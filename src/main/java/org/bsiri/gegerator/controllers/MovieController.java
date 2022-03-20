@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.handlers;
+package org.bsiri.gegerator.controllers;
 
 
 import org.bsiri.gegerator.domain.Movie;
@@ -7,14 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RestController("movies")
+@RestController("movies-controller")
 @RequestMapping(path = "/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
@@ -36,6 +33,11 @@ public class MovieController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(service.findById(id));
+    }
+
+    @PutMapping()
+    public void create(@RequestBody Movie movie){
+        service.save(movie);
     }
 
 }

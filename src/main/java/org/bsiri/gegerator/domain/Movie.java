@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 public class Movie implements Identifiable {
 
     @Id
-    private long id;
+    private Long id;
 
     private String name;
 
@@ -14,11 +14,11 @@ public class Movie implements Identifiable {
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
