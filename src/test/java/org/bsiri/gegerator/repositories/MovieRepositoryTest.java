@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.r2dbc.core.DatabaseClient;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
 
 @DataR2dbcTest
 public class MovieRepositoryTest {
@@ -36,7 +36,7 @@ public class MovieRepositoryTest {
 
     @Test
     public void moviesShouldHaveUniqueNames(){
-        String title = "From Dusk Till Dawn";
+        String title = "Snakes on a plane";
         Movie movie = new Movie(title);
 
         repo.save(movie).block();

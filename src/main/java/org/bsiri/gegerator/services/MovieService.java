@@ -33,7 +33,4 @@ public class MovieService {
         return repo.save(movie);
     }
 
-    public void scratch(){
-        Mono.never();
-    }
 }
