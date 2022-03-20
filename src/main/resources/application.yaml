@@ -1,0 +1,6 @@
+spring:
+  r2dbc:
+    name: gegerator
+
+  h2:
+    console.enabled: true
