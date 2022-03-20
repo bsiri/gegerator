@@ -1,0 +1,1 @@
+insert into movie(name) values ('Decapitron');
