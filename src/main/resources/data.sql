@@ -1,1 +1,1 @@
-insert into movie(name) values ('Decapitron');
+insert into movie(name, duration) values ('Decapitron', 'PT1H36M');

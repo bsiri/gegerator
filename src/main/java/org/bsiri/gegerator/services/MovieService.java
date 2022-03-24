@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 @Service
 public class MovieService {
@@ -22,6 +23,7 @@ public class MovieService {
 
     public Flux<Movie> findAll(){
         return repo.findAll();
+//        return Flux.fromIterable(Arrays.asList(new Movie("Decapitron", Duration.ofMinutes(110))));
     }
 
     public Mono<Movie> findById(long id){
