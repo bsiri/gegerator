@@ -8,3 +8,13 @@ CREATE TABLE movie (
     -- VARCHAR is just fine for my purposes.
 );
 
+CREATE TABLE movie_session(
+    id SERIAL PRIMARY KEY,
+    movie_id INTEGER,
+    theater VARCHAR(50),
+    start_time TIMESTAMP,
+    foreign key (movie_id) references movie(id) on delete cascade
+    -- note : cinema is a varchar here but in java
+    -- it will be an enum, I hope r2dbc driver can handle
+    -- the conversion
+);
