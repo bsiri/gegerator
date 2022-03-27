@@ -1,6 +1,5 @@
 package org.bsiri.gegerator.services;
 
-import org.bsiri.gegerator.domain.Identifiable;
 import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.repositories.MovieRepository;
@@ -8,14 +7,12 @@ import org.bsiri.gegerator.repositories.MovieSessionTuple;
 import org.bsiri.gegerator.repositories.MovieSessionTupleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.MultiValueMapAdapter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 @Service
 public class MovieSessionService {
@@ -30,13 +27,28 @@ public class MovieSessionService {
 
     public Mono<MovieSession> findById(long id){
         return sessionRepo.findById(id)
-                .flatMap(tuple -> {
-                    return movieRepo.findById(tuple.getMovieId())
-                            .map(movie -> toMovieSession(movie, tuple));
-                });
+                .zipWhen(tuple -> movieRepo.findById(tuple.getMovieId()))
+                .map(this::toMovieSessionSwapped);
     }
 
     public Flux<MovieSession> findAll(){
+        return movieRepo.findAllPlannedInSession()
+                .flatMap(movie ->
+                    Flux.zip(always(movie),
+                            sessionRepo.findAllByMovieId(movie.getId())
+                    )
+                )
+                .map(this::toMovieSession);
+    }
+
+
+/*
+    This old implementation of findall
+    is maybe faster (only two calls to DB)
+    but it's such a pita to read that the
+    other implementation is now preferred.
+
+    public Flux<MovieSession> findAllOld(){
         return sessionRepo.findAll()
                 // collect all then
                 // map movieId to list of movie session that plan that movie
@@ -55,7 +67,15 @@ public class MovieSessionService {
                             });
                 });
     }
+*/
 
+    private MovieSession toMovieSession(Tuple2<Movie, MovieSessionTuple> tuple){
+        return toMovieSession(tuple.getT1(), tuple.getT2());
+    }
+
+    private MovieSession toMovieSessionSwapped(Tuple2<MovieSessionTuple, Movie> tuple){
+        return toMovieSession(tuple.getT2(), tuple.getT1());
+    }
 
     private MovieSession toMovieSession(Movie movie, MovieSessionTuple tuple){
         return new MovieSession(
@@ -64,4 +84,9 @@ public class MovieSessionService {
                 tuple.getTheater(),
                 tuple.getStartTime());
     }
+
+    private <T> Flux<T> always(T something ){
+        return Flux.fromStream(Stream.iterate(something, UnaryOperator.identity()));
+    }
+
 }
