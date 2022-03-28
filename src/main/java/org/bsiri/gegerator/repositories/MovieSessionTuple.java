@@ -16,7 +16,7 @@ public class MovieSessionTuple implements Identifiable {
     private LocalDateTime startTime;
 
     // r2dbc isn't yet as mature as JPA unfortunately
-    private Long  movieId;
+    private Long movieId;
 
 
     public MovieSessionTuple(Long movieId, Theater theater, LocalDateTime startTime) {

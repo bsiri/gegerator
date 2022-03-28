@@ -36,6 +36,7 @@ public class MovieController {
     }
 
     @PutMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody Movie movie){
         service.save(movie);
     }
