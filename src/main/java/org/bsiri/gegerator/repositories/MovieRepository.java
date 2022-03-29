@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface MovieRepository extends ReactiveCrudRepository<Movie, Long> {
 
-    Mono<Movie> findByName(String name);
+    Mono<Movie> findByTitle(String title);
 
     @Query("select distinct m.* from movie_session ms inner join movie m on ms.movie_id = m.id")
     Flux<Movie> findAllPlannedInSession();

@@ -1,4 +1,4 @@
-insert into movie(id, name, duration) values
+insert into movie(id, title, duration) values
     (1, 'Decapitron', 'PT1H36M'),
     (2, 'Fortress', 'PT1H35M');
 

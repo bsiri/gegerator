@@ -1,6 +1,5 @@
 package org.bsiri.gegerator.testinfra;
 
-import org.bsiri.gegerator.repositories.DatasetLoader;
 import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -23,4 +22,7 @@ public class PersistenceTestConfig {
     public DatasetLoader dsLoader(){
         return new DatasetLoader(datasource());
     }
+
+
+
 }

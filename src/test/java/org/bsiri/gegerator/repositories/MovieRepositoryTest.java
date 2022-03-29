@@ -1,15 +1,12 @@
 package org.bsiri.gegerator.repositories;
 
 
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.bsiri.gegerator.domain.Movie;
+import org.bsiri.gegerator.testinfra.DatasetLoader;
 import org.bsiri.gegerator.testinfra.PersistenceTestConfig;
 
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
-import com.ninja_squad.dbsetup.operation.Operation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
@@ -41,11 +39,11 @@ public class MovieRepositoryTest {
 
     @Test
     public void shouldFindByName(){
-        repo.findByName("Discopath").as(StepVerifier::create)
+        repo.findByTitle("Discopath").as(StepVerifier::create)
                 .assertNext(movie -> {
                     assertEquals(Duration.parse("PT1H26M") ,movie.getDuration());
                     assertNotNull(movie.getId());
-                    assertEquals("Discopath", movie.getName());
+                    assertEquals("Discopath", movie.getTitle());
                 })
                 .verifyComplete();
     }
@@ -58,10 +56,10 @@ public class MovieRepositoryTest {
 
         repo.save(movie).block();
 
-        repo.findByName(title)
+        repo.findByTitle(title)
             .as(StepVerifier::create)
             .assertNext(m -> {
-                Assertions.assertEquals(title, m.getName());
+                Assertions.assertEquals(title, m.getTitle());
             })
             .verifyComplete();
 
@@ -83,10 +81,10 @@ public class MovieRepositoryTest {
 
     @Test
     public void shouldDelete(){
-        Movie discopath = repo.findByName("Discopath").block();
+        Movie discopath = repo.findByTitle("Discopath").block();
         repo.delete(discopath).block();
 
-        repo.findByName("Discopath")
+        repo.findByTitle("Discopath")
                 .as(StepVerifier::create)
                 .expectNextCount(0)
                 .verifyComplete();

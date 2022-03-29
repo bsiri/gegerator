@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.repositories;
+package org.bsiri.gegerator.testinfra;
 
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
@@ -11,7 +11,7 @@ public class DatasetLoader {
     public static final Operation TRUNCATE_ALL = Operations.deleteAllFrom("movie_session", "movie");
     public static final Operation MOVIE_REPOSITORY_DATASET =
             Operations.insertInto("movie")
-                .columns("id", "name", "duration")
+                .columns("id", "title", "duration")
                 .values("1", "Discopath", "PT1H26M")
             .build();
 

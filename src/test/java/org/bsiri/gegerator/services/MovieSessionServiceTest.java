@@ -26,7 +26,7 @@ public class MovieSessionServiceTest {
     public void shouldInsertThenFetch(){
         MovieSessionService service = new MovieSessionService(movieRepo, sessionRepo);
 
-        Movie decapitron = movieRepo.findByName("Decapitron").block();
+        Movie decapitron = movieRepo.findByTitle("Decapitron").block();
         MovieSession session = new MovieSession(
                 null,
                 decapitron,
