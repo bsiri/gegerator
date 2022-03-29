@@ -3,25 +3,19 @@ package org.bsiri.gegerator.repositories;
 
 import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.testinfra.DatasetLoader;
-import org.bsiri.gegerator.testinfra.PersistenceTestConfig;
-
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
 
-@DataR2dbcTest
-@ContextConfiguration(classes = {PersistenceTestConfig.class})
-public class MovieRepositoryTest {
+
+public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     DatasetLoader dsLoader;

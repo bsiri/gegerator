@@ -5,15 +5,23 @@ import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.Theater;
 import org.bsiri.gegerator.repositories.MovieRepository;
 import org.bsiri.gegerator.repositories.MovieSessionTupleRepository;
+import org.bsiri.gegerator.testinfra.PersistenceTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import static org.springframework.test.util.AssertionErrors.*;
+
+import org.springframework.test.context.ContextConfiguration;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
 
+/*
+    TODO
+    Just use plain mocks ? Do I need to inject anything ?
+ */
 @DataR2dbcTest
+@ContextConfiguration(classes = {PersistenceTestConfig.class})
 public class MovieSessionServiceTest {
 
     @Autowired
