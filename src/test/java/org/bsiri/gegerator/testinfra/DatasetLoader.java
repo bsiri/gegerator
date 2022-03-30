@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,13 +55,15 @@ public class DatasetLoader {
             ClassPathResource dsResource = new ClassPathResource(datasetPath);
             InputStream stream = dsResource.getInputStream();
 
-            List<String> sql = new BufferedReader(
+            String[] sql = new BufferedReader(
                     new InputStreamReader(stream, StandardCharsets.UTF_8)
                     )
                     .lines()
-                    .collect(Collectors.toList());
+                    .collect(Collectors.joining())
+                    .split(";");
 
-            return sql;
+
+            return Arrays.asList(sql);
         }
         catch(IOException ex){
             throw new RuntimeException(ex);
