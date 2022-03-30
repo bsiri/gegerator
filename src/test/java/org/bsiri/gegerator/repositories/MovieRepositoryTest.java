@@ -25,14 +25,16 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     DatabaseClient client;
-
-    @BeforeEach
-    public void dbsetup(){
-        dsLoader.load(DatasetLoader.MOVIE_REPOSITORY_DATASET);
-    }
+//
+//    @BeforeEach
+//    public void dbsetup(){
+//        dsLoader.load(DatasetLoader.MOVIE_REPOSITORY_DATASET);
+//    }
 
     @Test
     public void shouldFindByName(){
+        dsLoader.load("datasets/movie-repo/discopath.sql");
+
         repo.findByTitle("Discopath").as(StepVerifier::create)
                 .assertNext(movie -> {
                     assertEquals(Duration.parse("PT1H26M") ,movie.getDuration());
@@ -75,6 +77,8 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldDelete(){
+        dsLoader.load("datasets/movie-repo/discopath.sql");
+
         Movie discopath = repo.findByTitle("Discopath").block();
         repo.delete(discopath).block();
 
@@ -83,5 +87,10 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
                 .expectNextCount(0)
                 .verifyComplete();
     }
+
+    // *************** Datasets ***********************
+
+
+
 
 }
