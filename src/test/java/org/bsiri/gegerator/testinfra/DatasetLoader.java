@@ -15,14 +15,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+    Simple dataset manager,
+    created and injected using PersistenceTestConfig
+*/
 public class DatasetLoader {
-    public static final Operation TRUNCATE_ALL = Operations.deleteAllFrom("movie_session", "movie");
-    public static final Operation MOVIE_REPOSITORY_DATASET =
-            Operations.insertInto("movie")
-                .columns("id", "title", "duration")
-                .values("1", "Discopath", "PT1H26M")
-            .build();
 
+    private static final Operation TRUNCATE_ALL = Operations.deleteAllFrom("movie_session", "movie");
 
     private DataSource datasource;
 

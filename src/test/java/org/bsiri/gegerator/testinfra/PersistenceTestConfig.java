@@ -82,6 +82,9 @@ public class PersistenceTestConfig {
         return new DatasetLoader(datasource());
     }
 
-
+    @Bean
+    public SqlDatasetProcessorAspect sqlDatasetProcessorAspect(){
+        return new SqlDatasetProcessorAspect(dsLoader());
+    }
 
 }

@@ -3,6 +3,7 @@ package org.bsiri.gegerator.repositories;
 
 import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.testinfra.DatasetLoader;
+import org.bsiri.gegerator.testinfra.SqlDataset;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,13 +26,9 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     DatabaseClient client;
-//
-//    @BeforeEach
-//    public void dbsetup(){
-//        dsLoader.load(DatasetLoader.MOVIE_REPOSITORY_DATASET);
-//    }
 
     @Test
+    @SqlDataset("datasets/movie-repo/discopath.sql")
     public void shouldFindByName(){
         dsLoader.load("datasets/movie-repo/discopath.sql");
 
@@ -76,6 +73,7 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
+    @SqlDataset("datasets/movie-repo/discopath.sql")
     public void shouldDelete(){
         dsLoader.load("datasets/movie-repo/discopath.sql");
 
