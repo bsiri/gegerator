@@ -1,43 +1,24 @@
 package org.bsiri.gegerator.domain;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 import java.time.Duration;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode(exclude = "id")
 public class Movie implements Identifiable {
 
     @Id
     private Long id;
-    private String title;
-    private Duration duration;
+    private @NonNull String title;
+    private @NonNull Duration duration;
 
-    public Movie(String title, Duration duration){
-        this.title = title;
-        this.duration = duration;
-    }
-
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public Duration getDuration() {
-        return duration;
-    }
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-    public void setDuration(String duration){
-
     }
 
     @Override

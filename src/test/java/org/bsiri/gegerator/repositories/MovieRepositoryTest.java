@@ -3,14 +3,11 @@ package org.bsiri.gegerator.repositories;
 
 import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.testinfra.DatasetLoader;
-import org.bsiri.gegerator.testinfra.SqlDataset;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
@@ -24,23 +21,29 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
     @Autowired
     MovieRepository repo;
 
-    @Autowired
-    DatabaseClient client;
-
     @Test
-    @SqlDataset("datasets/movie-repo/discopath.sql")
     public void shouldFindByName(){
         dsLoader.load("datasets/movie-repo/discopath.sql");
 
         repo.findByTitle("Discopath").as(StepVerifier::create)
                 .assertNext(movie -> {
-                    assertEquals(Duration.parse("PT1H26M") ,movie.getDuration());
-                    assertNotNull(movie.getId());
-                    assertEquals("Discopath", movie.getTitle());
+                    assertEquals(new Movie("Discopath", Duration.parse("PT1H26M")), movie);
                 })
                 .verifyComplete();
     }
 
+    @Test
+    public void shouldFindAll(){
+        dsLoader.load("datasets/movie-repo/planned-movies.sql");
+
+        repo.findAll().as(StepVerifier::create).expectNext(
+                new Movie("Decapitron", Duration.parse("PT1h36M")),
+                new Movie("The Mist", Duration.parse("PT2h6M")),
+                new Movie("Fortress", Duration.parse("PT1h35M")),
+                new Movie("Bernie", Duration.parse("PT1h27M"))
+        )
+        .verifyComplete();
+    }
 
     @Test
     public void shouldInsertThenFetch(){
@@ -73,7 +76,6 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    @SqlDataset("datasets/movie-repo/discopath.sql")
     public void shouldDelete(){
         dsLoader.load("datasets/movie-repo/discopath.sql");
 
