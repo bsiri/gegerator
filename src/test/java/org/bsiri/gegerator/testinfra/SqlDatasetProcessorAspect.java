@@ -3,15 +3,12 @@ package org.bsiri.gegerator.testinfra;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
 
 @Aspect
 public class SqlDatasetProcessorAspect {
-
 
     private DatasetLoader dsLoader;
 
@@ -28,6 +25,5 @@ public class SqlDatasetProcessorAspect {
         dsLoader.load(datasetPath);
 
         return jointPoint.proceed();
-
     }
 }

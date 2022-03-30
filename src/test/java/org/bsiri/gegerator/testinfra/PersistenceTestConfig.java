@@ -11,9 +11,15 @@ import javax.sql.DataSource;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * This configuration class has two purposes:
+ * This configuration class has three purposes:
  * 1. hook on the r2dbc connection factory and change the name of the database to be unique
  * 2. create an additional jdbc datasource to be used by the DatasetLoader (which is jdbc-based).
+ * 3. create the DatasetLoader and SqlDataset annotation processing plumbing.
+ *
+ * It supplements the regular R2DBC AutoConfiguration, hence the @TestConfiguration annotation.
+ * It does not replace it !
+ *
+ * ----------------------
  *
  * 1. unique database name:
  *
@@ -41,12 +47,25 @@ import java.util.concurrent.ThreadLocalRandom;
  * - try to fiddle with ContextHierarchies and see if the Datasource can be created once and
  *   shared among all tests.
  *
+ * ----------------------
  *
  * 2. Additional JDBC datasource
  *
  * This datasource is created for the use of DbSetup, the data injection framework from Ninja Squad.
  * I would have used DbUnit if the Spring integration was mature, alas it works up to Junit 4 and not
  * to Junit 5 which I use here.
+ *
+ * ----------------------
+ *
+ * 3. DatasetLoader and SqlDataset aspects
+ *
+ * DatasetLoader is build around Ninja-Squad DbSetup library.
+ * In order to emulate the oh-so missed @Dataset annotation from DbUnit, I sort of mimic
+ * the same here with @SqlDataset, which is then channeled to the DatasetLoader via
+ * SqlDatasetProcessorAspect.
+ *
+ * None of these use @Component annotation, all the wiring happens here.
+ *
  *
  */
 @TestConfiguration
