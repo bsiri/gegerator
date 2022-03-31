@@ -3,16 +3,26 @@ package org.bsiri.gegerator.repositories;
 
 import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.testinfra.DatasetLoader;
+import org.bsiri.gegerator.testinfra.SqlDataset;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
 
 
+/*
+ * Remember : this class uses @SqlDataset, which works thanks to AspectJ.
+ * So this class needs to be woven (compile-time here).
+ *
+ * The Maven build takes care of that, but for it to work from the IDE
+ * launcher you need to configure your JUnit tasks to run
+ * 'mvn test-compile' before executing the tests.
+ */
 public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
@@ -22,9 +32,8 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
     MovieRepository repo;
 
     @Test
+    @SqlDataset("datasets/movie-repo/discopath.sql")
     public void shouldFindByName(){
-        dsLoader.load("datasets/movie-repo/discopath.sql");
-
         repo.findByTitle("Discopath").as(StepVerifier::create)
                 .assertNext(movie -> {
                     assertEquals(new Movie("Discopath", Duration.parse("PT1H26M")), movie);
@@ -76,8 +85,8 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
+    @SqlDataset("datasets/movie-repo/discopath.sql")
     public void shouldDelete(){
-        dsLoader.load("datasets/movie-repo/discopath.sql");
 
         Movie discopath = repo.findByTitle("Discopath").block();
         repo.delete(discopath).block();
@@ -87,10 +96,5 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
                 .expectNextCount(0)
                 .verifyComplete();
     }
-
-    // *************** Datasets ***********************
-
-
-
 
 }
