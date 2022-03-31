@@ -28,7 +28,7 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     @SqlDataset("datasets/movie-repo/discopath.sql")
-    public void shouldFindByName(){
+    public void shouldFindByTitle(){
         repo.findByTitle("Discopath").as(StepVerifier::create)
                 .assertNext(movie -> {
                     assertEquals(new Movie("Discopath", Duration.parse("PT1H26M")), movie);
@@ -44,6 +44,16 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
                 new Movie("The Mist", Duration.parse("PT2h6M")),
                 new Movie("Fortress", Duration.parse("PT1h35M")),
                 new Movie("Bernie", Duration.parse("PT1h27M"))
+        )
+        .verifyComplete();
+    }
+
+    @Test
+    @SqlDataset("datasets/movie-repo/planned-movies.sql")
+    public void shouldFindOnlyPlanned(){
+        repo.findAllPlannedInSession().as(StepVerifier::create).expectNext(
+                new Movie("Decapitron", Duration.parse("PT1h36M")),
+                new Movie("Fortress", Duration.parse("PT1h35M"))
         )
         .verifyComplete();
     }
