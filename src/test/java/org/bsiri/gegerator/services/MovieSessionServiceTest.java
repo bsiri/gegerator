@@ -4,50 +4,76 @@ import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.Theater;
 import org.bsiri.gegerator.repositories.MovieRepository;
+import org.bsiri.gegerator.repositories.MovieSessionTuple;
 import org.bsiri.gegerator.repositories.MovieSessionTupleRepository;
-import org.bsiri.gegerator.testinfra.PersistenceTestConfig;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
-import static org.springframework.test.util.AssertionErrors.*;
-
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
+import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
-/*
-    TODO
-    Just use plain mocks ? Do I need to inject anything ?
- */
-@DataR2dbcTest
-@ContextConfiguration(classes = {PersistenceTestConfig.class})
+
 public class MovieSessionServiceTest {
 
-    @Autowired
-    MovieSessionTupleRepository sessionRepo;
+    AutoCloseable mockClosable;
 
-    @Autowired
+    @Mock
+    MovieSessionTupleRepository sessionRepo;
+    @Mock
     MovieRepository movieRepo;
 
+    MovieSessionService service;
+
+    @BeforeEach
+    public void setup(){
+        mockClosable = MockitoAnnotations.openMocks(this);
+        service = new MovieSessionService(movieRepo, sessionRepo);
+
+
+        when(sessionRepo.findById(10L)).thenReturn(Mono.just(
+           sessionBloodFreakCasino()
+        ));
+
+        when(movieRepo.findById(1L)).thenReturn(Mono.just(
+            movieBloodFreak()
+        ));
+
+    }
+
+    @AfterEach
+    public void teardown() throws Exception{
+        mockClosable.close();
+    }
+
     @Test
-    public void shouldInsertThenFetch(){
-        MovieSessionService service = new MovieSessionService(movieRepo, sessionRepo);
-
-        Movie decapitron = movieRepo.findByTitle("Decapitron").block();
-        MovieSession session = new MovieSession(
-                null,
-                decapitron,
-                Theater.CASINO,
-                LocalDateTime.parse("2022-03-28T10:55:00"));
-
-        service.save(session).as(StepVerifier::create)
-                .assertNext(s -> assertNotNull("session had no ID", s.getId()))
+    public void shouldFindById(){
+        service.findById(10L).as(StepVerifier::create)
+                .expectNext(
+                    new MovieSession(10L, movieBloodFreak(), Theater.CASINO, date("2022-04-01T08:00:00"))
+                )
                 .verifyComplete();
     }
 
 
+    private static Movie movieBloodFreak(){
+        return new Movie("Blood Freak", duration("PT1H26M"));
+    }
 
+    private static MovieSessionTuple sessionBloodFreakCasino(){
+        MovieSessionTuple tuple = new MovieSessionTuple(1L, Theater.CASINO, date("2022-04-01T08:00:00"));
+        tuple.setId(10L);
+        return tuple;
+    }
 
+    private static LocalDateTime date(String strDate){
+        return LocalDateTime.parse(strDate);
+    }
 
+    private static Duration duration(String duration){ return Duration.parse(duration);}
 }
