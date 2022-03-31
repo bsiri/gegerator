@@ -57,22 +57,28 @@
 
 
 		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>1.9.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.9.7</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.ninja-squad</groupId>
-			<artifactId>DbSetup</artifactId>
-			<version>2.1.0</version>
-			<scope>test</scope>
-		</dependency>
-
 
 	</dependencies>
 
@@ -86,10 +92,34 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.14.0</version>
+				<configuration>
+					<complianceLevel>1.8</complianceLevel>
+					<source>1.8</source>
+					<target>1.8</target>
+					<showWeaveInfo>true</showWeaveInfo>
+					<encoding>UTF-8 </encoding>
+					<!-- <verbose>true</verbose>
+					<Xlint>ignore</Xlint> -->
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<!-- use this goal to weave all your test classes -->
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

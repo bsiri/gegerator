@@ -2,14 +2,12 @@ package org.bsiri.gegerator.repositories;
 
 
 import org.bsiri.gegerator.domain.Movie;
-import org.bsiri.gegerator.testinfra.DatasetLoader;
 import org.bsiri.gegerator.testinfra.SqlDataset;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
@@ -26,9 +24,6 @@ import java.time.Duration;
 public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
-    DatasetLoader dsLoader;
-
-    @Autowired
     MovieRepository repo;
 
     @Test
@@ -42,9 +37,8 @@ public class MovieRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
+    @SqlDataset("datasets/movie-repo/planned-movies.sql")
     public void shouldFindAll(){
-        dsLoader.load("datasets/movie-repo/planned-movies.sql");
-
         repo.findAll().as(StepVerifier::create).expectNext(
                 new Movie("Decapitron", Duration.parse("PT1h36M")),
                 new Movie("The Mist", Duration.parse("PT2h6M")),
