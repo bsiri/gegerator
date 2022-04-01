@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "id")
+@ToString
 public class MovieSession {
     private @NonNull Long id;
     private @NonNull Movie movie;
