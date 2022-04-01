@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(exclude = "id")
 @ToString
 public class MovieSession {
-    private @NonNull Long id;
+    private Long id;
     private @NonNull Movie movie;
     private @NonNull Theater theater;
     private @NonNull LocalDateTime startTime;

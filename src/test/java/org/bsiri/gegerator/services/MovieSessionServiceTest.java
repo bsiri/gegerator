@@ -7,6 +7,7 @@ import org.bsiri.gegerator.repositories.MovieRepository;
 import org.bsiri.gegerator.repositories.MovieSessionTuple;
 import org.bsiri.gegerator.repositories.MovieSessionTupleRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -91,6 +92,32 @@ public class MovieSessionServiceTest {
                 .verifyComplete();
     }
 
+    @Test
+    public void shouldSave(){
+        MovieSession newSession = new MovieSession(
+          movieBloodFreak(),
+          Theater.ESPACE_LAC,
+          date("2022-02-05T12:00:00")
+        );
+
+        Long newId = 50L;
+
+        when(sessionRepo.save(any(MovieSessionTuple.class)))
+                .thenAnswer(mi -> {
+                   MovieSessionTuple tuple = mi.getArgument(0);
+                   tuple.setId(newId);
+                   return Mono.just(tuple);
+                });
+
+        service.save(newSession).as(StepVerifier::create)
+                .assertNext(session -> {
+                    Assertions.assertEquals(session.getId(), newId);
+                    Assertions.assertEquals(session, newSession);
+                })
+                .verifyComplete();
+
+    }
+
     // ***************** datasets *******************************
 
     private static Movie movieBloodFreak() {
@@ -146,12 +173,12 @@ public class MovieSessionServiceTest {
     }
 
     private static MovieSession sessionOf(Movie movie, MovieSessionTuple tuple) {
-        return new MovieSession(
-                tuple.getId(),
+        MovieSession ns = new MovieSession(
                 movie,
                 tuple.getTheater(),
                 tuple.getStartTime()
-
         );
+        ns.setId(tuple.getId());
+        return ns;
     }
 }

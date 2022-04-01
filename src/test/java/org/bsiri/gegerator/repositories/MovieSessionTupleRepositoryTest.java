@@ -19,15 +19,13 @@ public class MovieSessionTupleRepositoryTest extends AbstractRepositoryTest{
     public void shouldFindByMovieId(){
         repo.findAllByMovieId(1L).as(StepVerifier::create)
                 .expectNext(
-                    new MovieSessionTuple(1L, Theater.ESPACE_LAC, parseDate("2022-03-26T10:50:00")),
-                    new MovieSessionTuple(1L, Theater.CASINO, parseDate("2022-03-26T13:00:00"))
+                    new MovieSessionTuple(1L, Theater.ESPACE_LAC, date("2022-03-26T10:50:00")),
+                    new MovieSessionTuple(1L, Theater.CASINO, date("2022-03-26T13:00:00"))
                 )
                 .verifyComplete();
     }
 
-
-
-    private static LocalDateTime parseDate(String strDate){
+    private static LocalDateTime date(String strDate){
         return LocalDateTime.parse(strDate);
     }
 

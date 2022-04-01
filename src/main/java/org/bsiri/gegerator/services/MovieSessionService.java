@@ -51,6 +51,9 @@ public class MovieSessionService {
         });
     }
 
+
+    // ************ Helpers ****************************
+
     private MovieSession toMovieSession(Tuple2<Movie, MovieSessionTuple> tuple){
         return toMovieSession(tuple.getT1(), tuple.getT2());
     }
@@ -60,11 +63,12 @@ public class MovieSessionService {
     }
 
     private MovieSession toMovieSession(Movie movie, MovieSessionTuple tuple){
-        return new MovieSession(
-                tuple.getId(),
+        MovieSession ns = new MovieSession(
                 movie,
                 tuple.getTheater(),
                 tuple.getStartTime());
+        ns.setId(tuple.getId());
+        return ns;
     }
 
     private MovieSessionTuple toTuple(MovieSession movieSession){
