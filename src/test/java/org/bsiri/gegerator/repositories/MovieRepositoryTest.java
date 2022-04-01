@@ -13,14 +13,6 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 
 
-/*
- * Remember : this class uses @SqlDataset, which works thanks to AspectJ.
- * So this class needs to be woven (compile-time here).
- *
- * The Maven build takes care of that, but for it to work from the IDE
- * launcher you need to configure your JUnit tasks to run
- * 'mvn test-compile' before executing the tests.
- */
 public class MovieRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
