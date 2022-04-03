@@ -1,0 +1,16 @@
+.movie{
+    border-radius: 5px;
+    background-color: darksalmon;
+    padding: 0.5em;
+    margin-top: 1em;
+
+
+    .movie-title{
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .movie-duration{
+        margin-top: 0.25em;
+    }
+}

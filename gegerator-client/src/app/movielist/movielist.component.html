@@ -4,7 +4,7 @@
 
     <div class="list">
 
-        <div *ngFor="let movie of movies">
+        <div *ngFor="let movie of movies$ | async">
             <app-movie [movie]="movie"></app-movie>
         </div>
         
