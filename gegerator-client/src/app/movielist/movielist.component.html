@@ -1,0 +1,15 @@
+
+<div class="movielist">
+    <h1>{{title}}</h1>
+
+    <div class="list">
+
+        <div *ngFor="let movie of movies">
+            <app-movie [movie]="movie"></app-movie>
+        </div>
+        
+
+
+    </div>
+
+</div>
