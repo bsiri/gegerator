@@ -12,20 +12,14 @@ import { MovielistService } from '../services/movielist.service';
 export class MovielistComponent implements OnInit {
 
   title = "Films"
-  
-  // movies: Movie[] = [
-  //   {id: 1, title: "Decapitron", duration: parse("PT1H26M")},
-  //   {id: 2, title: "The Warriors", duration: parse("PT1H32M")}
-  // ]
 
   movies$: Observable<Movie[]> = of([])
-
 
   constructor(private service: MovielistService) {
   }
 
   ngOnInit(): void {
-    this.movies$ = this.service.reloadMovies();
+    this.movies$ = this.service.movieSubject
   }
 
 }

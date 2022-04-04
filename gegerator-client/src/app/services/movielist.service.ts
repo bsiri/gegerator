@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http'
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { Movie } from '../models/movie';
 import { parse } from 'iso8601-duration';
 
@@ -17,19 +17,25 @@ const options = {
 @Injectable({
   providedIn: 'root'
 })
-export class MovielistService {
+export class MovielistService{
 
-  constructor(private http: HttpClient) { }
+  movieSubject: Subject<Movie[]> = new BehaviorSubject([] as Movie[]);
 
-  reloadMovies(): Observable<Movie[]>{
-    return this.http.get<JsonMovie[]>(moviesUrl, options)
+  constructor(private http: HttpClient) { 
+    this.reloadMovies();
+  }
+
+  reloadMovies(): void{
+    this.http.get<JsonMovie[]>(moviesUrl, options)
       .pipe(
         map(value => {
           return value.map(m => this._toMovies(m))
         })
+      ).subscribe(movies => 
+        this.movieSubject.next(movies)
       );
-
   }
+
 
   private _toMovies(item: JsonMovie): Movie{
     return {
@@ -38,7 +44,6 @@ export class MovielistService {
       duration: parse(item.duration)
     };
   }
-
 }
 
 class JsonMovie{
