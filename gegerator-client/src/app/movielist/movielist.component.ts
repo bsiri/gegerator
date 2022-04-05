@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { parse } from 'iso8601-duration';
-import { Observable, of } from 'rxjs';
-import { Movie } from '../models/movie';
-import { MovielistService } from '../services/movielist.service';
+import { Store } from '@ngrx/store';
+import { MovieListActions } from '../actions/movielist.actions';
+import { selectMovistlist } from '../selectors/movielist.selectors';
 
 @Component({
   selector: 'app-movielist',
@@ -13,13 +12,13 @@ export class MovielistComponent implements OnInit {
 
   title = "Films"
 
-  movies$: Observable<Movie[]> = of([])
+  movies$ = this.store.select(selectMovistlist);
 
-  constructor(private service: MovielistService) {
+  constructor(private store: Store ) {
   }
 
   ngOnInit(): void {
-    this.movies$ = this.service.movieSubject
+    this.store.dispatch(MovieListActions.reload_movies());
   }
 
 }

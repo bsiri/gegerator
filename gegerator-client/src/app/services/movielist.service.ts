@@ -19,20 +19,14 @@ const options = {
 })
 export class MovielistService{
 
-  movieSubject: Subject<Movie[]> = new BehaviorSubject([] as Movie[]);
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { 
-    this.reloadMovies();
-  }
-
-  reloadMovies(): void{
-    this.http.get<JsonMovie[]>(moviesUrl, options)
+  getAll(): Observable<Movie[]>{
+    return this.http.get<JsonMovie[]>(moviesUrl, options)
       .pipe(
         map(value => {
           return value.map(m => this._toMovies(m))
         })
-      ).subscribe(movies => 
-        this.movieSubject.next(movies)
       );
   }
 
