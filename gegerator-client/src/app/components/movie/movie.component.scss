@@ -1,9 +1,11 @@
+@import '../../../_variables.scss';
+
 .mat-card{
     border-radius: 15px;
     cursor:pointer;
 }
 
 .mat-card:hover{
-    background-color: blue;
+    background-color: $primary;
     color:white;
 }

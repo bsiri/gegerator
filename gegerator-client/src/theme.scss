@@ -2,15 +2,24 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
-$my-theme-primary: mat-palette($mat-indigo, 700, 300, 900);
-$my-theme-accent: mat-palette($mat-light-blue);
-$my-theme-warn: mat-palette($mat-deep-orange, A200);
 
-// create theme (use mat-dark-theme for themes with dark backgrounds)
-$my-theme: mat-light-theme(
-    $my-theme-primary,
-    $my-theme-accent,
-    $my-theme-warn
+// If these must change, remember to redeclare them 
+// in _variables.scss
+// (see : https://medium.com/@aleixsuau/how-to-use-angular-material-2-sass-variables-in-your-components-76ce0203f126)
+$app-primary: mat-palette($mat-indigo, 700, 300, 900);
+$app-accent: mat-palette($mat-light-blue);
+$app-warn: mat-palette($mat-deep-orange, A200);
+
+// create theme
+$app-theme: mat-light-theme(
+    $app-primary,
+    $app-accent,
+    $app-warn
 );
 
-@include angular-material-theme($my-theme)
+@include angular-material-theme($app-theme);
+
+// export the colors
+$primary: mat-color($app-primary);
+$accent: mat-color($app-accent);
+$warn: mat-color($app-warn);
