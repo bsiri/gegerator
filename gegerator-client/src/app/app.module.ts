@@ -4,13 +4,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MovielistComponent } from './movielist/movielist.component';
-import { MovieComponent } from './movie/movie.component';
+import { MovielistComponent } from './components/movielist/movielist.component';
+import { MovieComponent } from './components/movie/movie.component';
 import { DurationPipe } from './pipes/duration.pipe';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { movielistReducer } from './reducers/movielist.reducer';
-import { MovieListEffects } from './effects/movielist.effects';
+import { movielistReducer } from './ngrx/reducers/movielist.reducer';
+import { MovieListEffects } from './ngrx/effects/movielist.effects';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MovieListEffects } from './effects/movielist.effects';
     AppRoutingModule,
     HttpClientModule,
     StoreModule.forRoot({movielist: movielistReducer}, {}),
-    EffectsModule.forRoot([MovieListEffects])
+    EffectsModule.forRoot([MovieListEffects]),
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

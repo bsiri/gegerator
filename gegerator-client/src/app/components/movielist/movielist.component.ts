@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { MovieListActions } from '../actions/movielist.actions';
-import { selectMovistlist } from '../selectors/movielist.selectors';
+import { MovieListActions } from '../../ngrx/actions/movielist.actions';
+import { selectMovistlist } from '../../ngrx/selectors/movielist.selectors';
 
 @Component({
   selector: 'app-movielist',
