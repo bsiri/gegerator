@@ -1,6 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import {MatDialogModule} from '@angular/material/dialog'; 
+import {MatCardModule} from '@angular/material/card'; 
+import {MatButtonModule} from '@angular/material/button'; 
+import {MatIconModule} from '@angular/material/icon'; 
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +16,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { movielistReducer } from './ngrx/reducers/movielist.reducer';
 import { MovieListEffects } from './ngrx/effects/movielist.effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NewMovieDialog } from './components/newmoviedialog/newmoviedialog.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +24,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MovielistComponent,
     MovieComponent,
     DurationPipe,
+    NewMovieDialog
   ],
   imports: [
     BrowserModule,
@@ -26,7 +32,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     StoreModule.forRoot({movielist: movielistReducer}, {}),
     EffectsModule.forRoot([MovieListEffects]),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

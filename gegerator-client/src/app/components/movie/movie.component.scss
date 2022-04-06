@@ -1,16 +1,9 @@
-.movie{
-    border-radius: 5px;
-    background-color: darksalmon;
-    padding: 0.5em;
-    margin-top: 1em;
+.mat-card{
+    border-radius: 15px;
+    cursor:pointer;
+}
 
-
-    .movie-title{
-        font-weight: bold;
-        text-align: center;
-    }
-
-    .movie-duration{
-        margin-top: 0.25em;
-    }
+.mat-card:hover{
+    background-color: blue;
+    color:white;
 }

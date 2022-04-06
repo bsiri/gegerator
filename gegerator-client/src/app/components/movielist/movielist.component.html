@@ -1,15 +1,25 @@
 
 <div class="movielist">
-    <h1>{{title}}</h1>
+    <div class="movielist-header">
+        <div class="movielist-header--left">
+            <h1>{{title}}</h1>
+        </div>
+        
+        <div class="movielist-header--right">
+            <button mat-raised-button  color="accent" aria-label="add a movie">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
 
     <div class="list">
 
         <div *ngFor="let movie of movies$ | async">
-            <app-movie [movie]="movie"></app-movie>
+            <div class="movie-margin">
+                <app-movie [movie]="movie"></app-movie>
+            </div>
         </div>
         
-
-
     </div>
 
 </div>
