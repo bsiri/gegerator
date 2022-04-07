@@ -1,3 +1,5 @@
+@use "sass:color";
+
 @import '~@angular/material/theming';
 
 // Copy the palettes from your selected theme (usually theme.scss).
@@ -10,3 +12,4 @@ $primary: mat-color($app-primary);
 $accent: mat-color($app-accent);
 $warn: mat-color($app-warn);
 
+$primary-light-35: color.scale($primary, $lightness: +35%);

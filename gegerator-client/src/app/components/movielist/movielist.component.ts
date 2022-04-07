@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { MovieListActions } from '../../ngrx/actions/movielist.actions';
 import { selectMovistlist } from '../../ngrx/selectors/movielist.selectors';
+import { NewMovieDialog } from '../newmoviedialog/newmoviedialog.component';
 
 @Component({
   selector: 'app-movielist',
@@ -14,7 +16,19 @@ export class MovielistComponent implements OnInit {
 
   movies$ = this.store.select(selectMovistlist);
 
-  constructor(private store: Store ) {
+  constructor(private store: Store, private dialog: MatDialog ) {
+  }
+
+  openNewMovie(): void {
+    const dialogRef = this.dialog.open(NewMovieDialog, {
+      width: '350px',
+      autoFocus: "first-tabbable",
+      data: { id: null, title: '', duration: '' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`recieved movie : id=${result.id}, title=${result.title}, duration=${result.duration}`)
+    });
   }
 
   ngOnInit(): void {

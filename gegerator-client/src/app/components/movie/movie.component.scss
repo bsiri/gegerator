@@ -3,6 +3,7 @@
 .mat-card{
     border-radius: 15px;
     cursor:pointer;
+    border: 3px groove $primary;
 }
 
 .mat-card:hover{

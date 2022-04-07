@@ -1,1 +1,24 @@
-<p>newmovie works!</p>
+
+
+<h1 mat-dialog-title>Nouveau film</h1>
+<div mat-dialog-content>
+    <div>
+        <span>Titre : </span>
+        <mat-form-field appearance="fill">
+            <input matInput [(ngModel)]="movie.title">
+        </mat-form-field>
+    </div>
+    <div>
+        <span>Durée : </span>
+        <mat-form-field appearance="fill">
+            <mat-label>hh:mm</mat-label>
+            <input matInput [(ngModel)]="movie.duration">
+        </mat-form-field>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="movie">OK</button>
+    <button mat-button (click)="cancel()">Annuler</button>
+</div>
+
