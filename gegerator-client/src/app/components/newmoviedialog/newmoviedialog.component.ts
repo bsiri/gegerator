@@ -4,7 +4,7 @@ import { Movie } from 'src/app/models/movie';
 import { Duration } from "iso8601-duration";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
-const durEx: RegExp = RegExp(/^(\d):(\d\d)$/);
+const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 
 @Component({
   selector: 'app-newmoviedialog',
@@ -27,9 +27,10 @@ export class NewMovieDialog implements OnInit {
     this.id = movie.id;
     this.formGroup = new FormGroup({
       title: new FormControl(movie.title, [
-        Validators.required]
-      ),
+        Validators.required
+      ]),
       duration: new FormControl(strFromDuration(movie.duration), [
+        Validators.required,
         validateDuration
       ])
     });
@@ -55,24 +56,24 @@ export class NewMovieDialog implements OnInit {
     this.dialogRef.close();
   }
 
-  title(){
-    return this.formGroup.get('title')!
-  }
+  // ******** in-template validation helpers *******
 
-  duration(){
-    return this.formGroup.get('duration')!
+  invalid(ctrName: string): boolean{
+    const control = this.formGroup.get(ctrName)!;
+    return control.invalid && (control.dirty || control.touched)
   }
 
 }
 
 
 function validateDuration(durControl: AbstractControl): ValidationErrors | null{
-  const correct = durEx.test(durControl.value.trim());
-  if (correct){
+  try{
+    durationFromStr(durControl.value)
     return null;
   }
-  else{
-    return {duration: {value: durControl.value}}
+  catch (wtf){
+    // return the exception as per contract
+    return wtf as ValidationErrors;
   }
 }
 
@@ -83,7 +84,7 @@ function strFromDuration(duration: Duration): string{
 function durationFromStr(strDuration: string) : Duration{
   const match = strDuration.trim().match(durEx)
   if (! match){
-    throw new Error(`wrong duration ${strDuration}`);
+    throw { duration: strDuration} as ValidationErrors;
   }
   const [hours, minutes] = match.slice(1).map(i => parseInt(i));
   return {hours, minutes};
