@@ -23,11 +23,11 @@ export class MovielistComponent implements OnInit {
     const dialogRef = this.dialog.open(NewMovieDialog, {
       width: '350px',
       autoFocus: "first-tabbable",
-      data: { id: null, title: '', duration: '' }
+      data: { id: null, title: '', duration: null }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`recieved movie : id=${result.id}, title=${result.title}, duration=${result.duration}`)
+      console.log(`received movie : id=${result.id}, title=${result.title}, duration=${result.duration}`)
     });
   }
 

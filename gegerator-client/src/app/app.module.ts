@@ -8,8 +8,9 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field'; 
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-
+import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movielist/movielist.component';
 import { MovieComponent } from './components/movie/movie.component';
@@ -36,6 +37,7 @@ import { NewMovieDialog } from './components/newmoviedialog/newmoviedialog.compo
     StoreModule.forRoot({movielist: movielistReducer}, {}),
     EffectsModule.forRoot([MovieListEffects]),
     FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatDialogModule,
     MatCardModule,
