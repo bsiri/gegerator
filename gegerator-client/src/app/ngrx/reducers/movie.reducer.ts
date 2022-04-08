@@ -1,16 +1,16 @@
 import { createReducer, on } from "@ngrx/store";
 import { Movie } from "../../models/movie";
-import { MovieListActions } from "../actions/movielist.actions";
+import { MovieActions } from "../actions/movie.actions";
 
 export const initialMovielist: ReadonlyArray<Movie> = []
 
-export const movielistReducer = createReducer(
+export const movieReducer = createReducer(
     initialMovielist,
-    on(MovieListActions.movies_reloaded, 
+    on(MovieActions.movies_reloaded, 
         (state, {movies}) => 
             movies
         ),
-    on(MovieListActions.movie_created,
+    on(MovieActions.movie_created,
         (state, {movie}) => {
             const newState = state.slice();
             newState.push(movie); 

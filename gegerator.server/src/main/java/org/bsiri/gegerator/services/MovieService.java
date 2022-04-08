@@ -32,4 +32,7 @@ public class MovieService {
         return repo.save(movie);
     }
 
+    @Transactional
+    public Mono<Movie> update(Movie movie){ return repo.save(movie);}
+
 }

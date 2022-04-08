@@ -11,7 +11,7 @@ const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
   templateUrl: './newmoviedialog.component.html',
   styleUrls: ['./newmoviedialog.component.scss']
 })
-export class NewMovieDialog implements OnInit {
+export class CreateUpdateMovieDialog implements OnInit {
 
   // note: the ID is never modified by this form, 
   // however we must remember it because enventually
@@ -21,7 +21,7 @@ export class NewMovieDialog implements OnInit {
   formGroup: FormGroup;
 
   constructor(
-    public dialogRef: MatDialogRef<NewMovieDialog>,
+    public dialogRef: MatDialogRef<CreateUpdateMovieDialog>,
     @Inject(MAT_DIALOG_DATA) movie: Movie
   ) { 
     this.id = movie.id;

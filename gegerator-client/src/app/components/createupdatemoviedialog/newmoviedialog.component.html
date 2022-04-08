@@ -1,6 +1,7 @@
 
 
-<h1 mat-dialog-title>Nouveau film</h1>
+<h1 *ngIf="id === undefined" mat-dialog-title>Ajouter un film</h1>
+<h1 *ngIf="id != undefined" mat-dialog-title>Modifier ce film</h1>
 <div mat-dialog-content [formGroup]="formGroup">
     <div>
         <label for="newmovie-title">Titre : </label>

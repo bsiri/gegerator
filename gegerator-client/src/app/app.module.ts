@@ -17,10 +17,10 @@ import { MovieComponent } from './components/movie/movie.component';
 import { DurationPipe } from './pipes/duration.pipe';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { movielistReducer } from './ngrx/reducers/movielist.reducer';
-import { MovieListEffects } from './ngrx/effects/movielist.effects';
+import { movieReducer } from './ngrx/reducers/movie.reducer';
+import { MovieEffects } from './ngrx/effects/movie.effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NewMovieDialog } from './components/newmoviedialog/newmoviedialog.component';
+import { CreateUpdateMovieDialog } from './components/newmoviedialog/newmoviedialog.component';
 
 @NgModule({
   declarations: [
@@ -28,14 +28,14 @@ import { NewMovieDialog } from './components/newmoviedialog/newmoviedialog.compo
     MovielistComponent,
     MovieComponent,
     DurationPipe,
-    NewMovieDialog
+    CreateUpdateMovieDialog
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movielist: movielistReducer}, {}),
-    EffectsModule.forRoot([MovieListEffects]),
+    StoreModule.forRoot({movielist: movieReducer}, {}),
+    EffectsModule.forRoot([MovieEffects]),
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

@@ -42,4 +42,10 @@ public class MovieController {
                 .body(service.save(movie));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Mono<Movie>> update(@RequestBody Movie movie){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.update(movie));
+    }
+
 }
