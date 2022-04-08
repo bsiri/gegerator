@@ -24,14 +24,34 @@ export class MovielistService{
   getAll(): Observable<Movie[]>{
     return this.http.get<JsonMovie[]>(moviesUrl, options)
       .pipe(
-        map(value => {
-          return value.map(m => this._toMovies(m))
+        map(allMovies => {
+          return allMovies.map(m => this._toMovie(m))
         })
       );
   }
 
 
-  private _toMovies(item: JsonMovie): Movie{
+  save(movie: Movie): Observable<Movie>{
+    const jsmovie = this._toJsonMovie(movie);
+    return this.http.put<JsonMovie>(moviesUrl,jsmovie,options)
+    .pipe(
+      map(responsemovie => {
+          return this._toMovie(responsemovie) 
+      })
+    );
+  }
+
+
+  private _toJsonMovie(item: Movie): JsonMovie{
+    const [hours, minutes] = [item.duration.hours, item.duration.minutes];
+    return {
+      id: item.id, 
+      title: item.title,
+      duration: `PT${hours}H${minutes}M`
+    }
+  }
+
+  private _toMovie(item: JsonMovie): Movie{
     return {
       id: item.id,
       title: item.title,

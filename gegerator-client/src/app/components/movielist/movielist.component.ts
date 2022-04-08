@@ -26,8 +26,10 @@ export class MovielistComponent implements OnInit {
       data: { id: null, title: '', duration: null }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`received movie : id=${result.id}, title=${result.title}, duration=${result.duration}`)
+    dialogRef.afterClosed().subscribe(newmovie => {
+      if (!!newmovie){
+        this.store.dispatch(MovieListActions.create_movie({movie: newmovie}));
+      }
     });
   }
 

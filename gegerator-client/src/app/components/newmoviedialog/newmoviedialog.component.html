@@ -21,7 +21,7 @@
 
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="confirm()" [disabled]="!formGroup.valid">OK</button>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
     <button mat-button (click)="cancel()">Annuler</button>
 </div>
 

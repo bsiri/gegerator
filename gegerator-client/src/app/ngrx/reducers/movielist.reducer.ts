@@ -9,5 +9,11 @@ export const movielistReducer = createReducer(
     on(MovieListActions.movies_reloaded, 
         (state, {movies}) => 
             movies
-        )
+        ),
+    on(MovieListActions.movie_created,
+        (state, {movie}) => {
+            const newState = state.slice();
+            newState.push(movie); 
+            return newState;
+    })
 );

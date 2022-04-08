@@ -36,9 +36,10 @@ public class MovieController {
     }
 
     @PutMapping()
-    @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody Movie movie){
-        service.save(movie);
+    public ResponseEntity<Mono<Movie>> create(@RequestBody Movie movie){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.save(movie));
     }
 
 }

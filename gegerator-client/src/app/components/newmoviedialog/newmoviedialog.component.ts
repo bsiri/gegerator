@@ -77,9 +77,11 @@ function validateDuration(durControl: AbstractControl): ValidationErrors | null{
   }
 }
 
+
 function strFromDuration(duration: Duration): string{
   return (duration) ? `${duration.hours}:${duration.minutes}` : ''
 }
+
 
 function durationFromStr(strDuration: string) : Duration{
   const match = strDuration.trim().match(durEx)

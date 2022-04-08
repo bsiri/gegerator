@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, Effect, ofType } from "@ngrx/effects";
+import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MovielistService } from "../../services/movielist.service";
 import { MovieListActions } from "../actions/movielist.actions";
 import { map, mergeMap } from "rxjs";
-import { Movie } from "../../models/movie";
 
 @Injectable()
 export class MovieListEffects {
@@ -21,5 +20,14 @@ export class MovieListEffects {
             )
         )
     ));   
+
+    create$ = createEffect(() => this.actions$.pipe(
+        ofType(MovieListActions.create_movie),
+        mergeMap(action => this.service.save(action.movie)
+            .pipe(
+                map(responseMovie => MovieListActions.movie_created({movie: responseMovie}))
+            )
+        )
+    ));
 
 }
