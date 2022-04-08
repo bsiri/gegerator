@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { Movie } from '../../models/movie';
-import { CreateUpdateMovieDialog } from '../newmoviedialog/newmoviedialog.component';
+import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
   selector: 'app-movie',
@@ -19,11 +20,18 @@ export class MovieComponent implements OnInit {
   }
 
   updateMovie(): void{
-    const dialogRef = this.dialog.open(CreateUpdateMovieDialog, {
+    const _clone = { ...this.movie}
+    const dialogRef = this.dialog.open(MovieDialog, {
       width: '350px',
       autoFocus: "first-tabbable",
-      data: { id: undefined, title: '', duration: undefined }
+      data: _clone
     });   
+
+    dialogRef.afterClosed().subscribe(updated =>{
+      if (!!updated){
+        this.store.dispatch(MovieActions.update_movie({movie: updated}));
+      }
+    })
   }
 
 }

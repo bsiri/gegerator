@@ -20,7 +20,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { movieReducer } from './ngrx/reducers/movie.reducer';
 import { MovieEffects } from './ngrx/effects/movie.effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CreateUpdateMovieDialog } from './components/newmoviedialog/newmoviedialog.component';
+import { MovieDialog } from './components/moviedialog/moviedialog.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,7 @@ import { CreateUpdateMovieDialog } from './components/newmoviedialog/newmoviedia
     MovielistComponent,
     MovieComponent,
     DurationPipe,
-    CreateUpdateMovieDialog
+    MovieDialog
   ],
   imports: [
     BrowserModule,

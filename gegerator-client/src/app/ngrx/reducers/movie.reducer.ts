@@ -15,5 +15,12 @@ export const movieReducer = createReducer(
             const newState = state.slice();
             newState.push(movie); 
             return newState;
+    }),
+    on(MovieActions.movie_updated,
+        (state, {movie}) => {
+            const newState = state.slice();
+            const movieIndex = newState.findIndex( m => m.id == movie.id)
+            newState.splice(movieIndex, 1, movie);
+            return newState;
     })
 );

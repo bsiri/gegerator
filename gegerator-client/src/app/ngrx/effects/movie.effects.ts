@@ -25,8 +25,17 @@ export class MovieEffects {
         ofType(MovieActions.create_movie),
         mergeMap(action => this.service.save(action.movie)
             .pipe(
-                map(responseMovie => MovieActions.movie_created({movie: responseMovie}))
+                map(response => MovieActions.movie_created({movie: response}))
             )
+        )
+    ));
+
+    update$ = createEffect(() => this.actions$.pipe(
+        ofType(MovieActions.update_movie),
+        mergeMap(action => this.service.update(action.movie)
+            .pipe(
+                map(response => MovieActions.movie_updated({movie: response}))
+            )        
         )
     ));
 

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewMovieDialog } from './newmoviedialog.component';
+import { MovieDialog } from './moviedialog.component';
 
-describe('NewMovieDialog', () => {
-  let component: NewMovieDialog;
-  let fixture: ComponentFixture<NewMovieDialog>;
+describe('MovieDialog', () => {
+  let component: MovieDialog;
+  let fixture: ComponentFixture<MovieDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NewMovieDialog ]
+      declarations: [ MovieDialog ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NewMovieDialog);
+    fixture = TestBed.createComponent(MovieDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

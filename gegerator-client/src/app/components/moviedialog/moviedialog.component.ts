@@ -8,10 +8,10 @@ const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 
 @Component({
   selector: 'app-newmoviedialog',
-  templateUrl: './newmoviedialog.component.html',
-  styleUrls: ['./newmoviedialog.component.scss']
+  templateUrl: './moviedialog.component.html',
+  styleUrls: ['./moviedialog.component.scss']
 })
-export class CreateUpdateMovieDialog implements OnInit {
+export class MovieDialog implements OnInit {
 
   // note: the ID is never modified by this form, 
   // however we must remember it because enventually
@@ -21,7 +21,7 @@ export class CreateUpdateMovieDialog implements OnInit {
   formGroup: FormGroup;
 
   constructor(
-    public dialogRef: MatDialogRef<CreateUpdateMovieDialog>,
+    public dialogRef: MatDialogRef<MovieDialog>,
     @Inject(MAT_DIALOG_DATA) movie: Movie
   ) { 
     this.id = movie.id;
@@ -79,7 +79,7 @@ function validateDuration(durControl: AbstractControl): ValidationErrors | null{
 
 
 function strFromDuration(duration: Duration): string{
-  return (duration) ? `${duration.hours}:${duration.minutes}` : ''
+  return (duration) ? `${duration.hours}h${duration.minutes}` : ''
 }
 
 

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { MovieActions } from '../../ngrx/actions/movie.actions';
 import { selectMovistlist } from '../../ngrx/selectors/movie.selectors';
-import { CreateUpdateMovieDialog } from '../newmoviedialog/newmoviedialog.component';
+import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
   selector: 'app-movielist',
@@ -18,7 +18,7 @@ export class MovielistComponent implements OnInit {
   }
 
   openNewMovie(): void {
-    const dialogRef = this.dialog.open(CreateUpdateMovieDialog, {
+    const dialogRef = this.dialog.open(MovieDialog, {
       width: '350px',
       autoFocus: "first-tabbable",
       data: { id: undefined, title: '', duration: undefined }
