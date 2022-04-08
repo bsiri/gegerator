@@ -79,7 +79,15 @@ function validateDuration(durControl: AbstractControl): ValidationErrors | null{
 
 
 function strFromDuration(duration: Duration): string{
-  return (duration) ? `${duration.hours}h${duration.minutes}` : ''
+  if (!duration){
+    return "";
+  }
+  // Note : this is not exactly like DurationPipe
+  // because we dont want the 'm' at the end
+  const minutes = duration.minutes ?? 0
+  const twodigitsMinutes = (minutes < 10) ? "0"+minutes : ""+minutes;
+  return `${duration.hours}h${twodigitsMinutes}`;
+  
 }
 
 
