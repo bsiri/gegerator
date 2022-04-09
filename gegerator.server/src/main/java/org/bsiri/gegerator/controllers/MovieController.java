@@ -28,6 +28,13 @@ public class MovieController {
                 .body(service.findAll());
     }
 
+    @PostMapping()
+    public ResponseEntity<Mono<Movie>> create(@RequestBody Movie movie){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.save(movie));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Mono<Movie>> getById(@PathVariable long id) {
         return ResponseEntity
@@ -35,17 +42,16 @@ public class MovieController {
                 .body(service.findById(id));
     }
 
-    @PutMapping()
-    public ResponseEntity<Mono<Movie>> create(@RequestBody Movie movie){
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(service.save(movie));
-    }
-
     @PatchMapping("/{id}")
     public ResponseEntity<Mono<Movie>> update(@RequestBody Movie movie){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.update(movie));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id){
+        service.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

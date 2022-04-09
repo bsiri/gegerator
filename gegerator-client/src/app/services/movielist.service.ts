@@ -33,7 +33,7 @@ export class MovielistService{
 
   save(movie: Movie): Observable<Movie>{
     const jsmovie = this._toJsonMovie(movie);
-    return this.http.put<JsonMovie>(moviesUrl, jsmovie, options)
+    return this.http.post<JsonMovie>(moviesUrl, jsmovie, options)
     .pipe(
       map(responsemovie => {
           return this._toMovie(responsemovie) 

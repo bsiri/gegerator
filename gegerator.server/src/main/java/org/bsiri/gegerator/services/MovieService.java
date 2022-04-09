@@ -35,4 +35,9 @@ public class MovieService {
     @Transactional
     public Mono<Movie> update(Movie movie){ return repo.save(movie);}
 
+    @Transactional
+    public void deleteById(long id){
+        repo.deleteById(id);
+    }
+
 }
