@@ -5,6 +5,7 @@
     cursor:pointer;
     border: 3px groove $primary;
     max-width: 300px;
+    overflow-wrap: anywhere;
 }
 
 .mat-card:hover{

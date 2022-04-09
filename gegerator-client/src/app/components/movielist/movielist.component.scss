@@ -1,20 +1,26 @@
 
 .movielist{
-    padding-left: 1em;
-    padding-right: 1em;
+    max-width: 400px;
+    border-right: 2px solid black;
+    height: 100%;
 
-    .movielist-header{
+    .movielist-actions{
         display: flex;
+
+        .movielist-search{
+            flex: 1;
+        }
+
+        .movielist-buttons{
+            margin-left: auto;
+        }
+
     }
 
-    .movielist-header--left{
-        flex: 1;
-    }
 
-    .movielist-header--right{
-        margin-left: auto;
+    .movielist-title-center{
+        text-align: center;
     }
-
 
     .movie-margin{
         margin-bottom: 1em;
@@ -22,3 +28,7 @@
 
 }
 
+.padded{
+    padding-left: 1em;
+    padding-right: 1em;
+}

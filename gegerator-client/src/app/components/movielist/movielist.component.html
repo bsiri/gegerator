@@ -1,18 +1,26 @@
 
 <div class="movielist">
-    <div class="movielist-header">
-        <div class="movielist-header--left">
+    <div class="movielist-header padded">
+        <div class="movielist-title-center">
             <h1>Films</h1>
         </div>
         
-        <div class="movielist-header--right">
-            <button mat-raised-button  color="primary" aria-label="add a movie" (click)="openNewMovie()">
-                <mat-icon>add</mat-icon>
-            </button>
+        <div class="movielist-actions">
+            <div class="movielist-search">
+                <mat-icon>search</mat-icon>
+                <mat-form-field appearance="fill">
+                    <input matInput (keyup)="filterMovies($event)">
+                </mat-form-field>
+            </div>
+            <div class="movielist-buttons">
+                <button mat-raised-button  color="primary" aria-label="add a movie" (click)="openNewMovie()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="list">
+    <div class="movielist-list padded">
 
         <div *ngFor="let movie of movies$ | async">
             <div class="movie-margin">
