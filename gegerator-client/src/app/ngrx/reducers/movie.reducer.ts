@@ -21,6 +21,11 @@ export const movieReducer = createReducer(
             const newState = state.slice();
             const movieIndex = newState.findIndex( m => m.id == movie.id)
             newState.splice(movieIndex, 1, movie);
-            return newState;
-    })
+            return newState;            
+    }),
+    on(MovieActions.movie_deleted,
+        (state, {movie}) => {
+            return state.filter( m=> m.id != movie.id);
+        }    
+    )
 );

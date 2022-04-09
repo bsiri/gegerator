@@ -1,6 +1,6 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http'
-import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
+import { map, mergeMap, Observable } from 'rxjs';
 import { Movie } from '../models/movie';
 import { parse } from 'iso8601-duration';
 
@@ -43,11 +43,18 @@ export class MovielistService{
 
   update(movie: Movie): Observable<Movie>{
     const jsmovie = this._toJsonMovie(movie);
-    return this.http.patch<JsonMovie>(`${moviesUrl}/${jsmovie.id}`, jsmovie, options)
+    return this.http.patch<JsonMovie>(`${moviesUrl}/${movie.id}`, jsmovie, options)
     .pipe(
       map(responsemovie => {
           return this._toMovie(responsemovie) 
       })
+    );
+  }
+
+  delete(movie: Movie): Observable<Movie>{
+    return this.http.delete<void>(`${moviesUrl}/${movie.id}`, options)
+    .pipe(
+      map(()=>movie)
     );
   }
 
