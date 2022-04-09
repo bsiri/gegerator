@@ -7,12 +7,6 @@ import { parse } from 'iso8601-duration';
 
 const moviesUrl = "/gegerator/movies"
 
-const options = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  })
-}
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +16,7 @@ export class MovielistService{
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Movie[]>{
-    return this.http.get<JsonMovie[]>(moviesUrl, options)
+    return this.http.get<JsonMovie[]>(moviesUrl)
       .pipe(
         map(allMovies => {
           return allMovies.map(m => this._toMovie(m))
@@ -33,7 +27,7 @@ export class MovielistService{
 
   save(movie: Movie): Observable<Movie>{
     const jsmovie = this._toJsonMovie(movie);
-    return this.http.post<JsonMovie>(moviesUrl, jsmovie, options)
+    return this.http.post<JsonMovie>(moviesUrl, jsmovie)
     .pipe(
       map(responsemovie => {
           return this._toMovie(responsemovie) 
@@ -43,7 +37,7 @@ export class MovielistService{
 
   update(movie: Movie): Observable<Movie>{
     const jsmovie = this._toJsonMovie(movie);
-    return this.http.patch<JsonMovie>(`${moviesUrl}/${movie.id}`, jsmovie, options)
+    return this.http.patch<JsonMovie>(`${moviesUrl}/${movie.id}`, jsmovie)
     .pipe(
       map(responsemovie => {
           return this._toMovie(responsemovie) 
@@ -52,7 +46,7 @@ export class MovielistService{
   }
 
   delete(movie: Movie): Observable<Movie>{
-    return this.http.delete<void>(`${moviesUrl}/${movie.id}`, options)
+    return this.http.delete<void>(`${moviesUrl}/${movie.id}`)
     .pipe(
       map(()=>movie)
     );

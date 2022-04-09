@@ -22,6 +22,7 @@ import { MovieEffects } from './ngrx/effects/movie.effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MovieDialog } from './components/moviedialog/moviedialog.component';
 import { ConfirmDialog } from './components/confirmdialog/confirmdialog.component';
+import { httpInterceptorProviders } from './interceptors/interceptorprovider';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,9 @@ import { ConfirmDialog } from './components/confirmdialog/confirmdialog.componen
     MatFormFieldModule,
     MatInputModule
   ],
-  providers: [],
+  providers: [
+    httpInterceptorProviders
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,8 +1,10 @@
 package org.bsiri.gegerator.services;
 
 import org.bsiri.gegerator.domain.Movie;
+import org.bsiri.gegerator.exceptions.DuplicateNameException;
 import org.bsiri.gegerator.repositories.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -18,7 +20,6 @@ public class MovieService {
         this.repo = repo;
     }
 
-
     public Flux<Movie> findAll(){
         return repo.findAll();
     }
@@ -29,11 +30,18 @@ public class MovieService {
 
     @Transactional
     public Mono<Movie> save(Movie movie){
-        return repo.save(movie);
+        return repo.save(movie)
+                .onErrorMap(
+                        DataIntegrityViolationException.class,
+                        ex -> new DuplicateNameException((movie.getTitle()))
+                );
     }
 
+    // alias for "save"
     @Transactional
-    public Mono<Movie> update(Movie movie){ return repo.save(movie);}
+    public Mono<Movie> update(Movie movie){
+        return save(movie);
+    }
 
     @Transactional
     public Mono<Void> deleteById(long id){

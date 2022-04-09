@@ -10,7 +10,7 @@ export enum ConfirmOutput{
 export interface ConfirmDialogData{
   message: string;
   html: string;
-  type: "confirm" | "info" | "danger"
+  type: "confirm" | "info" | "error"
 }
 
 @Component({
@@ -26,6 +26,8 @@ export class ConfirmDialog implements OnInit {
     public dialogRef: MatDialogRef<ConfirmDialog>,
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
   ) { 
+    // TODO : actually if a message is supplied instead of html,
+    // at least we should html-encode it before usage.
     this.content = data.message || data.html || "Confirmer ?"
     this.type = data.type || "confirm"
   }
