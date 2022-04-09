@@ -11,3 +11,16 @@
     background-color: $primary;
     color:white;
 }
+
+/*
+    let cancel a few properties of .mat-button
+    so that we can make those buttons smaller
+*/
+.mat-card-del-button, .mat-button{
+    background-color: lightgray;
+    color: black;
+    float: right;
+    min-width: inherit;
+    padding: 0.1em;
+    line-height: normal;
+}

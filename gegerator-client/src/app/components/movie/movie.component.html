@@ -1,5 +1,7 @@
-<mat-card (dblclick)="updateMovie()">
-    <!-- <button mat-button>X</button> -->
+<mat-card (dblclick)="updateMovie()">    
+    <button mat-button (click)="confirmThenDelete()">
+        <mat-icon>remove</mat-icon>
+    </button>
     <mat-card-header>  
         <mat-card-title>{{movie.title}}</mat-card-title>   
         <!-- <button mat-button>LIKE</button> -->

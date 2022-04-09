@@ -49,9 +49,8 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
-        service.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Mono<Void>> delete(@PathVariable long id){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.deleteById(id));
     }
 
 }

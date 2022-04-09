@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { Movie } from '../../models/movie';
+import { ConfirmDialog, ConfirmOutput } from '../confirmdialog/confirmdialog.component';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
@@ -27,11 +28,29 @@ export class MovieComponent implements OnInit {
       data: _clone
     });   
 
-    dialogRef.afterClosed().subscribe(updated =>{
-      if (!!updated){
-        this.store.dispatch(MovieActions.update_movie({movie: updated}));
+    dialogRef.afterClosed().subscribe(updatedMovieData =>{
+      if (!!updatedMovieData){
+        this.store.dispatch(MovieActions.update_movie({movie: updatedMovieData}));
       }
     })
   }
 
+  confirmThenDelete(): void{
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        message: `Vraiment supprimer ce film : ${this.movie.title} ?`,
+        type: "confirm"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(response =>{
+      if (response == ConfirmOutput.CONFIRM){
+        this.store.dispatch(MovieActions.delete_movie({movie: this.movie}))
+      } 
+    });
+  }
+
 }
+
+
+
