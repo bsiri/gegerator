@@ -1,4 +1,4 @@
-@import '../../../_variables.scss';
+@use  '../../../_variables.scss' as *;
 
 .mat-card{
     border-radius: 15px;

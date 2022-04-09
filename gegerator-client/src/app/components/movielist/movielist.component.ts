@@ -15,17 +15,32 @@ import { MovieDialog } from '../moviedialog/moviedialog.component';
 })
 export class MovielistComponent implements OnInit {
 
+  // sort logic: consists of a flag, and of a subject 
+  sorted = false
+  sortedsubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
   // the movie filter in the template 
   // will be fed into this subject. 
   filtersubject: BehaviorSubject<string> = new BehaviorSubject('')
 
+  // the final model is the combination of the original model
+  // + the filtering and sorting logic
   movies$ = this.store.select(selectMovistlist).pipe(
-    // combine the movie list with the debounced filter subject
-    // combineLatestWith(this.filtersubject.pipe(
-    //   debounceTime(250)
-    // )),
-    combineLatestWith(this.filtersubject),
-    map(([allMovies, filterString]) => allMovies.filter(m => m.title.includes(filterString)))
+    combineLatestWith(this.filtersubject, this.sortedsubject),
+    map(([allMovies, filterString, isSorted]) => {
+      let finalMovies = allMovies.slice()
+      // filtering
+      finalMovies = allMovies.filter(m => 
+                  m.title.includes(filterString
+                ));
+      // sorting
+      if (isSorted){
+        finalMovies = finalMovies.sort(
+          (m1, m2) => m1.title.localeCompare(m2.title)
+        )
+      }
+      return finalMovies
+    })
   )
 
   constructor(private store: Store, private dialog: MatDialog) {}
@@ -51,6 +66,11 @@ export class MovielistComponent implements OnInit {
   filterMovies(evt: any): void {
     const value = evt.target.value;
     this.filtersubject.next(value);
+  }
+
+  toggleSort(): void{
+    this.sorted = !this.sorted
+    this.sortedsubject.next(this.sorted)
   }
 
 }

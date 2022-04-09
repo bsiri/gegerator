@@ -1,5 +1,5 @@
 <div mat-dialog-content>
-    <p>{{message}}</p>
+    <p [innerHtml]="content"></p>
 </div>
 <div mat-dialog-actions>
     <button mat-raised-button (click)="confirm()">Oui</button>

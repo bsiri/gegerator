@@ -9,6 +9,7 @@ export enum ConfirmOutput{
 
 export interface ConfirmDialogData{
   message: string;
+  html: string;
   type: "confirm" | "info" | "danger"
 }
 
@@ -18,14 +19,14 @@ export interface ConfirmDialogData{
   styleUrls: ['./confirmdialog.component.scss']
 })
 export class ConfirmDialog implements OnInit {
-  message: string;
+  content: string;
   type: string;
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialog>,
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
   ) { 
-    this.message = data.message || "Confirmer ?"
+    this.content = data.message || data.html || "Confirmer ?"
     this.type = data.type || "confirm"
   }
 
