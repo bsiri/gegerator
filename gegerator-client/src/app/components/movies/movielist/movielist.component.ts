@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, combineLatestWith, debounceTime, map, mergeMap, Observable, withLatestFrom } from 'rxjs';
 import { Movie } from 'src/app/models/movie';
 
-import { MovieActions } from '../../ngrx/actions/movie.actions';
-import { selectMovistlist } from '../../ngrx/selectors/movie.selectors';
+import { MovieActions } from '../../../ngrx/actions/movie.actions';
+import { selectMovistlist } from '../../../ngrx/selectors/movie.selectors';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({

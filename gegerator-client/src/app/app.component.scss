@@ -15,7 +15,8 @@ $side-panel-width: 80px;
         text-align: center;
 
         .app-header--centerpart{
-            // reset the text-align
+            // reset the text-align inherited from the parent
+            // because it would mess with the flex rules
             text-align: unset;
             display: flex;
             align-items: center;

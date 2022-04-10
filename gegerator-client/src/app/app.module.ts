@@ -13,17 +13,21 @@ import { AppRoutingModule } from './app-routing.module';
 import {MatSidenavModule} from '@angular/material/sidenav'; 
 
 import { AppComponent } from './app.component';
-import { MovielistComponent } from './components/movielist/movielist.component';
-import { MovieComponent } from './components/movie/movie.component';
+import { MovielistComponent } from './components/movies/movielist/movielist.component';
+import { MovieComponent } from './components/movies/movie/movie.component';
 import { DurationPipe } from './pipes/duration.pipe';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { movieReducer } from './ngrx/reducers/movie.reducer';
 import { MovieEffects } from './ngrx/effects/movie.effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MovieDialog } from './components/moviedialog/moviedialog.component';
+import { MovieDialog } from './components/movies/moviedialog/moviedialog.component';
 import { GenericPurposeDialog } from './components/genericpurposedialog/genericpurposedialog.component';
 import { httpInterceptorProviders } from './interceptors/interceptorprovider';
+import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
+import { SessionDayComponent } from './components/sessions/session-day/session-day.component';
+import { TheaterSwimlaneComponent } from './components/sessions/theater-swimlane/theater-swimlane.component';
+import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/other-swimlane.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +36,11 @@ import { httpInterceptorProviders } from './interceptors/interceptorprovider';
     MovieComponent,
     DurationPipe,
     MovieDialog,
-    GenericPurposeDialog
+    GenericPurposeDialog,
+    SessionSectionComponent,
+    SessionDayComponent,
+    TheaterSwimlaneComponent,
+    OtherSwimlaneComponent,
   ],
   imports: [
     BrowserModule,

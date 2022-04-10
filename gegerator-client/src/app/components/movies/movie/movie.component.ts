@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
-import { Movie } from '../../models/movie';
-import { GenericPurposeDialog, ConfirmOutput } from '../genericpurposedialog/genericpurposedialog.component';
+import { Movie } from '../../../models/movie';
+import { GenericPurposeDialog, ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
