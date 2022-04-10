@@ -1,6 +1,7 @@
 package org.bsiri.gegerator.controllers;
 
 import org.bsiri.gegerator.domain.Movie;
+import org.bsiri.gegerator.exceptions.DuplicateNameException;
 import org.bsiri.gegerator.services.MovieService;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.ReflectionUtils;
@@ -30,7 +32,7 @@ public class MovieControllerTest {
     public void shouldCreateMovie(){
         Movie carnosaur = movie(null, "Carnosaur", "PT1H29M");
 
-        client.put().uri("/movies")
+        client.post().uri("/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(carnosaur))
                 .exchange()
@@ -38,6 +40,23 @@ public class MovieControllerTest {
                     .isCreated();
 
         verify(service, times(1)).save(carnosaur);
+    }
+
+    @Test
+    public void shouldRefuseToCreateMovie(){
+        Movie carnosaur = movie(null, "Carnosaur", "PT1H29M");
+
+        when(service.save(carnosaur)).thenReturn(Mono.error(new DuplicateNameException("Carnosaur")));
+
+        client.post().uri("/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(carnosaur))
+                .exchange()
+                .expectStatus()
+                    .isEqualTo(HttpStatus.PRECONDITION_FAILED)
+                .expectBody()
+                    .json("\"Ce nom est déjà pris : Carnosaur\"");
+
     }
 
     @Test
@@ -62,6 +81,8 @@ public class MovieControllerTest {
         verify(service, times(1)).findById(flyId);
     }
 
+
+    // ************ boilerplate ****************
 
     private Movie movie(Long id, String title, String duration){
         Movie movie = new Movie(title, Duration.parse(duration));
