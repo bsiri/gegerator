@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
+import {MatSidenavModule} from '@angular/material/sidenav'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movielist/movielist.component';
@@ -47,7 +48,8 @@ import { httpInterceptorProviders } from './interceptors/interceptorprovider';
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSidenavModule
   ],
   providers: [
     httpInterceptorProviders

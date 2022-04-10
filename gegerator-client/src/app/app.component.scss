@@ -9,33 +9,44 @@ $side-panel-width: 80px;
 
 
      #app-header{
+        padding: 16px 0;
         width: 100%;
-        max-height: 150px; 
         background-color: orange;
+        text-align: center;
+
+        .app-header--centerpart{
+            // reset the text-align
+            text-align: unset;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            width: 40%;
+            margin: auto;
+            background-color: magenta;
+        }
+
+        #app-title{
+            font-size: 48px;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        #app-buttonbar{
+            margin: auto;
+            flex: 1;
+            display: flex;
+            justify-content: right;
+
+            button{
+                margin: 0 8px;
+            }
+        }
+
     }
 
     #app-content{
-        display: flex;
         flex: 1;
-        flex-direction: row;
-
-
-        #app-movielist-placeholder{
-            flex:1;
-            max-width: $side-panel-width;
-            background-color: lightblue;
-        }
-
-        #app-planning{
-            flex: 1;
-            background-color: lightgreen;
-        }
-
-        #app-constraints-placeholder{
-            flex:1;
-            max-width: $side-panel-width;
-        }
-
     }
 
 }

@@ -1,32 +1,22 @@
 
 <div id="app-mainview">
     <div id="app-header">
-        <h1>Gegerator (TODO: a real component)</h1>
+        <div class="app-header--centerpart">
+            <span id="app-title">Gegerator</span>
+            <div id="app-buttonbar">
+                <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
+                <button mat-raised-button color="primary">Contraintes &gt;</button>
+            </div>
+        </div>
     </div>
-    <div id="app-content">
+    <mat-sidenav-container id="app-content"
+        hasBackdrop="false">
+        <mat-sidenav id="app-movie" 
+            #appmovie 
+            disableClose="true">
+            <app-movielist></app-movielist>
+        </mat-sidenav>
         
-        <div id="app-movielist-placeholder">
-            <!-- 
-                placeholders maintain a reserved margin so that 
-                buttons that unfold the actual panel can stay visible,
-                and also set fixed, hard boundaries 
-                for app-planning
-            -->
-            <button mat-raised-button color="primary">Etendre</button>
-
-        </div>
-        <div id="app-planning">
-
-        </div>
-        <div id="app-constraints-placeholder">
-            <!-- 
-                placeholders maintain a reserved margin so that 
-                buttons that unfold the actual panel can stay visible,
-                and also set fixed, hard boundaries 
-                for app-planning
-            -->
-
-        </div>
-    </div>
+    </mat-sidenav-container>
 
 </div>
