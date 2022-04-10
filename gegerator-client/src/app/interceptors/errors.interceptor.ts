@@ -3,9 +3,9 @@ import {
   HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
 } from '@angular/common/http';
 
-import { catchError, EMPTY, empty, filter, mergeMap, NEVER, Observable } from 'rxjs';
+import { catchError, EMPTY, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialog } from '../components/confirmdialog/confirmdialog.component';
+import { GenericPurposeDialog } from '../components/genericpurposedialog/genericpurposedialog.component';
 
 
 const PRECONDITION_FAILED = 412
@@ -50,7 +50,7 @@ export class ErrorsInterceptor implements HttpInterceptor {
   }
 
   _openDialog(message: string){
-    this.dialog.open(ConfirmDialog, {
+    this.dialog.open(GenericPurposeDialog, {
       data: {html: message, type: "error"}
     });      
   }

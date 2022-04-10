@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConfirmDialog } from './confirmdialog.component';
+import { GenericPurposeDialog } from './genericpurposedialog.component';
 
 describe('Confirmdialog', () => {
-  let component: ConfirmDialog;
-  let fixture: ComponentFixture<ConfirmDialog>;
+  let component: GenericPurposeDialog;
+  let fixture: ComponentFixture<GenericPurposeDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConfirmDialog ]
+      declarations: [ GenericPurposeDialog ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConfirmDialog);
+    fixture = TestBed.createComponent(GenericPurposeDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

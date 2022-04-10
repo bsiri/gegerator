@@ -15,15 +15,15 @@ export interface ConfirmDialogData{
 
 @Component({
   selector: 'app-confirmdialog',
-  templateUrl: './confirmdialog.component.html',
-  styleUrls: ['./confirmdialog.component.scss']
+  templateUrl: './genericpurposedialog.component.html',
+  styleUrls: ['./genericpurposedialog.component.scss']
 })
-export class ConfirmDialog implements OnInit {
+export class GenericPurposeDialog implements OnInit {
   content: string;
   type: string;
 
   constructor(
-    public dialogRef: MatDialogRef<ConfirmDialog>,
+    public dialogRef: MatDialogRef<GenericPurposeDialog>,
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
   ) { 
     // TODO : actually if a message is supplied instead of html,

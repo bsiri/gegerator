@@ -21,7 +21,7 @@ import { movieReducer } from './ngrx/reducers/movie.reducer';
 import { MovieEffects } from './ngrx/effects/movie.effects';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MovieDialog } from './components/moviedialog/moviedialog.component';
-import { ConfirmDialog } from './components/confirmdialog/confirmdialog.component';
+import { GenericPurposeDialog } from './components/genericpurposedialog/genericpurposedialog.component';
 import { httpInterceptorProviders } from './interceptors/interceptorprovider';
 
 @NgModule({
@@ -31,7 +31,7 @@ import { httpInterceptorProviders } from './interceptors/interceptorprovider';
     MovieComponent,
     DurationPipe,
     MovieDialog,
-    ConfirmDialog
+    GenericPurposeDialog
   ],
   imports: [
     BrowserModule,

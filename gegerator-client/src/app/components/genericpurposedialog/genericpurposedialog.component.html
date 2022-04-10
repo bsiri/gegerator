@@ -1,0 +1,40 @@
+
+<div [ngSwitch]="type">
+    <!-- confirm dialog -->
+    <div *ngSwitchCase="'confirm'">
+        <h1 mat-dialog-title>Confirmer</h1>
+        <div mat-dialog-content>
+            <mat-icon color="primary">help_outline</mat-icon>    
+            <p class="dialong-content-flex" [innerHtml]="content"></p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-raised-button (click)="confirm()">Oui</button>
+            <button mat-raised-button (click)="cancel()">Non</button>
+        </div>
+    </div>
+
+    <!-- info dialog -->
+    <div *ngSwitchCase="'info'">
+        <h1 mat-dialog-title>Information</h1>
+        <div mat-dialog-content>
+            <mat-icon color="secondary">info</mat-icon>    
+            <p class="dialong-content-flex" [innerHtml]="content"></p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-raised-button (click)="cancel()">OK</button>
+        </div>
+    </div>
+
+    <!-- error dialog -->
+    <div *ngSwitchCase="'error'">
+        <h1 mat-dialog-title>Erreur !</h1>
+        <div mat-dialog-content>
+            <mat-icon color="warn">error</mat-icon>    
+            <p class="dialong-content-flex" [innerHtml]="content"></p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-raised-button (click)="cancel()">Fuck !</button>
+        </div>
+    </div>
+</div>
+
