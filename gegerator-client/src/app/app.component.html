@@ -1,9 +1,32 @@
 
-<div class="app-mainview">
-    <h1>Gegerator</h1>
+<div id="app-mainview">
+    <div id="app-header">
+        <h1>Gegerator (TODO: a real component)</h1>
+    </div>
+    <div id="app-content">
+        
+        <div id="app-movielist-placeholder">
+            <!-- 
+                placeholders maintain a reserved margin so that 
+                buttons that unfold the actual panel can stay visible,
+                and also set fixed, hard boundaries 
+                for app-planning
+            -->
+            <button mat-raised-button color="primary">Etendre</button>
 
-    <div class="app-content">
-        <app-movielist></app-movielist>
+        </div>
+        <div id="app-planning">
+
+        </div>
+        <div id="app-constraints-placeholder">
+            <!-- 
+                placeholders maintain a reserved margin so that 
+                buttons that unfold the actual panel can stay visible,
+                and also set fixed, hard boundaries 
+                for app-planning
+            -->
+
+        </div>
     </div>
 
 </div>

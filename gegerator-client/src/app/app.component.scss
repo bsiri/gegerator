@@ -1,6 +1,44 @@
 
+$side-panel-width: 80px;
 
-.app-mainview {
-    flex: 1;
+#app-mainview {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+
+     #app-header{
+        width: 100%;
+        max-height: 150px; 
+        background-color: orange;
+    }
+
+    #app-content{
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+
+
+        #app-movielist-placeholder{
+            flex:1;
+            max-width: $side-panel-width;
+            background-color: lightblue;
+        }
+
+        #app-planning{
+            flex: 1;
+            background-color: lightgreen;
+        }
+
+        #app-constraints-placeholder{
+            flex:1;
+            max-width: $side-panel-width;
+        }
+
+    }
+
 }
+
+
 
