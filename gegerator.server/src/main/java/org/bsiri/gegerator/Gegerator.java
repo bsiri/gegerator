@@ -11,6 +11,4 @@ public class Gegerator {
 		ApplicationContext context = SpringApplication.run(Gegerator.class, args);
 	}
 
-
-
 }

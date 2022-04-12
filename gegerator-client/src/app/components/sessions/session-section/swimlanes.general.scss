@@ -1,0 +1,32 @@
+/*
+    This style sheet is common to :
+- other-swimlanes
+- theater-swimlanes
+*/
+
+/*
+    Since we need the X-swimlanes component themselves to 
+    bear the class '.swimlane', things are a bit more tricky here.
+    First we have to programmaticaly set the class from 
+    the Component code with HostBinding(), and then use 
+    this construct ":host{&.swimlane}" otherwise it wouldn't work.
+    Awkward but works.
+*/
+:host {
+    &.swimlane{
+
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .swimlane-header{
+            height: 32px;
+        }
+
+        .swimlane-body{
+            flex: 1;
+            background-color: gray;
+        }
+    }
+}
+

@@ -25,7 +25,6 @@ import { MovieDialog } from './components/movies/moviedialog/moviedialog.compone
 import { GenericPurposeDialog } from './components/genericpurposedialog/genericpurposedialog.component';
 import { httpInterceptorProviders } from './interceptors/interceptorprovider';
 import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
-import { SessionDayComponent } from './components/sessions/session-day/session-day.component';
 import { TheaterSwimlaneComponent } from './components/sessions/theater-swimlane/theater-swimlane.component';
 import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/other-swimlane.component';
 
@@ -38,7 +37,6 @@ import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/oth
     MovieDialog,
     GenericPurposeDialog,
     SessionSectionComponent,
-    SessionDayComponent,
     TheaterSwimlaneComponent,
     OtherSwimlaneComponent,
   ],

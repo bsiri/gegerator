@@ -1,29 +1,15 @@
 
-
 <div id="sessions-mainview">
-
-    <div id="session-thursday">
-        <!-- 
-            For once, the child components will fix the height.
-            There is a good reason for that : they need to place 
-            elements pixel-perfect.
-        -->
-        <app-session-day day="thursday"></app-session-day>
+    <div class="sessions--center">
+        <div class="session-day" *ngFor="let day of Days.enumerate()">
+            <h1 class="session-day--title">{{day.name}}</h1>
+            <div class="session-day--swimlanes">
+                <app-other-swimlane [day]="day"></app-other-swimlane>
+                <app-theater-swimlane [day]="day" [theater]="Theaters.ESPACE_LAC" ></app-theater-swimlane>
+                <app-theater-swimlane [day]="day" [theater]="Theaters.CASINO" ></app-theater-swimlane>
+                <app-theater-swimlane [day]="day" [theater]="Theaters.PARADISO" ></app-theater-swimlane>
+                <app-theater-swimlane [day]="day" [theater]="Theaters.MCL" ></app-theater-swimlane>
+            </div>
+        </div>    
     </div>
-
-
-    <div id="session-friday">
-        <app-session-day day="friday"></app-session-day>
-    </div>
-
-
-    <div id="session-saturday">
-        <app-session-day day="saturday"></app-session-day>
-    </div>
-
-
-    <div id="session-sunday">
-        <app-session-day day="sunday"></app-session-day>
-    </div>
-
 </div>
