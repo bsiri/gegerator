@@ -1,9 +1,9 @@
 import { createReducer, on } from "@ngrx/store";
-import { RawSession } from "src/app/models/session.model";
+import { MovieSession } from "src/app/models/session.model";
 import { SessionActions } from "../actions/session.actions";
 
 
-export const initialRawSessionList: ReadonlyArray<RawSession> = []
+export const initialRawSessionList: ReadonlyArray<MovieSession> = []
 
 export const rawSessionReducer = createReducer(
     initialRawSessionList,

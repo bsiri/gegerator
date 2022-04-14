@@ -27,7 +27,7 @@ import { httpInterceptorProviders } from './interceptors/interceptorprovider';
 import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
 import { TheaterSwimlaneComponent } from './components/sessions/theater-swimlane/theater-swimlane.component';
 import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/other-swimlane.component';
-import { MovieSessionComponent } from './components/sessions/movie-session/movie-session.component';
+import { PlannedMovieSessionComponent } from './components/sessions/planned-movie-session/planned-movie-session.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import { MovieSessionComponent } from './components/sessions/movie-session/movie
     SessionSectionComponent,
     TheaterSwimlaneComponent,
     OtherSwimlaneComponent,
-    MovieSessionComponent,
+    PlannedMovieSessionComponent,
   ],
   imports: [
     BrowserModule,

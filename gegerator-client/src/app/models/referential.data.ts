@@ -1,5 +1,3 @@
-import { typeWithParameters } from "@angular/compiler/src/render3/util";
-
 /*
     Theater : the instances of Theater in Gerardmer.
     They should match the Theater class 
@@ -23,6 +21,32 @@ export class Theaters{
 
     static enumerate(): Theater[]{
         return [this.ESPACE_LAC, this.CASINO, this.PARADISO, this.MCL];
+    }
+
+    static fromKey(key: string): Theater{
+        switch(key){
+            case this.ESPACE_LAC.key: {
+                return this.ESPACE_LAC;
+                break;
+            }
+            case this.CASINO.key: {
+                return this.CASINO;
+                break;
+            }
+            case this.PARADISO.key: {
+                return this.PARADISO;
+                break;
+            }
+            case this.MCL.key: {
+                return this.MCL;
+                break;
+            }
+            default: {
+                const msg = `Cinéma inconnu : ${key} !!`
+                alert(msg);
+                throw Error(msg)
+            }
+        }
     }
 }
 

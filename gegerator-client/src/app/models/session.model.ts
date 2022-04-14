@@ -6,7 +6,7 @@ import { Theater } from "./referential.data";
     This is the raw model of a MovieSession, 
     as it is consumed by the server
 */
-export interface RawSession{
+export interface MovieSession{
     id: number;
     movieId: number;
     theater: Theater;
@@ -15,10 +15,12 @@ export interface RawSession{
 
 
 /*
-    This is a model of a MovieSession, as consumed
-    by the MovieSessionComponent.
+    This is a model of a PlannedMovieSession, as consumed
+    by the PlannedMovieComponent. It is an aggregate of 
+    a Movie, MovieSession and (soon) Constraints relative
+    to that session.
 */
-export class MovieSession{
+export class PlannedMovieSession{
     constructor(
         public id: number,
         public movie: Movie,
@@ -26,7 +28,7 @@ export class MovieSession{
         public startTime: Date
     ){}
 
-    toRawSession(){
+    toMovieSession(){
         return {
             id: this.id,
             movieId: this.movie.id,
