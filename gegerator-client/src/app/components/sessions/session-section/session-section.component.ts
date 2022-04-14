@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Day, Days, Theaters } from 'src/app/models/referential.data';
+import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Days, Theaters } from 'src/app/models/referential.data';
 
 @Component({
   selector: 'app-session-section',
@@ -18,7 +20,9 @@ export class SessionSectionComponent implements OnInit {
   Days = Days
   Theaters = Theaters
 
-  constructor() { }
+  sessions$ = this.store.select(selectMovistlist)
+
+  constructor(private store: Store, private dialog: MatDialog) { }
 
   ngOnInit(): void {
   }

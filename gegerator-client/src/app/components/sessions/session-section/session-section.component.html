@@ -2,7 +2,46 @@
 <div id="sessions-mainview">
     <div class="sessions--center">
         <div class="session-day" *ngFor="let day of Days.enumerate()">
-            <h1 class="session-day--title">{{day.name}}</h1>
+
+            <table class="session-day-table">
+                <thead>
+                    <tr>
+                        <td colspan="5">
+                            <h1 class="session-day--title">{{day.name}}</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <h2>Autres activités</h2>
+                        </th>
+                        <th>
+                            <h2>{{Theaters.ESPACE_LAC.name}}</h2>
+                        </th>
+                        <th>
+                            <h2>{{Theaters.CASINO.name}}</h2>
+                        </th>
+                        <th>
+                            <h2>{{Theaters.PARADISO.name}}</h2>
+                        </th>
+                        <th>
+                            <h2>{{Theaters.MCL.name}}</h2>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TODO</td>
+                        <td>
+                            <ng-container *ngFor="let session of ">
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+                <!--
             <div class="session-day--swimlanes">
                 <app-other-swimlane [day]="day"></app-other-swimlane>
                 <app-theater-swimlane [day]="day" [theater]="Theaters.ESPACE_LAC" ></app-theater-swimlane>
@@ -10,6 +49,7 @@
                 <app-theater-swimlane [day]="day" [theater]="Theaters.PARADISO" ></app-theater-swimlane>
                 <app-theater-swimlane [day]="day" [theater]="Theaters.MCL" ></app-theater-swimlane>
             </div>
+                -->
         </div>    
     </div>
 </div>

@@ -9,7 +9,7 @@ export const movieReducer = createReducer(
     on(MovieActions.movies_reloaded, 
         (state, {movies}) => 
             movies
-        ),
+    ),
     on(MovieActions.movie_created,
         (state, {movie}) => {
             const newState = state.slice();

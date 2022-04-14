@@ -1,0 +1,13 @@
+<div (dblclick)="updateSession()">    
+    <button mat-button (click)="confirmThenDelete()">
+        <mat-icon>remove</mat-icon>
+    </button>
+    <h4>{{session.movie.title}}</h4>
+    
+    <div class="session-info">
+        <label>début : </label><span>heure du début</span>
+    </div>
+    <div class="session-info">
+        <label>fin : </label><span>heure de fin</span>
+    </div>
+</div>
