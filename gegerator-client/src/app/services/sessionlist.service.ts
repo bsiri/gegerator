@@ -1,7 +1,8 @@
+import { Time } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Theaters } from '../models/referential.data';
+import { Days, Theaters } from '../models/referential.data';
 import { MovieSession } from '../models/session.model';
 
 const sessionsUrl = "/gegerator/movie-sessions"
@@ -56,6 +57,7 @@ export class SessionlistService {
       id: item.id,
       movieId: item.movieId,
       theater: item.theater.key,
+      day: item.day.key,
       startTime: item.startTime
     }
   }
@@ -65,6 +67,7 @@ export class SessionlistService {
       id: item.id,
       movieId: item.movieId,
       theater: Theaters.fromKey(item.theater),
+      day: Days.fromKey(item.day),
       startTime: item.startTime
     }
   }
@@ -76,7 +79,8 @@ class JsonMovieSession{
     public id: number, 
     public movieId: number,
     public theater: string,
-    public startTime: Date
+    public day: string, 
+    public startTime: Time
   ){}
 }
 

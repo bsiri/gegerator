@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, combineLatestWith, debounceTime, map, mergeMap, Observable, withLatestFrom } from 'rxjs';
-import { Movie } from 'src/app/models/movie';
 
 import { MovieActions } from '../../../ngrx/actions/movie.actions';
-import { selectMovistlist } from '../../../ngrx/selectors/movie.selectors';
+import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
@@ -25,15 +24,15 @@ export class MovielistComponent implements OnInit {
 
   // the final model is the combination of the original model
   // + the filtering and sorting logic
-  movies$ = this.store.select(selectMovistlist).pipe(
+  movies$ = this.store.select(selectMovieslist).pipe(
     combineLatestWith(this.filtersubject, this.sortedsubject),
     map(([allMovies, filterString, isSorted]) => {
       let finalMovies = allMovies.slice()
-      // filtering
+
       finalMovies = allMovies.filter(m => 
                   m.title.includes(filterString
                 ));
-      // sorting
+
       if (isSorted){
         finalMovies = finalMovies.sort(
           (m1, m2) => m1.title.localeCompare(m2.title)

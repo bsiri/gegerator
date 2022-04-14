@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Days, Theaters } from 'src/app/models/referential.data';
+import { filter, map } from 'rxjs';
+import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
+import { PlannedMovieSession } from 'src/app/models/session.model';
+import { SessionActions } from 'src/app/ngrx/actions/session.actions';
+import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 
 @Component({
   selector: 'app-session-section',
@@ -12,21 +16,30 @@ export class SessionSectionComponent implements OnInit {
 
 
   /*
-  Working around inability to import classes in 
-  the template itself.
-  Note : return
+    Redeclaring Days and Theaters as properties of this Component
+    allow for using them in the template.
   */
-
   Days = Days
   Theaters = Theaters
 
-  sessions$ = this.store.select(selectMovistlist)
+  /*
+    The proper model now
+  */
+  sessions$ = this.store.select(selectPlannedMovieSession)
 
   constructor(private store: Store, private dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
+    this.store.dispatch(SessionActions.reload_sessions());
   }
 
+  locateSessions(day: Day, theater: Theater) : PlannedMovieSession[]{
+    let filteredSessions = [] as PlannedMovieSession[]
+    this.sessions$.subscribe( allSessions =>
+      filteredSessions = allSessions.filter(s => s.day == day && s.theater == theater)
+    )
+    return filteredSessions;
+  }
 
 
 }

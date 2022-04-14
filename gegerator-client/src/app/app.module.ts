@@ -28,6 +28,8 @@ import { SessionSectionComponent } from './components/sessions/session-section/s
 import { TheaterSwimlaneComponent } from './components/sessions/theater-swimlane/theater-swimlane.component';
 import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/other-swimlane.component';
 import { PlannedMovieSessionComponent } from './components/sessions/planned-movie-session/planned-movie-session.component';
+import { sessionReducer } from './ngrx/reducers/session.reducer';
+import { MovieSessionEffects } from './ngrx/effects/session.effects';
 
 @NgModule({
   declarations: [
@@ -46,8 +48,8 @@ import { PlannedMovieSessionComponent } from './components/sessions/planned-movi
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movielist: movieReducer}, {}),
-    EffectsModule.forRoot([MovieEffects]),
+    StoreModule.forRoot({movielist: movieReducer, sessionList: sessionReducer}, {}),
+    EffectsModule.forRoot([MovieEffects, MovieSessionEffects]),
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

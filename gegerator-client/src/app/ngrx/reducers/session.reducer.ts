@@ -3,10 +3,10 @@ import { MovieSession } from "src/app/models/session.model";
 import { SessionActions } from "../actions/session.actions";
 
 
-export const initialRawSessionList: ReadonlyArray<MovieSession> = []
+export const initialSessionList: ReadonlyArray<MovieSession> = []
 
-export const rawSessionReducer = createReducer(
-    initialRawSessionList,
+export const sessionReducer = createReducer(
+    initialSessionList,
     on(SessionActions.sessions_reloaded, 
         (state, {sessions}) => sessions
     ),

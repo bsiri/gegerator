@@ -32,11 +32,25 @@
                     <tr>
                         <td>TODO</td>
                         <td>
-                            <ng-container *ngFor="let session of ">
+                            <ng-container *ngFor="let session of locateSessions(day, Theaters.ESPACE_LAC)">
+                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            </ng-container>
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <ng-container *ngFor="let session of locateSessions(day, Theaters.CASINO)">
+                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let session of locateSessions(day, Theaters.PARADISO)">
+                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let session of locateSessions(day, Theaters.MCL)">
+                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            </ng-container>
+                        </td>
                     </tr>
                 </tbody>
             </table>

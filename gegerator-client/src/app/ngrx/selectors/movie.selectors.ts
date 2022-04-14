@@ -2,5 +2,5 @@ import { createFeatureSelector } from "@ngrx/store";
 import { Movie } from "../../models/movie";
 
 
-export const selectMovistlist = createFeatureSelector<ReadonlyArray<Movie>>('movielist');
+export const selectMovieslist = createFeatureSelector<ReadonlyArray<Movie>>('movielist');
 

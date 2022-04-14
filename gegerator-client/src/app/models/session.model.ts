@@ -1,5 +1,6 @@
+import { Time } from "@angular/common";
 import { Movie } from "./movie";
-import { Theater } from "./referential.data";
+import { Day, Theater } from "./referential.data";
 
 
 /*
@@ -10,7 +11,8 @@ export interface MovieSession{
     id: number;
     movieId: number;
     theater: Theater;
-    startTime: Date;
+    day: Day;
+    startTime: Time;
 }
 
 
@@ -25,7 +27,8 @@ export class PlannedMovieSession{
         public id: number,
         public movie: Movie,
         public theater: Theater,
-        public startTime: Date
+        public day: Day,
+        public startTime: Time
     ){}
 
     toMovieSession(){
@@ -33,7 +36,8 @@ export class PlannedMovieSession{
             id: this.id,
             movieId: this.movie.id,
             theater: this.theater,
-            startTime: Date
+            day: this.day,
+            startTime: this.startTime
         }
     }
 }

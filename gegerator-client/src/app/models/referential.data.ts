@@ -4,8 +4,8 @@
     from the java model.
 
     Could have been enums, but they prove difficult to 
-    work with when passed around as Template inputs, 
-    thus this form is more convenient.
+    work with in Angular templates, and I found using 
+    this construct to be easier to manage.
 */
 
 export interface Theater{
@@ -24,29 +24,11 @@ export class Theaters{
     }
 
     static fromKey(key: string): Theater{
-        switch(key){
-            case this.ESPACE_LAC.key: {
-                return this.ESPACE_LAC;
-                break;
-            }
-            case this.CASINO.key: {
-                return this.CASINO;
-                break;
-            }
-            case this.PARADISO.key: {
-                return this.PARADISO;
-                break;
-            }
-            case this.MCL.key: {
-                return this.MCL;
-                break;
-            }
-            default: {
-                const msg = `Cinéma inconnu : ${key} !!`
-                alert(msg);
-                throw Error(msg)
-            }
+        const found = Theaters.enumerate().find(t => t.key == key)
+        if (!found){
+            throw Error(`Programmatic error : unknown theater ${key} !`)
         }
+        return found;
     }
 }
 
@@ -55,8 +37,8 @@ export class Theaters{
     Same thing with days.
 */
 export interface Day{
-    key: String, 
-    name: String
+    key: string, 
+    name: string
 }
 
 export class Days{
@@ -68,8 +50,13 @@ export class Days{
     static enumerate(): Day[]{
         return [this.THURSDAY, this.FRIDAY, this.SATURDAY, this.SUNDAY];
     }
+
+    static fromKey(key: string): Day{
+        const found = Days.enumerate().find(t => t.key == key)
+        if (!found){
+            throw Error(`Programmatic error : unknown day ${key} !`)
+        }
+        return found;
+    }
 }
-
-
-
 
