@@ -17,10 +17,11 @@
 
         display: flex;
         flex-direction: column;
-        flex: 1;
+        flex-basis: 17%;
+        text-align: center;
 
         .swimlane-header{
-            height: 32px;
+            padding: 8px 0;
         }
 
         .swimlane-body{
