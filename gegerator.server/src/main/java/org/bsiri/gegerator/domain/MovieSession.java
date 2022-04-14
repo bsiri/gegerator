@@ -2,8 +2,9 @@ package org.bsiri.gegerator.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -21,7 +22,9 @@ public class MovieSession {
     private @NonNull Long movieId;
 
     private @NonNull Theater theater;
-    private @NonNull LocalDateTime startTime;
+    @Column("day_name")
+    private @NonNull Day day;
+    private @NonNull LocalTime startTime;
 
     public void setId(Long id) {
         this.id = id;

@@ -1,5 +1,6 @@
 package org.bsiri.gegerator.repositories;
 
+import org.bsiri.gegerator.domain.Day;
 import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.Theater;
 import org.bsiri.gegerator.testinfra.SqlDataset;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 public class MovieSessionRepositoryTest extends AbstractRepositoryTest{
@@ -20,14 +22,14 @@ public class MovieSessionRepositoryTest extends AbstractRepositoryTest{
     public void shouldFindByMovieId(){
         repo.findAllByMovieId(1L).as(StepVerifier::create)
                 .expectNext(
-                    new MovieSession(1L, Theater.ESPACE_LAC, date("2022-03-26T10:50:00")),
-                    new MovieSession(1L, Theater.CASINO, date("2022-03-26T13:00:00"))
+                    new MovieSession(1L, Theater.ESPACE_LAC, Day.FRIDAY , time("10:50:00")),
+                    new MovieSession(1L, Theater.CASINO, Day.THURSDAY, time("13:00:00"))
                 )
                 .verifyComplete();
     }
 
-    private static LocalDateTime date(String strDate){
-        return LocalDateTime.parse(strDate);
+    private static LocalTime time(String strTime){
+        return LocalTime.parse(strTime);
     }
 
 }

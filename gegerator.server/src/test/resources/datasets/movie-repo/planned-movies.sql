@@ -6,7 +6,7 @@ insert into movie(id, title, duration) values
     (4, 'Bernie', 'PT1H27M');
 
 
-insert into movie_session(id, movie_id, theater, start_time) values
-    (1, 1, 'ESPACE_LAC', '2022-03-26 10:50:00'),
-    (2, 3, 'PARADISO', '2022-03-27 17:35:00'),
-    (3, 1, 'CASINO', '2022-03-26 13:00:00');
+insert into movie_session(id, movie_id, theater, day_name, start_time) values
+    (1, 1, 'ESPACE_LAC', 'FRIDAY', '10:50:00'),
+    (2, 3, 'PARADISO', 'SUNDAY', '17:35:00'),
+    (3, 1, 'CASINO', 'THURSDAY', '13:00:00');
