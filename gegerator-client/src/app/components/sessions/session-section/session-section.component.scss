@@ -1,29 +1,54 @@
+@use '../../../../_variables' as *;
 
 #sessions-mainview{
     display: flex;
     justify-content: center;
 
     .sessions--center{
-        flex: 0.7 0 auto;
+        flex: 0.7 0 min-content;
     }
     
     .session-day{
         margin: 8px 0;
         background-color: green;
-        height: 500px;
         
         display: flex;
         align-items: center;
         flex-direction: column;
     }
 
-    .session-day--swimlanes{
-        display: flex;
-        flex-direction: row;
-        flex: 1;
-        justify-content: space-between;
+    .session-day-table{
         width: 100%;
-    }
+        table-layout: fixed;
+        overflow-y: hidden;
 
-    
+        .session-day--title{
+            text-align: center;
+        }
+        
+        thead{
+            border-bottom: 1px solid black;
+        }
+
+        tbody tr{
+            height: $session-row-height;
+
+            td{
+                border-collapse: collapse;
+                position: relative;
+                padding: 0 8px;
+                
+                border-left: 1px solid black;
+                border-right: 1px solid black;
+
+                &:first-child{
+                    border-left: 0;
+                }
+
+                &:last-child{
+                    border-right: 0;
+                }
+            }
+        }
+    }    
 }

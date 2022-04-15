@@ -1,0 +1,19 @@
+@use  "../../../../_variables" as *;
+
+.pms{
+    border-radius: 10%;
+}
+
+.default{
+    border: 3px solid black;
+    background-color: white;
+}
+
+/*
+    The delete buttons
+*/
+.mat-button{
+    @include small-button;
+    @include delete-button;
+    float: right;
+}

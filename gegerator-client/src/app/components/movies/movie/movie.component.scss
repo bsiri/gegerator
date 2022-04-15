@@ -18,10 +18,7 @@
     so that we can make those buttons smaller
 */
 .mat-card-del-button, .mat-button{
-    background-color: lightgray;
-    color: black;
+    @include small-button;
+    @include delete-button;
     float: right;
-    min-width: inherit;
-    padding: 0.1em;
-    line-height: normal;
 }

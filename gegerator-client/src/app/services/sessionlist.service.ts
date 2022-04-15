@@ -58,7 +58,7 @@ export class SessionlistService {
       movieId: item.movieId,
       theater: item.theater.key,
       day: item.day.key,
-      startTime: item.startTime
+      startTime: serializeTime(item.startTime)
     }
   }
 
@@ -68,7 +68,7 @@ export class SessionlistService {
       movieId: item.movieId,
       theater: Theaters.fromKey(item.theater),
       day: Days.fromKey(item.day),
-      startTime: item.startTime
+      startTime: deserializeTime(item.startTime)
     }
   }
 
@@ -80,7 +80,16 @@ class JsonMovieSession{
     public movieId: number,
     public theater: string,
     public day: string, 
-    public startTime: Time
+    public startTime: string
   ){}
 }
 
+function serializeTime(time: Time): string{
+  return `${time.hours}:${time.minutes}:00`
+}
+
+function deserializeTime(strtime: string): Time{
+  const [strhours, strminutes] = strtime.split(':')
+  const [hours, minutes] = [parseInt(strhours), parseInt(strminutes)]
+  return {hours, minutes}
+}

@@ -13,3 +13,21 @@ $accent: mat-color($app-accent);
 $warn: mat-color($app-warn);
 
 $primary-light-35: color.scale($primary, $lightness: +35%);
+
+// mat-button customization
+@mixin small-button{
+    min-width: inherit;
+    padding: 0.1em;
+    line-height: normal;
+}
+
+@mixin delete-button{
+    background-color: lightgray;
+    color: black;
+}
+
+// global layout dimensions
+
+// 1600px: 100px per hour, for 16 hours. 
+$session-row-height: 1600px;
+
