@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { SESSION_DAY_BOUNDARIES } from 'src/app/models/referential.data';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 
 @Component({
@@ -10,14 +11,14 @@ export class PlannedMovieSessionComponent implements OnInit {
 
   @Input() session!: PlannedMovieSession
   
-  /*
-  @Input() cssHeightPx!: number;
-  @Input() cssTopPx!: number;
-  */
+  heightInPixel: string = '0px'
 
-  constructor() { }
+  constructor() {
+   }
 
   ngOnInit(): void {
+    // must wait for 'session' to be set before computing dimensions
+    this.heightInPixel = ''+SESSION_DAY_BOUNDARIES.lenInPixel(this.session.movie.duration)+'px' 
   }
 
   updateSession(){

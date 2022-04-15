@@ -1,4 +1,3 @@
-@use '../../../../_variables' as *;
 
 #sessions-mainview{
     display: flex;
@@ -31,12 +30,9 @@
         }
 
         tbody tr{
-            height: $session-row-height;
-
             td{
                 border-collapse: collapse;
                 position: relative;
-                padding: 0 8px;
                 
                 border-left: 1px solid black;
                 border-right: 1px solid black;

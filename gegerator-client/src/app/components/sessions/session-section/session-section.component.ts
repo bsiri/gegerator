@@ -1,8 +1,9 @@
+import { Time } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
-import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
+import { Day, Days, SESSION_DAY_BOUNDARIES, Theater, Theaters } from 'src/app/models/referential.data';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
@@ -21,6 +22,12 @@ export class SessionSectionComponent implements OnInit {
   */
   Days = Days
   Theaters = Theaters
+
+  /*
+    A session row height
+  */
+  rowHeightInPixel: string = ''+SESSION_DAY_BOUNDARIES.sessionDayInPixel()+'px'
+  
 
   /*
     The proper model now

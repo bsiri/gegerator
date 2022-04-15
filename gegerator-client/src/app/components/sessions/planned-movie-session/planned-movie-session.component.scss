@@ -2,6 +2,19 @@
 
 .pms{
     border-radius: 10%;
+    padding: 8px;
+
+    overflow-y: hidden;
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    
+    // Note: some other properties will
+    // be computed based on the model: 
+    // - height: depends on the movie duration
+    // - pos relative from top: depends on the session start time.
+    // these are also calculated pro-rata with respect
+    // to the parent cell height (see the session-section table).
 }
 
 .default{

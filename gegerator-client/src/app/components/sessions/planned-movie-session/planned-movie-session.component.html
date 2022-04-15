@@ -1,4 +1,6 @@
-<div class="pms" [ngClass]="'default'" (dblclick)="updateSession()">    
+<div class="pms" [ngClass]="'default'" (dblclick)="updateSession()"
+    [ngStyle]="{'height': heightInPixel}"
+>    
     <button mat-button (click)="confirmThenDelete()">
         <mat-icon>remove</mat-icon>
     </button>

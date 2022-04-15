@@ -29,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr [ngStyle]="{'height': rowHeightInPixel}">
                         <td>TODO</td>
                         <td>
                             <ng-container *ngFor="let session of locateSessions(day, Theaters.ESPACE_LAC)">
