@@ -1,14 +1,14 @@
 @use  "../../../../_variables" as *;
 
 .pms{
-    border-radius: 10%;
+    border-radius: 15px;
     padding: 8px;
 
     overflow-y: hidden;
     position: absolute;
     left: 2px;
     right: 2px;
-    
+
     // Note: some other properties will
     // be computed based on the model: 
     // - height: depends on the movie duration

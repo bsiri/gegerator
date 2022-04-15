@@ -6,10 +6,5 @@
     </button>
     <h4>{{session.movie.title}}</h4>
     
-    <div class="pms-info">
-        <label>début : </label><span>heure du début</span>
-    </div>
-    <div class="pms-info">
-        <label>fin : </label><span>heure de fin</span>
-    </div>
+    <span>{{session.startTime | time}} - {{session.endTime | time}}</span>
 </div>

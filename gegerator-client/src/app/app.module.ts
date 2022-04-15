@@ -30,6 +30,7 @@ import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/oth
 import { PlannedMovieSessionComponent } from './components/sessions/planned-movie-session/planned-movie-session.component';
 import { sessionReducer } from './ngrx/reducers/session.reducer';
 import { MovieSessionEffects } from './ngrx/effects/session.effects';
+import { TimePipe } from './pipes/time.pipe';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { MovieSessionEffects } from './ngrx/effects/session.effects';
     TheaterSwimlaneComponent,
     OtherSwimlaneComponent,
     PlannedMovieSessionComponent,
+    TimePipe,
   ],
   imports: [
     BrowserModule,

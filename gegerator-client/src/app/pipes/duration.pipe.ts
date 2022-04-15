@@ -6,7 +6,7 @@ import {Duration, parse} from 'iso8601-duration';
 })
 export class DurationPipe implements PipeTransform {
 
-  transform(value: Duration): unknown {
+  transform(value: Duration): string {
     const minutes = value.minutes ?? 0
     const twodigitsMinutes = (minutes < 10) ? "0"+minutes : ""+minutes;
     return `${value.hours}h${twodigitsMinutes}m`;
