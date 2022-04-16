@@ -76,7 +76,6 @@ export namespace Times{
     }
 
     export function add(start: Time, delta: Duration) : Time{
-        // yet more time arithmetic computed by myself
         const [deltaHours, deltaMinutes] =  [delta.hours ?? 0, delta.minutes ?? 0]
         const totalDeltaMinutes = deltaHours*60 + deltaMinutes 
         
@@ -84,6 +83,28 @@ export namespace Times{
         const newStartHours = start.hours + Math.floor((start.minutes + totalDeltaMinutes) / 60)
 
         return {hours: newStartHours, minutes: newStartMinutes}           
+    }
+
+    /**
+     * Tests whether the 'testedTime' is before the 'referenceTime'.
+     * @param testedTime 
+     * @param referenceTime 
+     */
+    export function isBefore(testedTime: Time, referenceTime: Time): boolean{
+        return toMinutes(testedTime) < toMinutes(referenceTime)
+    }
+
+    /**
+     * Tests whether the 'testedTime' is after the 'referenceTime'
+     * @param testedTime 
+     * @param referenceTime 
+     */
+    export function isAfter(testedTime: Time, referenceTime: Time): boolean{
+        return toMinutes(testedTime) > toMinutes(referenceTime)
+    }
+
+    export function toMinutes(time: Time): number{
+        return time.hours*60 + time.minutes
     }
 }
 

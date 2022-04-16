@@ -1,5 +1,6 @@
 import { Time } from "@angular/common"
 import { Duration } from "iso8601-duration"
+import { Times } from "src/app/models/time.utils"
 
 /*
     This constant defines the constants on which 
@@ -45,6 +46,18 @@ export class SessionDayBoundaries{
         return this.lenInPixel(time) - this.lenInPixel(this.dayBeginTime)
     }
 
+    /**
+     * Returns whether the given time is withing the session day boundaries
+     * @param time 
+     */
+    isInRange(time: Time): boolean{
+        return Times.isAfter(time, this.dayBeginTime) && Times.isBefore(time, this.dayEndTime)
+    }
+
+    toString(): string{
+        return `${Times.toString(this.dayBeginTime)} - ${Times.toString(this.dayEndTime)}`
+    }
+
 }
 
 export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBoundaries(
@@ -52,3 +65,4 @@ export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBounda
   {hours:25, minutes: 0} as Time,
   100
 )
+ 

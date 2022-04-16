@@ -6,7 +6,9 @@ import { map, Observable, startWith } from 'rxjs';
 import { Movie } from 'src/app/models/movie';
 import { Days, Theaters } from 'src/app/models/referential.data';
 import { PlannedMovieSession } from 'src/app/models/session.model';
+import { Times } from 'src/app/models/time.utils';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
+import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
 @Component({
   selector: 'app-sessiondialog',
@@ -28,7 +30,7 @@ export class SessionDialog implements OnInit {
   Theaters = Theaters  
   availableMovies: ReadonlyArray<Movie> = []  
   filteredTitles: Observable<string[]>
-
+  sessionDayBoundaries = SESSION_DAY_BOUNDARIES
 
   constructor(
     public dialogRef: MatDialogRef<SessionDialog>,
@@ -43,7 +45,11 @@ export class SessionDialog implements OnInit {
         day: new FormControl(session.day, [Validators.required]),
         theater: new FormControl(session.theater, [Validators.required]),
         title: new FormControl(session.movie?.title ?? '', [
-          Validators.required, this.validateMovie.bind(this)])
+          Validators.required, this.validateMovie.bind(this)
+        ]),
+        startTime: new FormControl(session.startTime, [
+          Validators.required, this.validateTime 
+        ])
       })
 
 
@@ -76,6 +82,21 @@ export class SessionDialog implements OnInit {
     }
     else{
       return null;
+    }
+  }
+
+  validateTime(startTimeControl: AbstractControl): ValidationErrors | null{
+    try{
+      const rawValue = startTimeControl.value
+      const time = Times.fromString(rawValue)
+      if (! SESSION_DAY_BOUNDARIES.isInRange(time)){
+        throw { value: rawValue }
+      }
+      return null;
+    }
+    catch(wtf){
+      // contract says to return the errors
+      return wtf as ValidationErrors
     }
   }
 
