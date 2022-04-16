@@ -1,6 +1,7 @@
 import { Time } from "@angular/common";
 import { Movie } from "./movie";
 import { Day, Theater } from "./referential.data";
+import { Times } from "./time.utils";
 
 
 /*
@@ -34,16 +35,7 @@ export class PlannedMovieSession{
     }
 
     public get endTime(){
-        // yet more time arithmetic computed by myself
-        const [movieHours, movieMinutes] =  [this.movie.duration.hours ?? 0, this.movie.duration.minutes ?? 0]
-        const totalMovieMinutes = movieHours*60 + movieMinutes 
-
-        const [startHours, startMinutes] =  [this.startTime.hours, this.startTime.minutes]
-        
-        const newStartMinutes = (startMinutes + totalMovieMinutes) % 60
-        const newStartHours = startHours + Math.floor((startMinutes + totalMovieMinutes) / 60)
-
-        return {hours: newStartHours, minutes: newStartMinutes}   
+        return Times.add(this.startTime, this.movie.duration)   
     }
 
     toMovieSession(){

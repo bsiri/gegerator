@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http'
 import { map, mergeMap, Observable } from 'rxjs';
 import { Movie } from '../models/movie';
 import { parse } from 'iso8601-duration';
+import { Durations } from '../models/time.utils';
 
 
 const moviesUrl = "/gegerator/movies"
@@ -61,7 +62,7 @@ export class MovielistService{
     return {
       id: item.id, 
       title: item.title,
-      duration: `PT${hours}H${minutes}M`
+      duration: Durations.serialize(item.duration)
     }
   }
 
@@ -69,7 +70,7 @@ export class MovielistService{
     return {
       id: item.id,
       title: item.title,
-      duration: parse(item.duration)
+      duration: Durations.deserialize(item.duration)
     };
   }
 }

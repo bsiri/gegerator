@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Movie } from 'src/app/models/movie';
 import { Duration } from "iso8601-duration";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Durations } from 'src/app/models/time.utils';
 
 const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 
@@ -29,7 +30,7 @@ export class MovieDialog implements OnInit {
       title: new FormControl(movie.title, [
         Validators.required
       ]),
-      duration: new FormControl(strFromDuration(movie.duration), [
+      duration: new FormControl(Durations.toString(movie.duration), [
         Validators.required,
         validateDuration
       ])
@@ -43,7 +44,7 @@ export class MovieDialog implements OnInit {
     return {
       id: this.id,
       title: this.formGroup.get('title')!.value,
-      duration: durationFromStr(this.formGroup.get('duration')!.value)
+      duration: Durations.fromString(this.formGroup.get('duration')!.value)
     }
   }
 
@@ -68,7 +69,7 @@ export class MovieDialog implements OnInit {
 
 function validateDuration(durControl: AbstractControl): ValidationErrors | null{
   try{
-    durationFromStr(durControl.value)
+    Durations.fromString(durControl.value)
     return null;
   }
   catch (wtf){
@@ -77,25 +78,3 @@ function validateDuration(durControl: AbstractControl): ValidationErrors | null{
   }
 }
 
-
-function strFromDuration(duration: Duration): string{
-  if (!duration){
-    return "";
-  }
-  // Note : this is not exactly like DurationPipe
-  // because we dont want the 'm' at the end
-  const minutes = duration.minutes ?? 0
-  const twodigitsMinutes = (minutes < 10) ? "0"+minutes : ""+minutes;
-  return `${duration.hours}h${twodigitsMinutes}`;
-  
-}
-
-
-function durationFromStr(strDuration: string) : Duration{
-  const match = strDuration.trim().match(durEx)
-  if (! match){
-    throw { duration: strDuration} as ValidationErrors;
-  }
-  const [hours, minutes] = match.slice(1).map(i => parseInt(i));
-  return {hours, minutes};
-}

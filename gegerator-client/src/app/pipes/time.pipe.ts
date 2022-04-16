@@ -1,5 +1,6 @@
 import { Time } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
+import { Times } from '../models/time.utils';
 
 @Pipe({
   name: 'time'
@@ -7,9 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TimePipe implements PipeTransform {
 
   transform(value: Time): string {
-    const minutes = value.minutes ?? 0
-    const twodigitsMinutes = (minutes < 10) ? "0"+minutes : ""+minutes;
-    return `${value.hours}:${twodigitsMinutes}`;
+    return Times.toString(value)
   }
 
 }
