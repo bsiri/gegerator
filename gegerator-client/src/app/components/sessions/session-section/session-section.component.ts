@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
-import { Day, Days, SESSION_DAY_BOUNDARIES, Theater, Theaters } from 'src/app/models/referential.data';
+import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
 @Component({
   selector: 'app-session-section',

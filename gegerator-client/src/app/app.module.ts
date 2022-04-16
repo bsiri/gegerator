@@ -25,8 +25,6 @@ import { MovieDialog } from './components/movies/moviedialog/moviedialog.compone
 import { GenericPurposeDialog } from './components/genericpurposedialog/genericpurposedialog.component';
 import { httpInterceptorProviders } from './interceptors/interceptorprovider';
 import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
-import { TheaterSwimlaneComponent } from './components/sessions/theater-swimlane/theater-swimlane.component';
-import { OtherSwimlaneComponent } from './components/sessions/other-swimlane/other-swimlane.component';
 import { PlannedMovieSessionComponent } from './components/sessions/planned-movie-session/planned-movie-session.component';
 import { sessionReducer } from './ngrx/reducers/session.reducer';
 import { MovieSessionEffects } from './ngrx/effects/session.effects';
@@ -41,8 +39,6 @@ import { TimePipe } from './pipes/time.pipe';
     MovieDialog,
     GenericPurposeDialog,
     SessionSectionComponent,
-    TheaterSwimlaneComponent,
-    OtherSwimlaneComponent,
     PlannedMovieSessionComponent,
     TimePipe,
   ],
