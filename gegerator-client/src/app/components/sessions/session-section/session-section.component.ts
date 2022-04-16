@@ -8,6 +8,7 @@ import { PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 
 @Component({
   selector: 'app-session-section',
@@ -41,7 +42,7 @@ export class SessionSectionComponent implements OnInit {
     this.store.dispatch(SessionActions.reload_sessions());
   }
 
-  locateSessions(day: Day, theater: Theater) : PlannedMovieSession[]{
+  sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
     let filteredSessions = [] as PlannedMovieSession[]
     this.sessions$.subscribe( allSessions =>
       filteredSessions = allSessions.filter(s => s.day == day && s.theater == theater)
@@ -49,5 +50,16 @@ export class SessionSectionComponent implements OnInit {
     return filteredSessions;
   }
 
-
+  openNewSession(day: Day, theater: Theater): void{
+    const dialogRef = this.dialog.open(SessionDialog, {
+      autoFocus: 'first-tabbable',
+      data: {
+        id: undefined, 
+        movie: undefined,
+        theater: theater,
+        day: day,
+        startTime: undefined
+      }
+    })
+  }
 }

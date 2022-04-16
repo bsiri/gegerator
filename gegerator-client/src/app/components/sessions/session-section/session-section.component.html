@@ -12,19 +12,27 @@
                     </tr>
                     <tr>
                         <th>
-                            <h2>Autres activités</h2>
+                            <h2 class="session-header--title">Autres activités</h2>
                         </th>
                         <th>
-                            <h2>{{Theaters.ESPACE_LAC.name}}</h2>
+                            <ng-container [ngTemplateOutlet]="sessionHeader" 
+                            [ngTemplateOutletContext]="{day:day, theater: Theaters.ESPACE_LAC}">
+                            </ng-container>
                         </th>
                         <th>
-                            <h2>{{Theaters.CASINO.name}}</h2>
+                            <ng-container [ngTemplateOutlet]="sessionHeader" 
+                            [ngTemplateOutletContext]="{day:day, theater: Theaters.CASINO}">
+                            </ng-container>
                         </th>
                         <th>
-                            <h2>{{Theaters.PARADISO.name}}</h2>
+                            <ng-container [ngTemplateOutlet]="sessionHeader" 
+                            [ngTemplateOutletContext]="{day:day, theater: Theaters.PARADISO}">
+                            </ng-container>
                         </th>
                         <th>
-                            <h2>{{Theaters.MCL.name}}</h2>
+                            <ng-container [ngTemplateOutlet]="sessionHeader" 
+                            [ngTemplateOutletContext]="{day:day, theater: Theaters.MCL}">
+                            </ng-container>
                         </th>
                     </tr>
                 </thead>
@@ -32,38 +40,36 @@
                     <tr [ngStyle]="{'height': rowHeightInPixel}">
                         <td>TODO</td>
                         <td>
-                            <ng-container *ngFor="let session of locateSessions(day, Theaters.ESPACE_LAC)">
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC)">
                                 <app-planned-movie-session [session]="session"></app-planned-movie-session>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of locateSessions(day, Theaters.CASINO)">
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.CASINO)">
                                 <app-planned-movie-session [session]="session"></app-planned-movie-session>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of locateSessions(day, Theaters.PARADISO)">
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.PARADISO)">
                                 <app-planned-movie-session [session]="session"></app-planned-movie-session>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of locateSessions(day, Theaters.MCL)">
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.MCL)">
                                 <app-planned-movie-session [session]="session"></app-planned-movie-session>
                             </ng-container>
                         </td>
                     </tr>
                 </tbody>
             </table>
-
-                <!--
-            <div class="session-day--swimlanes">
-                <app-other-swimlane [day]="day"></app-other-swimlane>
-                <app-theater-swimlane [day]="day" [theater]="Theaters.ESPACE_LAC" ></app-theater-swimlane>
-                <app-theater-swimlane [day]="day" [theater]="Theaters.CASINO" ></app-theater-swimlane>
-                <app-theater-swimlane [day]="day" [theater]="Theaters.PARADISO" ></app-theater-swimlane>
-                <app-theater-swimlane [day]="day" [theater]="Theaters.MCL" ></app-theater-swimlane>
-            </div>
-                -->
         </div>    
     </div>
 </div>
+
+
+<ng-template #sessionHeader let-day="day" let-theater="theater">
+    <h2 class="session-header--title">{{theater.name}}</h2>
+    <button mat-raised-button color="primary" (click)="openNewSession(day, theater)">
+        <mat-icon>add</mat-icon>
+    </button>
+</ng-template>

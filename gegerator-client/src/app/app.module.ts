@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import {MatSidenavModule} from '@angular/material/sidenav'; 
+import {MatSelectModule} from '@angular/material/select'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
@@ -29,6 +30,7 @@ import { PlannedMovieSessionComponent } from './components/sessions/planned-movi
 import { sessionReducer } from './ngrx/reducers/session.reducer';
 import { MovieSessionEffects } from './ngrx/effects/session.effects';
 import { TimePipe } from './pipes/time.pipe';
+import { SessionDialog } from './components/sessions/sessiondialog/sessiondialog.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,7 @@ import { TimePipe } from './pipes/time.pipe';
     SessionSectionComponent,
     PlannedMovieSessionComponent,
     TimePipe,
+    SessionDialog,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +60,8 @@ import { TimePipe } from './pipes/time.pipe';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatSelectModule
   ],
   providers: [
     httpInterceptorProviders

@@ -1,4 +1,6 @@
 
+@use '../../../../_variables' as *;
+
 #sessions-mainview{
     display: flex;
     justify-content: center;
@@ -27,6 +29,15 @@
         
         thead{
             border-bottom: 1px solid black;
+
+            .session-header--title{
+                display: inline;
+                margin-right: 8px;
+            }
+
+            .mat-raised-button{
+                @include small-button
+            }
         }
 
         tbody tr{

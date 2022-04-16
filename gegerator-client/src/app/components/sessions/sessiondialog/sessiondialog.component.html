@@ -1,0 +1,15 @@
+<h1 *ngIf="id === undefined" mat-dialog-title>Ajouter une session</h1>
+<h1 *ngIf="id != undefined" mat-dialog-title>Modifier cette session</h1>
+<div mat-dialog-content [formGroup]="formGroup">
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>Jour</mat-label>
+            <mat-select formControlName="day" >
+                <mat-option *ngFor="let sday of Days.enumerate()" [value]="sday">
+                    {{sday.name}}
+                  </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+</div>
