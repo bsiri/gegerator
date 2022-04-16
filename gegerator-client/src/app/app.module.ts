@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import {MatSidenavModule} from '@angular/material/sidenav'; 
 import {MatSelectModule} from '@angular/material/select'; 
+import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
@@ -61,7 +62,8 @@ import { SessionDialog } from './components/sessions/sessiondialog/sessiondialog
     MatFormFieldModule,
     MatInputModule,
     MatSidenavModule,
-    MatSelectModule
+    MatSelectModule,
+    MatAutocompleteModule
   ],
   providers: [
     httpInterceptorProviders

@@ -24,8 +24,6 @@ export interface MovieSession{
 */
 export class PlannedMovieSession{
 
-    public endTime: Time
-
     constructor(
         public id: number,
         public movie: Movie,
@@ -33,7 +31,19 @@ export class PlannedMovieSession{
         public day: Day,
         public startTime: Time
     ){        
-        this.endTime = this._computeEndtime()
+    }
+
+    public get endTime(){
+        // yet more time arithmetic computed by myself
+        const [movieHours, movieMinutes] =  [this.movie.duration.hours ?? 0, this.movie.duration.minutes ?? 0]
+        const totalMovieMinutes = movieHours*60 + movieMinutes 
+
+        const [startHours, startMinutes] =  [this.startTime.hours, this.startTime.minutes]
+        
+        const newStartMinutes = (startMinutes + totalMovieMinutes) % 60
+        const newStartHours = startHours + Math.floor((startMinutes + totalMovieMinutes) / 60)
+
+        return {hours: newStartHours, minutes: newStartMinutes}   
     }
 
     toMovieSession(){
@@ -44,19 +54,6 @@ export class PlannedMovieSession{
             day: this.day,
             startTime: this.startTime
         }
-    }
-
-    private _computeEndtime(): Time{
-        // yet more time arithmetic computed by myself
-        const [movieHours, movieMinutes] =  [this.movie.duration.hours ?? 0, this.movie.duration.minutes ?? 0]
-        const totalMovieMinutes = movieHours*60 + movieMinutes 
-
-        const [startHours, startMinutes] =  [this.startTime.hours, this.startTime.minutes]
-        
-        const newStartMinutes = (startMinutes + totalMovieMinutes) % 60
-        const newStartHours = startHours + Math.floor((startMinutes + totalMovieMinutes) / 60)
-
-        return {hours: newStartHours, minutes: newStartMinutes}    
     }
 }
 

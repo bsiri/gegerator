@@ -3,14 +3,14 @@
 <h1 *ngIf="id === undefined" mat-dialog-title>Ajouter un film</h1>
 <h1 *ngIf="id != undefined" mat-dialog-title>Modifier ce film</h1>
 <div mat-dialog-content [formGroup]="formGroup">
-    <div>
+    <div class="dialog-field">
         <label for="newmovie-title">Titre : </label>
         <mat-form-field appearance="fill">
             <input id="newmovie-title" matInput formControlName="title">          
             <mat-error *ngIf="invalid('title')">Il faut un titre à ce film !</mat-error>
         </mat-form-field>
     </div>
-    <div>
+    <div class="dialog-field">
         <label for="newmovie-duration">Durée : </label>
         <mat-form-field appearance="fill">
             <mat-label>Ex: 1h26</mat-label>

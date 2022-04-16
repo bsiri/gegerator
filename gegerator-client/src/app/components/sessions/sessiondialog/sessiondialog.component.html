@@ -1,14 +1,40 @@
 <h1 *ngIf="id === undefined" mat-dialog-title>Ajouter une session</h1>
 <h1 *ngIf="id != undefined" mat-dialog-title>Modifier cette session</h1>
 <div mat-dialog-content [formGroup]="formGroup">
-    <div>
+
+    <div class="dialog-field">
+        <span>Jour : </span>
         <mat-form-field appearance="fill">
-            <mat-label>Jour</mat-label>
-            <mat-select formControlName="day" >
+            <mat-select formControlName="day">
                 <mat-option *ngFor="let sday of Days.enumerate()" [value]="sday">
                     {{sday.name}}
                   </mat-option>
             </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="dialog-field">
+        <span>Cinéma : </span>
+        <mat-form-field appearance="fill">
+            <mat-select formControlName="theater">
+                <mat-option *ngFor="let stheater of Theaters.enumerate()" [value]="stheater">
+                    {{stheater.name}}
+                  </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="dialog-field">
+        <span>Film : </span>
+        <mat-autocomplete #moviesauto="matAutocomplete">
+            <mat-option *ngFor="let title of filteredTitles | async" [value]="title">
+                {{title}}
+            </mat-option>
+        </mat-autocomplete>
+        <mat-form-field appearance="fill">
+            <input matInput formControlName="title" 
+                [matAutocomplete]="moviesauto">
+            <mat-error *ngIf="invalid('title')">Je le connais pas ton film là</mat-error>
         </mat-form-field>
     </div>
 

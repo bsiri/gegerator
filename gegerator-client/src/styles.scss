@@ -29,3 +29,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 
+/* dialogs*/
+.dialog-field{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    >span, .field-label{
+        display: flex;
+        margin-right: 8px;
+    }   
+}
