@@ -20,9 +20,21 @@ export const selectPlannedMovieSession = createSelector(
     indexedMoviesSelector,
     selectSessionList,
     (indexedMovies, sessions) => {
-        const plannedSessions = sessions.map(s => {
-           return new PlannedMovieSession(s.id, indexedMovies[s.movieId], s.theater, s.day, s.startTime)
-        });
+        /*
+            Note : there is a chance that a session exists but not the movie:
+            - either race condition on page load, because the sessions can have finished loading
+              before the movies do,
+            - or a movie was deleted but its session objects still live in memory.
+
+            In these cases we must take care of not returning a session if the movie 
+            does not exist anymore.
+        */
+        const allMovieIds = Object.keys(indexedMovies).map(kId => parseInt(kId))
+        const plannedSessions = sessions
+            .filter(s => allMovieIds.includes(s.movieId))
+            .map(s =>
+                new PlannedMovieSession(s.id, indexedMovies[s.movieId], s.theater, s.day, s.startTime)
+            );
         return plannedSessions;
 });
 

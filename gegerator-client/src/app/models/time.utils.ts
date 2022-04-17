@@ -66,7 +66,9 @@ export namespace Times{
 
     // *** JSON representation ***
     export function serialize(time: Time) : string{
-        return `${time.hours}:${time.minutes}:00`   
+        const hours = twoDigitsStr(time.hours)
+        const minutes = twoDigitsStr(time.minutes)
+        return `${hours}:${minutes}:00`   
     }
     
     export function deserialize(strTime: string) : Time{
@@ -86,21 +88,23 @@ export namespace Times{
     }
 
     /**
-     * Tests whether the 'testedTime' is before the 'referenceTime'.
+     * Tests whether the 'testedTime' is before the 'referenceTime', 
+     * inclusive (equality counts are True)
      * @param testedTime 
      * @param referenceTime 
      */
     export function isBefore(testedTime: Time, referenceTime: Time): boolean{
-        return toMinutes(testedTime) < toMinutes(referenceTime)
+        return toMinutes(testedTime) <= toMinutes(referenceTime)
     }
 
     /**
-     * Tests whether the 'testedTime' is after the 'referenceTime'
+     * Tests whether the 'testedTime' is after the 'referenceTime', 
+     * inclusive (equality counts are True)
      * @param testedTime 
      * @param referenceTime 
      */
     export function isAfter(testedTime: Time, referenceTime: Time): boolean{
-        return toMinutes(testedTime) > toMinutes(referenceTime)
+        return toMinutes(testedTime) >= toMinutes(referenceTime)
     }
 
     export function toMinutes(time: Time): number{
@@ -115,7 +119,7 @@ function _toString(value: Time | Duration, sep: string = 'h'): string{
     }
 
     const minutes = value.minutes ?? 0
-    const twodigitsMinutes = (minutes < 10) ? "0"+minutes : ""+minutes;
+    const twodigitsMinutes = twoDigitsStr(minutes)
     return `${value.hours}${sep}${twodigitsMinutes}`;    
 }
 
@@ -126,4 +130,18 @@ function _fromString(strValue: string, expr: RegExp) : TimeDurationLike {
     }
     const [hours, minutes] = match.slice(1).map(i => parseInt(i));
     return {hours, minutes};           
+}
+
+
+/**
+ * Returns the given number as a two-digit string, 
+ * padding with a left '0' if necessary.
+ * @param someNumber 
+ */
+function twoDigitsStr(someNumber: number): string{
+    const absNum = Math.abs(someNumber)
+    const signPrefix = (someNumber < 0) ? "-" : ""
+    const padded = (absNum < 10) ? "0"+absNum : ""+absNum
+
+    return `${signPrefix}${padded}`
 }

@@ -41,13 +41,17 @@ export class SessionDialog implements OnInit {
       this.store.select(selectMovieslist).subscribe(movies => this.availableMovies = movies)
 
       this.id = session.id
+
+      const title = session.movie?.title 
+      const strStartTime = Times.toString(session.startTime)
+
       this.formGroup = new FormGroup({
         day: new FormControl(session.day, [Validators.required]),
         theater: new FormControl(session.theater, [Validators.required]),
-        title: new FormControl(session.movie?.title ?? '', [
+        title: new FormControl(title, [
           Validators.required, this.validateMovie.bind(this)
         ]),
-        startTime: new FormControl(session.startTime, [
+        startTime: new FormControl(strStartTime, [
           Validators.required, this.validateTime 
         ])
       })
@@ -67,6 +71,14 @@ export class SessionDialog implements OnInit {
   ngOnInit(): void {
   }
 
+  confirm(): void{
+    const session = this.toPlannedMovieSession();
+    this.dialogRef.close(session);
+  }
+
+  cancel(): void{
+    this.dialogRef.close()
+  }
 
   // ********* validation *************
 
@@ -75,10 +87,10 @@ export class SessionDialog implements OnInit {
   }
 
   validateMovie(movControl: AbstractControl): ValidationErrors | null{
-    const putativeTitle = movControl.value
-    const movie = this._findMovieByTitle(putativeTitle)
+    const candidateTitle = movControl.value
+    const movie = this._findMovieByTitle(candidateTitle)
     if (! movie){
-      return new Error(`unknown movie: ${putativeTitle}`)
+      return { 'unknown_movie': candidateTitle} as ValidationErrors
     }
     else{
       return null;
@@ -103,6 +115,31 @@ export class SessionDialog implements OnInit {
   invalid(ctrName: string): boolean{
     const control = this.formGroup.get(ctrName)!
     return control.invalid && (control.dirty || control.touched)
+  }
+
+
+  toPlannedMovieSession(): PlannedMovieSession{
+    const title = this._getFGValue('title')
+    const day = this._getFGValue('day')
+    const theater = this._getFGValue('theater')
+    const strStartTime = this._getFGValue('startTime')
+    
+    // Note about the '!' : the movie cannot be undefined
+    // here because the dialog already validated it.
+    const movie = this._findMovieByTitle(title)!
+    const startTime = Times.fromString(strStartTime)
+    
+    return new PlannedMovieSession(
+      this.id,
+      movie, 
+      theater, 
+      day, 
+      startTime
+    )
+  }
+
+  _getFGValue(fgName: string): any{
+    return this.formGroup.get(fgName)!.value
   }
 
 }

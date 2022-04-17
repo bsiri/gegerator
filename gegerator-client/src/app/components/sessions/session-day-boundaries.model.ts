@@ -23,10 +23,14 @@ export class SessionDayBoundaries{
 
     /*
         Returns the height (in pixels) that a session Day should have when rendered in 
-        the Session section.
+        the Session section. It also adds an extra 2 hours to account for midnight sessions.
     */
     sessionDayInPixel(): number{
-        return this.lenInPixel(this.dayEndTime) - this.lenInPixel(this.dayBeginTime)
+        const lenEnd = this.lenInPixel(this.dayEndTime)
+        const lenBegin = this.lenInPixel(this.dayBeginTime)
+        const extra = 2*this.hourLenInPixels
+
+        return (lenEnd - lenBegin) + extra
     }
 
     /*
@@ -62,7 +66,7 @@ export class SessionDayBoundaries{
 
 export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBoundaries(
   {hours: 8, minutes: 0} as Time,
-  {hours:25, minutes: 0} as Time,
+  {hours:23, minutes: 59} as Time,
   100
 )
  

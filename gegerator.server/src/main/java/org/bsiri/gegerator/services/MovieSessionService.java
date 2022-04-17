@@ -30,4 +30,13 @@ public class MovieSessionService {
         return sessionRepo.save(movieSession);
     }
 
+    @Transactional
+    public Mono<MovieSession> update(MovieSession movieSession){
+        return sessionRepo.save(movieSession);
+    }
+
+    @Transactional
+    public Mono<Void> deleteById(long id){ return sessionRepo.deleteById(id); }
+
+
 }

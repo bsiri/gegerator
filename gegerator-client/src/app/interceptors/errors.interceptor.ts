@@ -21,18 +21,18 @@ export class ErrorsInterceptor implements HttpInterceptor {
     Observable<HttpEvent<any>> {
 
         return next.handle(req).pipe(
-            catchError( (error: HttpErrorResponse) => {
-                console.log('got an error here, ',error)
+            catchError( (httpError: HttpErrorResponse) => {
+                console.log('got an error here, ',httpError)
 
-                if (error.status == PRECONDITION_FAILED ){
-                  this.openBusinessErrorDialog(error)
+                if (httpError.status == PRECONDITION_FAILED ){
+                  this.openBusinessErrorDialog(httpError)
                 }
-                else if (error.status >= 500){
-                  this.openServerErrorDialog(error)
+                else if (httpError.status >= 500){
+                  this.openServerErrorDialog(httpError)
                 }
                 else{
                   // TODO: better for other exceptions?
-                  this.openBusinessErrorDialog(error)
+                  this.openBusinessErrorDialog(httpError.error)
                 }
 
                 return EMPTY

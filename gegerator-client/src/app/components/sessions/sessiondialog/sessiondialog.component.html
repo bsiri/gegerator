@@ -44,6 +44,9 @@
             <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
             <input matInput formControlName="startTime">
         </mat-form-field>
-    </div>   
-
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+    <button mat-button (click)="cancel()">Annuler</button>
 </div>

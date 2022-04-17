@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
-import { PlannedMovieSession } from 'src/app/models/session.model';
+import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
@@ -61,5 +61,19 @@ export class SessionSectionComponent implements OnInit {
         startTime: undefined
       }
     })
+
+    dialogRef.afterClosed().subscribe(newsession => {
+      if (!!newsession){
+        const movieSession: MovieSession = {
+          id: newsession.id,
+          movieId: newsession.movie.id,
+          theater: newsession.theater,
+          day: newsession.day,
+          startTime: newsession.startTime
+        }
+        this.store.dispatch(SessionActions.create_session({session: movieSession}))
+      }
+    })
+
   }
 }

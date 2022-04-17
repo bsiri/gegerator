@@ -22,7 +22,7 @@ public class BusinessExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleOtherException(Exception ex){
-        String message = String.format("Gros problème {0} : {1}", ex.getClass().getName(), ex.getMessage());
+        String message = String.format("Gros problème %s : %s", ex.getClass().getName(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(message));
