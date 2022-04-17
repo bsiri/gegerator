@@ -1,8 +1,15 @@
 @use  "../../../../_variables" as *;
 
 .pms{
+    /*
+        Using border-box sizing, because here we 
+        need to be pixel-precise in placement 
+        (see related notes below)
+    */
+    box-sizing: border-box;
     border-radius: 15px;
     padding: 8px;
+    cursor: pointer;
 
     overflow-y: hidden;
     position: absolute;
@@ -15,6 +22,13 @@
     // - pos relative from top: depends on the session start time.
     // these are also calculated pro-rata with respect
     // to the parent cell height (see the session-section table).
+    
+    .pms-title{
+        font-weight: bold;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 .default{
