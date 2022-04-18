@@ -12,7 +12,9 @@
                     </tr>
                     <tr>
                         <th>
-                            <h2 class="session-header--title">Autres activités</h2>
+                            <ng-container [ngTemplateOutlet]="activityHeader" 
+                            [ngTemplateOutletContext]="{day:day}">
+                            </ng-container>
                         </th>
                         <th>
                             <ng-container [ngTemplateOutlet]="sessionHeader" 
@@ -38,7 +40,11 @@
                 </thead>
                 <tbody>
                     <tr [ngStyle]="{'height': rowHeightInPixel}">
-                        <td>TODO</td>
+                        <td>
+                            <ng-container *ngFor="let activity of activitiesByDay(day)">
+                                <app-other-activity [activity]="activity"></app-other-activity>
+                            </ng-container>
+                        </td>
                         <td>
                             <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC)">
                                 <app-planned-movie-session [session]="session"></app-planned-movie-session>
@@ -70,6 +76,13 @@
 <ng-template #sessionHeader let-day="day" let-theater="theater">
     <h2 class="session-header--title">{{theater.name}}</h2>
     <button mat-raised-button color="primary" (click)="openNewSession(day, theater)">
+        <mat-icon>add</mat-icon>
+    </button>
+</ng-template>
+
+<ng-template #activityHeader let-day="day">
+    <h2 class="session-header--title">Autres activités</h2>
+    <button mat-raised-button color="primary" (click)="openNewActivity(day)">
         <mat-icon>add</mat-icon>
     </button>
 </ng-template>

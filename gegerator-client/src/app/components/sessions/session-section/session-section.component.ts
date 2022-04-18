@@ -1,11 +1,12 @@
-import { Time } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
+import { OtherActivity } from 'src/app/models/activity.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
+import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
+import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
@@ -35,11 +36,13 @@ export class SessionSectionComponent implements OnInit {
     The proper model now
   */
   sessions$ = this.store.select(selectPlannedMovieSession)
+  activities$ = this.store.select(selectActivitieslist)
 
   constructor(private store: Store, private dialog: MatDialog) { }
 
   ngOnInit(): void { 
     this.store.dispatch(SessionActions.reload_sessions());
+    this.store.dispatch(ActivityActions.reload_activities());
   }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
@@ -48,6 +51,14 @@ export class SessionSectionComponent implements OnInit {
       filteredSessions = allSessions.filter(s => s.day == day && s.theater == theater)
     )
     return filteredSessions;
+  }
+
+  activitiesByDay(day: Day) : OtherActivity[]{
+    let filteredActivities = [] as OtherActivity[]
+    this.activities$.subscribe( allactivities =>
+      filteredActivities = allactivities.filter(a => a.day == day)  
+    )
+    return filteredActivities
   }
 
   openNewSession(day: Day, theater: Theater): void{
@@ -74,6 +85,9 @@ export class SessionSectionComponent implements OnInit {
         this.store.dispatch(SessionActions.create_session({session: movieSession}))
       }
     })
+  }
 
+  openNewActivity(day: Day): void{
+    // TODO
   }
 }

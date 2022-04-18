@@ -23,8 +23,9 @@ export class PlannedMovieSessionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const {startTime, endTime} = this.session
     // must wait for 'session' to be set before computing dimensions
-    this.heightInPixel = ''+SESSION_DAY_BOUNDARIES.lenInPixel(this.session.movie.duration)+'px' 
+    this.heightInPixel = ''+SESSION_DAY_BOUNDARIES.durationInPixel(this.session.movie.duration)+'px' 
     this.topPosInPixel = ''+SESSION_DAY_BOUNDARIES.offsetFromDayBeginInPixel(this.session.startTime)+'px' 
   }
 

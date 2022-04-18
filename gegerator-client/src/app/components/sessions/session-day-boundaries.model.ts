@@ -26,8 +26,8 @@ export class SessionDayBoundaries{
         the Session section. It also adds an extra 2 hours to account for midnight sessions.
     */
     sessionDayInPixel(): number{
-        const lenEnd = this.lenInPixel(this.dayEndTime)
-        const lenBegin = this.lenInPixel(this.dayBeginTime)
+        const lenEnd = this.durationInPixel(this.dayEndTime)
+        const lenBegin = this.durationInPixel(this.dayBeginTime)
         const extra = 2*this.hourLenInPixels
 
         return (lenEnd - lenBegin) + extra
@@ -36,18 +36,23 @@ export class SessionDayBoundaries{
     /*
         Returns the height in pixel to represent a given Duration.  
     */
-    lenInPixel(duration: Duration | Time): number{
+    durationInPixel(duration: Duration | Time): number{
         const [hours, minutes] = [duration.hours ?? 0, duration.minutes ?? 0]
         const height = hours * this.hourLenInPixels + minutes * this.minuteLenInPixel    
         return Math.floor(height);
     }
+
+    timeDifferenceInPixel(start: Time, end: Time): number{
+        return this.durationInPixel(end) - this.durationInPixel(start)
+    }
+
 
     /*
         Represent the offset in pixel that separate the given Time and the start of 
         the Session Day  .
     */
     offsetFromDayBeginInPixel(time: Time): number {
-        return this.lenInPixel(time) - this.lenInPixel(this.dayBeginTime)
+        return this.durationInPixel(time) - this.durationInPixel(this.dayBeginTime)
     }
 
     /**
