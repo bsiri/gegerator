@@ -1,8 +1,10 @@
 package org.bsiri.gegerator.services;
 
 import org.bsiri.gegerator.domain.OtherActivity;
+import org.bsiri.gegerator.exceptions.TimeParadoxException;
 import org.bsiri.gegerator.repositories.OtherActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -27,12 +29,14 @@ public class OtherActivityService {
 
     @Transactional
     public Mono<OtherActivity> save(OtherActivity activity){
-        return repo.save(activity);
+        return repo.save(activity)
+                .onErrorMap(DataIntegrityViolationException.class,
+                        ex -> new TimeParadoxException(activity.getStartTime(), activity.getEndTime()));
     }
 
     @Transactional
     public Mono<OtherActivity> update(OtherActivity activity){
-        return repo.save(activity);
+        return save(activity);
     }
 
     @Transactional

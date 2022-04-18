@@ -21,5 +21,6 @@ public class OtherActivity {
     private @NonNull LocalTime endTime;
     private @NonNull String description;
 
-    //public void setId(Long id){ this.id = id;}
+    // TODO : maybe validation to enforce that
+    // startTime < endTime, even though the DB does it already
 }
