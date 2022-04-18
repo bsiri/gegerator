@@ -14,10 +14,22 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 })
 export class SwimlaneItemComponent implements OnInit{
 
+  /**
+   * The item to plan, which must be a PlannableItem
+   */
   @Input() item!: PlannableItem
-  @Input() classes: String[]= []
-
+  
+  /**
+   * Requests the model objet to be updated. 
+   * It is triggered when the component is doubleclicked.
+   */
   @Output() requestUpdate = new EventEmitter()
+  
+  /**
+   * Requests the model object to be deleted.
+   * It is triggered when the small delete button 
+   * has been clicked.
+   */
   @Output() requestDelete = new EventEmitter()
 
   

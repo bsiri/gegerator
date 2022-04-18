@@ -1,0 +1,46 @@
+<h1 *ngIf="id === undefined" mat-dialog-title>Ajouter une activité</h1>
+<h1 *ngIf="id != undefined" mat-dialog-title>Modifier cette activité</h1>
+<div mat-dialog-content [formGroup]="formGroup">
+
+    <div class="dialog-field">
+        <span>Jour : </span>
+        <mat-form-field appearance="fill">
+            <mat-select formControlName="day">
+                <mat-option *ngFor="let sday of Days.enumerate()" [value]="sday">
+                    {{sday.name}}
+                  </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="dialog-field">
+        <label>Description : </label>
+        <mat-form-field appearance="fill">
+            <input matInput formControlName="description">
+        </mat-form-field>
+    </div>
+
+    <div class="dialog-field">
+        <label>Début : </label>
+        <mat-form-field appearance="fill">
+            <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+            <input matInput formControlName="startTime">
+        </mat-form-field>
+    </div>
+
+    <div class="dialog-field">
+        <label>Fin : </label>
+        <mat-form-field appearance="fill">
+            <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+            <input matInput formControlName="endTime">
+        </mat-form-field>
+    </div>
+
+
+    <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'hidden': 'visible'}">Le début doit être avant la fin n'est-ce pas</mat-error>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+    <button mat-button (click)="cancel()">Annuler</button>
+</div>

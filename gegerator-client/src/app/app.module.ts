@@ -36,6 +36,7 @@ import { OtherActivityComponent } from './components/sessions/other-activity/oth
 import { OtherActivityEffects } from './ngrx/effects/activity.effects';
 import { activityReducer } from './ngrx/reducers/activity.reducers';
 import { SwimlaneItemComponent } from './components/sessions/swimlane-item/swimlane-item.component';
+import { Activitydialog } from './components/sessions/activitydialog/activitydialog.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { SwimlaneItemComponent } from './components/sessions/swimlane-item/swiml
     SessionDialog,
     OtherActivityComponent,
     SwimlaneItemComponent,
+    Activitydialog,
   ],
   imports: [
     BrowserModule,
