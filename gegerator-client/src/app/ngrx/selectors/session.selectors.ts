@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { Movie } from "src/app/models/movie";
+import { Movie } from "src/app/models/movie.model";
 import { MovieSession, PlannedMovieSession } from "src/app/models/session.model";
 import { selectMovieslist } from "./movie.selectors";
 

@@ -1,10 +1,5 @@
-<div class="pms" [ngClass]="'default'" (dblclick)="updateActivity()"
-    [ngStyle]="{'height': heightInPixel, 'top': topPosInPixel}"
->    
-    <button mat-button (click)="confirmThenDelete()">
-        <mat-icon>remove</mat-icon>
-    </button>
-    <h4 class="pms-title">{{activity.description}}</h4>
-    
-    <span>{{activity.startTime | time}} - {{activity.endTime | time}}</span>
-</div>
+<app-swimlane-item [item]="activity"
+    (requestUpdate)="update()"
+    (requestDelete)="confirmThenDelete()"
+>
+</app-swimlane-item>

@@ -13,21 +13,13 @@ export class OtherActivityComponent implements OnInit {
 
   @Input() activity!: OtherActivity
 
-  heightInPixel: string = '0px'
-  topPosInPixel: string = '0px'
-
   constructor(private store: Store, private dialog: MatDialog) {
   }
 
-
   ngOnInit(): void {
-    const {startTime, endTime} = this.activity
-    // must wait for 'activity' to be set before computing dimensions
-    this.heightInPixel = ''+SESSION_DAY_BOUNDARIES.timeDifferenceInPixel(startTime, endTime)+'px' 
-    this.topPosInPixel = ''+SESSION_DAY_BOUNDARIES.offsetFromDayBeginInPixel(startTime)+'px' 
   }
 
-  updateActivity(){
+  update(){
     // TODO
   }
 

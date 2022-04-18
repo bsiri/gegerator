@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Movie } from 'src/app/models/movie';
-import { Duration } from "iso8601-duration";
+import { Movie } from 'src/app/models/movie.model';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Durations } from 'src/app/models/time.utils';
 

@@ -63,13 +63,13 @@ export class ActivitylistService {
   }
 
   private _toOtherActivity(item: JsonOtherActivity): OtherActivity{
-    return {
-      id: item.id,
-      day: Days.fromKey(item.day),
-      startTime: Times.deserialize(item.startTime),
-      endTime: Times.deserialize(item.endTime),
-      description: item.description
-    }
+    return new OtherActivity(
+      item.id,
+      Days.fromKey(item.day),
+      Times.deserialize(item.startTime),
+      Times.deserialize(item.endTime),
+      item.description
+    )
   }
 
 }

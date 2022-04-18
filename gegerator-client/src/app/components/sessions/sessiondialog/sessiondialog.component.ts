@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators }
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, Observable, startWith } from 'rxjs';
-import { Movie } from 'src/app/models/movie';
+import { Movie } from 'src/app/models/movie.model';
 import { Days, Theaters } from 'src/app/models/referential.data';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';

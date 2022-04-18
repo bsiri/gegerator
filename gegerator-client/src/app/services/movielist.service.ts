@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http'
 import { map, mergeMap, Observable } from 'rxjs';
-import { Movie } from '../models/movie';
-import { parse } from 'iso8601-duration';
+import { Movie } from '../models/movie.model';
 import { Durations } from '../models/time.utils';
 
 

@@ -1,5 +1,6 @@
 import { Time } from "@angular/common";
-import { Movie } from "./movie";
+import { Movie } from "./movie.model";
+import { PlannableItem } from "./plannable.model";
 import { Day, Theater } from "./referential.data";
 import { Times } from "./time.utils";
 
@@ -23,7 +24,7 @@ export interface MovieSession{
     a Movie, MovieSession and (soon) Constraints relative
     to that session.
 */
-export class PlannedMovieSession{
+export class PlannedMovieSession implements PlannableItem{
 
     constructor(
         public id: number,
@@ -34,8 +35,15 @@ export class PlannedMovieSession{
     ){        
     }
 
+    // implements/provides : PlannableItem.endTime
     public get endTime(){
         return Times.add(this.startTime, this.movie.duration)   
+    }
+
+    
+    // implements/provides: PlannableItem.name
+    public get name(){
+        return this.movie?.title ?? ''
     }
 
     toMovieSession(){

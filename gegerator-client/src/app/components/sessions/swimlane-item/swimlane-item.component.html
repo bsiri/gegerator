@@ -1,0 +1,19 @@
+
+<ng-container *ngIf="!!item">
+    <div class="swimlane-item" [ngClass]="classes"
+        [ngStyle]="{'height': heightInPixel, 'top': topPosInPixel}"
+        (dblclick)="requestUpdate.emit()"
+    > 
+
+        <button mat-button (click)="requestDelete.emit()">
+            <mat-icon>remove</mat-icon>
+        </button>
+        <h4 class="swimlane-item-title">{{item.name}}</h4>
+        
+        <span>{{item.startTime | time}} - {{item.endTime | time}}</span>
+        
+        <ng-content>
+            <!-- additional content goes here if any -->
+        </ng-content>
+    </div>
+</ng-container>
