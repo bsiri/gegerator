@@ -32,6 +32,9 @@ import { sessionReducer } from './ngrx/reducers/session.reducer';
 import { MovieSessionEffects } from './ngrx/effects/session.effects';
 import { TimePipe } from './pipes/time.pipe';
 import { SessionDialog } from './components/sessions/sessiondialog/sessiondialog.component';
+import { OtherActivityComponent } from './components/sessions/other-activity/other-activity.component';
+import { OtherActivityEffects } from './ngrx/effects/activity.effects';
+import { activityReducer } from './ngrx/reducers/activity.reducers';
 
 @NgModule({
   declarations: [
@@ -45,13 +48,14 @@ import { SessionDialog } from './components/sessions/sessiondialog/sessiondialog
     PlannedMovieSessionComponent,
     TimePipe,
     SessionDialog,
+    OtherActivityComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movielist: movieReducer, sessionList: sessionReducer}, {}),
-    EffectsModule.forRoot([MovieEffects, MovieSessionEffects]),
+    StoreModule.forRoot({movielist: movieReducer, sessionList: sessionReducer, activitylist: activityReducer}, {}),
+    EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects]),
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
