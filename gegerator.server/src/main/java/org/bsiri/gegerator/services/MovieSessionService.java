@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+
 @Service
 public class MovieSessionService {
 
@@ -28,6 +30,11 @@ public class MovieSessionService {
     @Transactional
     public Mono<MovieSession> save(MovieSession movieSession){
         return sessionRepo.save(movieSession);
+    }
+
+    @Transactional
+    public void saveAll(Collection<MovieSession> sessions){
+        sessionRepo.saveAll(sessions);
     }
 
     @Transactional

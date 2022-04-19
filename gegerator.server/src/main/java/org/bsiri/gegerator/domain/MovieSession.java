@@ -29,4 +29,10 @@ public class MovieSession {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public static MovieSession of(long id, long movieId, Theater theater, Day day, LocalTime startTime){
+        MovieSession session = new MovieSession(movieId, theater, day, startTime);
+        session.setId(id);
+        return session;
+    }
 }

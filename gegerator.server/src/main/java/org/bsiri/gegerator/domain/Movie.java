@@ -27,4 +27,10 @@ public class Movie implements Identifiable {
         String strDuration = String.format("%02d:%02d", seconds / 3600, (seconds % 3600) / 60);
         return String.format("Movie(id=%d, title='%s', duration=%s)", this.id, this.title, strDuration);
     }
+
+    public static Movie of(long id, String title, Duration duration){
+        Movie m = new Movie(title, duration);
+        m.setId(id);
+        return m;
+    }
 }

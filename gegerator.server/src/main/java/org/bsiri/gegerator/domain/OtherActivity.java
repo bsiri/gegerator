@@ -23,4 +23,14 @@ public class OtherActivity {
 
     // TODO : maybe validation to enforce that
     // startTime < endTime, even though the DB does it already
+
+    private void setId(long id){
+        this.id = id;
+    }
+
+    public static OtherActivity of (long id, Day day, LocalTime startTime, LocalTime endTime, String description){
+        OtherActivity activity = new OtherActivity(day, startTime, endTime, description);
+        activity.setId(id);
+        return activity;
+    }
 }

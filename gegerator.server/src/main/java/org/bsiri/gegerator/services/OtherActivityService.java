@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+
 @Service
 public class OtherActivityService {
 
@@ -32,6 +34,11 @@ public class OtherActivityService {
         return repo.save(activity)
                 .onErrorMap(DataIntegrityViolationException.class,
                         ex -> new TimeParadoxException(activity.getStartTime(), activity.getEndTime()));
+    }
+
+    @Transactional
+    public void saveAll(Collection<OtherActivity> activities){
+        repo.saveAll(activities);
     }
 
     @Transactional

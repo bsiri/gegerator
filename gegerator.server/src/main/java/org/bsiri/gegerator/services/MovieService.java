@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+
 
 @Service
 public class MovieService {
@@ -35,6 +37,11 @@ public class MovieService {
                         DataIntegrityViolationException.class,
                         ex -> new DuplicateNameException((movie.getTitle()))
                 );
+    }
+
+    @Transactional
+    public void saveAll(Collection<Movie> movies){
+        repo.saveAll(movies);
     }
 
     // alias for "save"
