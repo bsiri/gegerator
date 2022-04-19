@@ -8,6 +8,7 @@ import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 
@@ -88,6 +89,28 @@ export class SessionSectionComponent implements OnInit {
   }
 
   openNewActivity(day: Day): void{
-    // TODO
+    const dialogRef = this.dialog.open(Activitydialog, {
+      autoFocus: 'first-tabbable',
+      data: {
+        id: undefined, 
+        day: day,
+        startTime: undefined,
+        endTime: undefined,
+        description: ''
+      }
+    })
+
+    dialogRef.afterClosed().subscribe(newactivity => {
+      if (!!newactivity){
+        const activity = new OtherActivity(
+          newactivity.id, 
+          newactivity.day,
+          newactivity.startTime, 
+          newactivity.endTime,
+          newactivity.description
+        )
+        this.store.dispatch(ActivityActions.create_activity({activity}))
+      }
+    })  
   }
 }

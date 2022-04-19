@@ -32,7 +32,7 @@ export class OtherActivityComponent implements OnInit {
       if (! updatedActivityData){
         return 
       }
-      const activity = this.activity
+      const activity = updatedActivityData
       this.store.dispatch(ActivityActions.update_activity({activity}))
     })  }
 

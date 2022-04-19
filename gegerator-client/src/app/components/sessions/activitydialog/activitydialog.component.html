@@ -37,7 +37,7 @@
     </div>
 
 
-    <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'hidden': 'visible'}">Le début doit être avant la fin n'est-ce pas</mat-error>
+    <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'visible': 'hidden'}">Le début doit être avant la fin n'est-ce pas</mat-error>
 
 </div>
 <div mat-dialog-actions>
