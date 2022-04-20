@@ -14,6 +14,10 @@ export class AppComponent implements OnInit{
   constructor(private store: Store){}
 
   ngOnInit(): void {
-    //this.store.dispatch(MovieActions.reload_movies())
   }
+
+  downloadAppState(){
+    
+  }
+
 }

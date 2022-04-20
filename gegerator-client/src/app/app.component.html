@@ -1,17 +1,18 @@
-
 <div id="app-mainview">
+
     <div id="app-header">
         <div class="app-header--centerpart">
             <span id="app-title">Gegerator</span>
             <div id="app-buttonbar">
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
                 <button mat-raised-button color="primary">Contraintes &gt;</button>
+                <a mat-raised-button color="primary" href="/gegerator/app-state"><mat-icon>file_download</mat-icon></a>
+                <button mat-raised-button color="primary"><mat-icon>file_upload</mat-icon></button>
             </div>
         </div>
     </div>
-    <mat-sidenav-container id="app-content"
-        hasBackdrop="false">
-        
+
+    <mat-sidenav-container id="app-content" hasBackdrop="false">        
         <mat-sidenav id="app-movie" 
             #appmovie 
             disableClose="true">
@@ -19,8 +20,7 @@
         </mat-sidenav>
         <mat-sidenav-content>
             <app-session-section></app-session-section>
-        </mat-sidenav-content>
-        
+        </mat-sidenav-content>        
     </mat-sidenav-container>
 
 </div>
