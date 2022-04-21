@@ -10,7 +10,7 @@ export namespace ActivityActions{
 
     // Reducer actions
     export const activity_created = createAction('[Activity] created', props<{activity: OtherActivity}>());
-    export const activities_reloaded = createAction('[Activity] reloaded', props<{activities: OtherActivity[]}>());
+    export const activities_reloaded = createAction('[Activity] reloaded', props<{activities: readonly OtherActivity[]}>());
     export const activity_updated = createAction('[Activity] updated', props<{activity: OtherActivity}>());
     export const activity_deleted = createAction('[Activity] deleted', props<{activity: OtherActivity}>());
 

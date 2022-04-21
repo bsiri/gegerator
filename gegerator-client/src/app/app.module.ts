@@ -37,6 +37,8 @@ import { OtherActivityEffects } from './ngrx/effects/activity.effects';
 import { activityReducer } from './ngrx/reducers/activity.reducers';
 import { SwimlaneItemComponent } from './components/sessions/swimlane-item/swimlane-item.component';
 import { Activitydialog } from './components/sessions/activitydialog/activitydialog.component';
+import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
+import { AppStateEffects } from './ngrx/effects/appstate.effects';
 
 @NgModule({
   declarations: [
@@ -53,13 +55,14 @@ import { Activitydialog } from './components/sessions/activitydialog/activitydia
     OtherActivityComponent,
     SwimlaneItemComponent,
     Activitydialog,
+    UploadDialog,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movielist: movieReducer, sessionList: sessionReducer, activitylist: activityReducer}, {}),
-    EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects]),
+    StoreModule.forRoot({movies: movieReducer, sessions: sessionReducer, activities: activityReducer}, {}),
+    EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects, AppStateEffects]),
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

@@ -33,8 +33,8 @@ public class MovieSessionService {
     }
 
     @Transactional
-    public void saveAll(Collection<MovieSession> sessions){
-        sessionRepo.saveAll(sessions);
+    public Flux<MovieSession> saveAll(Collection<MovieSession> sessions){
+        return sessionRepo.saveAll(sessions);
     }
 
     @Transactional

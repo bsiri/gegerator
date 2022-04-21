@@ -5,7 +5,7 @@ import { selectMovieslist } from "./movie.selectors";
 
 interface MoviesById{[id: number]: Movie}
 
-export const selectSessionList = createFeatureSelector<ReadonlyArray<MovieSession>>('sessionList')
+export const selectSessionList = createFeatureSelector<ReadonlyArray<MovieSession>>('sessions')
 
 export const indexedMoviesSelector = createSelector(
     selectMovieslist,

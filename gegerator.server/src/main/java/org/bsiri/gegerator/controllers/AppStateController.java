@@ -1,19 +1,16 @@
 package org.bsiri.gegerator.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.handler.codec.http.HttpResponse;
 import org.bsiri.gegerator.domain.AppState;
 import org.bsiri.gegerator.services.AppStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import java.io.*;
@@ -23,16 +20,16 @@ import java.io.*;
 @RequestMapping(path = "/app-state")
 public class AppStateController {
 
-    private ObjectMapper serializer;
+    private ObjectMapper objectMapper;
     private AppStateService service;
 
-    public AppStateController(@Autowired AppStateService service, @Autowired ObjectMapper serializer) {
+    public AppStateController(@Autowired AppStateService service, @Autowired ObjectMapper objectMapper) {
         this.service = service;
-        this.serializer = serializer;
+        this.objectMapper = objectMapper;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Mono<Resource>> dump(ServerHttpResponse response){
+    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, params = "format=file")
+    public ResponseEntity<Mono<Resource>> dumpAsFile(){
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -45,7 +42,7 @@ public class AppStateController {
                             resourceIn.connect(jsonOut);
 
                             Resource resource = new InputStreamResource(resourceIn);
-                            serializer.writerWithDefaultPrettyPrinter()
+                            objectMapper.writerWithDefaultPrettyPrinter()
                                     .writeValue(jsonOut, appState);
                             return resource;
                         }
@@ -56,9 +53,18 @@ public class AppStateController {
                 );
     }
 
-    @PostMapping
-    public ResponseEntity<Void> load(@RequestBody AppState appState){
-        service.loadAppState(appState);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Mono<AppState>> dumpAsJson(){
+        return ResponseEntity.ok().body(service.dumpAppState());
     }
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Mono<AppState>> load(@RequestParam("file") MultipartFile file) throws IOException {
+        AppState appState = objectMapper.reader().readValue(file.getInputStream());
+        return ResponseEntity.ok().body(
+                service.loadAppState(appState)
+                .then(Mono.just(appState))
+        );
+    }
+
 }

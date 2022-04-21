@@ -16,11 +16,11 @@ export class MovielistComponent implements OnInit {
 
   // sort logic: consists of a flag, and of a subject 
   sorted = false
-  sortedsubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  sortedsubject = new BehaviorSubject<boolean>(false)
 
   // the movie filter in the template 
   // will be fed into this subject. 
-  filtersubject: BehaviorSubject<string> = new BehaviorSubject('')
+  filtersubject = new BehaviorSubject<string>('')
 
   // the final model is the combination of the original model
   // + the filtering and sorting logic
@@ -58,8 +58,7 @@ export class MovielistComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.store.dispatch(MovieActions.reload_movies());    
+  ngOnInit(): void {  
   }
 
   filterMovies(evt: any): void {

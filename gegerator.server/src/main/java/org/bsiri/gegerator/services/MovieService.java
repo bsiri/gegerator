@@ -40,8 +40,8 @@ public class MovieService {
     }
 
     @Transactional
-    public void saveAll(Collection<Movie> movies){
-        repo.saveAll(movies);
+    public Flux<Movie> saveAll(Collection<Movie> movies){
+        return repo.saveAll(movies);
     }
 
     // alias for "save"

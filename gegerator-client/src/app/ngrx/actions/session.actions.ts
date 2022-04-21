@@ -10,7 +10,7 @@ export namespace SessionActions{
 
     // Reducer actions
     export const session_created = createAction('[Session] created', props<{session: MovieSession}>());
-    export const sessions_reloaded = createAction('[Session] reloaded', props<{sessions: MovieSession[]}>());
+    export const sessions_reloaded = createAction('[Session] reloaded', props<{sessions: readonly MovieSession[]}>());
     export const session_updated = createAction('[Session] updated', props<{session: MovieSession}>());
     export const session_deleted = createAction('[Session] deleted', props<{session: MovieSession}>());
 

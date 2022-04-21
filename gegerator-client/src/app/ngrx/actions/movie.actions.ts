@@ -11,7 +11,7 @@ export namespace MovieActions{
     
     // Actions consumed by reducers
     export const movie_created = createAction('[MovieList] created', props<{movie: Movie}>());
-    export const movies_reloaded = createAction('[MovieList] reloaded', props<{movies: Movie[]}>());
+    export const movies_reloaded = createAction('[MovieList] reloaded', props<{movies: readonly Movie[]}>());
     export const movie_updated = createAction('[Movie] updated', props<{movie: Movie}>());
     export const movie_deleted = createAction('[Movie] deleted', props<{movie: Movie}>());
     

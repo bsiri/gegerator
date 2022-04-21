@@ -41,9 +41,7 @@ export class SessionSectionComponent implements OnInit {
 
   constructor(private store: Store, private dialog: MatDialog) { }
 
-  ngOnInit(): void { 
-    this.store.dispatch(SessionActions.reload_sessions());
-    this.store.dispatch(ActivityActions.reload_activities());
+  ngOnInit(): void {
   }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{

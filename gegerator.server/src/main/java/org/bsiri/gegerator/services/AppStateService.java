@@ -6,7 +6,9 @@ import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.OtherActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.GroupedFlux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -35,9 +37,12 @@ public class AppStateService {
             .map(tuple -> new AppState(tuple.getT1(), tuple.getT2(), tuple.getT3()));
     }
 
-    public void loadAppState(AppState appState){
-        movieService.saveAll(appState.getMovies());
-        sessionService.saveAll(appState.getSessions());
-        otherActivityService.saveAll(appState.getActivities());
+    @Transactional
+    public Mono<Void> loadAppState(AppState appState){
+        return Flux.merge(
+            movieService.saveAll(appState.getMovies()),
+            sessionService.saveAll(appState.getSessions()),
+            otherActivityService.saveAll(appState.getActivities())
+        ).then(Mono.empty());
     }
 }
