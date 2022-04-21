@@ -74,13 +74,13 @@ export class SessionSectionComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(newsession => {
       if (!!newsession){
-        const movieSession: MovieSession = {
-          id: newsession.id,
-          movieId: newsession.movie.id,
-          theater: newsession.theater,
-          day: newsession.day,
-          startTime: newsession.startTime
-        }
+        const movieSession = new MovieSession(
+          newsession.id,
+          newsession.movie.id,
+          newsession.theater,
+          newsession.day,
+          newsession.startTime
+        )
         this.store.dispatch(SessionActions.create_session({session: movieSession}))
       }
     })

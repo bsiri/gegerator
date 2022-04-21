@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { AppState } from '../ngrx/state/app.state';
+import { AppState, AppStateJSON } from '../ngrx/state/app.state';
 
 const stateUrl = '/gegerator/app-state'
 
@@ -19,7 +19,8 @@ export class AppStateService {
   }
 
   reload(): Observable<AppState>{
-    return this.http.get<AppState>(stateUrl)
+    return this.http.get<AppStateJSON>(stateUrl)
+      .pipe(map(AppState.fromJSON))
   }
 
 }

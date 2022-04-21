@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http'
 import { map, mergeMap, Observable } from 'rxjs';
-import { Movie } from '../models/movie.model';
+import { Movie, MovieJSON } from '../models/movie.model';
 import { Durations } from '../models/time.utils';
 
 
@@ -16,32 +16,20 @@ export class MovielistService{
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Movie[]>{
-    return this.http.get<JsonMovie[]>(moviesUrl)
-      .pipe(
-        map(allMovies => {
-          return allMovies.map(m => this._toMovie(m))
-        })
-      );
+    return this.http.get<MovieJSON[]>(moviesUrl)
+      .pipe(map(aoMovies => aoMovies.map(Movie.fromJSON))
+    )
   }
 
-
   save(movie: Movie): Observable<Movie>{
-    const jsmovie = this._toJsonMovie(movie);
-    return this.http.post<JsonMovie>(moviesUrl, jsmovie)
-    .pipe(
-      map(responsemovie => {
-          return this._toMovie(responsemovie) 
-      })
+    return this.http.post<MovieJSON>(moviesUrl, movie.toJSON())
+      .pipe(map(Movie.fromJSON)
     );
   }
 
   update(movie: Movie): Observable<Movie>{
-    const jsmovie = this._toJsonMovie(movie);
-    return this.http.patch<JsonMovie>(`${moviesUrl}/${movie.id}`, jsmovie)
-    .pipe(
-      map(responsemovie => {
-          return this._toMovie(responsemovie) 
-      })
+    return this.http.patch<MovieJSON>(`${moviesUrl}/${movie.id}`, movie.toJSON())
+    .pipe(map(Movie.fromJSON)
     );
   }
 
@@ -50,37 +38,5 @@ export class MovielistService{
     .pipe(
       map(()=>movie)
     );
-  }
-
-
-  // ************* helpers *****************
-
-
-  private _toJsonMovie(item: Movie): JsonMovie{
-    const [hours, minutes] = [item.duration.hours, item.duration.minutes];
-    return {
-      id: item.id, 
-      title: item.title,
-      duration: Durations.serialize(item.duration)
-    }
-  }
-
-  private _toMovie(item: JsonMovie): Movie{
-    return {
-      id: item.id,
-      title: item.title,
-      duration: Durations.deserialize(item.duration)
-    };
-  }
-}
-
-class JsonMovie{
-  id: number;
-  title: string;
-  duration: string;
-  constructor(id: number, title: string, duration: string){
-    this.id = id;
-    this.title = title;
-    this.duration = duration;
   }
 }

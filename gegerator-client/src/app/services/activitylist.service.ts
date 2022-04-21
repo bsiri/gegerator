@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { OtherActivity } from '../models/activity.model';
-import { Days } from '../models/referential.data';
-import { Times } from '../models/time.utils';
+import { OtherActivity, OtherActivityJSON } from '../models/activity.model';
 
 const activitiesUrl = '/gegerator/other-activities'
 
@@ -15,32 +13,18 @@ export class ActivitylistService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<OtherActivity[]>{
-    return this.http.get<JsonOtherActivity[]>(activitiesUrl)
-      .pipe(
-        map(allactivities => {
-          return allactivities.map(a => this._toOtherActivity(a));
-        })
-    );
+    return this.http.get<OtherActivityJSON[]>(activitiesUrl)
+      .pipe(map(aoActs => aoActs.map(OtherActivity.fromJSON) ))
   }
 
   save(activity: OtherActivity): Observable<OtherActivity>{
-    const jsactivity = this._toJsonOtherActivity(activity);
-    return this.http.post<JsonOtherActivity>(activitiesUrl, jsactivity)
-      .pipe(
-        map(responseactivity =>{
-          return this._toOtherActivity(responseactivity)
-        })
-    );
+    return this.http.post<OtherActivityJSON>(activitiesUrl, activity.toJSON())
+      .pipe(map(OtherActivity.fromJSON))
   }
 
   update(activity: OtherActivity): Observable<OtherActivity>{
-    const jsactivity = this._toJsonOtherActivity(activity);
-    return this.http.patch<JsonOtherActivity>(`${activitiesUrl}/${activity.id}`, jsactivity)
-      .pipe(
-        map(responseactivity => {
-          return this._toOtherActivity(responseactivity)
-        })
-    );
+    return this.http.patch<OtherActivityJSON>(`${activitiesUrl}/${activity.id}`, activity.toJSON())
+      .pipe(map(OtherActivity.fromJSON))
   }
 
   delete(activity: OtherActivity): Observable<OtherActivity>{
@@ -49,39 +33,4 @@ export class ActivitylistService {
         map(() => activity)
     )
   }
-
-  // ************* helpers *****************
-
-  private _toJsonOtherActivity(item: OtherActivity): JsonOtherActivity{
-    return {
-      id: item.id,
-      day: item.day.key,
-      startTime: Times.serialize(item.startTime),
-      endTime: Times.serialize(item.endTime),
-      description: item.description
-    }
-  }
-
-  private _toOtherActivity(item: JsonOtherActivity): OtherActivity{
-    return new OtherActivity(
-      item.id,
-      Days.fromKey(item.day),
-      Times.deserialize(item.startTime),
-      Times.deserialize(item.endTime),
-      item.description
-    )
-  }
-
 }
-
-class JsonOtherActivity{
-  constructor(
-    public id: number, 
-    public day: string, 
-    public startTime: string,
-    public endTime: string,
-    public description: string
-  ){}
-}
-
-

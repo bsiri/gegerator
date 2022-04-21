@@ -40,11 +40,11 @@ export class MovieDialog implements OnInit {
   }
 
   toMovie(): Movie{
-    return {
-      id: this.id,
-      title: this.formGroup.get('title')!.value,
-      duration: Durations.fromString(this.formGroup.get('duration')!.value)
-    }
+    return new Movie(
+      this.id,
+      this.formGroup.get('title')!.value,
+      Durations.fromString(this.formGroup.get('duration')!.value)
+    )
   }
 
   confirm(): void{

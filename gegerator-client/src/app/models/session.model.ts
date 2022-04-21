@@ -1,7 +1,7 @@
 import { Time } from "@angular/common";
 import { Movie } from "./movie.model";
 import { PlannableItem } from "./plannable.model";
-import { Day, Theater } from "./referential.data";
+import { Day, Days, Theater, Theaters } from "./referential.data";
 import { Times } from "./time.utils";
 
 
@@ -9,13 +9,44 @@ import { Times } from "./time.utils";
     This is the raw model of a MovieSession, 
     as it is consumed by the server
 */
-export interface MovieSession{
-    id: number;
-    movieId: number;
-    theater: Theater;
-    day: Day;
-    startTime: Time;
+export class MovieSession{
+    constructor(
+        public id: number,
+        public movieId: number,
+        public theater: Theater,
+        public day: Day,
+        public startTime: Time,
+    ){}
+
+    toJSON(): MovieSessionJSON{
+        return {
+            id: this.id,
+            movieId: this.movieId,
+            theater: this.theater.key,
+            day: this.day.key,
+            startTime: Times.serialize(this.startTime)
+        }
+    }
+
+    static fromJson(json: MovieSessionJSON): MovieSession{
+        return new MovieSession(
+            json.id, 
+            json.movieId,
+            Theaters.fromKey(json.theater),
+            Days.fromKey(json.day),
+            Times.deserialize(json.startTime)
+        )
+    }
 }
+
+export interface MovieSessionJSON{
+    id: number,
+    movieId: number,
+    theater: string,
+    day: string,
+    startTime: string
+}
+
 
 
 /*

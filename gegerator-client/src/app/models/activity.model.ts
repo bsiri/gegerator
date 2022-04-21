@@ -1,6 +1,7 @@
 import { Time } from "@angular/common";
 import { PlannableItem } from "./plannable.model";
-import { Day } from "./referential.data";
+import { Day, Days } from "./referential.data";
+import { Times } from "./time.utils";
 
 
 export class OtherActivity implements PlannableItem{
@@ -17,4 +18,35 @@ export class OtherActivity implements PlannableItem{
         return this.description
     }
 
+    // ********* JSON interface **********
+
+    toJSON(): OtherActivityJSON{
+        return {
+            id: this.id,
+            day: this.day.key,
+            startTime : Times.serialize(this.startTime),
+            endTime : Times.serialize(this.endTime),
+            description: this.description
+        }
+    }
+
+    static fromJSON(json: OtherActivityJSON): OtherActivity{
+        return new OtherActivity(
+            json.id, 
+            Days.fromKey(json.day),
+            Times.deserialize(json.startTime),
+            Times.deserialize(json.endTime),
+            json.description
+        )
+    }
+
+
+}
+
+export interface OtherActivityJSON{    
+    id: number 
+    day: string 
+    startTime: string
+    endTime: string
+    description: string    
 }

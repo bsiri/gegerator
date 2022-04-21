@@ -54,12 +54,12 @@ export class PlannedMovieSessionComponent{
 }
 
 function _toMovieSession(pms: PlannedMovieSession): MovieSession{
-  const session: MovieSession = {
-    id: pms.id, 
-    movieId: pms.movie.id,
-    theater: pms.theater,
-    startTime: pms.startTime,
-    day: pms.day
-  }
+  const session = new MovieSession(
+      pms.id, 
+      pms.movie.id,
+      pms.theater,
+      pms.day,
+      pms.startTime
+  )
   return session
 }
