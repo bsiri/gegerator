@@ -39,10 +39,21 @@ public class AppStateService {
 
     @Transactional
     public Mono<Void> loadAppState(AppState appState){
-        return Flux.merge(
-            movieService.saveAll(appState.getMovies()),
-            sessionService.saveAll(appState.getSessions()),
-            otherActivityService.saveAll(appState.getActivities())
-        ).then(Mono.empty());
+
+        // Here we wipe the database
+        // then we populate it again
+
+        // 1. Delete everything, in sequence.
+        return otherActivityService.deleteAll()
+            .then(sessionService.deleteAll())
+            .then(movieService.deleteAll())
+
+        // 2. Then insert in sequence
+            .thenMany(Flux.merge(
+                movieService.saveAll(appState.getMovies()),
+                sessionService.saveAll(appState.getSessions()),
+                otherActivityService.saveAll(appState.getActivities())
+            ))
+            .then(Mono.empty());
     }
 }

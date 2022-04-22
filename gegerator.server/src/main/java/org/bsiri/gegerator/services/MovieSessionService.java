@@ -43,7 +43,13 @@ public class MovieSessionService {
     }
 
     @Transactional
-    public Mono<Void> deleteById(long id){ return sessionRepo.deleteById(id); }
+    public Mono<Void> deleteById(long id){
+        return sessionRepo.deleteById(id);
+    }
 
+    @Transactional
+    public Mono<Void> deleteAll(){
+        return sessionRepo.deleteAll();
+    }
 
 }

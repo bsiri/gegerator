@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class SqlDatasetTestExecutionListener implements TestExecutionListener {
 
     private static final String TRUNCATE_ALL =
+            "delete from other_activity;"+
             "delete from movie_session;"+
                     "delete from movie;";
 

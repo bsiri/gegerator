@@ -25,6 +25,7 @@ export class AppComponent implements OnInit{
 
   uploadAppState(): void{
     const dialogRef = this.dialog.open(UploadDialog, {
+      width: '350px',
       autoFocus: "first-tabbable"
     });
 

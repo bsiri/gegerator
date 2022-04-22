@@ -2,10 +2,7 @@
 <h1 mat-dialog-title>Charger un état</h1>
 <form mat-dialog-content #uploadDialog="ngForm">
     <div class="dialog-field">
-        <label for="file">Fichier : </label>
-        <mat-form-field appearance="fill">
-            <input #fileInput="ngModel" id="file" type="file" [(ngModel)]="file" name="file" required>          
-        </mat-form-field>
+        <input #fileInput="ngModel" id="file" type="file" [(ngModel)]="file" name="file" required>       
     </div>    
 </form>
 <div mat-dialog-actions>

@@ -11,13 +11,15 @@ export class HeadersInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
 
-    const headersReq = req.clone({
-      headers: req.headers.set('Content-Type', 'application/json')
-                          .set('Accept', 'application/json')
+    TODOOOOOOOOOO REACTIATE THIS
+    // const headersReq = req.clone({
+    //   headers: req.headers.set('Content-Type', 'application/json')
+    //                       .set('Accept', 'application/json')
 
-    });
+    // });
 
-    return next.handle(headersReq);
+    // return next.handle(headersReq);
+    return next.handle(req)
 
   }
 }

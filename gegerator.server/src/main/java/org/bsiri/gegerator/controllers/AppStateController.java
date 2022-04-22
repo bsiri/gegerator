@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import reactor.core.publisher.Mono;
 
 import java.io.*;
@@ -58,9 +62,11 @@ public class AppStateController {
         return ResponseEntity.ok().body(service.dumpAppState());
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Mono<AppState>> load(@RequestParam("file") MultipartFile file) throws IOException {
-        AppState appState = objectMapper.reader().readValue(file.getInputStream());
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Mono<AppState>> load(Mono<FilePart> part) throws IOException {
+
+        System.out.println(part.toString());
+        AppState appState = objectMapper.reader().readValue("{\"movies\": [], \"sessions\": [], \"activities\": []}");
         return ResponseEntity.ok().body(
                 service.loadAppState(appState)
                 .then(Mono.just(appState))

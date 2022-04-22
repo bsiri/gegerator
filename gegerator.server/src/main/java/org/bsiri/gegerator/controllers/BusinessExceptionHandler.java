@@ -22,6 +22,7 @@ public class BusinessExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleOtherException(Exception ex){
+        ex.printStackTrace();
         String message = String.format("Gros problème %s : %s", ex.getClass().getName(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)

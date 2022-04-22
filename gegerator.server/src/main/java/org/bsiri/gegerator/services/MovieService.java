@@ -55,4 +55,9 @@ public class MovieService {
         return repo.deleteById(id);
     }
 
+    @Transactional
+    public Mono<Void> deleteAll(){
+        return repo.deleteAll();
+    }
+
 }

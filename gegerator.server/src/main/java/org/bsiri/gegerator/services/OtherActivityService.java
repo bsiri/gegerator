@@ -48,4 +48,9 @@ public class OtherActivityService {
 
     @Transactional
     public Mono<Void> deleteById(long id){ return repo.deleteById(id); }
+
+    @Transactional
+    public Mono<Void> deleteAll(){
+        return repo.deleteAll();
+    }
 }
