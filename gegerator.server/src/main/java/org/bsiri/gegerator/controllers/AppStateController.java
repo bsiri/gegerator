@@ -40,14 +40,12 @@ public class AppStateController {
                 .body(
                     service.dumpAppState().map(appState -> {
                         try {
-                            PipedInputStream resourceIn = new PipedInputStream();
-                            PipedOutputStream jsonOut = new PipedOutputStream();
-                            resourceIn.connect(jsonOut);
-
-                            Resource resource = new InputStreamResource(resourceIn);
+                            ByteArrayOutputStream jsonOut = new ByteArrayOutputStream();
                             objectMapper.writerWithDefaultPrettyPrinter()
                                     .writeValue(jsonOut, appState);
-                            return resource;
+
+                            ByteArrayInputStream resourceIn = new ByteArrayInputStream(jsonOut.toByteArray());
+                            return new InputStreamResource(resourceIn);
                         }
                         catch(IOException ex){
                             throw new RuntimeException(ex);
