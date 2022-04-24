@@ -47,7 +47,7 @@ public class AppStateService {
 
 
     @Transactional
-    public Mono<Void> loadAppState(AppState appState){
+    public Mono<AppState> loadAppState(AppState appState){
 
         /*
             Here we wipe the database, then we load the entities again.
@@ -74,7 +74,7 @@ public class AppStateService {
         .thenMany(insertAll(appState.getMovies()))
         .thenMany(insertAll(appState.getSessions()))
         .thenMany(insertAll(appState.getActivities()))
-        .then(Mono.empty());
+        .then(Mono.just(appState));
     }
 
 

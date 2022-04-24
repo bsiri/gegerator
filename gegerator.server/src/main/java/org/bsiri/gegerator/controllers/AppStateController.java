@@ -6,15 +6,13 @@ import org.bsiri.gegerator.services.AppStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import reactor.core.publisher.Mono;
 
 import java.io.*;
@@ -32,6 +30,7 @@ public class AppStateController {
         this.objectMapper = objectMapper;
     }
 
+
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, params = "format=file")
     public ResponseEntity<Mono<Resource>> dumpAsFile(){
         return ResponseEntity
@@ -41,8 +40,8 @@ public class AppStateController {
                 .body(
                     service.dumpAppState().map(appState -> {
                         try {
-                            PipedOutputStream jsonOut = new PipedOutputStream();
                             PipedInputStream resourceIn = new PipedInputStream();
+                            PipedOutputStream jsonOut = new PipedOutputStream();
                             resourceIn.connect(jsonOut);
 
                             Resource resource = new InputStreamResource(resourceIn);
@@ -57,20 +56,33 @@ public class AppStateController {
                 );
     }
 
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Mono<AppState>> dumpAsJson(){
         return ResponseEntity.ok().body(service.dumpAppState());
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Mono<AppState>> load(Mono<FilePart> part) throws IOException {
 
-        System.out.println(part.toString());
-        AppState appState = objectMapper.reader().readValue("{\"movies\": [], \"sessions\": [], \"activities\": []}");
-        return ResponseEntity.ok().body(
-                service.loadAppState(appState)
-                .then(Mono.just(appState))
-        );
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Mono<AppState>> load(@RequestPart("file") Mono<FilePart> partMono){
+
+        Mono<AppState> loadedAppState = partMono.flatMapMany(Part::content)
+                .map(DataBuffer::asInputStream)
+                .map(this::readAppState)
+                .flatMap(service::loadAppState)
+                .last();
+
+        return ResponseEntity.ok().body(loadedAppState);
+    }
+
+    // method necessary to wrap the checked exception as an unchecked one
+    private AppState readAppState(InputStream stream){
+        try{
+            return objectMapper.readValue(stream, AppState.class);
+        }
+        catch(IOException ex){
+            throw new RuntimeException(ex);
+        }
     }
 
 }

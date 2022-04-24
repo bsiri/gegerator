@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
-import { MovielistComponent } from './components/movies/movielist/movielist.component';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
-import { MovieActions } from './ngrx/actions/movie.actions';
-import { AppStateService } from './services/appstate.service';
 
 @Component({
   selector: 'app-root',

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { AppState, AppStateJSON } from '../ngrx/state/app.state';
 
 const stateUrl = '/gegerator/app-state'
@@ -15,7 +15,11 @@ export class AppStateService {
   upload(file: File): Observable<AppState>{
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<AppState>(stateUrl, formData)
+    return this.http.post<AppStateJSON>(stateUrl, formData)
+    .pipe(
+      //tap(something => console.log(something)),
+      map(AppState.fromJSON)
+    )
   }
 
   reload(): Observable<AppState>{

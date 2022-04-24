@@ -2,10 +2,11 @@
 <h1 mat-dialog-title>Charger un état</h1>
 <form mat-dialog-content #uploadDialog="ngForm">
     <div class="dialog-field">
-        <input #fileInput="ngModel" id="file" type="file" [(ngModel)]="file" name="file" required>       
+        <!-- <input #fileInput="ngModel" id="file" type="file" [(ngModel)]="file" name="file" required>       -->
+        <input id="file" name="file" type="file" (change)="changeFile($event)"/>
     </div>    
 </form>
 <div mat-dialog-actions>
-    <button mat-button (click)="confirm()" [disabled]="fileInput.invalid">OK</button>
+    <button mat-button (click)="confirm()" [disabled]="file === null">OK</button>
     <button mat-button (click)="cancel()">Annuler</button>
 </div>

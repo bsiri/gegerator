@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -8,12 +8,20 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class UploadDialog implements OnInit {
 
-  file!: File
+  file: File | null = null
+  
 
   constructor(public dialogRef: MatDialogRef<UploadDialog>){ 
   }
 
   ngOnInit(): void {
+  }
+
+  changeFile(event: any) {
+    const files: FileList = event.target.files
+    if (files.length > 0){
+      this.file = files[0]
+    }
   }
 
   confirm(){
