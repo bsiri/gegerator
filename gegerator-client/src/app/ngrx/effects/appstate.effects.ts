@@ -1,7 +1,9 @@
 import { Injectable } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
-import { map, mergeMap, of } from "rxjs";
+import { map, mergeMap, of, tap } from "rxjs";
+import { GenericPurposeDialog } from "src/app/components/genericpurposedialog/genericpurposedialog.component";
 import { AppStateService } from "src/app/services/appstate.service";
 import { ActivityActions } from "../actions/activity.actions";
 import { AppStateActions } from "../actions/appstate.actions";
@@ -13,13 +15,19 @@ export class AppStateEffects{
     constructor(
         private store: Store,
         private actions$: Actions,
-        private service: AppStateService
+        private service: AppStateService,
+        private dialog: MatDialog
     ){}
 
     upload$ = createEffect(() => this.actions$.pipe(
         ofType(AppStateActions.upload_appstate),
         mergeMap(action => this.service.upload(action.file)
             .pipe(
+                tap(() => {
+                    this.dialog.open(GenericPurposeDialog, {
+                        data: {message: "Fichier chargé", type: "info"}
+                      }); 
+                }),
                 map(appstate => AppStateActions.appstate_reloaded({appstate}))
             )        
         )

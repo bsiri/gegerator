@@ -2,6 +2,7 @@
 ==> Done
 
 2. Sauver et restaurer un state complet
+==> Done
 
 3. Modéliser les contraintes:
 a - appréciation film:

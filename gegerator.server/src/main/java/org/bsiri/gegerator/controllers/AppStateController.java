@@ -14,8 +14,11 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 
 import java.io.*;
+import java.util.function.Supplier;
 
 
 @RestController("appstate-controller")
@@ -32,25 +35,40 @@ public class AppStateController {
 
 
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, params = "format=file")
-    public ResponseEntity<Mono<Resource>> dumpAsFile(){
+    public ResponseEntity<Mono<? extends Resource>> dumpAsFile(){
+
+        /*
+            Using piped streams for serializing straight from Jackson to
+            the server output stream. This is essentially for fun because we
+            don't really need such setup (volume of data is expected to
+            be very small and could fit in whole in the memory).
+
+            Note: both the input and output streams will be closed
+            automatically on success by the server as usual.
+        */
+
+        PipedInputStream resourceIn = new PipedInputStream();
+        PipedOutputStream jsonOut = new PipedOutputStream();
+
+        connect(jsonOut, resourceIn);
+
+        // fetching then dumping the data into a stream and a separate thread here...
+        service.dumpAppState()
+                .publishOn(Schedulers.boundedElastic())
+                .subscribe(
+                    loadedState -> this.serializeToStream(loadedState, jsonOut),
+                    ex -> closeOnError(ex, jsonOut, resourceIn)
+                );
+
+        // ... while we return the EntityResponse immediately in the current thread.
+        // It'll block until the other thread starts producing data in the stream.
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "filename=gegerator.json")
                 .body(
-                    service.dumpAppState().map(appState -> {
-                        try {
-                            ByteArrayOutputStream jsonOut = new ByteArrayOutputStream();
-                            objectMapper.writerWithDefaultPrettyPrinter()
-                                    .writeValue(jsonOut, appState);
-
-                            ByteArrayInputStream resourceIn = new ByteArrayInputStream(jsonOut.toByteArray());
-                            return new InputStreamResource(resourceIn);
-                        }
-                        catch(IOException ex){
-                            throw new RuntimeException(ex);
-                        }
-                    })
+                    Mono.just(new InputStreamResource(resourceIn))
+                        .doOnError(ex -> closeOnError(ex, jsonOut, resourceIn))
                 );
     }
 
@@ -73,6 +91,8 @@ public class AppStateController {
         return ResponseEntity.ok().body(loadedAppState);
     }
 
+    // ************ internal boilerplate *****************
+
     // method necessary to wrap the checked exception as an unchecked one
     private AppState readAppState(InputStream stream){
         try{
@@ -80,6 +100,44 @@ public class AppStateController {
         }
         catch(IOException ex){
             throw new RuntimeException(ex);
+        }
+    }
+
+    private void connect(PipedOutputStream out, PipedInputStream in){
+        try{
+            in.connect(out);
+        }
+        catch (IOException ioex){
+            throw new RuntimeException(ioex);
+        }
+    }
+
+    private void serializeToStream(AppState appState, PipedOutputStream out){
+        try{
+            objectMapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValue(out, appState);
+        }
+        catch (IOException ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void closeOnError(Throwable sourceEx, Closeable... closeables) throws RuntimeException{
+        for (Closeable closable : closeables){
+            try{
+                closable.close();
+            }
+            catch (IOException ioex){
+                sourceEx.addSuppressed(ioex);
+            }
+        }
+
+        if (RuntimeException.class.isAssignableFrom(sourceEx.getClass())){
+            throw (RuntimeException) sourceEx;
+        }
+        else{
+            throw new RuntimeException(sourceEx);
         }
     }
 
