@@ -1,6 +1,7 @@
 package org.bsiri.gegerator.controllers;
 
 import org.bsiri.gegerator.domain.Movie;
+import org.bsiri.gegerator.domain.MovieRating;
 import org.bsiri.gegerator.exceptions.DuplicateNameException;
 import org.bsiri.gegerator.services.MovieService;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ public class MovieControllerTest {
 
     @Test
     public void shouldCreateMovie(){
-        Movie carnosaur = movie(null, "Carnosaur", "PT1H29M");
+        Movie carnosaur = movie(null, "Carnosaur", "PT1H29M", MovieRating.NEVER);
 
         client.post().uri("/movies")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -44,7 +45,7 @@ public class MovieControllerTest {
 
     @Test
     public void shouldRefuseToCreateMovie(){
-        Movie carnosaur = movie(null, "Carnosaur", "PT1H29M");
+        Movie carnosaur = movie(null, "Carnosaur", "PT1H29M", MovieRating.NEVER);
 
         when(service.save(carnosaur)).thenReturn(Mono.error(new DuplicateNameException("Carnosaur")));
 
@@ -64,7 +65,8 @@ public class MovieControllerTest {
         Long flyId = 10L;
         String flyTitle = "The Fly";
         String flyDuration = "PT1H36M";
-        Movie theFly = movie(flyId, flyTitle, flyDuration);
+        MovieRating flyRating = MovieRating.HIGHEST;
+        Movie theFly = movie(flyId, flyTitle, flyDuration, flyRating);
 
         when(service.findById(flyId)).thenReturn(Mono.just(theFly));
 
@@ -76,7 +78,8 @@ public class MovieControllerTest {
                 .expectBody()
                     .jsonPath("$.id").isEqualTo(flyId)
                     .jsonPath("$.title").isEqualTo(flyTitle)
-                    .jsonPath("$.duration").isEqualTo(flyDuration);
+                    .jsonPath("$.duration").isEqualTo(flyDuration)
+                    .jsonPath("$.rating").isEqualTo(flyRating.toString());
 
         verify(service, times(1)).findById(flyId);
     }
@@ -84,14 +87,8 @@ public class MovieControllerTest {
 
     // ************ boilerplate ****************
 
-    private Movie movie(Long id, String title, String duration){
-        Movie movie = new Movie(title, Duration.parse(duration));
-        setMovieId(movie, id);
-        return movie;
+    private Movie movie(Long id, String title, String duration, MovieRating rating){
+        return Movie.of(id, title, Duration.parse(duration), rating);
     }
-    private static void setMovieId(Movie movie, Long id){
-        Field idField = ReflectionUtils.findField(Movie.class, "id");
-        ReflectionUtils.makeAccessible(idField);
-        ReflectionUtils.setField(idField, movie, id);
-    }
+
 }

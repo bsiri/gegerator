@@ -16,6 +16,7 @@ public class Movie implements Identifiable {
     private Long id;
     private @NonNull String title;
     private @NonNull Duration duration;
+    private @NonNull MovieRating rating;
 
     private void setId(Long id) {
         this.id = id;
@@ -25,12 +26,15 @@ public class Movie implements Identifiable {
     public String toString(){
         long seconds = duration.getSeconds();
         String strDuration = String.format("%02d:%02d", seconds / 3600, (seconds % 3600) / 60);
-        return String.format("Movie(id=%d, title='%s', duration=%s)", this.id, this.title, strDuration);
+        return String.format(
+            "Movie(id=%d, title='%s', duration=%s, rating=%s)", this.id, this.title, strDuration, rating
+        );
     }
 
-    public static Movie of(long id, String title, Duration duration){
-        Movie m = new Movie(title, duration);
+    public static Movie of(Long id, String title, Duration duration, MovieRating rating){
+        Movie m = new Movie(title, duration, rating);
         m.setId(id);
         return m;
     }
+
 }

@@ -2,6 +2,7 @@ package org.bsiri.gegerator.services;
 
 
 import org.bsiri.gegerator.domain.Movie;
+import org.bsiri.gegerator.domain.MovieRating;
 import org.bsiri.gegerator.exceptions.DuplicateNameException;
 import org.bsiri.gegerator.repositories.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
+import static org.bsiri.gegerator.testinfra.TestBeans.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MovieServiceTest {
@@ -36,12 +38,12 @@ public class MovieServiceTest {
                         DataIntegrityViolationException("Hey, that's not legal !")
                 ));
 
-        service.save(new Movie("whatever", Duration.ofMinutes(15)))
+        service.save(halloween())
                 .as(StepVerifier::create)
                 .expectError(DuplicateNameException.class)
                 .verify();
 
-        service.update(new Movie("whatever", Duration.ofMinutes(15)))
+        service.update(halloween())
                 .as(StepVerifier::create)
                 .expectError(DuplicateNameException.class)
                 .verify();    }

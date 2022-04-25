@@ -1,6 +1,6 @@
 package org.bsiri.gegerator.services;
 
-import org.assertj.core.util.Arrays;
+
 import org.assertj.core.util.Lists;
 import org.bsiri.gegerator.domain.*;
 import org.hamcrest.Matchers;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.test.StepVerifier;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
 import static org.bsiri.gegerator.testinfra.TestBeans.*;
@@ -28,7 +28,7 @@ public class AppStateServiceTest extends AbstractDBBasedServiceTest{
     private DatabaseClient client;
 
     @Test
-    @SqlDataset("datasets/appstate-service/appstate.sql")
+    @SqlDataset("datasets/generic-datasets/appstate.sql")
     public void shouldDumpAppState(){
         AppState expected = makeAppState();
 
@@ -62,7 +62,7 @@ public class AppStateServiceTest extends AbstractDBBasedServiceTest{
     // ********* boilerplate ***********
 
     private AppState makeAppState(){
-        List<Movie> movies = Lists.list(decapitron(), tremors(), halloween());
+        List<Movie> movies = Lists.list(decapitron(), tremors(), halloween(), theMist());
         List<MovieSession> sessions = Lists.list(thursdayDecapitron(),
                 saturdayDecapitron(),
                 sundayHalloween(),

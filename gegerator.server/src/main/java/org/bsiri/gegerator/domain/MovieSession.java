@@ -25,13 +25,14 @@ public class MovieSession {
     @Column("day_name")
     private @NonNull Day day;
     private @NonNull LocalTime startTime;
+    private @NonNull MovieSessionRating rating;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public static MovieSession of(long id, long movieId, Theater theater, Day day, LocalTime startTime){
-        MovieSession session = new MovieSession(movieId, theater, day, startTime);
+    public static MovieSession of(long id, long movieId, Theater theater, Day day, LocalTime startTime, MovieSessionRating rating){
+        MovieSession session = new MovieSession(movieId, theater, day, startTime, rating);
         session.setId(id);
         return session;
     }

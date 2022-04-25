@@ -52,7 +52,7 @@ public class AppStateController {
 
         connect(jsonOut, resourceIn);
 
-        // fetching then dumping the data into a stream and a separate thread here...
+        // (new) producer thread : fetching then dumping the data into the stream here...
         service.dumpAppState()
                 .publishOn(Schedulers.boundedElastic())
                 .subscribe(
@@ -60,7 +60,7 @@ public class AppStateController {
                     ex -> closeOnError(ex, jsonOut, resourceIn)
                 );
 
-        // ... while we return the EntityResponse immediately in the current thread.
+        // ... (current) consumer thread:  we return the EntityResponse immediately.
         // It'll block until the other thread starts producing data in the stream.
         return ResponseEntity
                 .ok()
