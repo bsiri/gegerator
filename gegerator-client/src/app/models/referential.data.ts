@@ -49,7 +49,7 @@ export class Days{
     static SATURDAY: Day = { key: "SATURDAY", name: "Samedi"};
     static SUNDAY: Day = { key: "SUNDAY", name: "Dimanche"};
 
-    static enumerate(): Day[]{
+    static enumerate(): readonly Day[]{
         return [this.THURSDAY, this.FRIDAY, this.SATURDAY, this.SUNDAY];
     }
 

@@ -15,13 +15,7 @@ b - appréciation séance
 - Je veux voir ce film à cette séance précise
 - Pas à cette séance là
 - Laisser l'algorithme décider (défaut)
-
-Se rappeler que les Autres Activités sont aussi des contraintes, 
-et que les contraintes sont cumulables 
-(eg je veux vraiment voir ce film + Pas à cette séance là).
-
-Une Autre Activité est une sorte de séance qui a une valeur 
-très très grande en gros.
+==> Done
 
 4. Menu click-droit pour éditer les contraintes depuis les 
   sessions
@@ -36,5 +30,12 @@ très très grande en gros.
   (à traiter comme une contrainte supplémentaire, ou peut-être
   assigner "Je veux voir ce film à cette séance précise" qui 
   est fonctionnellement équivalent ?)
+
+  Se rappeler que les Autres Activités sont aussi des contraintes, 
+  et que les contraintes sont cumulables 
+  (eg je veux vraiment voir ce film + Pas à cette séance là).
+
+  Une Autre Activité est une sorte de séance qui a une valeur 
+  très très grande en gros.
 
 8. Export de la feuille de route générée par l'algorithme

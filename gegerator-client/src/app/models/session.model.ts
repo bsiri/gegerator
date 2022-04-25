@@ -16,6 +16,7 @@ export class MovieSession{
         public theater: Theater,
         public day: Day,
         public startTime: Time,
+        public rating: MovieSessionRating = MovieSessionRatings.DEFAULT
     ){}
 
     toJSON(): MovieSessionJSON{
@@ -24,7 +25,8 @@ export class MovieSession{
             movieId: this.movieId,
             theater: this.theater.key,
             day: this.day.key,
-            startTime: Times.serialize(this.startTime)
+            startTime: Times.serialize(this.startTime),
+            rating: this.rating.key
         }
     }
 
@@ -34,7 +36,8 @@ export class MovieSession{
             json.movieId,
             Theaters.fromKey(json.theater),
             Days.fromKey(json.day),
-            Times.deserialize(json.startTime)
+            Times.deserialize(json.startTime),
+            MovieSessionRatings.fromKey(json.rating)
         )
     }
 }
@@ -44,7 +47,8 @@ export interface MovieSessionJSON{
     movieId: number,
     theater: string,
     day: string,
-    startTime: string
+    startTime: string,
+    rating: string
 }
 
 
@@ -62,7 +66,8 @@ export class PlannedMovieSession implements PlannableItem{
         public movie: Movie,
         public theater: Theater,
         public day: Day,
-        public startTime: Time
+        public startTime: Time,
+        public rating: MovieSessionRating = MovieSessionRatings.DEFAULT
     ){        
     }
 
@@ -83,8 +88,48 @@ export class PlannedMovieSession implements PlannableItem{
             movieId: this.movie.id,
             theater: this.theater,
             day: this.day,
-            startTime: this.startTime
+            startTime: this.startTime,
+            rating: this.rating
         }
     }
 }
 
+// *********** "Enum" MovieSessionRating (see referential.data.ts for explanations) **************
+
+export interface MovieSessionRating{
+    key: string, 
+    name: string,
+    description: string
+  }
+  
+  export class MovieSessionRatings{
+    static HIGHEST: MovieSessionRating = { 
+      key: "MANDATORY", 
+      name: "Impérative",
+      description: "Je veux voir ce film à cette séance précise"
+    };
+    static DEFAULT: MovieSessionRating = { 
+      key: "DEFAULT", 
+      name: "Normale",
+      description: "Laisser l'algorithme décider"
+    };
+    static NEVER: MovieSessionRating = { 
+      key: "NEVER", 
+      name: "Jamais",
+      description: "Pas cette séance là"
+    };
+  
+    static enumerate(): readonly MovieSessionRating[]{
+      return [this.HIGHEST, this.DEFAULT, this.NEVER]
+    }
+  
+    static fromKey(key: string): MovieSessionRating{
+      const found = MovieSessionRatings.enumerate().find(r => r.key == key)
+      if (! found){
+        throw Error(`Programmatic error : unknown movie rating ${key} !`)
+      }
+      return found;
+    }
+  }
+  
+  
