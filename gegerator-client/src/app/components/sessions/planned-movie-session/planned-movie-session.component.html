@@ -1,6 +1,9 @@
-<app-swimlane-item [item]="session"
-    (requestUpdate)="update()"
-    (requestDelete)="confirmThenDelete()"
-    (requestContextMenu)="openRatingsMenu()"
->
-</app-swimlane-item>
+<div #_container>
+    <app-swimlane-item 
+        [item]="session"
+        (requestUpdate)="update()"
+        (requestDelete)="confirmThenDelete()"
+        (requestContextMenu)="openRatingsMenu()"
+    >
+    </app-swimlane-item>
+</div>

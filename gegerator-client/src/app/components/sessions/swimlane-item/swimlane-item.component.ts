@@ -14,8 +14,6 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 })
 export class SwimlaneItemComponent implements OnInit{
 
-  @ViewChild('swimlaneItemContainer') container!: ElementRef
-
   /**
    * The item to plan, which must be a PlannableItem
    */
@@ -47,14 +45,6 @@ export class SwimlaneItemComponent implements OnInit{
   
   heightInPixel: string = '0px'
   topPosInPixel: string = '0px'
-
-  /**
-   * Computed dimensions, because I need to export them
-   * for consumption by PlanedMovieSessionComponent.
-   */
-  get dimensions(): DOMRect{
-    return this.container.nativeElement.getBoundingClientRect()
-  }
 
 
   constructor() { }

@@ -17,11 +17,13 @@ export class PlannedMovieSessionComponent{
 
   @Input() session!: PlannedMovieSession
 
-  @ViewChild(SwimlaneItemComponent) swItem!: SwimlaneItemComponent 
+  @ViewChild('_container') private _container!: ElementRef 
 
   constructor(private store: Store, private dialog: MatDialog) {
   }
 
+
+  // Update the PlannedMovieSession
   update(){
     const _clone = { ...this.session} as PlannedMovieSession
     const dialogRef = this.dialog.open(SessionDialog, {
@@ -38,21 +40,27 @@ export class PlannedMovieSessionComponent{
     })
   }
 
-
+  // Update the Ratings for the Movie and for the Session
   openRatingsMenu(){
-    const position = this.ratingsMenuPosition()
+    // Note : the position will be either left of right of 
+    // this component, the choice will ultimately be 
+    // that of the RatingDialog.
     const dialogRef = this.dialog.open(RatingDialog, {
       data: {
-        parentComponent: this.swItem,
+        anchor: this,
         movieRating: this.session.movie.rating,
         sessionRating: this.session.rating
       },
       backdropClass: 'rating-nobackdrop',
-      position: position
+      position: {
+        top: "0px",
+        left: "0px"
+      }
     })
   }
 
-
+  // Open the confirmation dialog, then delete this 
+  // PlannedMovieSession if confirmed
   confirmThenDelete(){
     const dialogRef = this.dialog.open(GenericPurposeDialog, {
       data: {
@@ -73,16 +81,12 @@ export class PlannedMovieSessionComponent{
   // ********** other utility methods ****************
   
   /**
-   * Compute the top and left offset for the 
-   * RatingDialog
+   * Exposes the dimensions of that Component
    */
-  private ratingsMenuPosition(): DialogPosition{
-    const {top, right} = this.swItem.dimensions
-    return {
-      top: `${top}px`,
-      left: `${right}px`
-    }
+  public get dimensions(): DOMRect{
+    return this._container.nativeElement.getBoundingClientRect()
   }
+
 
 }
 
