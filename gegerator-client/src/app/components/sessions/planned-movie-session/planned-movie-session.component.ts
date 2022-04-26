@@ -17,7 +17,7 @@ export class PlannedMovieSessionComponent{
 
   @Input() session!: PlannedMovieSession
 
-  @ViewChild('_container') private _container!: ElementRef 
+  @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
 
   constructor(private store: Store, private dialog: MatDialog) {
   }
@@ -47,7 +47,7 @@ export class PlannedMovieSessionComponent{
     // that of the RatingDialog.
     const dialogRef = this.dialog.open(RatingDialog, {
       data: {
-        anchor: this,
+        anchor: this._swlitem,
         movieRating: this.session.movie.rating,
         sessionRating: this.session.rating
       },
@@ -76,18 +76,6 @@ export class PlannedMovieSessionComponent{
       }
     })
   }
-
-
-  // ********** other utility methods ****************
-  
-  /**
-   * Exposes the dimensions of that Component
-   */
-  public get dimensions(): DOMRect{
-    return this._container.nativeElement.getBoundingClientRect()
-  }
-
-
 }
 
 

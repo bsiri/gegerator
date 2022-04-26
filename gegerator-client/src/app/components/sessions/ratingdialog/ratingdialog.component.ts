@@ -3,6 +3,7 @@ import { DialogPosition, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component';
+import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
 
 const DIALOG_PADDING_PX = 24
 
@@ -18,7 +19,7 @@ export class RatingDialog implements OnInit, AfterViewInit {
    * The Component where this dialog should be attached
    * (see ngAfterViewInit())
    */
-  private _anchor: PlannedMovieSessionComponent
+  private _anchor: SwimlaneItemComponent
 
 
   /**
@@ -80,7 +81,7 @@ export class RatingDialog implements OnInit, AfterViewInit {
 }
 
 export interface RatingsDialogModel{
-  anchor: PlannedMovieSessionComponent
+  anchor: SwimlaneItemComponent
   movieRating: MovieRating
   sessionRating: MovieSessionRatings
 }

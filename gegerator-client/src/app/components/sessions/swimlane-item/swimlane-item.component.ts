@@ -14,6 +14,8 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 })
 export class SwimlaneItemComponent implements OnInit{
 
+  @ViewChild('_container') private _container!: ElementRef
+
   /**
    * The item to plan, which must be a PlannableItem
    */
@@ -42,9 +44,21 @@ export class SwimlaneItemComponent implements OnInit{
    */
   @Output() requestContextMenu = new EventEmitter()
 
-  
+  /**
+   * Computed properties, used to determine the final
+   * rendering (see ngOnInit)
+   */
   heightInPixel: string = '0px'
   topPosInPixel: string = '0px'
+
+    
+  /**
+   * Exposes the final dimensions of that Component,
+   * after rendering
+   */
+   public get dimensions(): DOMRect{
+    return this._container.nativeElement.getBoundingClientRect()
+  }
 
 
   constructor() { }

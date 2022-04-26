@@ -1,6 +1,8 @@
 
 <ng-container *ngIf="!!item">
-    <div class="swimlane-item" 
+    <div
+        #_container 
+        class="swimlane-item" 
         [ngStyle]="{'height': heightInPixel, 'top': topPosInPixel}"
         (dblclick)="requestUpdate.emit()"
         (contextmenu)="emitRequestContextMenu()"
