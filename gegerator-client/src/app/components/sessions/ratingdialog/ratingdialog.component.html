@@ -1,14 +1,33 @@
 <div #_container>
     <fieldset>
         <legend>Avis Film :</legend>
-        <mat-radio-group aria-label="Select an option">
-            <mat-radio-button *ngFor="let rating of MovieRatings.enumerate()" [value]="rating" class="radiobtn--block">{{rating.description}}</mat-radio-button>
+        <mat-radio-group 
+            aria-label="Select an option"
+            (change)="updateMovieRating($event)">
+            
+            <mat-radio-button *ngFor="let mr of MovieRatings.enumerate()" 
+                [value]="mr" class="radiobtn--block"
+                [disableRipple]="true"
+                [checked]="mr == movieRating">
+                    {{mr.description}}
+            </mat-radio-button>
+
         </mat-radio-group>      
     </fieldset>
 
     <fieldset>
         <legend>Avis Session :</legend>
-        <p>yay !</p>
-        <p>nay !</p>
+        <mat-radio-group 
+            aria-label="Select an option"
+            (change)="updateSessionRating($event)">
+
+            <mat-radio-button *ngFor="let sr of MovieSessionRatings.enumerate()" 
+                [value]="sr" class="radiobtn--block"
+                [disableRipple]="true"
+                [checked]="sr == sessionRating">
+                    {{sr.description}}
+            </mat-radio-button>
+            
+        </mat-radio-group>    
     </fieldset>
 </div>

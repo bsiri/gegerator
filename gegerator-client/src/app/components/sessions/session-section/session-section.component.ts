@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
-import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
+import { MovieSession, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
@@ -79,7 +79,8 @@ export class SessionSectionComponent implements OnInit {
           newsession.movie.id,
           newsession.theater,
           newsession.day,
-          newsession.startTime
+          newsession.startTime,
+          MovieSessionRatings.DEFAULT
         )
         this.store.dispatch(SessionActions.create_session({session: movieSession}))
       }

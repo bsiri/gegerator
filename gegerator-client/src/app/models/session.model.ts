@@ -83,14 +83,27 @@ export class PlannedMovieSession implements PlannableItem{
     }
 
     toMovieSession(){
-        return {
-            id: this.id,
-            movieId: this.movie.id,
-            theater: this.theater,
-            day: this.day,
-            startTime: this.startTime,
-            rating: this.rating
-        }
+        return new MovieSession(
+            this.id,
+            this.movie.id,
+            this.theater,
+            this.day,
+            this.startTime,
+            this.rating
+        )
+    }
+
+    copy(modifiers = {}): PlannedMovieSession{
+        const _clone = new PlannedMovieSession(
+            this.id,
+            this.movie,
+            this.theater,
+            this.day,
+            this.startTime,
+            this.rating
+        )
+        Object.assign(_clone, modifiers)
+        return _clone
     }
 }
 

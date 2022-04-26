@@ -7,6 +7,8 @@ import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 import { RatingDialog } from '../ratingdialog/ratingdialog.component';
 import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
+import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
+import { Movie } from 'src/app/models/movie.model';
 
 @Component({
   selector: 'app-planned-movie-session',
@@ -25,17 +27,16 @@ export class PlannedMovieSessionComponent{
 
   // Update the PlannedMovieSession
   update(){
-    const _clone = { ...this.session} as PlannedMovieSession
     const dialogRef = this.dialog.open(SessionDialog, {
       autoFocus: 'first-tabbable',
-      data: _clone
+      data: this.session.copy()
     })
 
     dialogRef.afterClosed().subscribe(updatedSessionData =>{
       if (! updatedSessionData){
         return 
       }
-      const session = _toMovieSession(updatedSessionData)
+      const session = updatedSessionData.toMovieSession()
       this.store.dispatch(SessionActions.update_session({session}))
     })
   }
@@ -57,6 +58,28 @@ export class PlannedMovieSessionComponent{
         left: "0px"
       }
     })
+
+    // Reading the result straight from the dialog content
+    // (remember that this dialog is blur only, so the API doesn't
+    // allow to set a result).
+    // Then update the movie/session rating if changed.
+    dialogRef.afterClosed().subscribe((whatever) =>{
+      const content = dialogRef.componentInstance
+      const [newMovieRating, newSessionRating] = [content.movieRating, content.sessionRating]
+
+      const movie = this.session.movie
+      if (movie.rating !== newMovieRating){
+        const modifiedMovie = movie.copy({rating: newMovieRating})
+        this.store.dispatch(MovieActions.update_movie({movie: modifiedMovie}))
+      }
+
+      const plannedSession = this.session
+      if (plannedSession.rating != newSessionRating){
+        const session = plannedSession.copy({rating: newSessionRating})
+                                      .toMovieSession()
+        this.store.dispatch(SessionActions.update_session({session}))
+      }
+    })
   }
 
   // Open the confirmation dialog, then delete this 
@@ -71,22 +94,10 @@ export class PlannedMovieSessionComponent{
 
     dialogRef.afterClosed().subscribe(response =>{
       if (response == ConfirmOutput.CONFIRM){
-        const session = _toMovieSession(this.session)
+        const session: MovieSession = this.session.toMovieSession()
         this.store.dispatch(SessionActions.delete_session({session}))  
       }
     })
   }
-}
-
-
-function _toMovieSession(pms: PlannedMovieSession): MovieSession{
-  const session = new MovieSession(
-      pms.id, 
-      pms.movie.id,
-      pms.theater,
-      pms.day,
-      pms.startTime
-  )
-  return session
 }
 

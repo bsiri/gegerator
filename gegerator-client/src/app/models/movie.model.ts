@@ -26,7 +26,20 @@ export class Movie{
       MovieRatings.fromKey(json.rating)
     )
   }
+
+  copy(modifiers = {}): Movie{
+    const _clone = new Movie(
+      this.id,
+      this.title,
+      this.duration, 
+      this.rating
+    )
+    Object.assign(_clone, modifiers)
+    return _clone
+  }
+
 }
+
 
 
 export interface MovieJSON{
