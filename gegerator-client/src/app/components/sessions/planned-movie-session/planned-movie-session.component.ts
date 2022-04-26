@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { DialogPosition, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/genericpurposedialog.component';
-import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
+import { RatingDialog } from '../ratingdialog/ratingdialog.component';
+import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
 
 @Component({
   selector: 'app-planned-movie-session',
@@ -15,6 +16,8 @@ import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 export class PlannedMovieSessionComponent{
 
   @Input() session!: PlannedMovieSession
+
+  @ViewChild(SwimlaneItemComponent) viewRef!: SwimlaneItemComponent 
 
   constructor(private store: Store, private dialog: MatDialog) {
   }
@@ -35,6 +38,18 @@ export class PlannedMovieSessionComponent{
     })
   }
 
+
+  openRatingsMenu(){
+    const position = this.ratingsMenuPosition()
+    const _clone = { ...this.session} as PlannedMovieSession
+    const dialogRef = this.dialog.open(RatingDialog, {
+      data: _clone,
+      backdropClass: 'rating-nobackdrop',
+      position: position
+    })
+  }
+
+
   confirmThenDelete(){
     const dialogRef = this.dialog.open(GenericPurposeDialog, {
       data: {
@@ -51,7 +66,25 @@ export class PlannedMovieSessionComponent{
     })
   }
 
+
+  // ********** other utility methods ****************
+  
+  /**
+   * Compute the top and left offset for the 
+   * RatingDialog
+   */
+  private ratingsMenuPosition(): DialogPosition{
+    const viewDims = this.viewRef.dimensions
+    const top = viewDims.top
+    const left = viewDims.left + viewDims.width
+    return {
+      top: `${top}px`,
+      left: `${left}px`
+    }
+  }
+
 }
+
 
 function _toMovieSession(pms: PlannedMovieSession): MovieSession{
   const session = new MovieSession(

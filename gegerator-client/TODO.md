@@ -19,6 +19,7 @@ b - appréciation séance
 
 4. Menu click-droit pour éditer les contraintes depuis les 
   sessions
+  Voir ce qu'on peut faire avec : https://github.com/angular/components/issues/5007#issuecomment-315645280
 
 5. Préparer les pictos et styles pour les contraintes et 
   modifier les reducers etc pour intégrer tout ça dans le rendering

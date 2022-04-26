@@ -1,1 +1,0 @@
-Create a common directive for PlannedMovieSession and OtherActivity ?

@@ -39,6 +39,7 @@ import { SwimlaneItemComponent } from './components/sessions/swimlane-item/swiml
 import { Activitydialog } from './components/sessions/activitydialog/activitydialog.component';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { AppStateEffects } from './ngrx/effects/appstate.effects';
+import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { AppStateEffects } from './ngrx/effects/appstate.effects';
     SwimlaneItemComponent,
     Activitydialog,
     UploadDialog,
+    RatingDialog,
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import {  Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { PlannableItem } from 'src/app/models/plannable.model';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
@@ -13,6 +13,8 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
   styleUrls: ['./swimlane-item.component.scss']
 })
 export class SwimlaneItemComponent implements OnInit{
+
+  @ViewChild('swimlaneItemContainer') container!: ElementRef
 
   /**
    * The item to plan, which must be a PlannableItem
@@ -32,9 +34,37 @@ export class SwimlaneItemComponent implements OnInit{
    */
   @Output() requestDelete = new EventEmitter()
 
+  /**
+   * Requests that a context menu of some sort 
+   * to be opened. Triggered when 
+   * right clicking on the component.
+   * 
+   * Note : the original right-click event will 
+   * also be neutralized.
+   */
+  @Output() requestContextMenu = new EventEmitter()
+
   
   heightInPixel: string = '0px'
   topPosInPixel: string = '0px'
+
+  /**
+   * Computed dimensions, because I need to export them
+   * for consumption by PlanedMovieSessionComponent.
+   * 
+   * Note : they are relative to the viewport (they 
+   * account for the scrolling).
+   */
+  get dimensions(): SwimlaneItemDimensions{
+    const rect = this.container.nativeElement.getBoundingClientRect()
+    return {
+      top: rect.top + window.scrollX, 
+      left: rect.left + window.screenY, 
+      height: rect.height, 
+      width: rect.width
+    }   
+  }
+
 
   constructor() { }
 
@@ -56,4 +86,23 @@ export class SwimlaneItemComponent implements OnInit{
     this.topPosInPixel = ''+SESSION_DAY_BOUNDARIES.offsetFromDayBeginInPixel(startTime)+'px' 
   }
 
+
+  emitRequestContextMenu(){
+    this.requestContextMenu.emit()
+    // kill the event propagation; 
+    // stopPropagation() and stopImmediatePropagation() wont work
+    return false
+  }
+
+}
+
+/*
+  Subset of a DomRect element,
+  all units are expressed in pixels
+*/
+export interface SwimlaneItemDimensions{
+  top: number
+  left: number,
+  width: number,
+  height: number
 }
