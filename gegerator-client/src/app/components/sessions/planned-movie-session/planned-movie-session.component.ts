@@ -74,12 +74,10 @@ export class PlannedMovieSessionComponent{
    * RatingDialog
    */
   private ratingsMenuPosition(): DialogPosition{
-    const viewDims = this.viewRef.dimensions
-    const top = viewDims.top
-    const left = viewDims.left + viewDims.width
+    const {top, right} = this.viewRef.dimensions
     return {
       top: `${top}px`,
-      left: `${left}px`
+      left: `${right}px`
     }
   }
 

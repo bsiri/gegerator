@@ -4,8 +4,8 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
 /*
   Abstract class for PlannedMovieSessionComponent and OtherActivityComponent.
-
-  This class has an awkward plumbing
+  Its main job is to compute its dimensions and position within its swimlane, 
+  based on the start time and duration of the Plannable it represents.
 */
 @Component({
   selector: 'app-swimlane-item',
@@ -51,18 +51,9 @@ export class SwimlaneItemComponent implements OnInit{
   /**
    * Computed dimensions, because I need to export them
    * for consumption by PlanedMovieSessionComponent.
-   * 
-   * Note : they are relative to the viewport (they 
-   * account for the scrolling).
    */
-  get dimensions(): SwimlaneItemDimensions{
-    const rect = this.container.nativeElement.getBoundingClientRect()
-    return {
-      top: rect.top + window.scrollX, 
-      left: rect.left + window.screenY, 
-      height: rect.height, 
-      width: rect.width
-    }   
+  get dimensions(): DOMRect{
+    return this.container.nativeElement.getBoundingClientRect()
   }
 
 
@@ -94,15 +85,4 @@ export class SwimlaneItemComponent implements OnInit{
     return false
   }
 
-}
-
-/*
-  Subset of a DomRect element,
-  all units are expressed in pixels
-*/
-export interface SwimlaneItemDimensions{
-  top: number
-  left: number,
-  width: number,
-  height: number
 }
