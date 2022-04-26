@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import {MatSidenavModule} from '@angular/material/sidenav'; 
 import {MatSelectModule} from '@angular/material/select'; 
 import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
+import {MatRadioModule} from '@angular/material/radio'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
@@ -76,7 +77,8 @@ import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.co
     MatInputModule,
     MatSidenavModule,
     MatSelectModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatRadioModule
   ],
   providers: [
     httpInterceptorProviders

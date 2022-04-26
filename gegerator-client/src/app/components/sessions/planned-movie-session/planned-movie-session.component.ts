@@ -17,7 +17,7 @@ export class PlannedMovieSessionComponent{
 
   @Input() session!: PlannedMovieSession
 
-  @ViewChild(SwimlaneItemComponent) viewRef!: SwimlaneItemComponent 
+  @ViewChild(SwimlaneItemComponent) swItem!: SwimlaneItemComponent 
 
   constructor(private store: Store, private dialog: MatDialog) {
   }
@@ -41,9 +41,12 @@ export class PlannedMovieSessionComponent{
 
   openRatingsMenu(){
     const position = this.ratingsMenuPosition()
-    const _clone = { ...this.session} as PlannedMovieSession
     const dialogRef = this.dialog.open(RatingDialog, {
-      data: _clone,
+      data: {
+        parentComponent: this.swItem,
+        movieRating: this.session.movie.rating,
+        sessionRating: this.session.rating
+      },
       backdropClass: 'rating-nobackdrop',
       position: position
     })
@@ -74,7 +77,7 @@ export class PlannedMovieSessionComponent{
    * RatingDialog
    */
   private ratingsMenuPosition(): DialogPosition{
-    const {top, right} = this.viewRef.dimensions
+    const {top, right} = this.swItem.dimensions
     return {
       top: `${top}px`,
       left: `${right}px`
@@ -94,3 +97,4 @@ function _toMovieSession(pms: PlannedMovieSession): MovieSession{
   )
   return session
 }
+

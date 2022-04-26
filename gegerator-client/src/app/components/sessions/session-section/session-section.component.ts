@@ -21,7 +21,7 @@ export class SessionSectionComponent implements OnInit {
 
 
   /*
-    Redeclaring Days and Theaters as properties of this Component
+    "Importing" Days and Theaters as properties of this Component
     allow for using them in the template.
   */
   Days = Days
