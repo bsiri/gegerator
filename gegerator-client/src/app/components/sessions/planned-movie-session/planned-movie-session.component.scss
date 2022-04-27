@@ -1,3 +1,45 @@
 .rating-nobackdrop{
     // purpsefully empty
 }
+
+.picto-container{
+    margin-top: 1em;
+}
+
+.picto{
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    margin-right: 4px;
+}
+
+.picto.movie-highest{
+    background-image: url('/assets/thumbup-double.png');
+    width: 48px;
+}
+
+.movie-high{
+    background-image: url('/assets/thumbup.png');
+}
+
+.movie-default{
+    // purposedly empty
+}
+
+.movie-never{
+    background-image: url('/assets/thumbdown.png');
+}
+
+.session-mandatory{
+    background-image: url('/assets/target.png');
+}
+
+.session-default{
+    // purposedly empty
+}
+
+.session-never{
+    background-image: url('/assets/stop.png');
+}

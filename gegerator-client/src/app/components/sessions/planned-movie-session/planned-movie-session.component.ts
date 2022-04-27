@@ -8,6 +8,8 @@ import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 import { RatingDialog } from '../ratingdialog/ratingdialog.component';
 import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
+import { MovieRatings } from 'src/app/models/movie.model';
+
 
 @Component({
   selector: 'app-planned-movie-session',
@@ -23,6 +25,20 @@ export class PlannedMovieSessionComponent{
   constructor(private store: Store, private dialog: MatDialog) {
   }
 
+
+  // *********** pictos & styles **************
+
+  get movieRatingClass(): string{
+    const rating = this.session.movie.rating.key.toLowerCase()
+    return `movie-${rating}`
+  }
+
+  get sessionRatingClass(): string{
+    const rating = this.session.rating.key.toLocaleLowerCase()
+    return `session-${rating}`    
+  }
+
+  // *********** data update ******************
 
   // Update the PlannedMovieSession
   update(){

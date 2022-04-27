@@ -19,11 +19,14 @@ b - appréciation séance
 
 4. Menu click-droit pour éditer les contraintes depuis les 
   sessions
+==> Done
 
 
 5. Préparer les pictos et styles pour les contraintes et 
   modifier les reducers etc pour intégrer tout ça dans le rendering
   d'une séance.
+
+
 
 6. Panel récapitulatif des contraintes
 

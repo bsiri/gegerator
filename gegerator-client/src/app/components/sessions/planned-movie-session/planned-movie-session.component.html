@@ -5,4 +5,10 @@
     (requestDelete)="confirmThenDelete()"
     (requestContextMenu)="openRatingsMenu()"
 >
+    <!-- pictos -->
+    <div class="picto-container">
+        <span *ngIf="session.movie.rating.key != 'DEFAULT'" [ngClass]="['picto', movieRatingClass]"></span>
+        <span [ngClass]="sessionRatingClass" class="picto"></span>
+    </div>
+    <!-- /pictos -->
 </app-swimlane-item>
