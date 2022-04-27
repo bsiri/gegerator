@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Movie } from 'src/app/models/movie.model';
+import { Movie, MovieRating } from 'src/app/models/movie.model';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Durations } from 'src/app/models/time.utils';
 
@@ -13,11 +13,12 @@ const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 })
 export class MovieDialog implements OnInit {
 
-  // note: the ID is never modified by this form, 
+  // note: the following attributes are never modified by this form, 
   // however we must remember it because enventually
   // we will need to re-emit a Movie with 
   // updated data on it
   id: number;
+  rating: MovieRating;
   formGroup: FormGroup;
 
   constructor(
@@ -25,6 +26,7 @@ export class MovieDialog implements OnInit {
     @Inject(MAT_DIALOG_DATA) movie: Movie
   ) { 
     this.id = movie.id;
+    this.rating = movie.rating;
     this.formGroup = new FormGroup({
       title: new FormControl(movie.title, [
         Validators.required
@@ -43,7 +45,8 @@ export class MovieDialog implements OnInit {
     return new Movie(
       this.id,
       this.formGroup.get('title')!.value,
-      Durations.fromString(this.formGroup.get('duration')!.value)
+      Durations.fromString(this.formGroup.get('duration')!.value),
+      this.rating
     )
   }
 

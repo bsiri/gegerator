@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { map, Observable, startWith } from 'rxjs';
 import { Movie } from 'src/app/models/movie.model';
 import { Days, Theaters } from 'src/app/models/referential.data';
-import { PlannedMovieSession } from 'src/app/models/session.model';
+import { MovieSessionRating, PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
@@ -17,11 +17,12 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 })
 export class SessionDialog implements OnInit {
 
-  // note: the ID is never modified by this form, 
+  // note: these attributes are never modified by this form, 
   // however we must remember it because enventually
   // we will need to re-emit a Session with 
   // updated data on it
   id: number;
+  rating: MovieSessionRating
   formGroup!: FormGroup;
 
 
@@ -41,6 +42,7 @@ export class SessionDialog implements OnInit {
       this.store.select(selectMovieslist).subscribe(movies => this.availableMovies = movies)
 
       this.id = session.id
+      this.rating = session.rating
 
       const title = session.movie?.title 
       const strStartTime = Times.toString(session.startTime)
@@ -134,7 +136,8 @@ export class SessionDialog implements OnInit {
       movie, 
       theater, 
       day, 
-      startTime
+      startTime,
+      this.rating
     )
   }
 
