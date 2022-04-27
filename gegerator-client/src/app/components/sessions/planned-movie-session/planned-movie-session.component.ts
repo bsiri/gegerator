@@ -8,7 +8,6 @@ import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 import { RatingDialog } from '../ratingdialog/ratingdialog.component';
 import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
-import { Movie } from 'src/app/models/movie.model';
 
 @Component({
   selector: 'app-planned-movie-session',
@@ -67,18 +66,20 @@ export class PlannedMovieSessionComponent{
       const content = dialogRef.componentInstance
       const [newMovieRating, newSessionRating] = [content.movieRating, content.sessionRating]
 
-      const movie = this.session.movie
-      if (movie.rating !== newMovieRating){
-        const modifiedMovie = movie.copy({rating: newMovieRating})
-        this.store.dispatch(MovieActions.update_movie({movie: modifiedMovie}))
-      }
-
       const plannedSession = this.session
       if (plannedSession.rating != newSessionRating){
         const session = plannedSession.copy({rating: newSessionRating})
                                       .toMovieSession()
         this.store.dispatch(SessionActions.update_session({session}))
       }
+
+      
+      const movie = this.session.movie
+      if (movie.rating !== newMovieRating){
+        const modifiedMovie = movie.copy({rating: newMovieRating})
+        this.store.dispatch(MovieActions.update_movie({movie: modifiedMovie}))
+      }
+
     })
   }
 

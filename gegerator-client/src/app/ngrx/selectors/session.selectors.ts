@@ -33,7 +33,7 @@ export const selectPlannedMovieSession = createSelector(
         const plannedSessions = sessions
             .filter(s => allMovieIds.includes(s.movieId))
             .map(s =>
-                new PlannedMovieSession(s.id, indexedMovies[s.movieId], s.theater, s.day, s.startTime)
+                new PlannedMovieSession(s.id, indexedMovies[s.movieId], s.theater, s.day, s.startTime, s.rating)
             );
         return plannedSessions;
 });
