@@ -28,7 +28,9 @@ b - appréciation séance
 
 6. Panel récapitulatif des contraintes.
   Les liens des contraintes, quand ça a du sens, doivent
-  être cliquables.
+  être cliquables, et alors la vue doit scroller jusqu'à
+  l'item correspondant.
+
 
 7. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
@@ -50,8 +52,12 @@ b - appréciation séance
   * Exporter les sélections manuelles
 
 9. Ajouter des tests jasmine/protractor,
-  packager l'appli,
-  Faire un petit message console pour dire quand c'est prêt.
+  
+10. Finitions:
+- packager l'appli,
+- écrire la doc,
+- au démarrage faire un petit message console pour dire 
+- quand c'est prêt.
 
 
 ## Features à envisager
@@ -70,3 +76,4 @@ b - appréciation séance
   que les films choisis.
 
 - Ajouter au boutonmenu Export : Exporter
+

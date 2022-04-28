@@ -54,7 +54,7 @@ $color-high: color.scale($color-highest, $lightness: +50%);
         border-color: red;
     }
 
-    &.movie-never, &.session-neve, &.disabled{
+    &.movie-never, &.session-never, &.disabled{
         border-style: dashed;
         background-color: lightgray !important;
         opacity: 0.5;
