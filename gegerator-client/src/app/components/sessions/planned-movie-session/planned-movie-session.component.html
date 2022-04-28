@@ -1,6 +1,7 @@
 
 <app-swimlane-item
     [item]="session"
+    [extraClasses]="[movieRatingClass, sessionRatingClass]"
     (requestUpdate)="update()"
     (requestDelete)="confirmThenDelete()"
     (requestContextMenu)="openRatingsMenu()"

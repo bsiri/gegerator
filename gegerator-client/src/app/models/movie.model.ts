@@ -71,7 +71,7 @@ export class MovieRatings{
   static DEFAULT: MovieRating = { 
     key: "DEFAULT", 
     name: "Normale",
-    description: "Je veux bien voir ce film, si on a rien d'autre à faire"
+    description: "Je veux bien voir ce film, si on n'a rien d'autre à faire"
   };
   static NEVER: MovieRating = { 
     key: "NEVER", 

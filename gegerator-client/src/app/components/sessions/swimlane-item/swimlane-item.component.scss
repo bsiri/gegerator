@@ -1,4 +1,9 @@
 @use  "../../../../_variables" as *;
+@use "sass:color";
+
+
+$color-highest: #93C572;
+$color-high: color.scale($color-highest, $lightness: +50%);
 
 .swimlane-item{
     /*
@@ -22,7 +27,7 @@
     left: 2px;
     right: 2px;
 
-    // default bordering
+    // default bordering and background
     border: 3px solid black;
     background-color: white;
 
@@ -33,11 +38,28 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-}
 
-.default{
-    border: 3px solid black;
-    background-color: white;
+// ********* movierating and sessionrating styles *****
+
+    &.movie-highest{
+        background-color: $color-highest;
+    }
+
+    &.movie-high{
+        background-color: $color-high;
+    }
+
+    &.session-mandatory{
+        border-width: 6px;
+        border-color: red;
+    }
+
+    &.movie-never, &.session-neve, &.disabled{
+        border-style: dashed;
+        background-color: lightgray !important;
+        opacity: 0.5;
+    }
+
 }
 
 /*

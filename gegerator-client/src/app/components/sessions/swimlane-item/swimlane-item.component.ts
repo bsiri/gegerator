@@ -20,7 +20,13 @@ export class SwimlaneItemComponent implements OnInit{
    * The item to plan, which must be a PlannableItem
    */
   @Input() item!: PlannableItem
+
+  /**
+   * Extra css classes
+   */
+  @Input() extraClasses: string[] = []
   
+
   /**
    * Requests the model objet to be updated. 
    * It is triggered when the component is doubleclicked.

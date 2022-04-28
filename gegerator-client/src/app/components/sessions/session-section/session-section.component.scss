@@ -3,7 +3,10 @@
 
 #sessions-mainview{
     display: flex;
-    justify-content: center;
+    justify-content: center;        
+    background-color: khaki;
+
+
 
     .sessions--center{
         flex: 0.7 0 min-content;
@@ -11,7 +14,6 @@
     
     .session-day{
         margin: 8px 0;
-        background-color: green;
         
         display: flex;
         align-items: center;
