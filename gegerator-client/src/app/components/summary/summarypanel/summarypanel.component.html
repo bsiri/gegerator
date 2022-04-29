@@ -1,0 +1,21 @@
+
+<div *ngFor="let entry of moviesByRating | async | keyvalue">
+    <label>{{entry.key.description}} :</label>
+    <ul>
+        <li *ngFor="let movie of entry.value">{{movie.title}}</li>
+    </ul>
+</div>
+
+<div *ngFor="let entry of sessionsByRating | async | keyvalue">
+    <label>{{entry.key.description}} :</label>
+    <ul>
+        <li *ngFor="let session of entry.value">{{session.toString()}}</li>
+    </ul>
+</div>
+
+<div>
+    <label>Autres trucs prévus :</label>
+    <ul>
+        <li *ngFor="let act of activities | async">{{act.toString()}}</li>
+    </ul>
+</div>

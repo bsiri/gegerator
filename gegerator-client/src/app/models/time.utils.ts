@@ -110,6 +110,14 @@ export namespace Times{
     export function toMinutes(time: Time): number{
         return time.hours*60 + time.minutes
     }
+
+    export function compare(time1: Time, time2: Time){
+        return toMinutes(time1) - toMinutes(time2)
+    }
+
+    export function toStrInterval(start: Time, end: Time){
+        return `${toString(start)} - ${toString(end)}`
+    }
 }
 
 

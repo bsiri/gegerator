@@ -18,6 +18,10 @@ export class OtherActivity implements PlannableItem{
         return this.description
     }
 
+    public toString(): string{
+        return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)} : ${this.description}`
+    }
+
     // ********* JSON interface **********
 
     toJSON(): OtherActivityJSON{

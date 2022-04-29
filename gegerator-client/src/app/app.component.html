@@ -5,7 +5,7 @@
             <span id="app-title">Gegerator</span>
             <div id="app-buttonbar">
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
-                <button mat-raised-button color="primary" (click)="appcontraints.toggle()">Contraintes &gt;</button>
+                <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
                 <a mat-raised-button color="primary" href="/gegerator/app-state?format=file">Sauver</a>
                 <button mat-raised-button color="primary" (click)="uploadAppState()">Charger</button>
             </div>
@@ -23,11 +23,11 @@
             <app-session-section></app-session-section>
         </mat-sidenav-content>  
 
-        <mat-sidenav id="app-constraints" 
-            #appcontraints 
+        <mat-sidenav id="app-summary" 
+            #appsummary 
             position="end"
             disableClose="true">
-            <p>TODO : les contraintes</p>
+            <app-summarypanel></app-summarypanel>
         </mat-sidenav>      
     </mat-sidenav-container>
 

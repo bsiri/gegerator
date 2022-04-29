@@ -41,6 +41,7 @@ import { Activitydialog } from './components/sessions/activitydialog/activitydia
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { AppStateEffects } from './ngrx/effects/appstate.effects';
 import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.component';
+import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.co
     Activitydialog,
     UploadDialog,
     RatingDialog,
+    SummarypanelComponent,
   ],
   imports: [
     BrowserModule,

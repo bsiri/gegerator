@@ -82,6 +82,10 @@ export class PlannedMovieSession implements PlannableItem{
         return this.movie?.title ?? ''
     }
 
+    public toString(): string{
+        return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)} : ${this.movie.title}`
+    }
+
     toMovieSession(){
         return new MovieSession(
             this.id,
