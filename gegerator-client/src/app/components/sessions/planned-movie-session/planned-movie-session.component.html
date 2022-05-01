@@ -7,9 +7,9 @@
     (requestContextMenu)="openRatingsMenu()"
 >
     <!-- pictos -->
-    <div class="picto-container">
-        <span *ngIf="session.movie.rating.key != 'DEFAULT'" [ngClass]="['picto', movieRatingClass]"></span>
-        <span [ngClass]="sessionRatingClass" class="picto"></span>
+    <div class="icon-container">
+        <app-movie-ratings [rating]="session.movie.rating"></app-movie-ratings>
+        <app-session-ratings [rating]="session.rating"></app-session-ratings>
     </div>
     <!-- /pictos -->
 </app-swimlane-item>

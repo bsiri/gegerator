@@ -40,3 +40,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
         margin-right: 8px;
     }   
 }
+
+.icon{
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    margin-right: 4px;
+}

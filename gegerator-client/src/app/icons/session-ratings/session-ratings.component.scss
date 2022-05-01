@@ -1,0 +1,11 @@
+.session-mandatory{
+    background-image: url('/assets/target.png');
+}
+
+.session-default{
+    // purposedly empty
+}
+
+.session-never{
+    background-image: url('/assets/stop.png');
+}

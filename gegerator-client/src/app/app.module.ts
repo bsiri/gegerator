@@ -44,6 +44,8 @@ import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.co
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
 import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
+import { MovieRatingsComponent } from './icons/movie-ratings/movie-ratings.component';
+import { SessionRatingsComponent } from './icons/session-ratings/session-ratings.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
     SummarypanelComponent,
     OrderByLowercasePipe,
     OrderByComparablePipe,
+    MovieRatingsComponent,
+    SessionRatingsComponent,
   ],
   imports: [
     BrowserModule,

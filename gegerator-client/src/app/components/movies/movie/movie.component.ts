@@ -38,7 +38,7 @@ export class MovieComponent implements OnInit {
   confirmThenDelete(): void{
     const dialogRef = this.dialog.open(GenericPurposeDialog, {
       data: {
-        html: `Vraiment supprimer ce film : ${this.movie.title} ? <br/> Toutes les seances et contraintes liées vont sauter aussi !`,
+        html: `Vraiment supprimer ce film : ${this.movie.title} ? <br/> Toutes les seances liées vont sauter aussi !`,
         type: "confirm"
       }
     });
