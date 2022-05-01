@@ -59,27 +59,34 @@ export class RatingDialog implements OnInit, AfterViewInit {
   ngOnInit(): void {
   }
 
-  // Repositions the RatingDialog either immediately to 
-  // the right of the parent PlannedMovieSessionComponent
-  // if possible, or to the left if the dialog would overflow
-  // the screen.
+  // Repositions the RatingDialog either immediately if needed 
+  // to ensure that the menu can be rendered in full, ie wont 
+  // be clipped by the bottom or right side of the viewport.
   ngAfterViewInit(): void {
     const myDims = this._container.nativeElement.getBoundingClientRect()
     const anchorDims= this._anchor.dimensions
 
-    let ntop=0, left = 0
+    let ntop=0, nleft = 0
+    // if the menu fits in the window, position it to the right of 
+    // the anchor, or to the left if it overflows on y axis
     if (anchorDims.right + myDims.width < window.innerWidth){
-      ntop = anchorDims.top
-      left = anchorDims.right
+      nleft = anchorDims.right
     }
     else{
+      nleft = anchorDims.left - myDims.width - (2*DIALOG_PADDING_PX)
+    }
+
+    // same logic for the top attribute
+    if (anchorDims.top + myDims.height < window.innerHeight){
       ntop = anchorDims.top
-      left = anchorDims.left - myDims.width - (2*DIALOG_PADDING_PX)
+    }
+    else{
+      ntop = anchorDims.bottom - myDims.height - (2*DIALOG_PADDING_PX)
     }
 
     const newPos: DialogPosition = {
       top: `${ntop}px`, 
-      left: `${left}px`
+      left: `${nleft}px`
     } 
 
     this.dialogRef.updatePosition(newPos)
