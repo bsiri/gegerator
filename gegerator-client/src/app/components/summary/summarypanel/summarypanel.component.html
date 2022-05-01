@@ -1,30 +1,39 @@
 
-<div *ngFor="let entry of moviesForRatings | async | orderByComparable:'rating'">
-    <label>{{entry.rating.description}} :</label>
-    <ul>
-        <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">{{movie.title}}</li>
-        <li *ngIf="entry.movies.length == 0">(Aucun)</li>
-    </ul>
-</div>
 
-<div *ngFor="let entry of sessionsForRatings | async | orderByComparable:'rating'">
-    <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
-    <label>{{entry.rating.description}} :</label>
-    <ul>
-        <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
-            <a [href]="'#'+session.htmlId">{{session.toString()}}</a>
-        </li>
-        <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
-    </ul>
-    </ng-container>
-</div>
+<div class="summary-panel">
+    <h1>Récap des films :</h1>
+    <div *ngFor="let entry of moviesForRatings | async | orderByComparable:'rating'">
+        <h3>{{entry.rating.description}} :</h3>
+        <ul>
+            <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">{{movie.title}}</li>
+            <li *ngIf="entry.movies.length == 0">(Aucun)</li>
+        </ul>
+    </div>
 
-<div>
-    <label>Autres trucs prévus :</label>
-    <ul>
-        <li *ngFor="let act of activities | async | orderByComparable:'day':'startTime'">
-            <a [href]="'#'+act.htmlId">{{act.toString()}}</a>
-        </li>
-        <li *ngIf="(activities | async)?.length == 0">(Aucun)</li>
-    </ul>
+    <hr/>
+
+    <h1>Récap des sessions :</h1>
+    <div *ngFor="let entry of sessionsForRatings | async | orderByComparable:'rating'">
+        <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
+        <h3>{{entry.rating.description}} :</h3>
+        <ul>
+            <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
+                <a [href]="'#'+session.htmlId">{{session.toString()}}</a>
+            </li>
+            <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
+        </ul>
+        </ng-container>
+    </div>
+
+    <hr/>
+
+    <div>
+        <h1>Autres trucs prévus :</h1>
+        <ul>
+            <li *ngFor="let act of activities | async | orderByComparable:'day':'startTime'">
+                <a [href]="'#'+act.htmlId">{{act.toString()}}</a>
+            </li>
+            <li *ngIf="(activities | async)?.length == 0">(Aucun)</li>
+        </ul>
+    </div>
 </div>
