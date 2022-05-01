@@ -16,6 +16,12 @@ export class OtherActivity implements PlannableItem{
     public get name(){
         return this.description
     }
+    
+    // implements : PlannableItem.htmlId
+    public get htmlId(){
+        return `other-activity-${this.id}`
+    }
+
 
     public toString(): string{
         return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)} : ${this.description}`

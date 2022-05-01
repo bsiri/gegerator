@@ -11,8 +11,10 @@
     <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
     <label>{{entry.rating.description}} :</label>
     <ul>
-        <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">{{session.toString()}}</li>
-        <p *ngIf="entry.sessions.length == 0">(Aucun)</p>
+        <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
+            <a [href]="'#'+session.htmlId">{{session.toString()}}</a>
+        </li>
+        <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
     </ul>
     </ng-container>
 </div>
@@ -20,6 +22,9 @@
 <div>
     <label>Autres trucs prévus :</label>
     <ul>
-        <li *ngFor="let act of activities | async | orderByComparable:'day':'startTime'">{{act.toString()}}</li>
+        <li *ngFor="let act of activities | async | orderByComparable:'day':'startTime'">
+            <a [href]="'#'+act.htmlId">{{act.toString()}}</a>
+        </li>
+        <li *ngIf="(activities | async)?.length == 0">(Aucun)</li>
     </ul>
 </div>

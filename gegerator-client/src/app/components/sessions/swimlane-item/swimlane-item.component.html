@@ -2,6 +2,7 @@
 <ng-container *ngIf="!!item">
     <div
         #_container 
+        [id]="item.htmlId"
         [ngClass]="['swimlane-item'].concat(extraClasses)" 
         [ngStyle]="{'height': heightInPixel, 'top': topPosInPixel}"
         (dblclick)="requestUpdate.emit()"

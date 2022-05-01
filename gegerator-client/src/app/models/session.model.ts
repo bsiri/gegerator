@@ -75,6 +75,10 @@ export class PlannedMovieSession implements PlannableItem{
         return Times.add(this.startTime, this.movie.duration)   
     }
 
+    // implements/provides : PlannableItem.htmlId
+    public get htmlId(){
+        return `planned-movie-session-${this.id}`
+    }
     
     // implements/provides: PlannableItem.name
     public get name(){

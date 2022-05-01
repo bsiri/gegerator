@@ -11,6 +11,7 @@ export interface PlannableItem{
     day: Day;
     startTime: Time;
     endTime: Time;
+    htmlId: string;
 }
 
 export namespace PlannableItems{
