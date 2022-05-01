@@ -45,6 +45,7 @@ import { SummarypanelComponent } from './components/summary/summarypanel/summary
 import { OrderByDateTimePipe } from './pipes/order-by-date-time.pipe';
 import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
 import { OrderByRatingPipe } from './pipes/order-by-rating.pipe';
+import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { OrderByRatingPipe } from './pipes/order-by-rating.pipe';
     OrderByDateTimePipe,
     OrderByLowercasePipe,
     OrderByRatingPipe,
+    OrderByComparablePipe,
   ],
   imports: [
     BrowserModule,

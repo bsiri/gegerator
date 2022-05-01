@@ -1,7 +1,7 @@
 import { Time } from "@angular/common";
 import { Movie } from "./movie.model";
 import { PlannableItem } from "./plannable.model";
-import { Day, Days, Theater, Theaters } from "./referential.data";
+import { Comparable, Day, Days, Theater, Theaters } from "./referential.data";
 import { Times } from "./time.utils";
 
 
@@ -113,32 +113,38 @@ export class PlannedMovieSession implements PlannableItem{
 
 // *********** "Enum" MovieSessionRating (see referential.data.ts for explanations) **************
 
-export interface MovieSessionRating{
-    key: string, 
-    rank: number,
-    name: string,
-    description: string
+export class MovieSessionRating implements Comparable<MovieSessionRating>{
+    constructor(
+        public key: string, 
+        public rank: number,
+        public name: string,
+        public description: string
+    ){}
+
+    compare(this: MovieSessionRating, other: MovieSessionRating): number {
+        return this.rank - other.rank
+    }
   }
   
   export class MovieSessionRatings{
-    static HIGHEST: MovieSessionRating = { 
-      key: "MANDATORY",
-      rank: 0, 
-      name: "Impérative",
-      description: "Je veux voir ce film à cette séance précise"
-    };
-    static DEFAULT: MovieSessionRating = { 
-      key: "DEFAULT", 
-      rank: 1,
-      name: "Normale",
-      description: "Laisser l'algorithme décider"
-    };
-    static NEVER: MovieSessionRating = { 
-      key: "NEVER",
-      rank: 2, 
-      name: "Jamais",
-      description: "Pas cette séance là"
-    };
+    static HIGHEST= new MovieSessionRating( 
+      "MANDATORY",
+      0, 
+      "Impérative",
+      "Je veux voir ce film à cette séance précise"
+    );
+    static DEFAULT = new MovieSessionRating( 
+      "DEFAULT", 
+      1,
+      "Normale",
+      "Laisser l'algorithme décider"
+    );
+    static NEVER = new MovieSessionRating( 
+      "NEVER",
+      2, 
+      "Jamais",
+      "Pas cette séance là"
+    );
   
     static enumerate(): readonly MovieSessionRating[]{
       return [this.HIGHEST, this.DEFAULT, this.NEVER]
@@ -153,7 +159,7 @@ export interface MovieSessionRating{
     }
 
     static compare(rating1: MovieSessionRating, rating2: MovieSessionRating): number{
-        return rating1.rank - rating2.rank
+        return rating1.compare(rating2)
     }
   }
   

@@ -1,12 +1,12 @@
 
-<div *ngFor="let entry of moviesForRatings | async | orderByRating">
+<div *ngFor="let entry of moviesForRatings | async | orderByComparable:'rating'">
     <label>{{entry.rating.description}} :</label>
     <ul>
         <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">{{movie.title}}</li>
     </ul>
 </div>
 
-<div *ngFor="let entry of sessionsForRatings | async | orderByRating">
+<div *ngFor="let entry of sessionsForRatings | async | orderByComparable:'rating'">
     <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
     <label>{{entry.rating.description}} :</label>
     <ul>

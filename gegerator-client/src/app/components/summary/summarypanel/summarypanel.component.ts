@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
-import { PlannableItem } from 'src/app/models/plannable.model';
-import { Day, Days } from 'src/app/models/referential.data';
-import { MovieSession, MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
-import { Times } from 'src/app/models/time.utils';
+import { MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
@@ -85,6 +82,7 @@ function _mapByRating<R extends Rating, T extends Ratable<R>>
             // Sorry, I need to supply the array of all ratings
             // because, long story short, poor modelling.
             allRatings: readonly R[] ): Map<R, T[]>{
+  
   const byRatings = new Map<R, T[]>(
     allRatings.map(rating => [rating, []])
   )

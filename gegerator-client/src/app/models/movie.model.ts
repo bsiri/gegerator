@@ -1,5 +1,6 @@
 import { Duration } from "iso8601-duration";
 import { RatingDialog } from "../components/sessions/ratingdialog/ratingdialog.component";
+import { Comparable } from "./referential.data";
 import { Durations } from "./time.utils";
 
 export class Movie{
@@ -52,38 +53,43 @@ export interface MovieJSON{
 
 // *********** "Enum" MovieRating (see referential.data.ts for explanations) **************
 
-export interface MovieRating{
-  key: string, 
-  rank: number,
-  name: string,
-  description: string
+export class MovieRating implements Comparable<MovieRating>{
+  constructor(
+    public key: string, 
+    public rank: number,
+    public name: string,
+    public description: string){ }
+
+    compare(this: MovieRating, other: MovieRating): number {
+      return this.rank - other.rank
+    }
 }
 
 export class MovieRatings{
-  static HIGHEST: MovieRating = { 
-    key: "HIGHEST", 
-    rank: 0,
-    name: "Très haute",
-    description: "Je veux absolument voir ce film"
-  };
-  static HIGH: MovieRating = { 
-    key: "HIGH",
-    rank: 1,
-    name: "Haute", 
-    description: "Je veux voir ce film, si on a le temps"
-  };
-  static DEFAULT: MovieRating = { 
-    key: "DEFAULT", 
-    rank: 2,
-    name: "Normale",
-    description: "Je veux bien voir ce film, si on n'a rien d'autre à faire"
-  };
-  static NEVER: MovieRating = { 
-    key: "NEVER", 
-    rank: 3,
-    name: "Jamais",
-    description: "Je ne veux jamais voir ce film"
-  };
+  static HIGHEST = new MovieRating( 
+    "HIGHEST", 
+    0,
+    "Très haute",
+    "Je veux absolument voir ce film"
+  );
+  static HIGH = new MovieRating( 
+    "HIGH",
+    1,
+    "Haute", 
+    "Je veux voir ce film, si on a le temps"
+  );
+  static DEFAULT = new MovieRating( 
+    "DEFAULT", 
+    2,
+    "Normale",
+    "Je veux bien voir ce film, si on n'a rien d'autre à faire"
+  );
+  static NEVER = new MovieRating( 
+    "NEVER", 
+    3,
+    "Jamais",
+    "Je ne veux jamais voir ce film"
+  );
 
   static enumerate(): readonly MovieRating[]{
     return [this.HIGHEST, this.HIGH, this.DEFAULT, this.NEVER]
@@ -98,7 +104,7 @@ export class MovieRatings{
   }
 
   static compare(rating1: MovieRating, rating2: MovieRating): number{
-    return rating1.rank - rating2.rank
+    return rating1.compare(rating2)
   }
 }
 

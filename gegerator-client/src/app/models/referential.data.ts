@@ -1,5 +1,10 @@
 
 
+export interface Comparable<T>{
+    compare(this: T, other: T) : number
+}
+
+
 /*
     Theater : the instances of Theater in Gerardmer.
     They should match the Theater class 
