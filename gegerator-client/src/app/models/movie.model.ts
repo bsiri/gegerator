@@ -1,4 +1,5 @@
 import { Duration } from "iso8601-duration";
+import { RatingDialog } from "../components/sessions/ratingdialog/ratingdialog.component";
 import { Durations } from "./time.utils";
 
 export class Movie{
@@ -53,6 +54,7 @@ export interface MovieJSON{
 
 export interface MovieRating{
   key: string, 
+  rank: number,
   name: string,
   description: string
 }
@@ -60,21 +62,25 @@ export interface MovieRating{
 export class MovieRatings{
   static HIGHEST: MovieRating = { 
     key: "HIGHEST", 
+    rank: 0,
     name: "Très haute",
     description: "Je veux absolument voir ce film"
   };
   static HIGH: MovieRating = { 
     key: "HIGH",
+    rank: 1,
     name: "Haute", 
     description: "Je veux voir ce film, si on a le temps"
   };
   static DEFAULT: MovieRating = { 
     key: "DEFAULT", 
+    rank: 2,
     name: "Normale",
     description: "Je veux bien voir ce film, si on n'a rien d'autre à faire"
   };
   static NEVER: MovieRating = { 
     key: "NEVER", 
+    rank: 3,
     name: "Jamais",
     description: "Je ne veux jamais voir ce film"
   };
@@ -89,6 +95,10 @@ export class MovieRatings{
       throw Error(`Programmatic error : unknown movie rating ${key} !`)
     }
     return found;
+  }
+
+  static compare(rating1: MovieRating, rating2: MovieRating): number{
+    return rating1.rank - rating2.rank
   }
 }
 

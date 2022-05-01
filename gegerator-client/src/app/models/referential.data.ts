@@ -39,15 +39,16 @@ export class Theaters{
     Same thing with days.
 */
 export interface Day{
-    key: string, 
+    key: string,
+    rank: number, 
     name: string
 }
 
 export class Days{
-    static THURSDAY: Day = { key: "THURSDAY", name: "Jeudi"};
-    static FRIDAY: Day = { key: "FRIDAY", name: "Vendredi"};
-    static SATURDAY: Day = { key: "SATURDAY", name: "Samedi"};
-    static SUNDAY: Day = { key: "SUNDAY", name: "Dimanche"};
+    static THURSDAY: Day = { key: "THURSDAY", rank: 0, name: "Jeudi"};
+    static FRIDAY: Day = { key: "FRIDAY", rank: 1, name: "Vendredi"};
+    static SATURDAY: Day = { key: "SATURDAY", rank: 2, name: "Samedi"};
+    static SUNDAY: Day = { key: "SUNDAY", rank: 3, name: "Dimanche"};
 
     static enumerate(): readonly Day[]{
         return [this.THURSDAY, this.FRIDAY, this.SATURDAY, this.SUNDAY];
@@ -59,6 +60,10 @@ export class Days{
             throw Error(`Programmatic error : unknown day ${key} !`)
         }
         return found;
+    }
+
+    static compare(day1: Day, day2: Day): number{
+        return day1.rank - day2.rank
     }
 }
 

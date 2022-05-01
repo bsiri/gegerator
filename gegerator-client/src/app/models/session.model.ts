@@ -83,7 +83,7 @@ export class PlannedMovieSession implements PlannableItem{
     }
 
     public toString(): string{
-        return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)} : ${this.movie.title}`
+        return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)}, ${this.theater.name} : ${this.movie.title}`
     }
 
     toMovieSession(){
@@ -115,23 +115,27 @@ export class PlannedMovieSession implements PlannableItem{
 
 export interface MovieSessionRating{
     key: string, 
+    rank: number,
     name: string,
     description: string
   }
   
   export class MovieSessionRatings{
     static HIGHEST: MovieSessionRating = { 
-      key: "MANDATORY", 
+      key: "MANDATORY",
+      rank: 0, 
       name: "Impérative",
       description: "Je veux voir ce film à cette séance précise"
     };
     static DEFAULT: MovieSessionRating = { 
       key: "DEFAULT", 
+      rank: 1,
       name: "Normale",
       description: "Laisser l'algorithme décider"
     };
     static NEVER: MovieSessionRating = { 
-      key: "NEVER", 
+      key: "NEVER",
+      rank: 2, 
       name: "Jamais",
       description: "Pas cette séance là"
     };
@@ -146,6 +150,10 @@ export interface MovieSessionRating{
         throw Error(`Programmatic error : unknown movie rating ${key} !`)
       }
       return found;
+    }
+
+    static compare(rating1: MovieSessionRating, rating2: MovieSessionRating): number{
+        return rating1.rank - rating2.rank
     }
   }
   

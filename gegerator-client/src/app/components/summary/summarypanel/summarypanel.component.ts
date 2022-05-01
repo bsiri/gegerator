@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { groupBy, map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { PlannableItem } from 'src/app/models/plannable.model';
 import { Day, Days } from 'src/app/models/referential.data';
@@ -10,10 +10,21 @@ import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors'
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 
+// A couple of interface
+// Think of them as entries of a Map<Rating, Ratable[]>, 
+// I found it clearer to explicitly model an interface for this
+interface MoviesForRating {
+  rating: MovieRating;
+  movies: Movie[]
+}
 
-type Rating = MovieRating|MovieSessionRating
-type Ratable = {rating: Rating}
+interface SessionsForRating{
+  rating: MovieSessionRating,
+  sessions: PlannedMovieSession[]
+}
 
+
+// ** main component **
 
 @Component({
   selector: 'app-summarypanel',
@@ -22,6 +33,8 @@ type Ratable = {rating: Rating}
 })
 export class SummarypanelComponent implements OnInit {
 
+  // Format : [MovieRating, [Movies sorted by title]]
+  /*
   moviesByRating = this.store.select(selectMovieslist).pipe(
     map(movies => {
       const sorted = movies.slice()
@@ -29,19 +42,14 @@ export class SummarypanelComponent implements OnInit {
       return groupByRating(sorted)
     })
   )
+*/
 
-  sessionsByRating = this.store.select(selectPlannedMovieSession).pipe(
-    map(sessions => {
-      const sorted = sessions.slice()
-                            .filter(s => s.rating != MovieSessionRatings.DEFAULT)
-                            .sort(byTime)
-      return groupByRating(sorted)
-    })
+  sessionsForRatings: Observable<SessionsForRating[]> = 
+          this.store.select(selectPlannedMovieSession).pipe(
+            map(toSessionsByRatingList)
   )
   
-  activities = this.store.select(selectActivitieslist).pipe(
-    map(acties => acties.slice().sort(byTime))
-  )
+  activities = this.store.select(selectActivitieslist)
 
   constructor(private store: Store) {
 
@@ -54,24 +62,26 @@ export class SummarypanelComponent implements OnInit {
 
 // ************ util functions ***********
 
-const _enumDays = Days.enumerate()
-
-function /*sort*/byTime(item1: PlannableItem, item2: PlannableItem): number{
-  const [day1, day2] = [item1.day, item2.day]
-  if (day1 != day2){
-    return _enumDays.indexOf(day1) - _enumDays.indexOf(day2)
-  }
-  return Times.compare(item1.startTime, item2.startTime)
+/** 
+ * @returns a list of SessionForRating, sorted by rating.
+ * 
+ * Entries for MovieSessionRating.DEFAULT will be excluded.
+ */
+function toSessionsByRatingList(sessions: readonly PlannedMovieSession[]): SessionsForRating[]{
+  const _copy = sessions.slice()
+  const sessionsByRatings = new Map<MovieSessionRating, PlannedMovieSession[]>(
+    MovieSessionRatings.enumerate().map(rating => [rating, []])
+  )
+  
+  sessions.forEach(session => sessionsByRatings.get(session.rating)?.push(session))
+  
+  return Array.from(sessionsByRatings.entries()).map(entry => {
+    return {
+      rating: entry[0],
+      sessions: entry[1]
+    } as SessionsForRating
+  })
+  .filter(sfr => sfr.rating != MovieSessionRatings.DEFAULT)
+  .sort((a, b) => MovieSessionRatings.compare(a.rating, b.rating))
 }
 
-function groupByRating<R extends Ratable>(ratables: R[]): Map<Rating, R[]>{
-  const result = new Map<Rating, R[]>()
-  ratables.forEach(r => {
-    const rating = r.rating
-    if (! result.get(rating)){
-      result.set(rating, [])
-    }
-    result.get(rating)?.push(r) ?? [r]
-  }) 
-  return result
-}
