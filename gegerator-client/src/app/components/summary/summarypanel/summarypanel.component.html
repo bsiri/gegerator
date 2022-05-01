@@ -1,12 +1,10 @@
 
-<!-- 
-<div *ngFor="let entry of moviesByRating | async | keyvalue">
-    <label>{{entry.key.description}} :</label>
+<div *ngFor="let entry of moviesForRatings | async">
+    <label>{{entry.rating.description}} :</label>
     <ul>
-        <li *ngFor="let movie of entry.value">{{movie.title}}</li>
+        <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">{{movie.title}}</li>
     </ul>
 </div>
--->
 
 <div *ngFor="let entry of sessionsForRatings | async">
     <label>{{entry.rating.description}} :</label>

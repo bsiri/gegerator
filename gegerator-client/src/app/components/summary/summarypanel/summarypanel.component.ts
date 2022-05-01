@@ -33,16 +33,9 @@ interface SessionsForRating{
 })
 export class SummarypanelComponent implements OnInit {
 
-  // Format : [MovieRating, [Movies sorted by title]]
-  /*
-  moviesByRating = this.store.select(selectMovieslist).pipe(
-    map(movies => {
-      const sorted = movies.slice()
-                          .sort((m1, m2) => m1.title.toLowerCase().localeCompare(m2.title.toLowerCase()))
-      return groupByRating(sorted)
-    })
+  moviesForRatings = this.store.select(selectMovieslist).pipe(
+    map(toMoviesByRatingList)
   )
-*/
 
   sessionsForRatings: Observable<SessionsForRating[]> = 
           this.store.select(selectPlannedMovieSession).pipe(
@@ -85,3 +78,27 @@ function toSessionsByRatingList(sessions: readonly PlannedMovieSession[]): Sessi
   .sort((a, b) => MovieSessionRatings.compare(a.rating, b.rating))
 }
 
+/**
+ * See toSessionsByRatingList, but here it is for movies.
+ * Note that here we don't filter on any rating 
+ * (unlike for, eg, MovieSessionRating.DEFAULT as above), 
+ * here we want them all.
+ * 
+ * @param movies
+ */
+function toMoviesByRatingList(movies: readonly Movie[]) : MoviesForRating[]{
+  const _copy = movies.slice()
+  const moviesByRatings = new Map<MovieRating, Movie[]>(
+    MovieRatings.enumerate().map(rating => [rating, []])
+  )
+  
+  movies.forEach(movie => moviesByRatings.get(movie.rating)?.push(movie))
+  
+  return Array.from(moviesByRatings.entries()).map(entry => {
+    return {
+      rating: entry[0],
+      movies: entry[1]
+    } as MoviesForRating
+  })
+  .sort((a, b) => MovieSessionRatings.compare(a.rating, b.rating))
+}
