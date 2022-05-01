@@ -1,8 +1,7 @@
-import { Time } from "@angular/common";
 import { Movie } from "./movie.model";
 import { PlannableItem } from "./plannable.model";
 import { Comparable, Day, Days, Theater, Theaters } from "./referential.data";
-import { Times } from "./time.utils";
+import { Time, Times } from "./time.utils";
 
 
 /*

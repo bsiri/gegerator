@@ -1,6 +1,5 @@
-import { Time } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
-import { Times } from '../models/time.utils';
+import { Time, Times } from '../models/time.utils';
 
 @Pipe({
   name: 'time'

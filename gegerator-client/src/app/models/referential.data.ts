@@ -43,17 +43,23 @@ export class Theaters{
 /*
     Same thing with days.
 */
-export interface Day{
-    key: string,
-    rank: number, 
-    name: string
+export class Day implements Comparable<Day>{
+    constructor(
+    public key: string,
+    public rank: number, 
+    public name: string
+    ){}
+
+    compare(this: Day, other: Day): number {
+        return this.rank - other.rank
+    }
 }
 
 export class Days{
-    static THURSDAY: Day = { key: "THURSDAY", rank: 0, name: "Jeudi"};
-    static FRIDAY: Day = { key: "FRIDAY", rank: 1, name: "Vendredi"};
-    static SATURDAY: Day = { key: "SATURDAY", rank: 2, name: "Samedi"};
-    static SUNDAY: Day = { key: "SUNDAY", rank: 3, name: "Dimanche"};
+    static THURSDAY = new Day("THURSDAY", 0, "Jeudi");
+    static FRIDAY = new Day("FRIDAY", 1, "Vendredi");
+    static SATURDAY = new Day("SATURDAY", 2, "Samedi");
+    static SUNDAY = new Day("SUNDAY", 3, "Dimanche");
 
     static enumerate(): readonly Day[]{
         return [this.THURSDAY, this.FRIDAY, this.SATURDAY, this.SUNDAY];
@@ -68,7 +74,7 @@ export class Days{
     }
 
     static compare(day1: Day, day2: Day): number{
-        return day1.rank - day2.rank
+        return day1.compare(day2)
     }
 }
 

@@ -11,9 +11,57 @@
     may differ. 
 */
 
-import { Time } from "@angular/common";
 import { ValidationErrors } from "@angular/forms";
 import { Duration, parse } from "iso8601-duration";
+import { Comparable } from "./referential.data";
+
+
+export class Time implements Comparable<Time>{
+    constructor(
+        public hours: number,
+        public minutes: number
+    ){}
+
+    compare(this: Time, other: Time): number {
+        return this.toMinutes() - other.toMinutes()
+    }
+
+    toMinutes(): number{
+        return this.hours*60 + this.minutes
+    }
+
+
+    /**
+     * Tests whether this time is before the 'referenceTime', 
+     * inclusive (equality counts are True)
+     * @param testedTime 
+     * @param referenceTime 
+     */
+    isBefore(referenceTime: Time): boolean{
+        return this.toMinutes() <= referenceTime.toMinutes()
+    }
+
+    /**
+     * Tests whether this Time is after the 'referenceTime', 
+     * inclusive (equality counts are True)
+     * @param testedTime 
+     * @param referenceTime 
+     */
+    isAfter(referenceTime: Time): boolean{
+        return this.toMinutes() >= referenceTime.toMinutes()
+    }
+
+    add(delta: Duration): Time{
+        const [deltaHours, deltaMinutes] =  [delta.hours ?? 0, delta.minutes ?? 0]
+        const totalDeltaMinutes = deltaHours*60 + deltaMinutes 
+        
+        const newStartMinutes = (this.minutes + totalDeltaMinutes) % 60
+        const newStartHours = this.hours + Math.floor((this.minutes + totalDeltaMinutes) / 60)
+
+        return new Time(newStartHours, newStartMinutes)
+    }
+}
+
 
 // duck typing
 type TimeDurationLike = {
@@ -61,7 +109,8 @@ export namespace Times{
     }
 
     export function fromString(strTime: string): Time{
-        return _fromString(strTime, timeEx)
+        const timeLike: TimeDurationLike = _fromString(strTime, timeEx)
+        return new Time(timeLike.hours, timeLike.minutes)
     }
 
     // *** JSON representation ***
@@ -74,17 +123,11 @@ export namespace Times{
     export function deserialize(strTime: string) : Time{
         const [strhours, strminutes] = strTime.split(':')
         const [hours, minutes] = [parseInt(strhours), parseInt(strminutes)]
-        return {hours, minutes}    
+        return new Time(hours, minutes)    
     }
 
     export function add(start: Time, delta: Duration) : Time{
-        const [deltaHours, deltaMinutes] =  [delta.hours ?? 0, delta.minutes ?? 0]
-        const totalDeltaMinutes = deltaHours*60 + deltaMinutes 
-        
-        const newStartMinutes = (start.minutes + totalDeltaMinutes) % 60
-        const newStartHours = start.hours + Math.floor((start.minutes + totalDeltaMinutes) / 60)
-
-        return {hours: newStartHours, minutes: newStartMinutes}           
+        return start.add(delta)      
     }
 
     /**
@@ -94,7 +137,7 @@ export namespace Times{
      * @param referenceTime 
      */
     export function isBefore(testedTime: Time, referenceTime: Time): boolean{
-        return toMinutes(testedTime) <= toMinutes(referenceTime)
+        return testedTime.isBefore(referenceTime)
     }
 
     /**
@@ -104,15 +147,15 @@ export namespace Times{
      * @param referenceTime 
      */
     export function isAfter(testedTime: Time, referenceTime: Time): boolean{
-        return toMinutes(testedTime) >= toMinutes(referenceTime)
+        return testedTime.isAfter(referenceTime)
     }
 
     export function toMinutes(time: Time): number{
-        return time.hours*60 + time.minutes
+        return time.toMinutes()
     }
 
     export function compare(time1: Time, time2: Time){
-        return toMinutes(time1) - toMinutes(time2)
+        return time1.compare(time2)
     }
 
     export function toStrInterval(start: Time, end: Time){

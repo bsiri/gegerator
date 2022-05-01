@@ -1,6 +1,5 @@
-import { Time } from "@angular/common";
 import { Day, Days } from "./referential.data";
-import { Times } from "./time.utils";
+import { Time, Times } from "./time.utils";
 
 /**
  * Interface for everything that can be 

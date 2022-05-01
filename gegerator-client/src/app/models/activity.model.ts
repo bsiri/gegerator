@@ -1,7 +1,6 @@
-import { Time } from "@angular/common";
 import { PlannableItem } from "./plannable.model";
 import { Day, Days } from "./referential.data";
-import { Times } from "./time.utils";
+import { Time, Times } from "./time.utils";
 
 
 export class OtherActivity implements PlannableItem{

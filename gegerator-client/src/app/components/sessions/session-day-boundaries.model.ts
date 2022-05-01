@@ -1,6 +1,5 @@
-import { Time } from "@angular/common"
 import { Duration } from "iso8601-duration"
-import { Times } from "src/app/models/time.utils"
+import { Time, Times } from "src/app/models/time.utils"
 
 /*
     This constant defines the constants on which 
