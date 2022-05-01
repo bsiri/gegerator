@@ -44,6 +44,7 @@ import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.co
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 import { OrderByDateTimePipe } from './pipes/order-by-date-time.pipe';
 import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
+import { OrderByRatingPipe } from './pipes/order-by-rating.pipe';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
     SummarypanelComponent,
     OrderByDateTimePipe,
     OrderByLowercasePipe,
+    OrderByRatingPipe,
   ],
   imports: [
     BrowserModule,

@@ -34,12 +34,22 @@ interface SessionsForRating{
 export class SummarypanelComponent implements OnInit {
 
   moviesForRatings = this.store.select(selectMovieslist).pipe(
-    map(toMoviesByRatingList)
+    map(movies => {
+      const byRating = mapMoviesByRating(movies)
+      return Array.from(byRating.entries()).map(entry => {
+        return {rating: entry[0], movies: entry[1]} as MoviesForRating
+      })
+    }),
   )
 
-  sessionsForRatings: Observable<SessionsForRating[]> = 
-          this.store.select(selectPlannedMovieSession).pipe(
-            map(toSessionsByRatingList)
+  sessionsForRatings = 
+    this.store.select(selectPlannedMovieSession).pipe(
+    map(sessions => {
+      const byRating = mapSessionByRating(sessions)
+      return Array.from(byRating.entries()).map(entry => {
+        return {rating: entry[0], sessions: entry[1]} as SessionsForRating
+      })
+    })
   )
   
   activities = this.store.select(selectActivitieslist)
@@ -55,50 +65,29 @@ export class SummarypanelComponent implements OnInit {
 
 // ************ util functions ***********
 
-/** 
- * @returns a list of SessionForRating, sorted by rating.
- * 
- * Entries for MovieSessionRating.DEFAULT will be excluded.
- */
-function toSessionsByRatingList(sessions: readonly PlannedMovieSession[]): SessionsForRating[]{
-  const _copy = sessions.slice()
-  const sessionsByRatings = new Map<MovieSessionRating, PlannedMovieSession[]>(
-    MovieSessionRatings.enumerate().map(rating => [rating, []])
-  )
-  
-  sessions.forEach(session => sessionsByRatings.get(session.rating)?.push(session))
-  
-  return Array.from(sessionsByRatings.entries()).map(entry => {
-    return {
-      rating: entry[0],
-      sessions: entry[1]
-    } as SessionsForRating
-  })
-  .filter(sfr => sfr.rating != MovieSessionRatings.DEFAULT)
-  .sort((a, b) => MovieSessionRatings.compare(a.rating, b.rating))
+
+type Rating = MovieSessionRating | MovieRating
+type Ratable<R extends Rating> = {
+  rating: R
 }
 
-/**
- * See toSessionsByRatingList, but here it is for movies.
- * Note that here we don't filter on any rating 
- * (unlike for, eg, MovieSessionRating.DEFAULT as above), 
- * here we want them all.
- * 
- * @param movies
- */
-function toMoviesByRatingList(movies: readonly Movie[]) : MoviesForRating[]{
-  const _copy = movies.slice()
-  const moviesByRatings = new Map<MovieRating, Movie[]>(
-    MovieRatings.enumerate().map(rating => [rating, []])
+
+function mapMoviesByRating(movies: readonly Movie[]): Map<MovieRating, Movie[]>{
+  return _mapByRating(movies, MovieRatings.enumerate())
+}
+
+function mapSessionByRating(sessions: readonly PlannedMovieSession[]): Map<MovieSessionRating, PlannedMovieSession[]>{
+  return _mapByRating(sessions, MovieSessionRatings.enumerate())
+}
+
+function _mapByRating<R extends Rating, T extends Ratable<R>>
+          (ratables: readonly T[], 
+            // Sorry, I need to supply the array of all ratings
+            // because, long story short, poor modelling.
+            allRatings: readonly R[] ): Map<R, T[]>{
+  const byRatings = new Map<R, T[]>(
+    allRatings.map(rating => [rating, []])
   )
-  
-  movies.forEach(movie => moviesByRatings.get(movie.rating)?.push(movie))
-  
-  return Array.from(moviesByRatings.entries()).map(entry => {
-    return {
-      rating: entry[0],
-      movies: entry[1]
-    } as MoviesForRating
-  })
-  .sort((a, b) => MovieSessionRatings.compare(a.rating, b.rating))
+  ratables.forEach(rat => byRatings.get(rat.rating)?.push(rat))
+  return byRatings
 }
