@@ -14,6 +14,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSelectModule} from '@angular/material/select'; 
 import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
 import {MatRadioModule} from '@angular/material/radio'; 
+import {MatTabsModule} from '@angular/material/tabs'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
@@ -88,7 +89,8 @@ import { SessionRatingsComponent } from './icons/session-ratings/session-ratings
     MatSidenavModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatRadioModule
+    MatRadioModule,
+    MatTabsModule
   ],
   providers: [
     httpInterceptorProviders
