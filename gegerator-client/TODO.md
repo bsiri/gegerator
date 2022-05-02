@@ -31,6 +31,9 @@ b - appréciation séance
   être cliquables, et alors la vue doit scroller jusqu'à
   l'item correspondant.
 
+  Note : faire un panneau à trois onglets, avec une table 
+  triable/filtrable/pagineable par onglet ?
+
 
 7. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
