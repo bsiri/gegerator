@@ -6,8 +6,15 @@
             <div id="app-buttonbar">
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
                 <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
-                <a mat-raised-button color="primary" href="/gegerator/app-state?format=file">Sauver</a>
-                <button mat-raised-button color="primary" (click)="uploadAppState()">Charger</button>
+                
+                <!-- Save/Load button menu -->
+                <button mat-raised-button [matMenuTriggerFor]="saveLoadMenu" color="primary">
+                    <mat-icon style="transform: rotate(90deg);">compare_arrows</mat-icon>
+                </button>
+                <mat-menu #saveLoadMenu>
+                    <div><a mat-menu-item href="/gegerator/app-state?format=file">Sauver</a></div>
+                    <button mat-menu-item (click)="uploadAppState()">Charger</button>
+                </mat-menu>
             </div>
         </div>
     </div>

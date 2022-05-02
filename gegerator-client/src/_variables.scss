@@ -13,6 +13,7 @@ $accent: mat-color($app-accent);
 $warn: mat-color($app-warn);
 
 $primary-light-35: color.scale($primary, $lightness: +35%);
+$primary-dark-35: color.scale($primary, $lightness: -35%);
 
 // mat-button customization
 @mixin small-button{

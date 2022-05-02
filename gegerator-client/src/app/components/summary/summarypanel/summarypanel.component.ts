@@ -58,6 +58,11 @@ export class SummarypanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  showSelected(target: string){
+    const elt = document.getElementById(target)
+    elt?.scrollIntoView({behavior: 'smooth'})
+  }
+
 }
 
 // ************ util functions ***********

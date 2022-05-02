@@ -1,5 +1,4 @@
 
-
 <div class="summary-panel">
 
     <mat-tab-group>
@@ -21,7 +20,9 @@
                 <h2>{{entry.rating.description}} :</h2>
                 <ul>
                     <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
-                        <a [href]="'#'+session.htmlId">{{session.toString()}}</a>
+                        <span class="pseudolink" (click)="showSelected(session.htmlId)">
+                            {{session.toString()}}
+                        </span>
                     </li>
                     <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
                 </ul>
@@ -33,7 +34,9 @@
             <h1>Autres trucs prévus :</h1>
             <ul>
                 <li *ngFor="let act of activities | async | orderByComparable:'day':'startTime'">
-                    <a [href]="'#'+act.htmlId">{{act.toString()}}</a>
+                    <span class="pseudolink"  (click)="showSelected(act.htmlId)">
+                        {{act.toString()}}
+                    </span>
                 </li>
                 <li *ngIf="(activities | async)?.length == 0">(Aucun)</li>
             </ul>

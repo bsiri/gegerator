@@ -1,4 +1,4 @@
-
+@use '../../../../_variables.scss' as *;
 
 .summary-panel{
     max-width: 400px;
@@ -12,5 +12,10 @@
         font-family: "sans";
         font-weight: bold;
         font-style: italic;
+    }
+
+    .pseudolink{
+        color: blue;
+        cursor: pointer;
     }
 }

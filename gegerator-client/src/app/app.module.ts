@@ -15,6 +15,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
 import {MatRadioModule} from '@angular/material/radio'; 
 import {MatTabsModule} from '@angular/material/tabs'; 
+import {MatMenuModule} from '@angular/material/menu'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
@@ -69,7 +70,7 @@ import { SessionRatingsComponent } from './icons/session-ratings/session-ratings
     OrderByLowercasePipe,
     OrderByComparablePipe,
     MovieRatingsComponent,
-    SessionRatingsComponent,
+    SessionRatingsComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +91,8 @@ import { SessionRatingsComponent } from './icons/session-ratings/session-ratings
     MatSelectModule,
     MatAutocompleteModule,
     MatRadioModule,
-    MatTabsModule
+    MatTabsModule,
+    MatMenuModule
   ],
   providers: [
     httpInterceptorProviders

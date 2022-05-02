@@ -4,34 +4,34 @@
         <div class="session-day" *ngFor="let day of Days.enumerate()">
 
             <table class="session-day-table">
-                <thead>
+                <thead class="mat-elevation-z8">
                     <tr>
-                        <td colspan="5">
+                        <th class="th-day" colspan="5">
                             <h1 class="session-day--title">{{day.name}}</h1>
-                        </td>
+                        </th>
                     </tr>
                     <tr>
-                        <th>
+                        <th class="th-col">
                             <ng-container [ngTemplateOutlet]="activityHeader" 
                             [ngTemplateOutletContext]="{day:day}">
                             </ng-container>
                         </th>
-                        <th>
+                        <th class="th-col">
                             <ng-container [ngTemplateOutlet]="sessionHeader" 
                             [ngTemplateOutletContext]="{day:day, theater: Theaters.ESPACE_LAC}">
                             </ng-container>
                         </th>
-                        <th>
+                        <th class="th-col">
                             <ng-container [ngTemplateOutlet]="sessionHeader" 
                             [ngTemplateOutletContext]="{day:day, theater: Theaters.CASINO}">
                             </ng-container>
                         </th>
-                        <th>
+                        <th class="th-col">
                             <ng-container [ngTemplateOutlet]="sessionHeader" 
                             [ngTemplateOutletContext]="{day:day, theater: Theaters.PARADISO}">
                             </ng-container>
                         </th>
-                        <th>
+                        <th class="th-col">
                             <ng-container [ngTemplateOutlet]="sessionHeader" 
                             [ngTemplateOutletContext]="{day:day, theater: Theaters.MCL}">
                             </ng-container>

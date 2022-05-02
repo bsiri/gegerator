@@ -1,12 +1,12 @@
 
 @use '../../../../_variables' as *;
+@use "sass:color";
+// $color-high: color.scale($color-highest, $lightness: +50%);
 
 #sessions-mainview{
     display: flex;
     justify-content: center;        
     background-color: khaki;
-
-
 
     .sessions--center{
         flex: 0.7 0 min-content;
@@ -24,6 +24,7 @@
         width: 100%;
         table-layout: fixed;
         overflow-y: hidden;
+        border-collapse: collapse;
 
         .session-day--title{
             text-align: center;
@@ -31,6 +32,11 @@
         
         thead{
             border-bottom: 1px solid black;
+            position: sticky;
+            top: 8px;
+            z-index: 2;
+            background-color: khaki;
+            
 
             .session-header--title{
                 display: inline;
@@ -40,6 +46,7 @@
             .mat-raised-button{
                 @include small-button
             }
+                        
         }
 
         tbody tr{

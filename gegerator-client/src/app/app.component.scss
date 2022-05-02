@@ -1,3 +1,5 @@
+@use '../_variables.scss' as *;
+
 
 $side-panel-width: 80px;
 
@@ -31,6 +33,11 @@ $side-panel-width: 80px;
             font-family: "sans";
             font-weight: bold;
             font-style: italic;
+            /* WIP : 
+            background-image: linear-gradient(90deg, rgba(53,207,34,0.8729692560617998) 0%, rgba(230,226,28,0.6068628134847689) 50%, rgba(255,0,204,1) 100%);
+            background-clip: text;
+            color: transparent;
+            */
         }
 
         #app-buttonbar{
@@ -51,6 +58,3 @@ $side-panel-width: 80px;
     }
 
 }
-
-
-

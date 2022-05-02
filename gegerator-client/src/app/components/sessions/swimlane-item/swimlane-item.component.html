@@ -1,13 +1,18 @@
 
 <ng-container *ngIf="!!item">
+
     <div
         #_container 
-        [id]="item.htmlId"
         [ngClass]="['swimlane-item'].concat(extraClasses)" 
         [ngStyle]="{'height': heightInPixel, 'top': topPosInPixel}"
         (dblclick)="requestUpdate.emit()"
         (contextmenu)="emitRequestContextMenu()"
     > 
+
+        <a class="anchor" [id]="item.htmlId">
+            <!-- see explanation for this <a> element in the .scss file-->
+        </a>
+
 
         <button mat-button (click)="requestDelete.emit()">
             <mat-icon>remove</mat-icon>
