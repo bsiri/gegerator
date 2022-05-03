@@ -4,14 +4,13 @@
     max-width: 400px;
     border-left: 2px solid black;
     height: 100%;
+    background-color: $tertiary-pane-color;
 
     padding-left: 1em;
     padding-right: 1em;
 
-    h1 {
-        font-family: "sans";
-        font-weight: bold;
-        font-style: italic;
+    h1{
+        @include sect-title;
     }
 
     .pseudolink{

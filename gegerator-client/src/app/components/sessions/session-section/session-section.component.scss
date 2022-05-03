@@ -6,7 +6,7 @@
 #sessions-mainview{
     display: flex;
     justify-content: center;        
-    background-color: khaki;
+    background-color: $secondary-pane-color;
 
     .sessions--center{
         flex: 0.7 0 min-content;
@@ -35,7 +35,7 @@
             position: sticky;
             top: 8px;
             z-index: 2;
-            background-color: khaki;
+            background-color: $secondary-pane-color;
             
 
             .session-header--title{

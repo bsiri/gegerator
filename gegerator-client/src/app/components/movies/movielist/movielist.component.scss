@@ -5,6 +5,7 @@
     max-width: 400px;
     border-right: 2px solid black;
     height: 100%;
+    background-color: $tertiary-pane-color;
 
     .movielist-actions{
         display: flex;
@@ -21,7 +22,9 @@
 
 
     .movielist-title-center{
-        text-align: center;
+        h1{
+            @include sect-title;
+        }
     }
 
     .movie-margin{

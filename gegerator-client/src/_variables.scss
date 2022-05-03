@@ -15,7 +15,7 @@ $warn: mat-color($app-warn);
 $primary-light-35: color.scale($primary, $lightness: +35%);
 $primary-dark-35: color.scale($primary, $lightness: -35%);
 
-// mat-button customization
+// ***** mat-button customization ********
 @mixin small-button{
     min-width: inherit;
     padding: 0.1em;
@@ -27,4 +27,23 @@ $primary-dark-35: color.scale($primary, $lightness: -35%);
     color: black;
 }
 
+// ******** main section styles ********
+
+@mixin sect-title{
+    font-family: "sans";
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    color: magenta;
+    /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
+
+    background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
+    background-clip: text;
+    color: transparent;        
+}
+
+$primary-pane-color: orange;
+//$secondary-pane-color: khaki;
+$secondary-pane-color: khaki;
+$tertiary-pane-color: bisque ;
 
