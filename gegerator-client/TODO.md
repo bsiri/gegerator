@@ -33,9 +33,16 @@ b - appréciation séance
 
   Note : faire un panneau à trois onglets, avec une table 
   triable/filtrable/pagineable par onglet ?
+==> Done
 
+7. Barre d'outils : 
+- charger/sauver dans un bouton menu
+- bouton 'afficher/masquer les suggestions de l'algorithme'
+- boutonmenu Export: 
+  * Exporter les suggestions de l'algorithme
+  * Exporter les sélections manuelles
 
-7. Implémenter l'algorithme, integrer ça au rendu des films
+8. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
   assigner "Je veux voir ce film à cette séance précise" qui 
   est fonctionnellement équivalent ?)
@@ -47,12 +54,6 @@ b - appréciation séance
   Une Autre Activité est une sorte de séance qui a une valeur 
   très très grande en gros.
 
-8. Barre d'outils : 
-- charger/sauver dans un bouton menu
-- bouton 'afficher/masquer les suggestions de l'algorithme'
-- boutonmenu Export: 
-  * Exporter les suggestions de l'algorithme
-  * Exporter les sélections manuelles
 
 9. Ajouter des tests jasmine/protractor,
   

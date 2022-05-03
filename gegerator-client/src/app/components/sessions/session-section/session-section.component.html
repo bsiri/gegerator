@@ -73,15 +73,19 @@
 </div>
 
 <ng-template #activityHeader let-day="day">
-    <h2 class="session-header--title">Autres activités</h2>
-    <button mat-raised-button color="primary" (click)="openNewActivity(day)">
-        <mat-icon>add</mat-icon>
-    </button>
+    <div class="session-header">
+        <h2 class="session-header--title">Autres activités</h2>
+        <button mat-raised-button color="primary" (click)="openNewActivity(day)">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
 </ng-template>
 
 <ng-template #sessionHeader let-day="day" let-theater="theater">
-    <h2 class="session-header--title">{{theater.name}}</h2>
-    <button mat-raised-button color="primary" (click)="openNewSession(day, theater)">
-        <mat-icon>add</mat-icon>
-    </button>
+    <div class="session-header">
+        <h2 class="session-header--title">{{theater.name}}</h2>
+        <button mat-raised-button color="primary" (click)="openNewSession(day, theater)">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
 </ng-template>

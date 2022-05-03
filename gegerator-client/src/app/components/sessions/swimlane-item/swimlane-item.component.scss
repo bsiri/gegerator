@@ -2,8 +2,8 @@
 @use "sass:color";
 
 
-$color-highest: #93C572;
-$color-high: color.scale($color-highest, $lightness: +50%);
+$color-highest: #519B20;
+$color-high: #93C572;
 
 
 .anchor{
@@ -59,6 +59,7 @@ $color-high: color.scale($color-highest, $lightness: +50%);
 
     &.movie-highest{
         background-color: $color-highest;
+        color: white;
     }
 
     &.movie-high{
@@ -74,6 +75,7 @@ $color-high: color.scale($color-highest, $lightness: +50%);
         border-style: dashed;
         background-color: lightgray !important;
         opacity: 0.5;
+        color: black !important;
     }
 
 }

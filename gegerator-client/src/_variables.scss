@@ -36,14 +36,14 @@ $primary-dark-35: color.scale($primary, $lightness: -35%);
     text-align: center;
     color: magenta;
     /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
-
+/*
     background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
     background-clip: text;
     color: transparent;        
+*/
 }
 
 $primary-pane-color: orange;
-//$secondary-pane-color: khaki;
 $secondary-pane-color: khaki;
-$tertiary-pane-color: bisque ;
+$tertiary-pane-color: beige ;
 
