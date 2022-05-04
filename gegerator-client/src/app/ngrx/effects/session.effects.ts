@@ -30,11 +30,31 @@ export class MovieSessionEffects{
         )
     ));
 
+    /*
+        Note: as indicated by the code, the 'thenReload' paramater 
+        indicates that instead of normally raising the usual 'session_updated' 
+        event we trigger a full reload of the sessions.
+
+        This is the case when the updated attributes are likely to trigger 
+        business rules on the server side, which may alter more session than 
+        just this one.
+
+        The simplest solution is to just reload the whole thing afterward, 
+        but if this solution causes performance issues then we should consider
+        replicating the business rules here on client side. 
+    */
     update$ = createEffect(() => this.actions$.pipe(
         ofType(SessionActions.update_session),
         mergeMap(action => this.service.update(action.session)
             .pipe(
-                map(session => SessionActions.session_updated({session}))
+                map(session => {
+                    if (action.thenReload === true){
+                        return SessionActions.reload_sessions()
+                    }
+                    else{
+                        return SessionActions.session_updated({session})
+                    }
+                })
             )        
         )
     ));

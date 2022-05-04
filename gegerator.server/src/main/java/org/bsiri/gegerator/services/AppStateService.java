@@ -6,11 +6,9 @@ import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.OtherActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.GroupedFlux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
@@ -55,8 +53,8 @@ public class AppStateService {
             Because they already have an ID, the regular repositories
             will deduce it needs to issue UPDATE commands instead of
             INSERT. This is indeed the expected behavior most of the time.
-            However, in this scenario these entities a actually new (we just wiped
-            the database), the UPDATE will fail, understandably.
+            However, in this scenario these entities are actually new (we just wiped
+            the database) so the UPDATE will fail, understandably.
 
             To work around this we shortcut the repositories and work
             directly with the R2dbcTemplate for the insertion.

@@ -37,11 +37,6 @@ public class OtherActivityService {
     }
 
     @Transactional
-    public Flux<OtherActivity> saveAll(Collection<OtherActivity> activities){
-        return repo.saveAll(activities);
-    }
-
-    @Transactional
     public Mono<OtherActivity> update(OtherActivity activity){
         return save(activity);
     }

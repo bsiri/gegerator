@@ -89,6 +89,19 @@ export class PlannedMovieSession implements PlannableItem{
         return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)}, ${this.theater.name} : ${this.movie.title}`
     }
 
+
+    /**
+     * Asks whether the changes made to that entity
+     * are likely to require a full reload of PlannedMovieSessions
+     * due to business rules performed by the server.
+     * 
+     * @param modified 
+     */
+    public checkChangesRequireReload(modified: PlannedMovieSession): boolean{
+        // R1. : if Rating transitionned to MANDATORY, reload is necessary.
+        return (this.rating != MovieSessionRatings.MANDATORY && modified.rating == MovieSessionRatings.MANDATORY)
+    }
+
     toMovieSession(){
         return new MovieSession(
             this.id,
@@ -130,7 +143,7 @@ export class MovieSessionRating implements Comparable<MovieSessionRating>{
   }
   
   export class MovieSessionRatings{
-    static HIGHEST= new MovieSessionRating( 
+    static MANDATORY= new MovieSessionRating( 
       "MANDATORY",
       0, 
       "Impérative",
@@ -150,7 +163,7 @@ export class MovieSessionRating implements Comparable<MovieSessionRating>{
     );
   
     static enumerate(): readonly MovieSessionRating[]{
-      return [this.HIGHEST, this.DEFAULT, this.NEVER]
+      return [this.MANDATORY, this.DEFAULT, this.NEVER]
     }
   
     static fromKey(key: string): MovieSessionRating{

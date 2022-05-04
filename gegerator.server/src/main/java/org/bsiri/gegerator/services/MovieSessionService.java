@@ -1,6 +1,7 @@
 package org.bsiri.gegerator.services;
 
 import org.bsiri.gegerator.domain.MovieSession;
+import org.bsiri.gegerator.domain.MovieSessionRating;
 import org.bsiri.gegerator.repositories.MovieSessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,19 +28,27 @@ public class MovieSessionService {
         return sessionRepo.findAll();
     }
 
+    /**
+     * Updates a MovieSession, paying attention to the following Business Rules:
+     *  - If that session has a Rating == MANDATORY, then all other sessions
+     *    of the same Movie of Rating MANDATORY now become of Rating DEFAULT.
+     *
+     * @param movieSession
+     * @return
+     */
     @Transactional
     public Mono<MovieSession> save(MovieSession movieSession){
-        return sessionRepo.save(movieSession);
-    }
+        Mono<Void> rgUniqueMandatory = Mono.empty();
+        if (movieSession.getRating() == MovieSessionRating.MANDATORY){
+            rgUniqueMandatory = sessionRepo.resetRatingsForSessionOfMovie(movieSession.getMovieId());
+        }
 
-    @Transactional
-    public Flux<MovieSession> saveAll(Collection<MovieSession> sessions){
-        return sessionRepo.saveAll(sessions);
+        return rgUniqueMandatory.then(sessionRepo.save(movieSession));
     }
 
     @Transactional
     public Mono<MovieSession> update(MovieSession movieSession){
-        return sessionRepo.save(movieSession);
+        return save(movieSession);
     }
 
     @Transactional

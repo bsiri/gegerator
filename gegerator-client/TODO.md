@@ -35,14 +35,27 @@ b - appréciation séance
   triable/filtrable/pagineable par onglet ?
 ==> Done
 
-7. Barre d'outils : 
+7. RG additionnelles sur les sessions:
+
+- Quand une séance passe à Mandatory, s'il y a lieu l'autre
+  séance Mandatory pour le même film passe à Default.
+
+- Quand une séance passe à Mandatory, les autres séances 
+  pour le même film auront un rendu 'disabled' dans l'interface, 
+  sans toucher pour autant à leur valeur réelle de Rating.
+
+- Si une séance est à Mandatory, alors cette séance sera 
+  rappelée et linkée dans l'onglet "Films" du panel Résumé.
+
+
+8. Barre d'outils : 
 - charger/sauver dans un bouton menu
 - bouton 'afficher/masquer les suggestions de l'algorithme'
 - boutonmenu Export: 
   * Exporter les suggestions de l'algorithme
   * Exporter les sélections manuelles
 
-8. Implémenter l'algorithme, integrer ça au rendu des films
+9. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
   assigner "Je veux voir ce film à cette séance précise" qui 
   est fonctionnellement équivalent ?)
@@ -55,9 +68,9 @@ b - appréciation séance
   très très grande en gros.
 
 
-9. Ajouter des tests jasmine/protractor,
+10. Ajouter des tests jasmine/protractor,
   
-10. Finitions:
+11. Finitions:
 - packager l'appli,
 - écrire la doc,
 - au démarrage faire un petit message console pour dire 
@@ -66,15 +79,9 @@ b - appréciation séance
 
 ## Features à envisager
 
-- Quand on sélectionne une séance comme 'mandatory', 
-  toutes les autres sont automatiquement à 'never'.
-  Il s'ensuit que si au moins une repasse à 'default', 
-  toutes les autres repassent à 'default.
-
 - Quand on place une OtherActivity, toutes les sessions
-  qui chevauchent temporellement sont à 'never'. 
-  Penser que cela doit se combiner avec la feature du 
-  dessus.
+  qui chevauchent temporellement auront un rendu 'disabled'
+  dans l'interface.
 
 - Une barre de filtre (position statique) pour n'afficher
   que les films choisis.

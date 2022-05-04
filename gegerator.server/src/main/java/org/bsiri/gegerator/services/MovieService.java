@@ -39,11 +39,6 @@ public class MovieService {
                 );
     }
 
-    @Transactional
-    public Flux<Movie> saveAll(Collection<Movie> movies){
-        return repo.saveAll(movies);
-    }
-
     // alias for "save"
     @Transactional
     public Mono<Movie> update(Movie movie){

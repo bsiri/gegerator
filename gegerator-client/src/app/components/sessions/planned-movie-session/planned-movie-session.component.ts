@@ -26,7 +26,7 @@ export class PlannedMovieSessionComponent{
   }
 
 
-  // *********** pictos & styles **************
+  // *********** icons & styles **************
 
   get movieRatingClass(): string{
     const rating = this.session.movie.rating.key.toLowerCase()
@@ -51,16 +51,16 @@ export class PlannedMovieSessionComponent{
       if (! updatedSessionData){
         return 
       }
+
+      const thenReload = this.session.checkChangesRequireReload(updatedSessionData)
+
       const session = updatedSessionData.toMovieSession()
-      this.store.dispatch(SessionActions.update_session({session}))
+      this.store.dispatch(SessionActions.update_session({session, thenReload}))
     })
   }
 
   // Update the Ratings for the Movie and for the Session
   openRatingsMenu(){
-    // Note : the position will be either left of right of 
-    // this component, the choice will ultimately be 
-    // that of the RatingDialog.
     const dialogRef = this.dialog.open(RatingDialog, {
       data: {
         anchor: this._swlitem,
@@ -84,11 +84,13 @@ export class PlannedMovieSessionComponent{
 
       const plannedSession = this.session
       if (plannedSession.rating != newSessionRating){
-        const session = plannedSession.copy({rating: newSessionRating})
-                                      .toMovieSession()
-        this.store.dispatch(SessionActions.update_session({session}))
-      }
+        const modified = plannedSession.copy({rating: newSessionRating})
+        
+        const thenReload = this.session.checkChangesRequireReload(modified)
 
+        const session = modified.toMovieSession()
+        this.store.dispatch(SessionActions.update_session({session, thenReload}))
+      }
       
       const movie = this.session.movie
       if (movie.rating !== newMovieRating){
