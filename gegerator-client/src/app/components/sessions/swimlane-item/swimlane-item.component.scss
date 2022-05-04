@@ -71,7 +71,7 @@ $color-high: #93C572;
         border-color: red;
     }
 
-    &.movie-never, &.session-never, &.disabled{
+    &.movie-never, &.session-never, &.disqualified{
         border-style: dashed;
         background-color: lightgray !important;
         opacity: 0.5;
