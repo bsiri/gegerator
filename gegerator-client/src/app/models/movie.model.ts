@@ -1,6 +1,5 @@
 import { Duration } from "iso8601-duration";
-import { RatingDialog } from "../components/sessions/ratingdialog/ratingdialog.component";
-import { Comparable } from "./referential.data";
+import { Comparable } from "./comparable.interface";
 import { Durations } from "./time.utils";
 
 export class Movie{

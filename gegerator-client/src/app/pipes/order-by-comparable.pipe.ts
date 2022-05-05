@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Comparable, sortByComparableAttributes } from '../models/referential.data';
+import { sortByComparableAttributes } from '../models/comparable.interface';
 
 
 /**

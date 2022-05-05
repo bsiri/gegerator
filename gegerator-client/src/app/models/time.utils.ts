@@ -13,7 +13,7 @@
 
 import { ValidationErrors } from "@angular/forms";
 import { Duration, parse } from "iso8601-duration";
-import { Comparable } from "./referential.data";
+import { Comparable } from "./comparable.interface";
 
 
 export class Time implements Comparable<Time>{
