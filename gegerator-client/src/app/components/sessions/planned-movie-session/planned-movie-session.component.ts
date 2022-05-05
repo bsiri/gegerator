@@ -6,9 +6,9 @@ import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/genericpurposedialog.component';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 import { RatingDialog } from '../ratingdialog/ratingdialog.component';
-import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
+import { SwimlaneItemComponent, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
-import { MovieRatings } from 'src/app/models/movie.model';
+import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class PlannedMovieSessionComponent{
   }
 
 
-  // *********** icons & styles **************
+  // ***********  **************
 
   get movieRatingClass(): string{
     const rating = this.session.movie.rating.key.toLowerCase()
@@ -36,6 +36,13 @@ export class PlannedMovieSessionComponent{
   get sessionRatingClass(): string{
     const rating = this.session.rating.key.toLocaleLowerCase()
     return `session-${rating}`    
+  }
+
+  get contentRendering(): SwItemContentRendering{
+    let crender = SwItemContentRendering.NORMAL;
+    switch(this.session.movie.rating){
+      case MovieRatings.HIGHEST: crender = SwItemContentRendering.VERY_GREEN;
+    }
   }
 
   // *********** data update ******************

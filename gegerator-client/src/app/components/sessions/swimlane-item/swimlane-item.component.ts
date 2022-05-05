@@ -1,6 +1,35 @@
-import {  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { PlannableItem } from 'src/app/models/plannable.model';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+
+
+/**
+ * Kind of CSS rendering for the content
+ * of that swimlane element. They are listed 
+ * here by order of extravaganza.
+ */
+export enum SwItemContentRendering{
+  DISABLED = "content-disabled",
+  NORMAL = "content-normal",
+  GREEN = "content-green",
+  VERY_GREEN = "content-very-green",
+  OUTSTANDING = "content-outstanding",
+}
+
+/**
+ * Kind of CSS rendering for the border
+ * of that swimlane element. They are listed 
+ * here by order of extravaganza.
+ */
+export enum SwItemBorderRendering{
+  DISABLED = "border-disabled",
+  NORMAL = "border-normal",
+  SALIENT = "border-salient",
+  OUTSTANDING = "border-outstanding"
+}
+
+
+
 
 /*
   Abstract class for PlannedMovieSessionComponent and OtherActivityComponent.
@@ -21,10 +50,16 @@ export class SwimlaneItemComponent implements OnInit{
    */
   @Input() item!: PlannableItem
 
+
   /**
-   * Extra css classes
+   * How the item needs to style its content.
    */
-  @Input() extraClasses: string[] = []
+  @Input() contentRendering : SwItemContentRendering = SwItemContentRendering.NORMAL
+
+  /**
+   * How the item needs to style its border.
+   */
+  @Input() borderRendering : SwItemBorderRendering = SwItemBorderRendering.NORMAL
   
 
   /**
@@ -57,6 +92,9 @@ export class SwimlaneItemComponent implements OnInit{
   heightInPixel: string = '0px'
   topPosInPixel: string = '0px'
 
+  extraClasses(): string[]{
+    return [this.contentRendering, this.borderRendering]
+  }
     
   /**
    * Exposes the final dimensions of that Component,

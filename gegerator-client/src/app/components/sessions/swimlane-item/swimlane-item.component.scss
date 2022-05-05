@@ -1,10 +1,18 @@
 @use  "../../../../_variables" as *;
 @use "sass:color";
 
+$color-base-outstanding: #f7ec0f;
 
-$color-highest: #519B20;
-$color-high: #93C572;
+$color-content-outstanding: color.scale($color-base-outstanding, $lightness: -35%);
+$color-content-very-green: #519B20;
+$color-content-green: #93C572;
+$color-content-normal: white;
+$color-content-disabled: lightgray;
 
+$color-border-outstanding: $color-base-outstanding;
+$color-border-salient: red;
+$color-border-normal: black;
+$color-border-disabled: lightgray; 
 
 .anchor{
     /* 
@@ -44,8 +52,8 @@ $color-high: #93C572;
     right: 2px;
 
     // default bordering and background
-    border: 3px solid black;
-    background-color: white;
+    border: 3px solid $color-border-normal;
+    background-color: $color-content-normal;
 
     
     .swimlane-item-title{
@@ -55,27 +63,50 @@ $color-high: #93C572;
         white-space: nowrap;
     }
 
-// ********* movierating and sessionrating styles *****
+// ********* content styles *****
 
-    &.movie-highest{
-        background-color: $color-highest;
+    &.content-disabled{
+        background-color: $color-content-disabled;
+        opacity: 0.5;
+    }
+
+    &.content-normal{
+        background-color: $color-content-normal;
+    }
+
+    &.content-green{
+        background-color: $color-content-green;
+    }
+
+    &.content-very-green{
+        background-color: $color-content-very-green;
         color: white;
     }
 
-    &.movie-high{
-        background-color: $color-high;
+    &.content-outstanding{
+        background-color: $color-content-outstanding;
+        color: white;
     }
 
-    &.session-mandatory{
-        border-width: 6px;
-        border-color: red;
-    }
+// ********* border styles *****
 
-    &.movie-never, &.session-never, &.disqualified{
+    &.border-disabled{
         border-style: dashed;
-        background-color: lightgray !important;
-        opacity: 0.5;
-        color: black !important;
+        border-color: $color-border-disabled;
+    }
+
+    &.border-normal{
+        border-color: $color-border-normal;
+    }
+
+    &.border-salient{
+        border-width: 6px;
+        border-color: $color-border-salient;
+    }
+
+    &.border-outstanding{
+        border-width: 6px;
+        border-color: $color-border-outstanding;
     }
 
 }

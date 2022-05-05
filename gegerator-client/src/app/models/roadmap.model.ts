@@ -1,24 +1,37 @@
-import { OrderByComparablePipe } from "../pipes/order-by-comparable.pipe";
 import { OtherActivity } from "./activity.model";
+import { chainComparator } from "./comparable.interface";
 import { Movie } from "./movie.model";
 import { PlannableItem } from "./plannable.model";
-import { chainComparator, Day, Days, sortByComparableAttributes } from "./referential.data";
-import { MovieSession, PlannedMovieSession } from "./session.model";
+import { Day, Days} from "./referential.data";
+import { PlannedMovieSession } from "./session.model";
 
 
+/**
+ * Says who designed the instance of the FestivalRoadmap
+ */
+export enum RoadmapAuthor{
+    HUMAN,
+    MACHINE
+}
 
 /**
  * A Roadmap is a collection of PlannedMovieSession
  * and OtherActivities that constitute a viable final
  * planning for the festival.
+ * 
+ * This domain object is special in the sense that it 
+ * entirely derived from other domain objects, and 
+ * in particular it is not modeled on the backend, nor 
+ * have a proper database table.
+ * 
  */
 export class FestivalRoadmap{
 
     constructor(
+        public author: RoadmapAuthor,
         public sessions: readonly PlannedMovieSession[], 
-        public activities: readonly OtherActivity[]){
-
-        }
+        public activities: readonly OtherActivity[]
+    ){}
 
     /**
      * Says whether the given Movie | PlannedMovieSession | OtherActivity is 
@@ -56,7 +69,6 @@ export class FestivalRoadmap{
         return this.sessions.find(session => session.movie.id == movie.id)
     }
 
-    
     /**
      * @returns day by day, and sorted by time, the items that 
      * constitutes that roadmap.
