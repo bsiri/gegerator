@@ -1,12 +1,12 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DialogPosition, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
+import { MovieSession, MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/genericpurposedialog.component';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 import { RatingDialog } from '../ratingdialog/ratingdialog.component';
-import { SwimlaneItemComponent, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
+import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 
@@ -26,23 +26,41 @@ export class PlannedMovieSessionComponent{
   }
 
 
-  // ***********  **************
-
-  get movieRatingClass(): string{
-    const rating = this.session.movie.rating.key.toLowerCase()
-    return `movie-${rating}`
-  }
-
-  get sessionRatingClass(): string{
-    const rating = this.session.rating.key.toLocaleLowerCase()
-    return `session-${rating}`    
-  }
+  // *********** content & border styles **************
 
   get contentRendering(): SwItemContentRendering{
-    let crender = SwItemContentRendering.NORMAL;
-    switch(this.session.movie.rating){
-      case MovieRatings.HIGHEST: crender = SwItemContentRendering.VERY_GREEN;
+    if (this._isDisabled()){
+      return "disabled"
     }
+    const mrating = this.session.movie.rating
+    let crender: SwItemContentRendering = "normal"
+    switch(mrating){
+      case MovieRatings.HIGHEST: crender = "very-green"; break;
+      case MovieRatings.HIGH: crender = "green"; break;
+      case MovieRatings.DEFAULT: crender = "normal"; break;
+      case MovieRatings.NEVER: crender = "disabled"; break;
+      default: throw Error(`wtf is that MovieRating: ${mrating.key}`)
+    }
+    return crender
+  }
+
+  get borderRendering(): SwItemBorderRendering{
+    if (this._isDisabled()){
+      return "disabled"
+    }
+    const srating = this.session.rating
+    let brender: SwItemBorderRendering = "normal"
+    switch(srating){
+      case MovieSessionRatings.MANDATORY: brender = "salient"; break;
+      case MovieSessionRatings.DEFAULT: brender = "normal"; break;
+      case MovieSessionRatings.NEVER: brender = "disabled"; break;
+      default: throw Error(`wtf is that MovieSessionRating: ${srating.key}`)
+    }
+    return brender
+  }
+
+  _isDisabled(): boolean{
+    return (this.session.movie.rating == MovieRatings.NEVER || this.session.rating == MovieSessionRatings.NEVER)
   }
 
   // *********** data update ******************

@@ -8,27 +8,17 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
  * of that swimlane element. They are listed 
  * here by order of extravaganza.
  */
-export enum SwItemContentRendering{
-  DISABLED = "content-disabled",
-  NORMAL = "content-normal",
-  GREEN = "content-green",
-  VERY_GREEN = "content-very-green",
-  OUTSTANDING = "content-outstanding",
-}
+
+export type SwItemContentRendering = "disabled" | "normal" | "green" | "very-green" | "outstanding"
+
 
 /**
  * Kind of CSS rendering for the border
  * of that swimlane element. They are listed 
  * here by order of extravaganza.
  */
-export enum SwItemBorderRendering{
-  DISABLED = "border-disabled",
-  NORMAL = "border-normal",
-  SALIENT = "border-salient",
-  OUTSTANDING = "border-outstanding"
-}
 
-
+export type SwItemBorderRendering = "disabled" | "normal" | "salient" | "outstanding"
 
 
 /*
@@ -54,12 +44,12 @@ export class SwimlaneItemComponent implements OnInit{
   /**
    * How the item needs to style its content.
    */
-  @Input() contentRendering : SwItemContentRendering = SwItemContentRendering.NORMAL
+  @Input() contentRendering : SwItemContentRendering = "normal"
 
   /**
    * How the item needs to style its border.
    */
-  @Input() borderRendering : SwItemBorderRendering = SwItemBorderRendering.NORMAL
+  @Input() borderRendering : SwItemBorderRendering = "normal"
   
 
   /**
@@ -93,7 +83,10 @@ export class SwimlaneItemComponent implements OnInit{
   topPosInPixel: string = '0px'
 
   extraClasses(): string[]{
-    return [this.contentRendering, this.borderRendering]
+    return [
+      `content-${this.contentRendering}`,
+      `border-${this.borderRendering}`
+    ]
   }
     
   /**

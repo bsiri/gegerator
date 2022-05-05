@@ -1,7 +1,9 @@
 
 <app-swimlane-item
     [item]="session"
-    [extraClasses]="[movieRatingClass, sessionRatingClass]"
+    [contentRendering]="contentRendering"
+    [borderRendering]="borderRendering"
+
     (requestUpdate)="update()"
     (requestDelete)="confirmThenDelete()"
     (requestContextMenu)="openRatingsMenu()"

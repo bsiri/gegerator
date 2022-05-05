@@ -2,17 +2,18 @@
 @use "sass:color";
 
 $color-base-outstanding: #f7ec0f;
+$color-base-disabled: lightgray;
 
 $color-content-outstanding: color.scale($color-base-outstanding, $lightness: -35%);
 $color-content-very-green: #519B20;
 $color-content-green: #93C572;
 $color-content-normal: white;
-$color-content-disabled: lightgray;
+$color-content-disabled: $color-base-disabled;
 
 $color-border-outstanding: $color-base-outstanding;
 $color-border-salient: red;
 $color-border-normal: black;
-$color-border-disabled: lightgray; 
+$color-border-disabled: color.scale($color-base-disabled, $lightness: -35%); 
 
 .anchor{
     /* 
