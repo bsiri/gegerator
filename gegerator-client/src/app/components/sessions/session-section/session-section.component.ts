@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { map, Observable } from 'rxjs';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
 import { MovieSession, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
+import { selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
@@ -17,7 +19,7 @@ import { SessionDialog } from '../sessiondialog/sessiondialog.component';
   templateUrl: './session-section.component.html',
   styleUrls: ['./session-section.component.scss']
 })
-export class SessionSectionComponent implements OnInit {
+export class SessionSectionComponent implements OnInit, OnDestroy {
 
 
   /*
@@ -38,26 +40,27 @@ export class SessionSectionComponent implements OnInit {
   */
   sessions$ = this.store.select(selectPlannedMovieSession)
   activities$ = this.store.select(selectActivitieslist)
+  roadmap = this.store.select(selectUserRoadmap)
 
   constructor(private store: Store, private dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
 
-  sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
-    let filteredSessions = [] as PlannedMovieSession[]
-    this.sessions$.subscribe( allSessions =>
-      filteredSessions = allSessions.filter(s => s.day == day && s.theater == theater)
-    )
-    return filteredSessions;
+  ngOnDestroy(): void{
+
   }
 
-  activitiesByDay(day: Day) : OtherActivity[]{
-    let filteredActivities = [] as OtherActivity[]
-    this.activities$.subscribe( allactivities =>
-      filteredActivities = allactivities.filter(a => a.day == day)  
+  sessionsByDayAndTheater(day: Day, theater: Theater) : Observable<PlannedMovieSession[]>{
+    return this.sessions$.pipe(
+      map(sessions => sessions.filter(s => s.day == day && s.theater == theater))
     )
-    return filteredActivities
+  }
+
+  activitiesByDay(day: Day) : Observable<OtherActivity[]>{
+    return this.activities$.pipe(
+      map(activities => activities.filter(a => a.day == day))
+    )
   }
 
   openNewSession(day: Day, theater: Theater): void{

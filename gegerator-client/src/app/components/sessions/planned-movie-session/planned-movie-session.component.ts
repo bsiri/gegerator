@@ -1,5 +1,5 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { DialogPosition, MatDialog } from '@angular/material/dialog';
+import { Component, Input, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { MovieSession, MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
@@ -9,6 +9,7 @@ import { RatingDialog } from '../ratingdialog/ratingdialog.component';
 import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
+import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 
 
 @Component({
@@ -19,6 +20,8 @@ import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 export class PlannedMovieSessionComponent{
 
   @Input() session!: PlannedMovieSession
+
+  @Input() roadmap!: FestivalRoadmap
 
   @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
 
@@ -32,35 +35,28 @@ export class PlannedMovieSessionComponent{
     if (this._isDisabled()){
       return "disabled"
     }
-    const mrating = this.session.movie.rating
-    let crender: SwItemContentRendering = "normal"
-    switch(mrating){
-      case MovieRatings.HIGHEST: crender = "very-green"; break;
-      case MovieRatings.HIGH: crender = "green"; break;
-      case MovieRatings.DEFAULT: crender = "normal"; break;
-      case MovieRatings.NEVER: crender = "disabled"; break;
-      default: throw Error(`wtf is that MovieRating: ${mrating.key}`)
-    }
-    return crender
+    return movieRatingClasses.get(this.session.movie.rating) ?? "normal"
   }
 
   get borderRendering(): SwItemBorderRendering{
     if (this._isDisabled()){
       return "disabled"
     }
-    const srating = this.session.rating
-    let brender: SwItemBorderRendering = "normal"
-    switch(srating){
-      case MovieSessionRatings.MANDATORY: brender = "salient"; break;
-      case MovieSessionRatings.DEFAULT: brender = "normal"; break;
-      case MovieSessionRatings.NEVER: brender = "disabled"; break;
-      default: throw Error(`wtf is that MovieSessionRating: ${srating.key}`)
-    }
-    return brender
+    return sessionRatingClasses.get(this.session.rating) ?? "normal"
   }
 
   _isDisabled(): boolean{
-    return (this.session.movie.rating == MovieRatings.NEVER || this.session.rating == MovieSessionRatings.NEVER)
+    const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]
+
+    // R1. If one of the ratings is 'NEVER', the session is disabled.
+    if (movie.rating == MovieRatings.NEVER || session.rating == MovieSessionRatings.NEVER){
+      return true
+    }
+    // R2. If the movie is already planned in a different session, this session is disabled.
+    if (roadmap.isInRoadmap(movie) && ! this.roadmap.isInRoadmap(session)){
+      return true
+    }
+    return false
   }
 
   // *********** data update ******************
@@ -145,3 +141,21 @@ export class PlannedMovieSessionComponent{
   }
 }
 
+// ******** css mapping ***********
+
+const movieRatingClasses = new Map<MovieRating, SwItemContentRendering>(
+  [
+    [MovieRatings.HIGHEST, "very-green"],
+    [MovieRatings.HIGH, "green"],
+    [MovieRatings.DEFAULT, "normal"],
+    [MovieRatings.NEVER, "disabled"]    
+  ]
+)
+
+const sessionRatingClasses = new Map<MovieSessionRating, SwItemBorderRendering>(
+  [
+    [MovieSessionRatings.MANDATORY, "salient"],
+    [MovieSessionRatings.DEFAULT, "normal"],
+    [MovieSessionRatings.NEVER, "disabled"]    
+  ]
+)

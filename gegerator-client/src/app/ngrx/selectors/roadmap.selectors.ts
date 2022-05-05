@@ -11,7 +11,7 @@ import { selectPlannedMovieSession } from "./session.selectors";
  * all OtherActivities and all PlannedMovieSession
  * that were handpicked by the user as MANDATORY 
  */
-export const userRoadmap = createSelector(
+export const selectUserRoadmap = createSelector(
     selectPlannedMovieSession, 
     selectActivitieslist,
     (sessions, activities) => {

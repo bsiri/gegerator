@@ -41,28 +41,28 @@
                 <tbody>
                     <tr [ngStyle]="{'height': rowHeightInPixel}">
                         <td>
-                            <ng-container *ngFor="let activity of activitiesByDay(day)">
+                            <ng-container *ngFor="let activity of activitiesByDay(day) | async">
                                 <app-other-activity [activity]="activity"></app-other-activity>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC)">
-                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC) | async">
+                                <app-planned-movie-session [session]="session" [roadmap]="(roadmap | async)!"></app-planned-movie-session>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.CASINO)">
-                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.CASINO) | async">
+                                <app-planned-movie-session [session]="session" [roadmap]="(roadmap | async)!"></app-planned-movie-session>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.PARADISO)">
-                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.PARADISO) | async">
+                                <app-planned-movie-session [session]="session" [roadmap]="(roadmap | async)!"></app-planned-movie-session>
                             </ng-container>
                         </td>
                         <td>
-                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.MCL)">
-                                <app-planned-movie-session [session]="session"></app-planned-movie-session>
+                            <ng-container *ngFor="let session of sessionsByDayAndTheater(day, Theaters.MCL) | async">
+                                <app-planned-movie-session [session]="session" [roadmap]="(roadmap | async)!"></app-planned-movie-session>
                             </ng-container>
                         </td>
                     </tr>
