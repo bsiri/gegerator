@@ -1,5 +1,6 @@
 import { Duration } from "iso8601-duration"
-import { Time, Times } from "src/app/models/time.utils"
+import { Times } from "src/app/models/time.utils"
+import { Time } from "src/app/models/time.model"
 
 /*
     This constant defines the constants on which 

@@ -2,7 +2,8 @@ import { Comparable } from "./comparable.interface";
 import { Movie } from "./movie.model";
 import { PlannableItem } from "./plannable.model";
 import { Day, Days, Theater, Theaters } from "./referential.data";
-import { Time, Times } from "./time.utils";
+import { Times } from "./time.utils";
+import { Time } from "./time.model";
 
 
 /*

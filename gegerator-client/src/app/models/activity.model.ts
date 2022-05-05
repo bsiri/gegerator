@@ -1,6 +1,7 @@
 import { PlannableItem } from "./plannable.model";
 import { Day, Days } from "./referential.data";
-import { Time, Times } from "./time.utils";
+import { Times } from "./time.utils";
+import { Time } from "./time.model";
 
 
 export class OtherActivity implements PlannableItem{
