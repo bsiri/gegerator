@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subscription, takeWhile } from 'rxjs';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
+import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 import { MovieSession, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
@@ -40,15 +41,28 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
   */
   sessions$ = this.store.select(selectPlannedMovieSession)
   activities$ = this.store.select(selectActivitieslist)
-  roadmap = this.store.select(selectUserRoadmap)
 
-  constructor(private store: Store, private dialog: MatDialog) { }
+  /*
+    Note: here we subscribe directly and assign the roadmap by subscription
+    It is so because we need to inject it in each and every PlannedMovieSession.
+    Doing so with an observable would lead to as many subscription wich would 
+    be very short lived. 
+
+    So we subscribe here once instead.
+  */
+  roadmap!: FestivalRoadmap
+  subRoadmap: Subscription
+
+
+  constructor(private store: Store, private dialog: MatDialog) {
+    this.subRoadmap = this.store.select(selectUserRoadmap).subscribe(rmap => this.roadmap = rmap)
+  }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy(): void{
-
+    this.subRoadmap.unsubscribe()
   }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : Observable<PlannedMovieSession[]>{
