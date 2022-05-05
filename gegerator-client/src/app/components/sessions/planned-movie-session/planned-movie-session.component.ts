@@ -9,7 +9,7 @@ import { RatingDialog } from '../ratingdialog/ratingdialog.component';
 import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
-import { FestivalRoadmap } from 'src/app/models/roadmap.model';
+import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
 
 
 @Component({
@@ -35,12 +35,18 @@ export class PlannedMovieSessionComponent{
     if (this._isDisabled()){
       return "disabled"
     }
+    if (this._isOutstanding()){
+      return "outstanding"
+    }
     return movieRatingClasses.get(this.session.movie.rating) ?? "normal"
   }
 
   get borderRendering(): SwItemBorderRendering{
     if (this._isDisabled()){
       return "disabled"
+    }
+    if (this._isOutstanding()){
+      return "outstanding"
     }
     return sessionRatingClasses.get(this.session.rating) ?? "normal"
   }
@@ -57,6 +63,10 @@ export class PlannedMovieSessionComponent{
       return true
     }
     return false
+  }
+
+  _isOutstanding(): boolean{
+    return (this.roadmap.isInRoadmap(this.session) && this.roadmap.author == RoadmapAuthor.MACHINE)
   }
 
   // *********** data update ******************

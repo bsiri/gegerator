@@ -1,8 +1,7 @@
 import { createSelector } from "@ngrx/store";
 import { FestivalRoadmap, RoadmapAuthor } from "src/app/models/roadmap.model";
-import { MovieSessionRating, MovieSessionRatings } from "src/app/models/session.model";
+import {  MovieSessionRatings } from "src/app/models/session.model";
 import { selectActivitieslist } from "./activity.selectors";
-import { selectMovieslist } from "./movie.selectors";
 import { selectPlannedMovieSession } from "./session.selectors";
 
 
