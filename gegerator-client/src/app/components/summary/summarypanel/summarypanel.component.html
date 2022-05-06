@@ -12,7 +12,9 @@
                             {{event.toString()}}
                         </span>
                     </li>
-                    <li *ngIf="roadmap.dailyPlanning().get(day)?.length == 0">{{'('+day.name+' : Rien)'}}</li>
+                    <li *ngIf="roadmap.dailyPlanning().get(day)?.length == 0">
+                        {{'('+day.name+' : Rien)'}}
+                    </li>
                 </ul>
             </div>
         </mat-tab>
@@ -22,7 +24,12 @@
             <div *ngFor="let entry of moviesForRatings$ | async | orderByComparable:'rating'">
                 <h2>{{entry.rating.description}} :</h2>
                 <ul>
-                    <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">{{movie.title}}</li>
+                    <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">
+                        <span>{{movie.title}} </span> 
+                        <ng-container [ngTemplateOutlet]="movieSessionLink" 
+                                    [ngTemplateOutletContext]="{session:getSession(movie)}">
+                        </ng-container>
+                    </li>
                     <li *ngIf="entry.movies.length == 0">(Aucun)</li>
                 </ul>
             </div>
@@ -49,3 +56,12 @@
     </mat-tab-group>
 
 </div>
+
+<ng-template #movieSessionLink  let-session="session">
+    <span *ngIf="session"
+        class="pseudolink" 
+        (click)="showSelected(session.htmlId)">
+        {{session.format('(%d, %h, %t)')}}
+    </span>
+    <span *ngIf="! session">(pas encore plannifié)</span>
+</ng-template>

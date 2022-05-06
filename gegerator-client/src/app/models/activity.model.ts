@@ -28,6 +28,22 @@ export class OtherActivity implements PlannableItem{
         return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)} : ${this.description}`
     }
 
+    /**
+     * Will format this activity as a string, 
+     * using the following hints:
+     * - %d : prints the day
+     * - %h : prints the start and end time interval
+     * - %n : prints the description
+     * 
+     * .toString() == .format('%d, %h : %n')
+     * @param fmtString 
+     */
+       public format(fmtString: string) :string{
+        return fmtString.replace('%d', this.day.name)
+                        .replace('%h', Times.toStrInterval(this.startTime, this.endTime))
+                        .replace('%n', this.description)
+    }  
+
     // ********* JSON interface **********
 
     toJSON(): OtherActivityJSON{

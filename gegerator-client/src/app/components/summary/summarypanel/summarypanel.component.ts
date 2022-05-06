@@ -76,6 +76,14 @@ export class SummarypanelComponent implements OnInit, OnDestroy {
     elt?.scrollIntoView({behavior: 'smooth'})
   }
 
+  isInRoadmap(movie: Movie): boolean{
+    return this.roadmap.isInRoadmap(movie)
+  }
+
+  getSession(movie: Movie) : PlannedMovieSession | undefined{
+    return this.roadmap.maybeGetSessionForMovie(movie)
+  }
+
 }
 
 // ************ util functions ***********

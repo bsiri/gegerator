@@ -1,5 +1,4 @@
-import { Day, Days } from "./referential.data";
-import { Times } from "./time.utils";
+import { Day } from "./referential.data";
 import { Time } from "./time.model";
 
 /**
@@ -13,14 +12,25 @@ export interface PlannableItem{
     startTime: Time;
     endTime: Time;
     htmlId: string;
+    
+    /**
+     * Returns a string representation
+     * of this PlannableItem
+     */
+    toString(): string;
+
+    /**
+     * Will format this item as a string, 
+     * implementation proposing at least 
+     * the following hints:
+     * - %d : prints the day
+     * - %h : prints the start and end time interval
+     * - %n : prints the name
+     * 
+     * Implementations may propose more options
+     * if applicable.
+     * @param fmtString 
+     */
+    format(fmtString: string) : string;
 }
 
-export namespace PlannableItems{
-    export function compare(item1: PlannableItem, item2: PlannableItem): number{
-        const cmpDays = Days.compare(item1.day, item2.day)
-        if (cmpDays != 0){
-            return cmpDays
-        }
-        return Times.compare(item1.startTime, item2.startTime)
-    }
-}

@@ -84,13 +84,30 @@ export class PlannedMovieSession implements PlannableItem{
     
     // implements/provides: PlannableItem.name
     public get name(){
-        return this.movie?.title ?? ''
+        return this.movie.title
     }
 
     public toString(): string{
         return `${this.day.name}, ${Times.toStrInterval(this.startTime, this.endTime)}, ${this.theater.name} : ${this.movie.title}`
     }
 
+    /**
+     * Will format this session as a string, 
+     * using the following hints:
+     * - %d : prints the day
+     * - %h : prints the start and end time interval
+     * - %n : prints the movie.
+     * - %t : prints the theater
+     * 
+     * .toString() == .format('%d, %h, %t : %m')
+     * @param fmtString 
+     */
+    public format(fmtString: string) :string{
+        return fmtString.replace('%d', this.day.name)
+                        .replace('%h', Times.toStrInterval(this.startTime, this.endTime))
+                        .replace('%t', this.theater.name)
+                        .replace('%n', this.movie.title)
+    }
 
     /**
      * Asks whether the changes made to that entity
