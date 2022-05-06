@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
+import { Days } from 'src/app/models/referential.data';
+import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
 import { MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
+import { selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 
 // A couple of interface
@@ -28,9 +31,13 @@ interface SessionsForRating{
   templateUrl: './summarypanel.component.html',
   styleUrls: ['./summarypanel.component.scss']
 })
-export class SummarypanelComponent implements OnInit {
+export class SummarypanelComponent implements OnInit, OnDestroy {
 
-  moviesForRatings = this.store.select(selectMovieslist).pipe(
+  // same thing as always : bring the Days in 'this' context
+  // so we can use them in the template.
+  Days = Days
+
+  moviesForRatings$ = this.store.select(selectMovieslist).pipe(
     map(movies => {
       const byRating = mapMoviesByRating(movies)
       return Array.from(byRating.entries()).map(entry => {
@@ -39,7 +46,7 @@ export class SummarypanelComponent implements OnInit {
     }),
   )
 
-  sessionsForRatings = 
+  sessionsForRatings$ = 
     this.store.select(selectPlannedMovieSession).pipe(
     map(sessions => {
       const byRating = mapSessionByRating(sessions)
@@ -49,13 +56,19 @@ export class SummarypanelComponent implements OnInit {
     })
   )
   
-  activities = this.store.select(selectActivitieslist)
+
+  roadmap: FestivalRoadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+  roadmapSub!: Subscription
 
   constructor(private store: Store) {
-
+    this.roadmapSub = this.store.select(selectUserRoadmap).subscribe(rmap => this.roadmap = rmap)
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.roadmapSub.unsubscribe()
   }
 
   showSelected(target: string){

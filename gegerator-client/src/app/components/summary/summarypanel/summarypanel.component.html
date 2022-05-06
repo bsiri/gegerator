@@ -2,9 +2,24 @@
 <div class="summary-panel">
 
     <mat-tab-group>
+
+        <mat-tab label="Roadmap">
+            <h1>Roadmap :</h1>
+            <div *ngFor="let day of Days.enumerate()">
+                <ul>
+                    <li *ngFor="let event of roadmap.dailyPlanning().get(day)">
+                        <span class="pseudolink" (click)="showSelected(event.htmlId)">
+                            {{event.toString()}}
+                        </span>
+                    </li>
+                    <li *ngIf="roadmap.dailyPlanning().get(day)?.length == 0">{{'('+day.name+' : Rien)'}}</li>
+                </ul>
+            </div>
+        </mat-tab>
+
         <mat-tab label="Films">
             <h1>Récap des films :</h1>
-            <div *ngFor="let entry of moviesForRatings | async | orderByComparable:'rating'">
+            <div *ngFor="let entry of moviesForRatings$ | async | orderByComparable:'rating'">
                 <h2>{{entry.rating.description}} :</h2>
                 <ul>
                     <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">{{movie.title}}</li>
@@ -15,7 +30,7 @@
 
         <mat-tab label="Sessions">
             <h1>Récap des sessions :</h1>
-            <div *ngFor="let entry of sessionsForRatings | async | orderByComparable:'rating'">
+            <div *ngFor="let entry of sessionsForRatings$ | async | orderByComparable:'rating'">
                 <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
                 <h2>{{entry.rating.description}} :</h2>
                 <ul>
@@ -30,17 +45,6 @@
             </div>
         </mat-tab>
 
-        <mat-tab label="Autres">
-            <h1>Autres trucs prévus :</h1>
-            <ul>
-                <li *ngFor="let act of activities | async | orderByComparable:'day':'startTime'">
-                    <span class="pseudolink"  (click)="showSelected(act.htmlId)">
-                        {{act.toString()}}
-                    </span>
-                </li>
-                <li *ngIf="(activities | async)?.length == 0">(Aucun)</li>
-            </ul>
-        </mat-tab>
 
     </mat-tab-group>
 

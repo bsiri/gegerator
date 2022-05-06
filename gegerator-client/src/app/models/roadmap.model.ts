@@ -73,7 +73,7 @@ export class FestivalRoadmap{
      * @returns day by day, and sorted by time, the items that 
      * constitutes that roadmap.
      */
-    finalized(): Map<Day, Array<PlannableItem>>{
+    dailyPlanning(): Map<Day, Array<PlannableItem>>{
         const finalized = new Map<Day, PlannableItem[]>(Days.enumerate().map(day => [day, []]))
 
         let allPlannable: PlannableItem[] = [...this.sessions, ...this.activities].sort(chainComparator('day', 'startTime'))
