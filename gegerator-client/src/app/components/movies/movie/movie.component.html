@@ -14,6 +14,12 @@
         
         <mat-card-content>
             <div class="movie-duration"><label>durée : </label><span>{{movie.duration | duration}}</span></div>
+
+            <!-- icons -->
+            <div class="icon-container">
+                <app-movie-ratings [rating]="movie.rating"></app-movie-ratings>
+            </div>
+            <!-- /icons -->
         </mat-card-content>
     </mat-card>
 </span>

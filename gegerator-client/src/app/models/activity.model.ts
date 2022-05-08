@@ -69,6 +69,18 @@ export class OtherActivity implements PlannableEvent{
         )
     }
 
+    copy(modifiers = {}): OtherActivity{
+        const _clone = new OtherActivity(
+            this.id,
+            this.day,
+            this.startTime,
+            this.endTime,
+            this.description,
+            this.rating
+        )
+        Object.assign(_clone, modifiers)
+        return _clone
+    }
 
 }
 
