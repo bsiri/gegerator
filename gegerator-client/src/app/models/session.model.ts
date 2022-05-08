@@ -1,9 +1,8 @@
-import { Comparable } from "./comparable.interface";
 import { Movie } from "./movie.model";
-import { PlannableItem } from "./plannable.model";
 import { Day, Days, Theater, Theaters } from "./referential.data";
 import { Times } from "./time.utils";
 import { Time } from "./time.model";
+import { EventRating, EventRatings, PlannableEvent } from "./plannable.model";
 
 
 /*
@@ -17,7 +16,7 @@ export class MovieSession{
         public theater: Theater,
         public day: Day,
         public startTime: Time,
-        public rating: MovieSessionRating = MovieSessionRatings.DEFAULT
+        public rating: EventRating = EventRatings.DEFAULT
     ){}
 
     toJSON(): MovieSessionJSON{
@@ -38,7 +37,7 @@ export class MovieSession{
             Theaters.fromKey(json.theater),
             Days.fromKey(json.day),
             Times.deserialize(json.startTime),
-            MovieSessionRatings.fromKey(json.rating)
+            EventRatings.fromKey(json.rating)
         )
     }
 }
@@ -60,7 +59,7 @@ export interface MovieSessionJSON{
     a Movie, MovieSession and (soon) Constraints relative
     to that session.
 */
-export class PlannedMovieSession implements PlannableItem{
+export class PlannedMovieSession implements PlannableEvent{
 
     constructor(
         public id: number,
@@ -68,21 +67,21 @@ export class PlannedMovieSession implements PlannableItem{
         public theater: Theater,
         public day: Day,
         public startTime: Time,
-        public rating: MovieSessionRating = MovieSessionRatings.DEFAULT
+        public rating: EventRating = EventRatings.DEFAULT
     ){        
     }
 
-    // implements/provides : PlannableItem.endTime
+    // implements/provides : PlannableEvent.endTime
     public get endTime(){
         return Times.add(this.startTime, this.movie.duration)   
     }
 
-    // implements/provides : PlannableItem.htmlId
+    // implements/provides : PlannableEvent.htmlId
     public get htmlId(){
         return `planned-movie-session-${this.id}`
     }
     
-    // implements/provides: PlannableItem.name
+    // implements/provides: PlannableEvent.name
     public get name(){
         return this.movie.title
     }
@@ -118,7 +117,7 @@ export class PlannedMovieSession implements PlannableItem{
      */
     public checkChangesRequireReload(modified: PlannedMovieSession): boolean{
         // R1. : if Rating transitionned to MANDATORY, reload is necessary.
-        return (this.rating != MovieSessionRatings.MANDATORY && modified.rating == MovieSessionRatings.MANDATORY)
+        return (this.rating != EventRatings.MANDATORY && modified.rating == EventRatings.MANDATORY)
     }
 
     toMovieSession(){
@@ -146,56 +145,3 @@ export class PlannedMovieSession implements PlannableItem{
     }
 }
 
-// *********** "Enum" MovieSessionRating (see referential.data.ts for explanations) **************
-
-export class MovieSessionRating implements Comparable<MovieSessionRating>{
-    constructor(
-        public key: string, 
-        public rank: number,
-        public name: string,
-        public description: string
-    ){}
-
-    compare(this: MovieSessionRating, other: MovieSessionRating): number {
-        return this.rank - other.rank
-    }
-  }
-  
-  export class MovieSessionRatings{
-    static MANDATORY= new MovieSessionRating( 
-      "MANDATORY",
-      0, 
-      "Impérative",
-      "Je veux voir ce film à cette séance précise"
-    );
-    static DEFAULT = new MovieSessionRating( 
-      "DEFAULT", 
-      1,
-      "Normale",
-      "Laisser l'algorithme décider"
-    );
-    static NEVER = new MovieSessionRating( 
-      "NEVER",
-      2, 
-      "Jamais",
-      "Pas cette séance là"
-    );
-  
-    static enumerate(): readonly MovieSessionRating[]{
-      return [this.MANDATORY, this.DEFAULT, this.NEVER]
-    }
-  
-    static fromKey(key: string): MovieSessionRating{
-      const found = MovieSessionRatings.enumerate().find(r => r.key == key)
-      if (! found){
-        throw Error(`Programmatic error : unknown movie rating ${key} !`)
-      }
-      return found;
-    }
-
-    static compare(rating1: MovieSessionRating, rating2: MovieSessionRating): number{
-        return rating1.compare(rating2)
-    }
-  }
-  
-  

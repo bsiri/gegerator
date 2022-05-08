@@ -4,8 +4,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, Observable, startWith } from 'rxjs';
 import { Movie } from 'src/app/models/movie.model';
+import { EventRating } from 'src/app/models/plannable.model';
 import { Days, Theaters } from 'src/app/models/referential.data';
-import { MovieSessionRating, PlannedMovieSession } from 'src/app/models/session.model';
+import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
@@ -22,7 +23,7 @@ export class SessionDialog implements OnInit {
   // we will need to re-emit a Session with 
   // updated data on it
   id: number;
-  rating: MovieSessionRating
+  rating: EventRating
   formGroup!: FormGroup;
 
 

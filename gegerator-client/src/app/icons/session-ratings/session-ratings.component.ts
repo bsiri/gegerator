@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MovieSessionRating } from 'src/app/models/session.model';
+import { EventRating } from 'src/app/models/plannable.model';
 
 @Component({
   selector: 'app-session-ratings',
@@ -8,7 +8,7 @@ import { MovieSessionRating } from 'src/app/models/session.model';
 })
 export class SessionRatingsComponent implements OnInit {
 
-  @Input() rating! : MovieSessionRating
+  @Input() rating! : EventRating
 
   constructor() { }
 

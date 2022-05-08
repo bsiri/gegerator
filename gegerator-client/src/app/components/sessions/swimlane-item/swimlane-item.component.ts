@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { PlannableItem } from 'src/app/models/plannable.model';
+import { PlannableEvent } from 'src/app/models/plannable.model';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
 
@@ -36,9 +36,9 @@ export class SwimlaneItemComponent implements OnInit{
   @ViewChild('_container') private _container!: ElementRef
 
   /**
-   * The item to plan, which must be a PlannableItem
+   * The item to plan, which must be a PlannableEvent
    */
-  @Input() item!: PlannableItem
+  @Input() item!: PlannableEvent
 
 
   /**

@@ -1,7 +1,7 @@
 import { OtherActivity } from "./activity.model";
 import { chainComparator } from "./comparable.interface";
 import { Movie } from "./movie.model";
-import { PlannableItem } from "./plannable.model";
+import { PlannableEvent } from "./plannable.model";
 import { Day, Days} from "./referential.data";
 import { PlannedMovieSession } from "./session.model";
 
@@ -73,10 +73,10 @@ export class FestivalRoadmap{
      * @returns day by day, and sorted by time, the items that 
      * constitutes that roadmap.
      */
-    dailyPlanning(): Map<Day, Array<PlannableItem>>{
-        const finalized = new Map<Day, PlannableItem[]>(Days.enumerate().map(day => [day, []]))
+    dailyPlanning(): Map<Day, Array<PlannableEvent>>{
+        const finalized = new Map<Day, PlannableEvent[]>(Days.enumerate().map(day => [day, []]))
 
-        let allPlannable: PlannableItem[] = [...this.sessions, ...this.activities].sort(chainComparator('day', 'startTime'))
+        let allPlannable: PlannableEvent[] = [...this.sessions, ...this.activities].sort(chainComparator('day', 'startTime'))
 
         allPlannable.forEach(plannable => finalized.get(plannable.day)?.push(plannable))
         

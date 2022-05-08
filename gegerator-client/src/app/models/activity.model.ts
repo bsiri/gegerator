@@ -1,24 +1,25 @@
-import { PlannableItem } from "./plannable.model";
+import { EventRating, EventRatings, PlannableEvent } from "./plannable.model";
 import { Day, Days } from "./referential.data";
 import { Times } from "./time.utils";
 import { Time } from "./time.model";
 
 
-export class OtherActivity implements PlannableItem{
+export class OtherActivity implements PlannableEvent{
     constructor(
         public id: number,
         public day: Day,
         public startTime: Time,
         public endTime: Time,
         public description: string,
+        public rating: EventRating = EventRatings.DEFAULT
     ){}
 
-    // implements/provides : PlannableItem.name
+    // implements/provides : PlannableEvent.name
     public get name(){
         return this.description
     }
     
-    // implements : PlannableItem.htmlId
+    // implements : PlannableEvent.htmlId
     public get htmlId(){
         return `other-activity-${this.id}`
     }
@@ -52,7 +53,8 @@ export class OtherActivity implements PlannableItem{
             day: this.day.key,
             startTime : Times.serialize(this.startTime),
             endTime : Times.serialize(this.endTime),
-            description: this.description
+            description: this.description,
+            rating: this.rating.key
         }
     }
 
@@ -62,7 +64,8 @@ export class OtherActivity implements PlannableItem{
             Days.fromKey(json.day),
             Times.deserialize(json.startTime),
             Times.deserialize(json.endTime),
-            json.description
+            json.description,
+            EventRatings.fromKey(json.rating)
         )
     }
 
@@ -75,4 +78,5 @@ export interface OtherActivityJSON{
     startTime: string
     endTime: string
     description: string    
+    rating: string
 }

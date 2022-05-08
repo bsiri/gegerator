@@ -1,6 +1,6 @@
 import { createSelector } from "@ngrx/store";
+import { EventRatings } from "src/app/models/plannable.model";
 import { FestivalRoadmap, RoadmapAuthor } from "src/app/models/roadmap.model";
-import {  MovieSessionRatings } from "src/app/models/session.model";
 import { selectActivitieslist } from "./activity.selectors";
 import { selectPlannedMovieSession } from "./session.selectors";
 
@@ -16,7 +16,7 @@ export const selectUserRoadmap = createSelector(
     (sessions, activities) => {
         return new FestivalRoadmap(
             RoadmapAuthor.HUMAN,
-            sessions.filter(session => session.rating == MovieSessionRatings.MANDATORY),
+            sessions.filter(session => session.rating == EventRatings.MANDATORY),
             activities
         )
     }

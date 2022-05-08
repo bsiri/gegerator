@@ -1,7 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { MovieSession, MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/genericpurposedialog.component';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
@@ -10,6 +9,8 @@ import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } 
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
+import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
+import { EventRating, EventRatings } from 'src/app/models/plannable.model';
 
 
 @Component({
@@ -55,7 +56,7 @@ export class PlannedMovieSessionComponent{
     const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]
 
     // R1. If one of the ratings is 'NEVER', the session is disabled.
-    if (movie.rating == MovieRatings.NEVER || session.rating == MovieSessionRatings.NEVER){
+    if (movie.rating == MovieRatings.NEVER || session.rating == EventRatings.NEVER){
       return true
     }
     // R2. If the movie is already planned in a different session, this session is disabled.
@@ -162,10 +163,10 @@ const movieRatingClasses = new Map<MovieRating, SwItemContentRendering>(
   ]
 )
 
-const sessionRatingClasses = new Map<MovieSessionRating, SwItemBorderRendering>(
+const sessionRatingClasses = new Map<EventRating, SwItemBorderRendering>(
   [
-    [MovieSessionRatings.MANDATORY, "salient"],
-    [MovieSessionRatings.DEFAULT, "normal"],
-    [MovieSessionRatings.NEVER, "disabled"]    
+    [EventRatings.MANDATORY, "salient"],
+    [EventRatings.DEFAULT, "normal"],
+    [EventRatings.NEVER, "disabled"]    
   ]
 )

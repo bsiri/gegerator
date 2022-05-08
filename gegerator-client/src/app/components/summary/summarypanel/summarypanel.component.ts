@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, Subscription } from 'rxjs';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
+import { EventRating, EventRatings } from 'src/app/models/plannable.model';
 import { Days } from 'src/app/models/referential.data';
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
-import { MovieSessionRating, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
-import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
+import { PlannedMovieSession } from 'src/app/models/session.model';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
@@ -19,7 +19,7 @@ interface MoviesForRating {
 }
 
 interface SessionsForRating{
-  rating: MovieSessionRating,
+  rating: EventRating,
   sessions: PlannedMovieSession[]
 }
 
@@ -89,7 +89,7 @@ export class SummarypanelComponent implements OnInit, OnDestroy {
 // ************ util functions ***********
 
 
-type Rating = MovieSessionRating | MovieRating
+type Rating = EventRating | MovieRating
 type Ratable<R extends Rating> = {
   rating: R
 }
@@ -99,8 +99,8 @@ function mapMoviesByRating(movies: readonly Movie[]): Map<MovieRating, Movie[]>{
   return _mapByRating(movies, MovieRatings.enumerate())
 }
 
-function mapSessionByRating(sessions: readonly PlannedMovieSession[]): Map<MovieSessionRating, PlannedMovieSession[]>{
-  return _mapByRating(sessions, MovieSessionRatings.enumerate())
+function mapSessionByRating(sessions: readonly PlannedMovieSession[]): Map<EventRating, PlannedMovieSession[]>{
+  return _mapByRating(sessions, EventRatings.enumerate())
 }
 
 function _mapByRating<R extends Rating, T extends Ratable<R>>

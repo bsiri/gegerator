@@ -36,7 +36,7 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
         need to be pixel-precise in placement.
 
         Indeed, some other properties will
-        be computed based on the model (a PlannableItem): 
+        be computed based on the model (a PlannableEvent): 
         - height: depends on the start and end times
         - pos relative from top: depends on thestart time.
         these are also calculated pro-rata with respect

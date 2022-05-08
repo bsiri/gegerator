@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from 
 import { DialogPosition, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
-import { MovieSessionRating, MovieSessionRatings } from 'src/app/models/session.model';
+import { EventRating, EventRatings } from 'src/app/models/plannable.model';
 import { SwimlaneItemComponent } from '../swimlane-item/swimlane-item.component';
 
 // magic number to account for the Dialog padding
@@ -40,13 +40,13 @@ export class RatingDialog implements OnInit, AfterViewInit {
    * enumerate them in the view
    */
   MovieRatings = MovieRatings
-  MovieSessionRatings = MovieSessionRatings
+  EventRatings = EventRatings
 
   /**
    * Model
    */
   movieRating: MovieRating
-  sessionRating: MovieSessionRating
+  sessionRating: EventRating
 
   constructor(
     public dialogRef: MatDialogRef<RatingDialog>,
@@ -105,5 +105,5 @@ export class RatingDialog implements OnInit, AfterViewInit {
 export interface RatingsDialogModel{
   anchor: SwimlaneItemComponent
   movieRating: MovieRating
-  sessionRating: MovieSessionRating
+  sessionRating: EventRating
 }

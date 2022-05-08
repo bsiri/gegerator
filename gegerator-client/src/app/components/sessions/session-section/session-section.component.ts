@@ -3,9 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, Observable, Subscription, takeWhile } from 'rxjs';
 import { OtherActivity } from 'src/app/models/activity.model';
+import { EventRatings } from 'src/app/models/plannable.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
 import { FestivalRoadmap } from 'src/app/models/roadmap.model';
-import { MovieSession, MovieSessionRatings, PlannedMovieSession } from 'src/app/models/session.model';
+import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
@@ -97,7 +98,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
           newsession.theater,
           newsession.day,
           newsession.startTime,
-          MovieSessionRatings.DEFAULT
+          EventRatings.DEFAULT
         )
         this.store.dispatch(SessionActions.create_session({session: movieSession}))
       }
