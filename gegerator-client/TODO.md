@@ -49,8 +49,17 @@ b - appréciation séance
 
 ==> Done
 
+8. Premier lot remarques Thomas :
+- Retravailler la barre de recherche, qu'on confond trop 
+  souvent avec un outil de création de film.
+- Permettre d'évaluer les Autres Activités tout comme 
+  le sont les sessions.
+- Retirer "Avis Film" de l'écran Session, et ne le permettre 
+  que dans l'onglet films.
+- N'utiliser que 'h' pour les Times et les Duration
 
-8. Barre d'outils : 
+
+9. Barre d'outils : 
 - charger/sauver dans un bouton menu
 - bouton 'afficher/masquer les suggestions de l'algorithme'
 - boutonmenu Export: 
@@ -59,7 +68,7 @@ b - appréciation séance
 
 
 
-9. Implémenter l'algorithme, integrer ça au rendu des films
+10. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
   assigner "Je veux voir ce film à cette séance précise" qui 
   est fonctionnellement équivalent ?)
@@ -72,9 +81,9 @@ b - appréciation séance
   très très grande en gros.
 
 
-10. Ajouter des tests jasmine/protractor,
+11. Ajouter des tests jasmine/protractor,
   
-11. Finitions:
+12. Finitions:
 - packager l'appli,
 - écrire la doc,
 - au démarrage faire un petit message console pour dire 
@@ -96,16 +105,10 @@ b - appréciation séance
 
 ## Remarques Thomas
 
-- Permettre d'évaluer les Autres Activités tout comme 
-  le sont les sessions.
 
-- Retirer "Avis Film" de l'écran Session, et ne le permettre 
-  que dans l'onglet films.
 
 - Permettre de prioriser les cinemas.
 
-- Retravailler la barre de recherche, qu'on confond trop 
-  souvent avec un outil de création de film.
 
 - Ajouter un bouton pour créer un film à la volée depuis 
   l'interface Session.

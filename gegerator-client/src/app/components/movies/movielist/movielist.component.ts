@@ -30,7 +30,7 @@ export class MovielistComponent implements OnInit {
       let finalMovies = allMovies.slice()
 
       finalMovies = allMovies.filter(m => 
-                  m.title.includes(filterString
+                  m.title.toLowerCase().includes(filterString
                 ));
 
       if (isSorted){

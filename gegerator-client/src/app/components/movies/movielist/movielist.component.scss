@@ -2,38 +2,58 @@
 
 
 .movielist{
-    max-width: 400px;
-    border-right: 2px solid black;
+    width: 400px;
     height: 100%;
-    background-color: $tertiary-pane-color;
+    border-right: 2px solid black;
+    background-color: $secondary-pane-color;
 
-    .movielist-actions{
+    display: flex;
+    flex-direction: column;
+
+
+    .movielist-header {
         display: flex;
-
-        .movielist-search{
-            flex: 1;
-        }
-
-        .movielist-buttons{
-            margin-left: auto;
-        }
-
-    }
-
-
-    .movielist-title-center{
+        justify-content: space-around;
+        align-items: center;
+        
         h1{
             @include sect-title;
+            margin-bottom: 0;
         }
     }
 
+
+    .movielist-list{
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow-y: auto;
+        background-color: $tertiary-pane-color;
+    }
+
+
     .movie-margin{
-        margin-bottom: 1em;
+        margin-bottom: $default-gap;
+    }
+
+    .movielist-search{
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
     }
 
 }
 
 .padded{
-    padding-left: 1em;
-    padding-right: 1em;
+    padding: $default-gap;
+}
+
+.vert-small-pad{
+    padding-top: $default-gap;
+    padding-bottom: $default-gap;
+}
+
+.hor-small-pad{
+    padding-left: $small-gap;
+    padding-right: $small-gap;
 }

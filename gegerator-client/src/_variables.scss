@@ -15,6 +15,14 @@ $warn: mat-color($app-warn);
 $primary-light-35: color.scale($primary, $lightness: +35%);
 $primary-dark-35: color.scale($primary, $lightness: -35%);
 
+
+// ***** spacings and layouts ***********
+
+$default-gap: 1em;
+$small-gap: 8px;
+
+
+
 // ***** mat-button customization ********
 @mixin small-button{
     min-width: inherit;
