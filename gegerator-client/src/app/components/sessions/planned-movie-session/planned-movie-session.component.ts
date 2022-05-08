@@ -6,7 +6,6 @@ import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 import { EventRatingMenu } from '../event-rating-menu/event-rating-menu.component';
 import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
-import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
@@ -91,28 +90,22 @@ export class PlannedMovieSessionComponent{
     })
   }
 
-  // Update the Ratings for the Movie and for the Session
-  openRatingsMenu(){
+  // Update the Ratings for the Session
+  updateRating(){
     const dialogRef = this.dialog.open(EventRatingMenu, {
       data: {
         anchor: this._swlitem,
-        movieRating: this.session.movie.rating,
-        sessionRating: this.session.rating
+        eventRating: this.session.rating
       },
-      backdropClass: 'rating-nobackdrop',
-      position: {
-        top: "0px",
-        left: "0px"
-      }
+      backdropClass: 'rating-nobackdrop'
     })
 
     // Reading the result straight from the dialog content
     // (remember that this dialog is blur only, so the API doesn't
     // allow to set a result).
-    // Then update the movie/session rating if changed.
+    // Then update the event rating if changed.
     dialogRef.afterClosed().subscribe((whatever) =>{
-      const content = dialogRef.componentInstance
-      const [newMovieRating, newSessionRating] = [content.movieRating, content.sessionRating]
+      const newSessionRating = dialogRef.componentInstance.eventRating
 
       const plannedSession = this.session
       if (plannedSession.rating != newSessionRating){
@@ -122,12 +115,6 @@ export class PlannedMovieSessionComponent{
 
         const session = modified.toMovieSession()
         this.store.dispatch(SessionActions.update_session({session, thenReload}))
-      }
-      
-      const movie = this.session.movie
-      if (movie.rating !== newMovieRating){
-        const modifiedMovie = movie.copy({rating: newMovieRating})
-        this.store.dispatch(MovieActions.update_movie({movie: modifiedMovie}))
       }
 
     })

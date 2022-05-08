@@ -13,6 +13,10 @@ export class ContextMenuDirective implements AfterViewInit{
 
   constructor(private thiselt: ElementRef) { }
 
+
+  // Repositions the RatingDialog either immediately if needed 
+  // to ensure that the menu can be rendered in full, ie wont 
+  // be clipped by the bottom or right side of the viewport.
   ngAfterViewInit(): void {
     const myDims = this.thiselt.nativeElement.getBoundingClientRect()
     const anchorDims= this.recipient.location

@@ -3,6 +3,7 @@
 
     <div
         #_container 
+        title="dbclick : éditer, click droit : noter" 
         [ngClass]="['swimlane-item'].concat(extraClasses())" 
         [ngStyle]="{'height': heightInPixel, 'top': topPosInPixel}"
         (dblclick)="requestUpdate.emit()"

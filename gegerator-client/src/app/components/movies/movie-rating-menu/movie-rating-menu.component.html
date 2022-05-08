@@ -1,1 +1,17 @@
-<p>movie-rating-menu works!</p>
+<div appContextMenu [recipient]="_anchor" [dialogRef]="dialogRef" >
+    <fieldset>
+        <legend>Avis Film :</legend>
+        <mat-radio-group 
+            aria-label="Select an option"
+            (change)="updateMovieRating($event)">
+            
+            <mat-radio-button *ngFor="let mr of MovieRatings.enumerate()" 
+                [value]="mr" class="radiobtn--block"
+                [disableRipple]="true"
+                [checked]="mr == movieRating">
+                    {{mr.description}}
+            </mat-radio-button>
+
+        </mat-radio-group>      
+    </fieldset>
+</div>

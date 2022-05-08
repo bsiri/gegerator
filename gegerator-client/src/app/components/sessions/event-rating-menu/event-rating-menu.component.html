@@ -1,32 +1,16 @@
 
 <div appContextMenu [recipient]="_anchor" [dialogRef]="dialogRef" >
     <fieldset>
-        <legend>Avis Film :</legend>
-        <mat-radio-group 
-            aria-label="Select an option"
-            (change)="updateMovieRating($event)">
-            
-            <mat-radio-button *ngFor="let mr of MovieRatings.enumerate()" 
-                [value]="mr" class="radiobtn--block"
-                [disableRipple]="true"
-                [checked]="mr == movieRating">
-                    {{mr.description}}
-            </mat-radio-button>
-
-        </mat-radio-group>      
-    </fieldset>
-
-    <fieldset>
         <legend>Avis Session :</legend>
         <mat-radio-group 
             aria-label="Select an option"
-            (change)="updateSessionRating($event)">
+            (change)="updateRating($event)">
 
-            <mat-radio-button *ngFor="let sr of EventRatings.enumerate()" 
-                [value]="sr" class="radiobtn--block"
+            <mat-radio-button *ngFor="let er of EventRatings.enumerate()" 
+                [value]="er" class="radiobtn--block"
                 [disableRipple]="true"
-                [checked]="sr == sessionRating">
-                    {{sr.description}}
+                [checked]="er == eventRating">
+                    {{er.description}}
             </mat-radio-button>
             
         </mat-radio-group>    

@@ -89,14 +89,6 @@ export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
       `border-${this.borderRendering}`
     ]
   }
-    
-  /**
-   * Exposes the final dimensions of that Component,
-   * after rendering
-   */
-   public get dimensions(): DOMRect{
-    return this._container.nativeElement.getBoundingClientRect()
-  }
 
   public get location(): DOMRect {
     return this._container.nativeElement.getBoundingClientRect()
