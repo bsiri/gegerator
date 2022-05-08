@@ -15,11 +15,11 @@ const DIALOG_PADDING_PX = 24
  * read straight from the MatDialogRef.componentInstance
  */
 @Component({
-  selector: 'app-ratingdialog',
-  templateUrl: './ratingdialog.component.html',
-  styleUrls: ['./ratingdialog.component.scss']
+  selector: 'app-event-rating-menu',
+  templateUrl: './event-rating-menu.component.html',
+  styleUrls: ['./event-rating-menu.component.scss']
 })
-export class RatingDialog implements OnInit, AfterViewInit {
+export class EventRatingMenu implements OnInit, AfterViewInit {
 
 
   /**
@@ -43,7 +43,7 @@ export class RatingDialog implements OnInit, AfterViewInit {
   sessionRating: EventRating
 
   constructor(
-    public dialogRef: MatDialogRef<RatingDialog>,
+    public dialogRef: MatDialogRef<EventRatingMenu>,
     @Inject(MAT_DIALOG_DATA) model: RatingsDialogModel) {
       this.movieRating = model.movieRating
       this.sessionRating = model.sessionRating

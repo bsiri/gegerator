@@ -42,13 +42,14 @@ import { SwimlaneItemComponent } from './components/sessions/swimlane-item/swiml
 import { Activitydialog } from './components/sessions/activitydialog/activitydialog.component';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { AppStateEffects } from './ngrx/effects/appstate.effects';
-import { RatingDialog } from './components/sessions/ratingdialog/ratingdialog.component';
+import { EventRatingMenu } from './components/sessions/event-rating-menu/event-rating-menu.component';
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
 import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
 import { MovieRatingsComponent } from './icons/movie-ratings/movie-ratings.component';
 import { SessionRatingsComponent } from './icons/session-ratings/session-ratings.component';
 import { ContextMenuDirective } from './directives/context-menu.directive';
+import { MovieRatingMenu } from './components/movies/movie-rating-menu/movie-rating-menu.component';
 
 @NgModule({
   declarations: [
@@ -66,13 +67,15 @@ import { ContextMenuDirective } from './directives/context-menu.directive';
     SwimlaneItemComponent,
     Activitydialog,
     UploadDialog,
-    RatingDialog,
+    EventRatingMenu,
     SummarypanelComponent,
     OrderByLowercasePipe,
     OrderByComparablePipe,
     MovieRatingsComponent,
     SessionRatingsComponent,
-    ContextMenuDirective
+    ContextMenuDirective,
+    MovieRatingMenu,
+    
   ],
   imports: [
     BrowserModule,

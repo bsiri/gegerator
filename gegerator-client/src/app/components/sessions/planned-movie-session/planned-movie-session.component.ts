@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/genericpurposedialog.component';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
-import { RatingDialog } from '../ratingdialog/ratingdialog.component';
+import { EventRatingMenu } from '../event-rating-menu/event-rating-menu.component';
 import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
@@ -93,7 +93,7 @@ export class PlannedMovieSessionComponent{
 
   // Update the Ratings for the Movie and for the Session
   openRatingsMenu(){
-    const dialogRef = this.dialog.open(RatingDialog, {
+    const dialogRef = this.dialog.open(EventRatingMenu, {
       data: {
         anchor: this._swlitem,
         movieRating: this.session.movie.rating,
