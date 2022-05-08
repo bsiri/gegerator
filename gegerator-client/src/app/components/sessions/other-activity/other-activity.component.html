@@ -2,5 +2,13 @@
     (requestUpdate)="update()"
     (requestDelete)="confirmThenDelete()"
     (requestContextMenu)="updateRating()"
+
+    [borderRendering]="borderRendering"
+    [contentRendering]="contentRendering"
 >
+    <!-- icons -->
+    <div class="icon-container">
+        <app-session-ratings [rating]="activity.rating"></app-session-ratings>
+    </div>
+    <!-- /icons -->
 </app-swimlane-item>

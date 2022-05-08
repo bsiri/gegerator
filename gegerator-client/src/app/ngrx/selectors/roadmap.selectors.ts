@@ -17,7 +17,7 @@ export const selectUserRoadmap = createSelector(
         return new FestivalRoadmap(
             RoadmapAuthor.HUMAN,
             sessions.filter(session => session.rating == EventRatings.MANDATORY),
-            activities
+            activities.filter(act => act.rating == EventRatings.MANDATORY),
         )
     }
 )

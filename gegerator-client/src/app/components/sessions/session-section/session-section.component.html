@@ -42,7 +42,7 @@
                     <tr [ngStyle]="{'height': rowHeightInPixel}">
                         <td>
                             <ng-container *ngFor="let activity of activitiesByDay(day) | async">
-                                <app-other-activity [activity]="activity"></app-other-activity>
+                                <app-other-activity [activity]="activity" [roadmap]="roadmap"></app-other-activity>
                             </ng-container>
                         </td>
                         <td>
