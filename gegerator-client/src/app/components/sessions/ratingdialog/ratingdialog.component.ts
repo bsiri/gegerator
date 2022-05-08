@@ -30,12 +30,6 @@ export class RatingDialog implements OnInit, AfterViewInit {
 
 
   /**
-   * DOM references for rendering
-   */
-  @ViewChild('_container') private _container!: ElementRef
-
-
-  /**
    * "Importing" some pseudo enums so that we can 
    * enumerate them in the view
    */

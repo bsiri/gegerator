@@ -4,8 +4,6 @@ import { DialogPosition, MatDialogRef } from '@angular/material/dialog';
 // magic number to account for the Dialog padding
 const DIALOG_PADDING_PX = 24
 
-const SAFETY_MARGIN = 8
-
 @Directive({
   selector: '[appContextMenu]'
 })
@@ -22,7 +20,7 @@ export class ContextMenuDirective implements AfterViewInit{
     let ntop=0, nleft = 0
     // if the menu fits in the window, position it to the right of 
     // the anchor, or to the left if it overflows on y axis
-    if (anchorDims.right + myDims.width + SAFETY_MARGIN < window.innerWidth){
+    if (anchorDims.right + myDims.width < window.innerWidth){
       nleft = anchorDims.right
     }
     else{
@@ -30,7 +28,7 @@ export class ContextMenuDirective implements AfterViewInit{
     }
 
     // same logic for the top attribute
-    if (anchorDims.top + myDims.height + SAFETY_MARGIN < window.innerHeight){
+    if (anchorDims.top + myDims.height < window.innerHeight){
       ntop = anchorDims.top
     }
     else{
