@@ -32,5 +32,6 @@ CREATE TABLE other_activity(
     start_time TIME WITHOUT TIME ZONE NOT NULL,
     end_time TIME WITHOUT TIME ZONE NOT NULL,
     description VARCHAR(250) NOT NULL,
+    rating VARCHAR(10) NOT NULL DEFAULT 'DEFAULT',
     constraint time_integrity check (end_time > start_time)
 );

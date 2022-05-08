@@ -1,6 +1,6 @@
 package org.bsiri.gegerator.repositories;
 
-import org.bsiri.gegerator.domain.MovieSessionRating;
+import org.bsiri.gegerator.domain.EventRating;
 import org.bsiri.gegerator.testinfra.SqlDataset;
 import static org.bsiri.gegerator.testinfra.TestBeans.*;
 
@@ -39,7 +39,7 @@ public class MovieSessionRepositoryTest extends AbstractRepositoryTest{
         // Refetch so we can test our assertion.
         .then(repo.findById(fridayTremors().getId()))
         .as(StepVerifier::create)
-        .assertNext(movie -> assertThat(movie.getRating(), equalTo(MovieSessionRating.DEFAULT)))
+        .assertNext(movie -> assertThat(movie.getRating(), equalTo(EventRating.DEFAULT)))
         .verifyComplete();
     }
 }

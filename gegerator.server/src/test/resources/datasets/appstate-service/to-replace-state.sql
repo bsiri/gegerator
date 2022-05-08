@@ -9,6 +9,6 @@ insert into movie_session(id, movie_id, theater, day_name, start_time) values
     (3, 1, 'CASINO', 'FRIDAY', '13:00:00'),
     (4, 2, 'MCL', 'THURSDAY', '08:25:00');
 
-insert into other_activity(id, day_name, start_time, end_time, description) values
-    (1, 'THURSDAY', '12:00:00', '14:00:00', 'Géromoise'),
-    (2, 'FRIDAY', '19:30:00', '21:30:00', 'Clé des Champs');
+insert into other_activity(id, day_name, start_time, end_time, description, rating) values
+    (1, 'THURSDAY', '12:00:00', '14:00:00', 'Géromoise', 'MANDATORY'),
+    (2, 'FRIDAY', '19:30:00', '21:30:00', 'Clé des Champs', 'NEVER');

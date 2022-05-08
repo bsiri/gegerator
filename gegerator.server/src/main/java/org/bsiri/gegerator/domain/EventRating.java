@@ -7,7 +7,7 @@ package org.bsiri.gegerator.domain;
  * ratings compose with each other
  * depend on the planning algorithm.
  */
-public enum MovieSessionRating {
+public enum EventRating {
     /**
      * Mandatory rating : the MovieSession is a must
      * and any optimal planning should include this

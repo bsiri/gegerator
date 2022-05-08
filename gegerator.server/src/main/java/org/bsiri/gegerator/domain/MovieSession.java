@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "id")
 @ToString
-public class MovieSession {
+public class MovieSession implements RatableEvent {
     @Id
     private Long id;
     // r2dbc isn't yet as mature as JPA unfortunately
@@ -25,13 +25,13 @@ public class MovieSession {
     @Column("day_name")
     private @NonNull Day day;
     private @NonNull LocalTime startTime;
-    private @NonNull MovieSessionRating rating;
+    private @NonNull EventRating rating;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public static MovieSession of(long id, long movieId, Theater theater, Day day, LocalTime startTime, MovieSessionRating rating){
+    public static MovieSession of(long id, long movieId, Theater theater, Day day, LocalTime startTime, EventRating rating){
         MovieSession session = new MovieSession(movieId, theater, day, startTime, rating);
         session.setId(id);
         return session;

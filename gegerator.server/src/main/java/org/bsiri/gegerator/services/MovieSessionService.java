@@ -1,15 +1,13 @@
 package org.bsiri.gegerator.services;
 
 import org.bsiri.gegerator.domain.MovieSession;
-import org.bsiri.gegerator.domain.MovieSessionRating;
+import org.bsiri.gegerator.domain.EventRating;
 import org.bsiri.gegerator.repositories.MovieSessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Collection;
 
 @Service
 public class MovieSessionService {
@@ -39,7 +37,7 @@ public class MovieSessionService {
     @Transactional
     public Mono<MovieSession> save(MovieSession movieSession){
         Mono<Void> rgUniqueMandatory = Mono.empty();
-        if (movieSession.getRating() == MovieSessionRating.MANDATORY){
+        if (movieSession.getRating() == EventRating.MANDATORY){
             rgUniqueMandatory = sessionRepo.resetRatingsForSessionOfMovie(movieSession.getMovieId());
         }
 

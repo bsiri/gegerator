@@ -9,11 +9,14 @@ import reactor.core.publisher.Mono;
 
 public interface MovieSessionRepository extends ReactiveCrudRepository<MovieSession, Long> {
 
+    // for the SpEL in the query :
+    static final String EVENT_RATING = "T(org.bsiri.gegerator.domain.EventRating)";
+
     Flux<MovieSession> findAllByMovieId(long movieId);
 
     @Modifying
-    @Query("UPDATE movie_session SET rating = :#{T(org.bsiri.gegerator.domain.MovieSessionRating).DEFAULT}"+
-            " where rating = :#{T(org.bsiri.gegerator.domain.MovieSessionRating).MANDATORY} "+
+    @Query("UPDATE movie_session SET rating = :#{"+EVENT_RATING+".DEFAULT}"+
+            " where rating = :#{"+EVENT_RATING+".MANDATORY} "+
             " and movie_id = :movieId")
     Mono<Void> resetRatingsForSessionOfMovie(long movieId);
 

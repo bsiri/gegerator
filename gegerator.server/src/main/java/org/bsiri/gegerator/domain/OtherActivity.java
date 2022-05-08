@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "id")
-public class OtherActivity {
+public class OtherActivity implements RatableEvent{
     @Id
     private Long id;
 
@@ -20,6 +20,7 @@ public class OtherActivity {
     private @NonNull LocalTime startTime;
     private @NonNull LocalTime endTime;
     private @NonNull String description;
+    private @NonNull EventRating rating;
 
     // TODO : maybe validation to enforce that
     // startTime < endTime, even though the DB does it already
@@ -28,8 +29,8 @@ public class OtherActivity {
         this.id = id;
     }
 
-    public static OtherActivity of (long id, Day day, LocalTime startTime, LocalTime endTime, String description){
-        OtherActivity activity = new OtherActivity(day, startTime, endTime, description);
+    public static OtherActivity of (long id, Day day, LocalTime startTime, LocalTime endTime, String description, EventRating rating){
+        OtherActivity activity = new OtherActivity(day, startTime, endTime, description, rating);
         activity.setId(id);
         return activity;
     }
