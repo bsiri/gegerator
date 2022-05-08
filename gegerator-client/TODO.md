@@ -47,6 +47,8 @@ b - appréciation séance
 - Si une séance est à Mandatory, alors cette séance sera 
   rappelée et linkée dans l'onglet "Films" du panel Résumé.
 
+==> Done
+
 
 8. Barre d'outils : 
 - charger/sauver dans un bouton menu
@@ -54,6 +56,8 @@ b - appréciation séance
 - boutonmenu Export: 
   * Exporter les suggestions de l'algorithme
   * Exporter les sélections manuelles
+
+
 
 9. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
@@ -86,5 +90,32 @@ b - appréciation séance
 - Une barre de filtre (position statique) pour n'afficher
   que les films choisis.
 
-- Ajouter au boutonmenu Export : Exporter
+- Ajouter au boutonmenu Export : Exporter la sélection  
+  utilisateur.
 
+
+## Remarques Thomas
+
+- Permettre d'évaluer les Autres Activités tout comme 
+  le sont les sessions.
+
+- Retirer "Avis Film" de l'écran Session, et ne le permettre 
+  que dans l'onglet films.
+
+- Permettre de prioriser les cinemas.
+
+- Retravailler la barre de recherche, qu'on confond trop 
+  souvent avec un outil de création de film.
+
+- Ajouter un bouton pour créer un film à la volée depuis 
+  l'interface Session.
+
+- Réfléchir à la possibilité d'un algorithme d'optimisation 
+  linéaire sous contraintes : une seule fonction objectif
+  mais sortir plusieurs solutions, chacune optimale pour une 
+  certaine valuation des paramètres. 
+  Par exemple, pour un paramétrage "Cinema" (C) et un 
+  paramétrage "Film" (F):
+  sortir une solution 100C/0F, 90C/0F, 80C/20F etc
+
+  ==> Rappeler Noelle
