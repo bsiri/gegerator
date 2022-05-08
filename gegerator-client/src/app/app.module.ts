@@ -48,6 +48,7 @@ import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
 import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
 import { MovieRatingsComponent } from './icons/movie-ratings/movie-ratings.component';
 import { SessionRatingsComponent } from './icons/session-ratings/session-ratings.component';
+import { ContextMenuDirective } from './directives/context-menu.directive';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { SessionRatingsComponent } from './icons/session-ratings/session-ratings
     OrderByLowercasePipe,
     OrderByComparablePipe,
     MovieRatingsComponent,
-    SessionRatingsComponent
+    SessionRatingsComponent,
+    ContextMenuDirective
   ],
   imports: [
     BrowserModule,

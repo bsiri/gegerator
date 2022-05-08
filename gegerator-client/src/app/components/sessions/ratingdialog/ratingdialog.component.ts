@@ -26,7 +26,7 @@ export class RatingDialog implements OnInit, AfterViewInit {
    * The Component where this dialog should be attached
    * (see ngAfterViewInit())
    */
-  private _anchor: SwimlaneItemComponent
+  public _anchor: SwimlaneItemComponent
 
 
   /**
@@ -63,6 +63,7 @@ export class RatingDialog implements OnInit, AfterViewInit {
   // to ensure that the menu can be rendered in full, ie wont 
   // be clipped by the bottom or right side of the viewport.
   ngAfterViewInit(): void {
+    /*
     const myDims = this._container.nativeElement.getBoundingClientRect()
     const anchorDims= this._anchor.dimensions
 
@@ -90,6 +91,7 @@ export class RatingDialog implements OnInit, AfterViewInit {
     } 
 
     this.dialogRef.updatePosition(newPos)
+    */
   }
 
   updateMovieRating($event: MatRadioChange): void{

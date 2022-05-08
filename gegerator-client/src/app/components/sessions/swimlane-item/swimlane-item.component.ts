@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { PlannableEvent } from 'src/app/models/plannable.model';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
@@ -31,7 +32,7 @@ export type SwItemBorderRendering = "disabled" | "normal" | "salient" | "outstan
   templateUrl: './swimlane-item.component.html',
   styleUrls: ['./swimlane-item.component.scss']
 })
-export class SwimlaneItemComponent implements OnInit{
+export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
 
   @ViewChild('_container') private _container!: ElementRef
 
@@ -97,6 +98,9 @@ export class SwimlaneItemComponent implements OnInit{
     return this._container.nativeElement.getBoundingClientRect()
   }
 
+  public get location(): DOMRect {
+    return this._container.nativeElement.getBoundingClientRect()
+  }
 
   constructor() { }
 
