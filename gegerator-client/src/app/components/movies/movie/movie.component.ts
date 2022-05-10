@@ -5,7 +5,7 @@ import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive'
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
 import { Movie } from '../../../models/movie.model';
 import { GenericPurposeDialog, ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component';
-import { MovieRatingMenu } from '../movie-rating-menu/movie-rating-menu.component';
+import { MovieCtxtMenu } from '../movie-ctxt-menu/movie-ctxt-menu.component';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
@@ -18,7 +18,8 @@ export class MovieComponent implements OnInit, ContextMenuRecipient {
   @ViewChild('_container') private _container!: ElementRef
 
   @Input() movie!: Movie;
-
+  
+  
   public get location(): DOMRect {
     return this._container.nativeElement.getBoundingClientRect()
   }
@@ -45,10 +46,10 @@ export class MovieComponent implements OnInit, ContextMenuRecipient {
   }
 
   updateRating(){
-    const dialogRef = this.dialog.open(MovieRatingMenu, {
+    const dialogRef = this.dialog.open(MovieCtxtMenu, {
       data: {
         anchor: this,
-        movieRating: this.movie.rating,
+        movie: this.movie.copy()
       },
       backdropClass: 'rating-nobackdrop'
     })
@@ -58,11 +59,10 @@ export class MovieComponent implements OnInit, ContextMenuRecipient {
     // allow to set a result).
     // Then update the movie rating if changed.
     dialogRef.afterClosed().subscribe((whatever) =>{
-      const newMovieRating= dialogRef.componentInstance.movieRating
+      const newMovie= dialogRef.componentInstance.movie
 
-      if (this.movie.rating !== newMovieRating){
-        const modifiedMovie = this.movie.copy({rating: newMovieRating})
-        this.store.dispatch(MovieActions.update_movie({movie: modifiedMovie}))
+      if (this.movie.rating !== newMovie.rating){
+        this.store.dispatch(MovieActions.update_movie({movie: newMovie}))
       }
     })    
 

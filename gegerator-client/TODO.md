@@ -58,8 +58,16 @@ b - appréciation séance
   que dans l'onglet films.
 - N'utiliser que 'h' pour les Times et les Duration
 
+==> Done
 
-9. Barre d'outils : 
+9. Click droit sur Movie:
+- montrer Ratings, 
+- montrer aussi a liste des sessions possibles, 
+  par ordre chronologigue, et avec le picto associé
+TODO : make a component 'event-link' with the pseudolink 
+class etc in it
+
+10. Barre d'outils : 
 - charger/sauver dans un bouton menu
 - bouton 'afficher/masquer les suggestions de l'algorithme'
 - boutonmenu Export: 
@@ -68,7 +76,7 @@ b - appréciation séance
 
 
 
-10. Implémenter l'algorithme, integrer ça au rendu des films
+11. Implémenter l'algorithme, integrer ça au rendu des films
   (à traiter comme une contrainte supplémentaire, ou peut-être
   assigner "Je veux voir ce film à cette séance précise" qui 
   est fonctionnellement équivalent ?)
@@ -81,9 +89,9 @@ b - appréciation séance
   très très grande en gros.
 
 
-11. Ajouter des tests jasmine/protractor,
+12. Ajouter des tests jasmine/protractor,
   
-12. Finitions:
+13. Finitions:
 - packager l'appli,
 - écrire la doc,
 - au démarrage faire un petit message console pour dire 

@@ -8,10 +8,23 @@
             <mat-radio-button *ngFor="let mr of MovieRatings.enumerate()" 
                 [value]="mr" class="radiobtn--block"
                 [disableRipple]="true"
-                [checked]="mr == movieRating">
+                [checked]="mr == movie.rating">
                     {{mr.description}}
             </mat-radio-button>
 
         </mat-radio-group>      
+    </fieldset>
+
+    <fieldset>
+        <legend>Plannifié dans : </legend>
+        <div class="limit-height">
+            <ul>
+                <li *ngFor="let s of sessions$ | async | orderByComparable:'day':'startTime'">
+                    <span class="pseudolink" (click)="showSelected(s.htmlId)">
+                        {{s.toString()}}
+                    </span>
+                </li>
+            </ul>
+        </div>
     </fieldset>
 </div>

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MovieRatingMenu } from './movie-rating-menu.component';
+import { MovieCtxtMenu } from './movie-ctxt-menu.component';
 
-describe('MovieRatingMenu', () => {
-  let component: MovieRatingMenu;
-  let fixture: ComponentFixture<MovieRatingMenu>;
+describe('MovieCtxtMenu', () => {
+  let component: MovieCtxtMenu;
+  let fixture: ComponentFixture<MovieCtxtMenu>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MovieRatingMenu ]
+      declarations: [ MovieCtxtMenu ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MovieRatingMenu);
+    fixture = TestBed.createComponent(MovieCtxtMenu);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

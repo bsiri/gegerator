@@ -49,7 +49,7 @@ import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
 import { MovieRatingsComponent } from './icons/movie-ratings/movie-ratings.component';
 import { SessionRatingsComponent } from './icons/session-ratings/session-ratings.component';
 import { ContextMenuDirective } from './directives/context-menu.directive';
-import { MovieRatingMenu } from './components/movies/movie-rating-menu/movie-rating-menu.component';
+import { MovieCtxtMenu } from './components/movies/movie-ctxt-menu/movie-ctxt-menu.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +74,7 @@ import { MovieRatingMenu } from './components/movies/movie-rating-menu/movie-rat
     MovieRatingsComponent,
     SessionRatingsComponent,
     ContextMenuDirective,
-    MovieRatingMenu,
+    MovieCtxtMenu,
     
   ],
   imports: [

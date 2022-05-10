@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, combineLatestWith, debounceTime, map, mergeMap, Observable, withLatestFrom } from 'rxjs';
+import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 
 import { MovieActions } from '../../../ngrx/actions/movie.actions';
 import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
