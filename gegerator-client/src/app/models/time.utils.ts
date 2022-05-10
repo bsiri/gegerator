@@ -25,8 +25,8 @@ type TimeDurationLike = {
 
 // duration : hours (1 digit) 'h' minutes (2 digits)
 const durationEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
-// time : hours (1 or 2 digits) ':' minutes (2 digits)
-const timeEx: RegExp = RegExp(/^(\d\d?):([0-5]\d)$/)
+// time : hours (1 or 2 digits) 'h' minutes (2 digits)
+const timeEx: RegExp = RegExp(/^(\d\d?)h([0-5]\d)$/)
 
 export namespace Durations{
 
@@ -58,7 +58,7 @@ export namespace Durations{
 export namespace Times{
     // *** Human readable representation ***
     export function toString(time: Time): string{
-        return _toString(time, ':')    
+        return _toString(time, 'h')    
     }
 
     export function fromString(strTime: string): Time{
