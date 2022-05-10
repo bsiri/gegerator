@@ -1,54 +1,66 @@
 
 <div class="summary-panel">
 
-    <mat-tab-group>
+    <mat-tab-group [dynamicHeight]="true">
 
         <mat-tab label="Roadmap">
-            <h1>Roadmap :</h1>
-            <div *ngFor="let day of Days.enumerate()">
-                <ul>
-                    <li *ngFor="let event of roadmap.dailyPlanning().get(day)">
-                        <span class="pseudolink" (click)="showSelected(event.htmlId)">
-                            {{event.toString()}}
-                        </span>
-                    </li>
-                    <li *ngIf="roadmap.dailyPlanning().get(day)?.length == 0">
-                        {{'('+day.name+' : Rien)'}}
-                    </li>
-                </ul>
+            <div class="pane">
+                <h1>Roadmap :</h1>
+                <div class="pane-content">
+                    <div *ngFor="let day of Days.enumerate()">
+                        <ul>
+                            <li *ngFor="let event of roadmap.dailyPlanning().get(day)">
+                                <span class="pseudolink" (click)="showSelected(event.htmlId)">
+                                    {{event.toString()}}
+                                </span>
+                            </li>
+                            <li *ngIf="roadmap.dailyPlanning().get(day)?.length == 0">
+                                {{'('+day.name+' : Rien)'}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </mat-tab>
 
         <mat-tab label="Films">
-            <h1>Récap des films :</h1>
-            <div *ngFor="let entry of moviesForRatings$ | async | orderByComparable:'rating'">
-                <h2>{{entry.rating.description}} :</h2>
-                <ul>
-                    <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">
-                        <span>{{movie.title}} </span> 
-                        <ng-container [ngTemplateOutlet]="movieSessionLink" 
-                                    [ngTemplateOutletContext]="{session:getSession(movie)}">
-                        </ng-container>
-                    </li>
-                    <li *ngIf="entry.movies.length == 0">(Aucun)</li>
-                </ul>
+            <div class="pane">
+                <h1>Récap des films :</h1>
+                <div class="pane-content">
+                    <div *ngFor="let entry of moviesForRatings$ | async | orderByComparable:'rating'">
+                        <h2>{{entry.rating.description}} :</h2>
+                        <ul>
+                            <li *ngFor="let movie of entry.movies | orderByLowercase:'title'">
+                                <span>{{movie.title}} </span> 
+                                <ng-container [ngTemplateOutlet]="movieSessionLink" 
+                                            [ngTemplateOutletContext]="{session:getSession(movie)}">
+                                </ng-container>
+                            </li>
+                            <li *ngIf="entry.movies.length == 0">(Aucun)</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </mat-tab>
 
         <mat-tab label="Sessions">
-            <h1>Récap des sessions :</h1>
-            <div *ngFor="let entry of sessionsForRatings$ | async | orderByComparable:'rating'">
-                <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
-                <h2>{{entry.rating.description}} :</h2>
-                <ul>
-                    <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
-                        <span class="pseudolink" (click)="showSelected(session.htmlId)">
-                            {{session.toString()}}
-                        </span>
-                    </li>
-                    <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
-                </ul>
-                </ng-container>
+            <div class="pane">
+                <h1>Récap des sessions :</h1>
+                <div class="pane-content">
+                    <div *ngFor="let entry of sessionsForRatings$ | async | orderByComparable:'rating'">
+                        <ng-container *ngIf="entry.rating.key != 'DEFAULT'">
+                        <h2>{{entry.rating.description}} :</h2>
+                        <ul>
+                            <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
+                                <span class="pseudolink" (click)="showSelected(session.htmlId)">
+                                    {{session.toString()}}
+                                </span>
+                            </li>
+                            <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
+                        </ul>
+                        </ng-container>
+                    </div>
+                </div>
             </div>
         </mat-tab>
 

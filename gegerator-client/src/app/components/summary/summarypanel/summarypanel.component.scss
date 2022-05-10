@@ -5,16 +5,36 @@
     border-left: 2px solid black;
     height: 100%;
     background-color: $tertiary-pane-color;
+    display: flex;
+    
+    .pane{
+        display:flex;
+        flex-direction: column;
+    }
 
-    padding-left: 1em;
-    padding-right: 1em;
 
     h1{
         @include sect-title;
+        margin: 0;
+        padding: $small-gap 0;
+        background-color: $secondary-pane-color;
+    }
+    
+    .pane-content{
+        flex: 1;
+        background-color: $tertiary-pane-color;
+        padding: $default-gap;
+        overflow-y: auto;
     }
 
     .pseudolink{
         color: blue;
         cursor: pointer;
     }
+
+}
+
+// cheating a bit
+:host ::ng-deep .mat-tab-header{
+    background-color: $secondary-pane-color;
 }
