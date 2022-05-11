@@ -36,7 +36,7 @@ export class SummarypanelComponent implements OnInit, OnDestroy {
   // same thing as always : bring the Days in 'this' context
   // so we can use them in the template.
   Days = Days
-
+/*
   moviesForRatings$ = this.store.select(selectMovieslist).pipe(
     map(movies => {
       const byRating = mapMoviesByRating(movies)
@@ -45,6 +45,9 @@ export class SummarypanelComponent implements OnInit, OnDestroy {
       })
     }),
   )
+*/
+
+  movies$ = this.store.select(selectMovieslist)
 
   sessionsForRatings$ = 
     this.store.select(selectPlannedMovieSession).pipe(

@@ -67,6 +67,8 @@ b - appréciation séance
 TODO : make a component 'event-link' with the pseudolink 
 class etc in it
 
+
+
 10. Barre d'outils : 
 - charger/sauver dans un bouton menu
 - bouton 'afficher/masquer les suggestions de l'algorithme'

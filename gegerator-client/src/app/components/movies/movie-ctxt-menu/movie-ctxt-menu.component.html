@@ -21,7 +21,7 @@
             <ul>
                 <li *ngFor="let s of sessions$ | async | orderByComparable:'day':'startTime'">
                     <app-event-link [event]="s">
-                        {{s.toString()}}
+                        {{s.format('%d, %h, %t')}}
                     </app-event-link>
                 </li>
             </ul>

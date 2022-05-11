@@ -27,6 +27,22 @@
             <div class="pane">
                 <h1>Récap des films :</h1>
                 <div class="pane-content">
+                    <table>
+                        <tbody>
+                            <tr *ngFor="let movie of movies$ | async | orderByComparable:'rating':'title'">
+                                <td>
+                                    <app-movie-ratings [rating]="movie.rating"></app-movie-ratings>
+                                </td>
+                                <td>
+                                    <span>{{movie.title}} </span>
+                                    <ng-container [ngTemplateOutlet]="movieSessionLink" 
+                                            [ngTemplateOutletContext]="{session:getSession(movie)}">
+                                    </ng-container>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--                         
                     <div *ngFor="let entry of moviesForRatings$ | async | orderByComparable:'rating'">
                         <h2>{{entry.rating.description}} :</h2>
                         <ul>
@@ -37,8 +53,9 @@
                                 </ng-container>
                             </li>
                             <li *ngIf="entry.movies.length == 0">(Aucun)</li>
-                        </ul>
+                        </ul> 
                     </div>
+                    -->
                 </div>
             </div>
         </mat-tab>
@@ -69,9 +86,11 @@
 
 </div>
 
+<!-- Templates -->
+
 <ng-template #movieSessionLink  let-session="session">
     <app-event-link *ngIf="session" [event]="session">
         {{session.format('(%d, %h, %t)')}}
     </app-event-link>
-    <span *ngIf="! session">(pas encore plannifié)</span>
+    <span *ngIf="! session">(non planifié)</span>
 </ng-template>

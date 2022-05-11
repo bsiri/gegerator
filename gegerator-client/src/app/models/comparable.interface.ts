@@ -6,10 +6,17 @@ export interface Comparable<T>{
     compare(this: T, other: T) : number
 }
 
+class PrimitiveComparable<T> implements Comparable<PrimitiveComparable<T>>{
+  constructor(public value: T){}
+  compare(this: PrimitiveComparable<T>, other: PrimitiveComparable<T>): number {
+    return this.value < other.value ? -1 : 1
+  }
+}
+
 /**
  * Returns the array of Things, sorted by the supplied attribute names of those Things. 
  * The attribute names are sorted in the order of declaration, and their type 
- * must be implementors of Comparable<>.
+ * must be implementors of Comparable<> or primitive.
  * 
  * @param toSort 
  * @param attrNames 
@@ -50,15 +57,20 @@ function _makeGetter<C extends Comparable<C>>(attrName: string): (o: any) => C{
     return (o: any): C => {
       if (attrName in o){
         const value = o[attrName]
+        if (typeof value !== 'object'){
+          return new PrimitiveComparable(value) as unknown as C
+        }
         if ('compare' in value){
           return value
         }
       }
       throw new Error(`cannot order by ${attrName} : 
-      attribute not found in type ${o.constructor.name}, or is not a Comparable`)
+      attribute not found in type ${o.constructor.name}, or is not a Comparable or a primitive`)
     }
 }
-  
+
+
+
   
 
 
