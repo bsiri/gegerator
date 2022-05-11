@@ -71,11 +71,6 @@ export class SummarypanelComponent implements OnInit, OnDestroy {
     this.roadmapSub.unsubscribe()
   }
 
-  showSelected(target: string){
-    const elt = document.getElementById(target)
-    elt?.scrollIntoView({behavior: 'smooth'})
-  }
-
   isInRoadmap(movie: Movie): boolean{
     return this.roadmap.isInRoadmap(movie)
   }

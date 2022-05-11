@@ -57,10 +57,6 @@ export class MovieCtxtMenu implements OnInit {
     this.movie.rating = $event.value
   }
 
-  showSelected(target: string){
-    const elt = document.getElementById(target)
-    elt?.scrollIntoView({behavior: 'smooth'})
-  }
 
 }
 

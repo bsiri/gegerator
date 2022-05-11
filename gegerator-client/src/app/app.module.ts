@@ -46,10 +46,11 @@ import { EventRatingMenu } from './components/sessions/event-rating-menu/event-r
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 import { OrderByLowercasePipe } from './pipes/order-by-lowercase.pipe';
 import { OrderByComparablePipe } from './pipes/order-by-comparable.pipe';
-import { MovieRatingsComponent } from './icons/movie-ratings/movie-ratings.component';
-import { SessionRatingsComponent } from './icons/session-ratings/session-ratings.component';
+import { MovieRatingsComponent } from './components/small-comps/movie-ratings/movie-ratings.component';
+import { SessionRatingsComponent } from './components/small-comps/session-ratings/session-ratings.component';
 import { ContextMenuDirective } from './directives/context-menu.directive';
 import { MovieCtxtMenu } from './components/movies/movie-ctxt-menu/movie-ctxt-menu.component';
+import { EventLinkComponent } from './components/small-comps/event-link/event-link.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { MovieCtxtMenu } from './components/movies/movie-ctxt-menu/movie-ctxt-me
     SessionRatingsComponent,
     ContextMenuDirective,
     MovieCtxtMenu,
+    EventLinkComponent,
     
   ],
   imports: [

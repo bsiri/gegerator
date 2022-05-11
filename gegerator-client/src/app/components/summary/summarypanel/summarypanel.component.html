@@ -10,9 +10,9 @@
                     <div *ngFor="let day of Days.enumerate()">
                         <ul>
                             <li *ngFor="let event of roadmap.dailyPlanning().get(day)">
-                                <span class="pseudolink" (click)="showSelected(event.htmlId)">
+                                <app-event-link [event]="event">
                                     {{event.toString()}}
-                                </span>
+                                </app-event-link>
                             </li>
                             <li *ngIf="roadmap.dailyPlanning().get(day)?.length == 0">
                                 {{'('+day.name+' : Rien)'}}
@@ -52,9 +52,9 @@
                         <h2>{{entry.rating.description}} :</h2>
                         <ul>
                             <li *ngFor="let session of entry.sessions | orderByComparable:'day':'startTime'">
-                                <span class="pseudolink" (click)="showSelected(session.htmlId)">
+                                <app-event-link [event]="session">
                                     {{session.toString()}}
-                                </span>
+                                </app-event-link>
                             </li>
                             <li *ngIf="entry.sessions.length == 0">(Aucun)</li>
                         </ul>
@@ -70,10 +70,8 @@
 </div>
 
 <ng-template #movieSessionLink  let-session="session">
-    <span *ngIf="session"
-        class="pseudolink" 
-        (click)="showSelected(session.htmlId)">
+    <app-event-link *ngIf="session" [event]="session">
         {{session.format('(%d, %h, %t)')}}
-    </span>
+    </app-event-link>
     <span *ngIf="! session">(pas encore plannifié)</span>
 </ng-template>

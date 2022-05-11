@@ -20,9 +20,9 @@
         <div class="limit-height">
             <ul>
                 <li *ngFor="let s of sessions$ | async | orderByComparable:'day':'startTime'">
-                    <span class="pseudolink" (click)="showSelected(s.htmlId)">
+                    <app-event-link [event]="s">
                         {{s.toString()}}
-                    </span>
+                    </app-event-link>
                 </li>
             </ul>
         </div>
