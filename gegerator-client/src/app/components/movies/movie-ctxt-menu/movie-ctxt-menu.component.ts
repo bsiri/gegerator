@@ -45,15 +45,15 @@ export class MovieCtxtMenu implements OnInit {
     private store: Store,
     public dialogRef: MatDialogRef<MovieCtxtMenu>,
     @Inject(MAT_DIALOG_DATA) model: MovieCtxtMenuModel) {
-      this.movie = model.movie
-      this._anchor = model.anchor
-    }
+    this.movie = model.movie
+    this._anchor = model.anchor
+  }
 
   ngOnInit(): void {
   }
 
 
-  updateMovieRating($event: MatRadioChange): void{
+  updateMovieRating($event: MatRadioChange): void {
     this.movie.rating = $event.value
   }
 
