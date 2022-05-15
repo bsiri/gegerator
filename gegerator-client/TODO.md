@@ -1,3 +1,6 @@
+================= V1 ============================
+0. (trucs déjà implémentés)
+
 1. CRUD pour les Autres Activités
 ==> Done
 
@@ -64,36 +67,59 @@ b - appréciation séance
 - montrer Ratings, 
 - montrer aussi a liste des sessions possibles, 
   par ordre chronologigue, et avec le picto associé
-TODO : make a component 'event-link' with the pseudolink 
-class etc in it
 
+==> Done
 
-
-10. Barre d'outils : 
+10. Barre d'outils :
 - charger/sauver dans un bouton menu
-- bouton 'afficher/masquer les suggestions de l'algorithme'
-- boutonmenu Export: 
-  * Exporter les suggestions de l'algorithme
-  * Exporter les sélections manuelles
+- export de la Roadmap dans un bouton menu
+
+==> Done 
+
+==> V1 Done
+
+================= V2 ============================
+
+1. Bouton menu "Mode"
+- manuel (c'est l'existant)
+
+2. Objet WizardConfiguration qui permet de:
+- attribuer un Rank aux cinémas
+- attribuer un ratio de préférence entre la valeur d'un cinéma et la
+  valeur d'un film (default : neutre à 50%)
+- inclure cet objet dans les download/upload de AppState
+
+3. Configuration de l'assistant: 
+- un dialog qui permet de configurer et uploader l'objet ci-dessus.
+- un bouton "Configuration de l'assistant..." dans le menu "Mode"
+
+4. Implémenter l'algorithme de l'assistant. Touver une formule pour
+évaluer une session compte tenu du score  du film, de celui du cinéma,
+du ratio de préférence, et se rappeler  que les OtherActivity n'ont
+pas de cinéma donc il faudrait  normaliser le score entre ces deux
+types d'événements.
+
+5. Plomberie pour acheminer les prédictions: 
+- faire tourner l'assistant dans un worker thread
+- déclencher le calcul lorsque le modèle ou les paramètres sont 
+  modifiés (et cancel du thread en cours si un calcul était déjà en
+  train de tourner), SAUF dans le cas d'un Chargement de l'AppState
+- câbler la sortie de l'algorithme sur un Flux ou une Web Socket, 
+- côté client, écouter le flux ou la socket.
+
+6. Switch de mode Manuel/Assistant :
+- ajouter "Assistant" au menu Mode
+- un selector pour la Roadmap générée par l'assistant,
+- un autre selector qui combineLatest la RoadMap manuelle, celle de
+l'assistant, et le mode pour déterminer quelle intance de la Roadmap
+au final doit être fournie aux services.
 
 
+Finitions : 
 
-11. Implémenter l'algorithme, integrer ça au rendu des films
-  (à traiter comme une contrainte supplémentaire, ou peut-être
-  assigner "Je veux voir ce film à cette séance précise" qui 
-  est fonctionnellement équivalent ?)
-
-  Se rappeler que les Autres Activités sont aussi des contraintes, 
-  et que les contraintes sont cumulables 
-  (eg je veux vraiment voir ce film + Pas à cette séance là).
-
-  Une Autre Activité est une sorte de séance qui a une valeur 
-  très très grande en gros.
-
-
-12. Ajouter des tests jasmine/protractor,
+7. Ajouter des tests jasmine/protractor,
   
-13. Finitions:
+8. Finitions:
 - packager l'appli,
 - écrire la doc,
 - au démarrage faire un petit message console pour dire 
@@ -109,16 +135,8 @@ class etc in it
 - Une barre de filtre (position statique) pour n'afficher
   que les films choisis.
 
-- Ajouter au boutonmenu Export : Exporter la sélection  
-  utilisateur.
-
 
 ## Remarques Thomas
-
-
-
-- Permettre de prioriser les cinemas.
-
 
 - Ajouter un bouton pour créer un film à la volée depuis 
   l'interface Session.
