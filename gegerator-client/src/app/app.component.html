@@ -7,10 +7,19 @@
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
                 <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
                 
+                <!-- Export the roadmap -->
+                <button mat-raised-button [matMenuTriggerFor]="exportMenu" color="primary">Exporter</button>
+
+                <mat-menu #exportMenu>
+                    <button mat-menu-item (click)="exportRoadmap()">Exporter la Roadmap</button>
+                </mat-menu>
+
+
                 <!-- Save/Load button menu -->
                 <button mat-raised-button [matMenuTriggerFor]="saveLoadMenu" color="primary">
                     <mat-icon style="transform: rotate(90deg);">compare_arrows</mat-icon>
                 </button>
+
                 <mat-menu #saveLoadMenu>
                     <div><a mat-menu-item href="/gegerator/app-state?format=file">Sauver</a></div>
                     <button mat-menu-item (click)="uploadAppState()">Charger</button>
