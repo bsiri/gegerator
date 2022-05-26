@@ -11,7 +11,7 @@ public enum TheaterRating {
     /**
      * This Theater is particularly attractive.
      */
-    VERY_HIGH,
+    HIGHEST,
 
     /**
      * This Theater is a good pick.

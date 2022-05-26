@@ -51,6 +51,8 @@ import { SessionRatingsComponent } from './components/small-comps/session-rating
 import { ContextMenuDirective } from './directives/context-menu.directive';
 import { MovieCtxtMenu } from './components/movies/movie-ctxt-menu/movie-ctxt-menu.component';
 import { EventLinkComponent } from './components/small-comps/event-link/event-link.component';
+import { configurationReducer } from './ngrx/reducers/configuration.reducer';
+import { ConfigurationEffects } from './ngrx/effects/configuration.effects';
 
 @NgModule({
   declarations: [
@@ -83,8 +85,8 @@ import { EventLinkComponent } from './components/small-comps/event-link/event-li
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movies: movieReducer, sessions: sessionReducer, activities: activityReducer}, {}),
-    EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects, AppStateEffects]),
+    StoreModule.forRoot({movies: movieReducer, sessions: sessionReducer, activities: activityReducer, configuration: configurationReducer}, {}),
+    EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects, AppStateEffects, ConfigurationEffects]),
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

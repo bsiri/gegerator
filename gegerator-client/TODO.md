@@ -86,14 +86,15 @@ b - appréciation séance
   valeur d'un film (default : neutre à 50%)
 - inclure cet objet dans les download/upload de AppState
 
-=> Done
+==> Done
 
 2. Bouton menu "Mode"
 - toggle button : "mode assistant" v "mode manuel"
-- un bouton menu pour la configuration de l'assistant (voir ci-dessous)
+
+==> Done
 
 3. Configuration de l'assistant: 
-- un dialog qui permet de configurer et uploader l'objet ci-dessus.
+- un dialog qui permet de configurer et uploader la config de l'assistant.
 - un bouton "Configuration de l'assistant..." dans le menu "Mode"
 
 4. Implémenter l'algorithme de l'assistant. Touver une formule pour
