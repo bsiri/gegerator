@@ -1,7 +1,7 @@
 package org.bsiri.gegerator.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bsiri.gegerator.domain.AppState;
+import org.bsiri.gegerator.config.AppState;
 import org.bsiri.gegerator.services.AppStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -18,7 +18,6 @@ import reactor.core.scheduler.Schedulers;
 
 
 import java.io.*;
-import java.util.function.Supplier;
 
 
 @RestController("appstate-controller")

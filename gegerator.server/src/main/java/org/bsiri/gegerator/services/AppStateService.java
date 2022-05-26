@@ -1,6 +1,7 @@
 package org.bsiri.gegerator.services;
 
-import org.bsiri.gegerator.domain.AppState;
+import org.bsiri.gegerator.config.AppState;
+import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.OtherActivity;
@@ -17,16 +18,19 @@ import java.util.List;
 @Service
 public class AppStateService {
 
+    private ConfigurationService confService;
     private MovieService movieService;
     private MovieSessionService sessionService;
     private OtherActivityService otherActivityService;
     private R2dbcEntityTemplate template;
 
-    public AppStateService(@Autowired MovieService movieService,
+    public AppStateService(@Autowired ConfigurationService confService,
+                           @Autowired MovieService movieService,
                            @Autowired MovieSessionService sessionService,
                            @Autowired OtherActivityService otherActivityService,
                            @Autowired R2dbcEntityTemplate template) {
 
+        this.confService = confService;
         this.movieService = movieService;
         this.sessionService = sessionService;
         this.otherActivityService = otherActivityService;
@@ -34,12 +38,13 @@ public class AppStateService {
     }
 
     public Mono<AppState> dumpAppState(){
+        Mono<WizardConfiguration> wizconf = confService.getWizardConfiguration();
         Mono<List<Movie>> movies = movieService.findAll().collectList();
         Mono<List<MovieSession>> sessions = sessionService.findAll().collectList();
         Mono<List<OtherActivity>> activities = otherActivityService.findAll().collectList();
 
-        return Mono.zip(movies, sessions, activities)
-            .map(tuple -> new AppState(tuple.getT1(), tuple.getT2(), tuple.getT3()));
+        return Mono.zip(wizconf, movies, sessions, activities)
+            .map(tuple -> new AppState(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
     }
 
 
@@ -69,6 +74,7 @@ public class AppStateService {
             .then(movieService.deleteAll())
 
         // 2. Then insert in sequence
+        .then(confService.setWizardConfiguration(appState.getWizardConfiguration()))
         .thenMany(insertAll(appState.getMovies()))
         .thenMany(insertAll(appState.getSessions()))
         .thenMany(insertAll(appState.getActivities()))

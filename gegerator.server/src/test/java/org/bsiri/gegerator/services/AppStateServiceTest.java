@@ -2,6 +2,8 @@ package org.bsiri.gegerator.services;
 
 
 import org.assertj.core.util.Lists;
+import org.bsiri.gegerator.config.AppState;
+import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
 import org.hamcrest.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,6 +64,7 @@ public class AppStateServiceTest extends AbstractDBBasedServiceTest{
     // ********* boilerplate ***********
 
     private AppState makeAppState(){
+        WizardConfiguration wizconf = new WizardConfiguration();
         List<Movie> movies = Lists.list(decapitron(), tremors(), halloween(), theMist());
         List<MovieSession> sessions = Lists.list(thursdayDecapitron(),
                 saturdayDecapitron(),
@@ -70,7 +73,7 @@ public class AppStateServiceTest extends AbstractDBBasedServiceTest{
 
         List<OtherActivity> activities = Lists.list(thursdayGeromoise(), saturdaySoupeAuChoux());
 
-        AppState state = new AppState(movies, sessions, activities);
+        AppState state = new AppState(wizconf, movies, sessions, activities);
         return state;
     }
 
