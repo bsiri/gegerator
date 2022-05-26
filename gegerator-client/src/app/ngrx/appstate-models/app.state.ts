@@ -1,7 +1,7 @@
 import { MovieSession, MovieSessionJSON } from "src/app/models/session.model";
 import { Movie, MovieJSON } from "src/app/models/movie.model";
 import { OtherActivity, OtherActivityJSON } from "src/app/models/activity.model";
-import { WizardConfiguration, WizardConfigurationJSON } from "src/app/models/wizardconfiguration.model";
+import { WizardConfiguration, WizardConfigurationJSON } from "src/app/ngrx/appstate-models/wizardconfiguration.model";
 
 /**
  * AppState is not really a domain object, 

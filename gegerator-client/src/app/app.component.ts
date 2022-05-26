@@ -3,14 +3,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
-import { OtherActivity } from './models/activity.model';
-import { Mode } from './models/mode.model';
+import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
-import { PlannedMovieSession } from './models/session.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
 import { selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
 import { ModeService } from './services/mode.service';
+import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
+import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
+import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
+import { ConfigurationActions } from './ngrx/actions/configuration.actions';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +23,8 @@ export class AppComponent implements OnInit{
 
   Mode = Mode
   mode$! : Observable<Mode>
+
+  wizconf!: WizardConfiguration
   roadmap!: FestivalRoadmap
 
   constructor(private store: Store, 
@@ -32,6 +36,7 @@ export class AppComponent implements OnInit{
     this.mode$ = this.modeService.mode$
     this.store.dispatch(AppStateActions.reload_appstate())
     this.store.select(selectUserRoadmap).subscribe(rm => this.roadmap = rm)
+    this.store.select(selectConfiguration).subscribe(wizconf => this.wizconf = wizconf)
     // Note : no need to take care of unsubscribing here since the App lives until, 
     // well, the end of the App
   }
@@ -67,6 +72,19 @@ export class AppComponent implements OnInit{
     fakelink.href = "data:application/octet-stream," + encodeURIComponent(planningStr)
     fakelink.click()
 
+  }
+
+  openWizardConfiguration(): void{
+    const dialogRef = this.dialog.open(ConfigDialog, {
+      autoFocus: 'first-tabbable',
+      data: this.wizconf.copy()
+    })
+
+    dialogRef.afterClosed().subscribe(wizconf =>{
+      if (!!wizconf){
+        this.store.dispatch(ConfigurationActions.update_wizconf({wizconf}))
+      }
+    })
   }
 
   // quick and dirty way to remove the day from the 'toString()' output,

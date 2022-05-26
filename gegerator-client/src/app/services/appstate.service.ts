@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
-import { AppState, AppStateJSON } from '../ngrx/state/app.state';
+import { AppState, AppStateJSON } from '../ngrx/appstate-models/app.state';
 
 const stateUrl = '/gegerator/app-state'
 

@@ -97,6 +97,8 @@ b - appréciation séance
 - un dialog qui permet de configurer et uploader la config de l'assistant.
 - un bouton "Configuration de l'assistant..." dans le menu "Mode"
 
+==> Done
+
 4. Implémenter l'algorithme de l'assistant. Touver une formule pour
 évaluer une session compte tenu du score  du film, de celui du cinéma,
 du ratio de préférence, et se rappeler  que les OtherActivity n'ont

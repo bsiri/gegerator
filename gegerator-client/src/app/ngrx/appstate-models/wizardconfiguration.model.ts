@@ -1,4 +1,4 @@
-import { Comparable } from "./comparable.interface";
+import { Comparable } from "../../models/comparable.interface";
 
 
 export class WizardConfiguration{
@@ -7,7 +7,7 @@ export class WizardConfiguration{
         public casinoRating: TheaterRating = TheaterRatings.DEFAULT, 
         public paradisoRating: TheaterRating = TheaterRatings.DEFAULT,
         public mclRating: TheaterRating = TheaterRatings.DEFAULT,
-        public movieVsTheaterCoeff: number = 0.5
+        public movieVsTheaterBias: number = 0.5
     ){}
     
     toJSON(): WizardConfigurationJSON{
@@ -16,7 +16,7 @@ export class WizardConfiguration{
             casinoRating: this.casinoRating.key,
             paradisoRating: this.paradisoRating.key,
             mclRating: this.mclRating.key,
-            movieVsTheaterCoeff: this.movieVsTheaterCoeff
+            movieVsTheaterBias: this.movieVsTheaterBias
         }
     }
 
@@ -26,8 +26,20 @@ export class WizardConfiguration{
             TheaterRatings.fromKey(json.casinoRating),
             TheaterRatings.fromKey(json.paradisoRating),
             TheaterRatings.fromKey(json.mclRating),
-            json.movieVsTheaterCoeff
+            json.movieVsTheaterBias
         )
+    }
+
+    copy(modifiers = {}): WizardConfiguration{
+      const _clone = new WizardConfiguration(
+        this.espaceLacRating, 
+        this.casinoRating, 
+        this.paradisoRating, 
+        this.mclRating, 
+        this.movieVsTheaterBias
+      )
+      Object.assign(_clone, modifiers)
+      return _clone
     }
 }
 
@@ -36,7 +48,7 @@ export interface WizardConfigurationJSON{
     casinoRating: string,
     paradisoRating: string,
     mclRating: string,
-    movieVsTheaterCoeff: number
+    movieVsTheaterBias: number
 }
 
 
@@ -58,19 +70,19 @@ export class TheaterRatings{
   static HIGHEST = new TheaterRating( 
     "HIGHEST", 
     0,
-    "Incontournable",
+    "Très haute",
     "J'adore cette salle"
   );
   static HIGH = new TheaterRating( 
     "HIGH",
     1,
-    "Bien", 
+    "Haute", 
     "C'est une bonne salle"
   );
   static DEFAULT = new TheaterRating( 
     "DEFAULT", 
     2,
-    "Normale",
+    "Moyenne",
     "Pas d'avis"
   );
   static NEVER = new TheaterRating( 

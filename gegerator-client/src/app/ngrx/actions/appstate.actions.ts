@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { AppState } from '../state/app.state'
+import { AppState } from '../appstate-models/app.state'
 
 export namespace AppStateActions{
     // Effect actions

@@ -7,6 +7,7 @@ import { GenericPurposeDialog } from "src/app/components/genericpurposedialog/ge
 import { AppStateService } from "src/app/services/appstate.service";
 import { ActivityActions } from "../actions/activity.actions";
 import { AppStateActions } from "../actions/appstate.actions";
+import { ConfigurationActions } from "../actions/configuration.actions";
 import { MovieActions } from "../actions/movie.actions";
 import { SessionActions } from "../actions/session.actions";
 
@@ -45,6 +46,9 @@ export class AppStateEffects{
         ofType(AppStateActions.appstate_reloaded),
         mergeMap(action => {
             const state = action.appstate
+            this.store.dispatch(
+                ConfigurationActions.wizconf_reloaded({wizconf: state.wizardConfiguration})
+            )
             this.store.dispatch(
                 MovieActions.movies_reloaded({movies: state.movies})
             )

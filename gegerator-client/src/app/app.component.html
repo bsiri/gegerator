@@ -14,6 +14,9 @@
                         <mat-label *ngIf="(mode$ | async) == Mode.MANUAL">Activer l'assistant</mat-label>
                         <mat-label *ngIf="(mode$ | async) == Mode.WIZARD">Désactiver l'assistant</mat-label>
                     </button>
+                    <button mat-menu-item (click)="openWizardConfiguration()">
+                        Configurer l'assistant...
+                    </button>
                 </mat-menu>
 
                 <!-- Export the roadmap -->

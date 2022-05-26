@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { WizardConfiguration, WizardConfigurationJSON } from '../models/wizardconfiguration.model';
+import { WizardConfiguration, WizardConfigurationJSON } from '../ngrx/appstate-models/wizardconfiguration.model';
 
 const wizconfUrl = "/gegerator/configuration/wizard"
 
@@ -20,7 +20,7 @@ export class ConfigurationService {
   }
 
   updateWizardConfiguration(wizconf: WizardConfiguration): Observable<WizardConfiguration>{
-    return this.http.put<WizardConfigurationJSON>(wizconfUrl, wizconf)
+    return this.http.put<WizardConfigurationJSON>(wizconfUrl, wizconf.toJSON())
     .pipe(
       map(WizardConfiguration.fromJSON)
     )

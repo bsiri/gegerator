@@ -27,16 +27,16 @@ public class WizardConfiguration {
      * - 1.0 : The reverse situation
      * - 0.5 : Both are of equal importance (this is the default).
      */
-    private float movieVsTheaterCoeff = 0.5f;
+    private float movieVsTheaterBias = 0.5f;
 
 
-    public void setMovieVsTheaterCoeff(float movieVsTheaterCoeff) {
-        if (movieVsTheaterCoeff < 0.0f || movieVsTheaterCoeff > 1.00f){
+    public void setMovieVsTheaterBias(float movieVsTheaterBias) {
+        if (movieVsTheaterBias < 0.0f || movieVsTheaterBias > 1.00f){
             throw new IllegalArgumentException(
-                    "movieVsTheaterCoeff out of scale ! Should be between [0.0, 1.0] but got : " +
-                    movieVsTheaterCoeff
+                    "movieVsTheaterBias out of scale ! Should be between [0.0, 1.0] but got : " +
+                            movieVsTheaterBias
             );
         }
-        this.movieVsTheaterCoeff = movieVsTheaterCoeff;
+        this.movieVsTheaterBias = movieVsTheaterBias;
     }
 }

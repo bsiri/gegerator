@@ -16,6 +16,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatRadioModule} from '@angular/material/radio'; 
 import {MatTabsModule} from '@angular/material/tabs'; 
 import {MatMenuModule} from '@angular/material/menu'; 
+import {MatSliderModule} from '@angular/material/slider'; 
 
 import { AppComponent } from './app.component';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
@@ -53,6 +54,7 @@ import { MovieCtxtMenu } from './components/movies/movie-ctxt-menu/movie-ctxt-me
 import { EventLinkComponent } from './components/small-comps/event-link/event-link.component';
 import { configurationReducer } from './ngrx/reducers/configuration.reducer';
 import { ConfigurationEffects } from './ngrx/effects/configuration.effects';
+import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,7 @@ import { ConfigurationEffects } from './ngrx/effects/configuration.effects';
     ContextMenuDirective,
     MovieCtxtMenu,
     EventLinkComponent,
+    ConfigDialog,
     
   ],
   imports: [
@@ -101,7 +104,8 @@ import { ConfigurationEffects } from './ngrx/effects/configuration.effects';
     MatAutocompleteModule,
     MatRadioModule,
     MatTabsModule,
-    MatMenuModule
+    MatMenuModule,
+    MatSliderModule
   ],
   providers: [
     httpInterceptorProviders
