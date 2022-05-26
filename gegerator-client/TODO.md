@@ -80,14 +80,17 @@ b - appréciation séance
 
 ================= V2 ============================
 
-1. Bouton menu "Mode"
-- manuel (c'est l'existant)
-
-2. Objet WizardConfiguration qui permet de:
+1. Objet WizardConfiguration qui permet de:
 - attribuer un Rank aux cinémas
 - attribuer un ratio de préférence entre la valeur d'un cinéma et la
   valeur d'un film (default : neutre à 50%)
 - inclure cet objet dans les download/upload de AppState
+
+=> Done
+
+2. Bouton menu "Mode"
+- toggle button : "mode assistant" v "mode manuel"
+- un bouton menu pour la configuration de l'assistant (voir ci-dessous)
 
 3. Configuration de l'assistant: 
 - un dialog qui permet de configurer et uploader l'objet ci-dessus.

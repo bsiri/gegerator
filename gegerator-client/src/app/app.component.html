@@ -7,6 +7,15 @@
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
                 <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
                 
+                <!-- Mode -->
+                <button mat-raised-button [matMenuTriggerFor]="mode" color="primary">Mode</button>
+                <mat-menu #mode>
+                    <button mat-menu-item (click)="switchMode()" >
+                        <mat-label *ngIf="(mode$ | async) == Mode.MANUAL">Activer l'assistant</mat-label>
+                        <mat-label *ngIf="(mode$ | async) == Mode.WIZARD">Désactiver l'assistant</mat-label>
+                    </button>
+                </mat-menu>
+
                 <!-- Export the roadmap -->
                 <button mat-raised-button [matMenuTriggerFor]="exportMenu" color="primary">Exporter</button>
 

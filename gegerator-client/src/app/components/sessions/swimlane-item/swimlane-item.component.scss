@@ -11,7 +11,7 @@ $color-content-normal: white;
 $color-content-disabled: $color-base-disabled;
 
 $color-border-outstanding: $color-base-outstanding;
-$color-border-salient: red;
+$color-border-salient: #0b661c;
 $color-border-normal: black;
 $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%); 
 

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { OtherActivity } from './models/activity.model';
+import { Mode } from './models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
 import { PlannedMovieSession } from './models/session.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
 import { selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
+import { ModeService } from './services/mode.service';
 
 @Component({
   selector: 'app-root',
@@ -16,17 +19,21 @@ import { selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
 })
 export class AppComponent implements OnInit{
 
+  Mode = Mode
+  mode$! : Observable<Mode>
   roadmap!: FestivalRoadmap
 
   constructor(private store: Store, 
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private modeService: ModeService
     ){}
 
   ngOnInit(): void {
+    this.mode$ = this.modeService.mode$
     this.store.dispatch(AppStateActions.reload_appstate())
     this.store.select(selectUserRoadmap).subscribe(rm => this.roadmap = rm)
-    // Note : no need to take care of unsubscribing here since destroying the app
-    // would essentially entail the completion of all the observables
+    // Note : no need to take care of unsubscribing here since the App lives until, 
+    // well, the end of the App
   }
 
   uploadAppState(): void{
@@ -67,6 +74,10 @@ export class AppComponent implements OnInit{
   // that's my pet project so who cares :-)
   formatEventStr(event: PlannableEvent): string{
     return event.toString().replace(/^(.*?), /, '    ') + '\n'
+  }
+
+  switchMode(): void{
+    this.modeService.switchMode()
   }
 
 }
