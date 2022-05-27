@@ -2,6 +2,8 @@ package org.bsiri.gegerator.testinfra;
 
 import org.bsiri.gegerator.domain.*;
 
+import java.time.DayOfWeek;
+
 import static java.time.Duration.ofMinutes;
 import static java.time.LocalTime.parse;
 
@@ -36,29 +38,29 @@ public class TestBeans {
     // ********** sessions **********
 
     public static MovieSession thursdayDecapitron() {
-        return MovieSession.of(1L, decapitron().getId(), Theater.ESPACE_LAC, Day.THURSDAY, parse("10:00:00"), EventRating.NEVER);
+        return MovieSession.of(1L, decapitron().getId(), Theater.ESPACE_LAC, DayOfWeek.THURSDAY, parse("10:00:00"), EventRating.NEVER);
     }
 
     public static MovieSession saturdayDecapitron() {
-        return MovieSession.of(2L, decapitron().getId(), Theater.MCL, Day.SATURDAY, parse("17:25:00"), EventRating.DEFAULT);
+        return MovieSession.of(2L, decapitron().getId(), Theater.MCL, DayOfWeek.SATURDAY, parse("17:25:00"), EventRating.DEFAULT);
     }
 
     public static MovieSession sundayHalloween() {
-        return MovieSession.of(3L, halloween().getId(), Theater.CASINO, Day.SUNDAY, parse("11:15:00"), EventRating.DEFAULT);
+        return MovieSession.of(3L, halloween().getId(), Theater.CASINO, DayOfWeek.SUNDAY, parse("11:15:00"), EventRating.DEFAULT);
     }
 
     public static MovieSession fridayTremors() {
-        return MovieSession.of(4L, tremors().getId(), Theater.PARADISO, Day.FRIDAY, parse("13:30:00"), EventRating.MANDATORY);
+        return MovieSession.of(4L, tremors().getId(), Theater.PARADISO, DayOfWeek.FRIDAY, parse("13:30:00"), EventRating.MANDATORY);
     }
 
     // ********** activities *********
 
     public static OtherActivity thursdayGeromoise() {
-        return OtherActivity.of(1L, Day.THURSDAY, parse("19:00:00"), parse("21:00:00"), "Géromoise", EventRating.MANDATORY);
+        return OtherActivity.of(1L, DayOfWeek.THURSDAY, parse("19:00:00"), parse("21:00:00"), "Géromoise", EventRating.MANDATORY);
     }
 
     public static OtherActivity saturdaySoupeAuChoux() {
-        return OtherActivity.of(2L, Day.SATURDAY, parse("20:00:00"), parse("21:30:00"), "Soupe aux Choux", EventRating.DEFAULT);
+        return OtherActivity.of(2L, DayOfWeek.SATURDAY, parse("20:00:00"), parse("21:30:00"), "Soupe aux Choux", EventRating.DEFAULT);
     }
 
 }

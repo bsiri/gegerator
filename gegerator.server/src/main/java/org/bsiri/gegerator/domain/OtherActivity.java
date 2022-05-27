@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter
@@ -16,7 +17,7 @@ public class OtherActivity implements RatableEvent{
     private Long id;
 
     @Column("day_name")
-    private @NonNull Day day;
+    private @NonNull DayOfWeek day;
     private @NonNull LocalTime startTime;
     private @NonNull LocalTime endTime;
     private @NonNull String description;
@@ -29,7 +30,15 @@ public class OtherActivity implements RatableEvent{
         this.id = id;
     }
 
-    public static OtherActivity of (long id, Day day, LocalTime startTime, LocalTime endTime, String description, EventRating rating){
+    public void setDay(DayOfWeek day){
+        // only days from thursday to sunday are allowed
+        if (day.getValue() < DayOfWeek.THURSDAY.getValue()){
+            throw new IllegalArgumentException("Days allowed are from THURSDAY to SUNDAY inclusive, but got : "+day.name());
+        }
+        this.day = day;
+    }
+
+    public static OtherActivity of (long id, DayOfWeek day, LocalTime startTime, LocalTime endTime, String description, EventRating rating){
         OtherActivity activity = new OtherActivity(day, startTime, endTime, description, rating);
         activity.setId(id);
         return activity;
