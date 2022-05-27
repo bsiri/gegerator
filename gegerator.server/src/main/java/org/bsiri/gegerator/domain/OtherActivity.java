@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "id")
-public class OtherActivity implements RatableEvent{
+public class OtherActivity implements RatableEvent, PlannableEvent{
     @Id
     private Long id;
 

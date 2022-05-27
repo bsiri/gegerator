@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "id")
 @ToString
-public class MovieSession implements RatableEvent {
+public class MovieSession implements RatableEvent, PlannableEvent, HasTheater {
     @Id
     private Long id;
     // r2dbc isn't yet as mature as JPA unfortunately

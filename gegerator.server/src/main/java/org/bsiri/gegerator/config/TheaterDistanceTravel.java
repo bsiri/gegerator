@@ -1,14 +1,17 @@
 package org.bsiri.gegerator.config;
 
 
+import org.bsiri.gegerator.domain.HasTheater;
+import org.bsiri.gegerator.domain.PlannableEvent;
 import org.bsiri.gegerator.domain.Theater;
+
+import static java.time.Duration.ofMinutes;
 import static org.bsiri.gegerator.domain.Theater.*;
-import java.time.LocalTime;
-import static java.time.LocalTime.of;
+import java.time.Duration;
 
 public class TheaterDistanceTravel {
 
-    private static LocalTime[][] travel = new LocalTime[Theater.values().length][Theater.values().length];
+    private static Duration[][] travel = new Duration[Theater.values().length][Theater.values().length];
 
     static {
         record(ESPACE_LAC, ESPACE_LAC, 0);
@@ -27,11 +30,26 @@ public class TheaterDistanceTravel {
     }
 
     private static void record(Theater from, Theater to, int minutes){
-        travel[from.ordinal()][to.ordinal()] = of(0, minutes);
-        travel[to.ordinal()][from.ordinal()] = of(0, minutes);
+        travel[from.ordinal()][to.ordinal()] = ofMinutes(minutes);
+        travel[to.ordinal()][from.ordinal()] = ofMinutes(minutes);
     }
 
-    public static LocalTime get(Theater from, Theater to){
+    public static Duration get(Theater from, Theater to){
         return travel[from.ordinal()][to.ordinal()];
+    }
+
+    public static Duration get(PlannableEvent src, PlannableEvent dst){
+        Theater theaterSrc = null;
+        Theater theaterDst = null;
+        if (HasTheater.class.isAssignableFrom(src.getClass())){
+            theaterSrc = ((HasTheater)src).getTheater();
+        }
+        if (HasTheater.class.isAssignableFrom(dst.getClass())){
+            theaterDst = ((HasTheater)dst).getTheater();
+        }
+        if (theaterSrc != null && theaterDst != null){
+            return TheaterDistanceTravel.get(theaterSrc, theaterDst);
+        }
+        return Duration.ofMinutes(0);
     }
 }
