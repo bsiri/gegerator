@@ -2,6 +2,7 @@ package org.bsiri.gegerator.config;
 
 
 import lombok.Data;
+import org.bsiri.gegerator.domain.Theater;
 
 /**
  * General settings that will tweak the behavior of the wizard,
@@ -29,6 +30,16 @@ public class WizardConfiguration {
      */
     private float movieVsTheaterBias = 0.5f;
 
+    public TheaterRating getTheaterRating(Theater theater){
+        switch(theater){
+            case ESPACE_LAC: return espaceLacRating;
+            case CASINO: return casinoRating;
+            case PARADISO: return paradisoRating;
+            case MCL: return mclRating;
+            default:
+                throw new IllegalArgumentException("Unknown theater : "+theater);
+        }
+    }
 
     public void setMovieVsTheaterBias(float movieVsTheaterBias) {
         if (movieVsTheaterBias < 0.0f || movieVsTheaterBias > 1.00f){

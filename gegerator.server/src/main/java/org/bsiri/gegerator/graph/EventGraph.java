@@ -141,7 +141,7 @@ public class EventGraph {
         private Set<Long> seenMovies = new HashSet<>();
 
         // keep track of score
-        private int bestScore = -10000;
+        private long bestScore = -10000;
         private EventNode[] bestRoadmap;
 
         ExplorationStack(int nodesCard){
@@ -168,7 +168,7 @@ public class EventGraph {
         }
 
         void recordRoadmapIfBest(){
-            int currentScore = Stream.of(nodeStack).collect(Collectors.summingInt(EventNode::getScore));
+            long currentScore = Stream.of(nodeStack).collect(Collectors.summingLong(EventNode::getScore));
             if (currentScore > bestScore){
                 bestScore = currentScore;
                 bestRoadmap = new EventNode[topStack];

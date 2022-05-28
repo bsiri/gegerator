@@ -30,6 +30,10 @@ public class MovieService {
         return repo.findById(id);
     }
 
+    public Flux<Movie> findAllPlannedInSession(){
+        return repo.findAllPlannedInSession();
+    }
+
     @Transactional
     public Mono<Movie> save(Movie movie){
         return repo.save(movie)

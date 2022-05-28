@@ -3,7 +3,6 @@ package org.bsiri.gegerator.graph;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bsiri.gegerator.domain.Movie;
 import org.bsiri.gegerator.domain.PlannableEvent;
 import org.bsiri.gegerator.domain.Theater;
 
@@ -15,7 +14,7 @@ import java.time.LocalTime;
 public class EventNode implements TimeAndSpaceLocation {
     private PlannableEvent representedEvent;
     private String name;
-    private int score;
+    private long score;
 
     /**
      * Movie Id, may be null

@@ -26,7 +26,7 @@ public class Scoring {
         return movies.getScores().get(rating);
     }
 
-    public Integer getScore(EventScore rating){
+    public Integer getScore(EventRating rating){
         return events.getScores().get(rating);
     }
 
