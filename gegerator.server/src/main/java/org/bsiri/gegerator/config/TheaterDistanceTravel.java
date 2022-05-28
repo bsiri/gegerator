@@ -1,8 +1,6 @@
 package org.bsiri.gegerator.config;
 
 
-import org.bsiri.gegerator.domain.HasTheater;
-import org.bsiri.gegerator.domain.PlannableEvent;
 import org.bsiri.gegerator.domain.Theater;
 
 import static java.time.Duration.ofMinutes;
@@ -35,21 +33,11 @@ public class TheaterDistanceTravel {
     }
 
     public static Duration get(Theater from, Theater to){
+        if (from == null || to == null){
+            return Duration.ofMinutes(0);
+        }
         return travel[from.ordinal()][to.ordinal()];
     }
 
-    public static Duration get(PlannableEvent src, PlannableEvent dst){
-        Theater theaterSrc = null;
-        Theater theaterDst = null;
-        if (HasTheater.class.isAssignableFrom(src.getClass())){
-            theaterSrc = ((HasTheater)src).getTheater();
-        }
-        if (HasTheater.class.isAssignableFrom(dst.getClass())){
-            theaterDst = ((HasTheater)dst).getTheater();
-        }
-        if (theaterSrc != null && theaterDst != null){
-            return TheaterDistanceTravel.get(theaterSrc, theaterDst);
-        }
-        return Duration.ofMinutes(0);
-    }
+
 }
