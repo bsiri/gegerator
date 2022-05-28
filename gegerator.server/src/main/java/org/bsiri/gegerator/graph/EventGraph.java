@@ -45,7 +45,7 @@ public class EventGraph {
      * of loop iterations * instead of exploring the whole N²
      * combinations.
      */
-    private EventNode[] events;
+    private EventNode[] nodes;
 
     /* The value for each entry is 1 if a connection
      * is possible and 0 otherwise.
@@ -69,15 +69,15 @@ public class EventGraph {
         copy.add(ROOT);
         copy.add(SINK);
         Collections.sort(copy, Comparator.comparing(EventNode::getDay).thenComparing(EventNode::getStartTime));
-        this.events = copy.toArray(new EventNode[]{});
+        this.nodes = copy.toArray(new EventNode[]{});
     }
 
     private void initEdges(){
-        adjacency = new int[events.length][events.length];
-        for (int iSrc = 0; iSrc < events.length; iSrc++){
-            for (int iDst = iSrc+1; iDst < events.length; iDst++){
-                EventNode src = events[iSrc];
-                EventNode dst = events[iDst];
+        adjacency = new int[nodes.length][nodes.length];
+        for (int iSrc = 0; iSrc < nodes.length; iSrc++){
+            for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
+                EventNode src = nodes[iSrc];
+                EventNode dst = nodes[iDst];
                 if (! isTransitionFeasible(src, dst)) continue;
                 adjacency[iSrc][iDst] = 1;
             }
@@ -104,10 +104,10 @@ public class EventGraph {
     // ******************* Computation ************************
 
     public List<EventNode> findBestRoadmap(){
-        ExplorationStack stack = new ExplorationStack(events.length);
+        ExplorationStack stack = new ExplorationStack(nodes.length);
 
         // Note : node 0 is the ROOT node
-        stack.push(events[0]);
+        stack.push(nodes[0]);
         explore(0, stack);
         List<EventNode> best = Arrays.asList(stack.bestRoadmap);
         stack.pop();
@@ -117,13 +117,13 @@ public class EventGraph {
     }
 
     private void explore(int nodeIndex, ExplorationStack stack){
-        EventNode node = events[nodeIndex];
+        EventNode node = nodes[nodeIndex];
         if (node == SINK){
             stack.recordRoadmapIfBest();
             return;
         }
-        for (int destIndex = nodeIndex+1; destIndex < events.length; destIndex++){
-            EventNode destNode = events[destIndex];
+        for (int destIndex = nodeIndex+1; destIndex < nodes.length; destIndex++){
+            EventNode destNode = nodes[destIndex];
 
             if (adjacency[nodeIndex][destIndex] == 0 ) continue;
             if (stack.alreadySeenMovie(destNode)) continue;
