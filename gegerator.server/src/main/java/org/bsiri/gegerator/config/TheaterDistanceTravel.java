@@ -27,6 +27,8 @@ public class TheaterDistanceTravel {
         record(MCL, MCL, 0);
     }
 
+    private TheaterDistanceTravel(){}
+
     private static void record(Theater from, Theater to, int minutes){
         travel[from.ordinal()][to.ordinal()] = ofMinutes(minutes);
         travel[to.ordinal()][from.ordinal()] = ofMinutes(minutes);

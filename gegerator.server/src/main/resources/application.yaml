@@ -7,3 +7,39 @@ spring:
 
   webflux:
     base-path: /gegerator
+
+
+scoring:
+  # Theater ratings have a normal scoring,
+  # except for Never which is very very penalized.
+  theaters:
+    HIGHEST:
+      score: 1000
+    HIGH:
+      score: 100
+    DEFAULT:
+      score: 0
+    NEVER:
+      score: -99999
+
+  # Same scoring logic than for theaters.
+  movies:
+    HIGHEST:
+      score: 1000
+    HIGH:
+      score: 100
+    DEFAULT:
+      score: 0
+    NEVER:
+      score: -99999
+
+  # Events ratings have a tremendous value
+  # compared to the rest
+  events:
+     MANDATORY:
+       score: 999999
+     DEFAULT:
+       score: 0
+     NEVER:
+       score: -999999
+
