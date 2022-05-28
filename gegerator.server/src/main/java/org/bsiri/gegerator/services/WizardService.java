@@ -8,7 +8,6 @@ import org.bsiri.gegerator.graph.EventGraph;
 import org.bsiri.gegerator.graph.EventNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -43,26 +42,13 @@ public class WizardService {
         Mono<List<Movie>> plannedMoviesMono = movieService.findAllPlannedInSession().collectList();
         Mono<List<MovieSession>> sessionsMono = sessionService.findAll().collectList();
 
-        return Flux.combineLatest(wizconfMono,
-                activitiesMono,
-                plannedMoviesMono,
-                sessionsMono,
-                // damn you type erasure !
-                (Object[] ingredients) -> {
-                    WizardConfiguration wizconf = (WizardConfiguration) ingredients[0];
-                    List<OtherActivity> activities = (List<OtherActivity>) ingredients[1];
-                    List<Movie> movies = (List<Movie>) ingredients[2];
-                    List<MovieSession> sessions = (List<MovieSession>) ingredients[3];
-
-                    List<EventNode> events = toEventNodes(wizconf, activities, movies, sessions);
-                    return findBestRoadmap(events);
-                }
-        ).last();
-
+        return Mono.zip(wizconfMono, activitiesMono, plannedMoviesMono, sessionsMono)
+                .map(tuple -> toEventNodes(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()))
+                .map(this::findBestRoadmap);
     }
 
 
-    private List<EventNode> toEventNodes(
+     List<EventNode> toEventNodes(
                 WizardConfiguration wizconf,
                 List<OtherActivity> activities,
                 List<Movie> movies,
@@ -79,19 +65,13 @@ public class WizardService {
         return events;
     }
 
-    private List<PlannableEvent> findBestRoadmap(List<EventNode> events){
+    List<PlannableEvent> findBestRoadmap(List<EventNode> events){
         EventGraph graph = new EventGraph(events);
         return graph.findBestRoadmap().stream().map(EventNode::getRepresentedEvent).collect(Collectors.toList());
     }
 
-    private EventNode createNode(WizardConfiguration wizconf, MovieSession session, Movie movie) {
-        // Take that Demeter, I'm a thug bro !
-        int tScore = scoring.getScore(wizconf.getTheaterRating(session.getTheater()));
-        int sScore = scoring.getScore(session.getRating());
-        int mScore = scoring.getScore(movie.getRating());
-        float bias = wizconf.getMovieVsTheaterBias();
-
-        int finalscore = (int)(((1.0-bias) * mScore) + (bias * tScore) + sScore);
+    EventNode createNode(WizardConfiguration wizconf, MovieSession session, Movie movie) {
+        int finalscore = calculateSessionScore(wizconf, session, movie);
 
         return new EventNode(
             session,
@@ -111,7 +91,18 @@ public class WizardService {
 
     }
 
-    private EventNode createNode(WizardConfiguration wizconf, OtherActivity activity){
+    int calculateSessionScore(WizardConfiguration wizconf, MovieSession session, Movie movie) {
+        // Take that Demeter, I'm a thug bro !
+        int tScore = scoring.getScore(wizconf.getTheaterRating(session.getTheater()));
+        int sScore = scoring.getScore(session.getRating());
+        int mScore = scoring.getScore(movie.getRating());
+        float bias = wizconf.getMovieVsTheaterBias();
+
+        int finalscore = (int)(((1.0-bias) * mScore) + (bias * tScore) + sScore);
+        return finalscore;
+    }
+
+    EventNode createNode(WizardConfiguration wizconf, OtherActivity activity){
         long finalScore = scoring.getScore(activity.getRating());
         return new EventNode(
             activity,
