@@ -29,4 +29,9 @@ public class EventNode implements TimeAndSpaceLocation {
     private DayOfWeek day;
     private LocalTime startTime;
     private LocalTime endTime;
+
+    @Override
+    public String toString(){
+        return name;
+    }
 }

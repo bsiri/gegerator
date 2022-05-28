@@ -6,8 +6,6 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EventGraph {
 
@@ -80,7 +78,6 @@ public class EventGraph {
             for (int iDst = iSrc+1; iDst < events.length; iDst++){
                 EventNode src = events[iSrc];
                 EventNode dst = events[iDst];
-                if (src == dst) continue;
                 if (! isTransitionFeasible(src, dst)) continue;
                 adjacency[iSrc][iDst] = 1;
             }
@@ -96,20 +93,27 @@ public class EventGraph {
      * @return
      */
     private boolean isTransitionFeasible(TimeAndSpaceLocation src, TimeAndSpaceLocation dst){
-        if (src.getDay().compareTo(dst.getDay())>=0){
-            return false;
+        int dayDiff = src.getDay().compareTo(dst.getDay());
+        if (dayDiff != 0){
+            return (dayDiff < 0);
         }
         Duration travel = TheaterDistanceTravel.get(src.getTheater(), dst.getTheater());
-        return src.getEndTime().isBefore(dst.getStartTime().plus(travel));
+        return src.getEndTime().plus(travel).isBefore(dst.getStartTime());
     }
 
     // ******************* Computation ************************
 
     public List<EventNode> findBestRoadmap(){
         ExplorationStack stack = new ExplorationStack(events.length);
+
         // Note : node 0 is the ROOT node
+        stack.push(events[0]);
         explore(0, stack);
-        return Arrays.asList(stack.bestRoadmap);
+        List<EventNode> best = Arrays.asList(stack.bestRoadmap);
+        stack.pop();
+
+        // remove the ROOT and SINK nodes then exit
+        return best.subList(1, best.size()-1);
     }
 
     private void explore(int nodeIndex, ExplorationStack stack){
@@ -156,7 +160,7 @@ public class EventGraph {
         }
 
         EventNode pop(){
-            EventNode node = nodeStack[topStack--];
+            EventNode node = nodeStack[--topStack];
             if (node.getMovie() != null){
                 seenMovies.remove(node.getMovie());
             }
@@ -168,7 +172,13 @@ public class EventGraph {
         }
 
         void recordRoadmapIfBest(){
-            long currentScore = Stream.of(nodeStack).collect(Collectors.summingLong(EventNode::getScore));
+            // the good old for loop will be more efficient,
+            // because a stream over a native array will just iterate
+            // until the end of it instead of stopping at "topstack'
+            long currentScore = 0L;
+            for (int i=0; i<topStack; i++)
+                currentScore += nodeStack[i].getScore();
+
             if (currentScore > bestScore){
                 bestScore = currentScore;
                 bestRoadmap = new EventNode[topStack];
