@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -66,7 +66,7 @@ export class SessionDialog implements OnInit {
         startWith(''),
         map(value => {
           const movieTitles = this.availableMovies.map(m=>m.title)
-          return movieTitles.filter(title=> title.includes(value))
+          return movieTitles.filter(title=> title.toLowerCase().includes(value.toLowerCase()))
         })
       )
   }
@@ -74,6 +74,7 @@ export class SessionDialog implements OnInit {
   ngOnInit(): void {
   }
 
+  @HostListener('window:keyup.Enter', ['$event'])
   confirm(): void{
     const session = this.toPlannedMovieSession();
     this.dialogRef.close(session);

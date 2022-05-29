@@ -144,6 +144,10 @@ Finitions :
 
 ## Remarques Thomas
 
+- Rajouter des raccourcis claviers : valider les dialog avec
+  Enter, ou encore de quoi créer des films ou sessions à 
+  la chaîne.
+
 - Ajouter un bouton pour créer un film à la volée depuis 
   l'interface Session.
 
