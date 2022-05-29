@@ -13,6 +13,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ public class GraphTest {
             node("Movie 1 Super", SUPER_SCORE, MOVIE_1, "PARADISO|THURSDAY|10:00|11:00"),
             node("Movie 1 Average", AVERAGE_SCORE, MOVIE_1, "PARADISO|FRIDAY|10:00|11:00")
         );
+        Collections.shuffle(nodes);
 
         EventGraph graph = new EventGraph(nodes);
         List<EventNode> best = graph.findBestRoadmap();
@@ -69,6 +71,7 @@ public class GraphTest {
             node("super session", SUPER_SCORE, MOVIE_1, "MCL | FRIDAY | 10:00 | 11:00"),
             node("medium session", MEDIUM_SCORE, MOVIE_1, "MCL | SUNDAY | 10:00 | 11:00")
         );
+        Collections.shuffle(nodes);
 
         EventGraph graph = new EventGraph(nodes);
         List<EventNode> best = graph.findBestRoadmap();
@@ -94,6 +97,7 @@ public class GraphTest {
             node("another super movie", SUPER_SCORE, MOVIE_2, "CASINO | FRIDAY | 10:30 | 11:30"),
             node("average movie", AVERAGE_SCORE, MOVIE_3, "ESPACE_LAC | FRIDAY | 11:15 | 12:15")
         );
+        Collections.shuffle(nodes);
 
         EventGraph graph = new EventGraph(nodes);
         List<EventNode> best = graph.findBestRoadmap();
@@ -113,6 +117,7 @@ public class GraphTest {
             node("average movie", AVERAGE_SCORE, MOVIE_2, "MCL | THURSDAY | 10:00 | 11:00"),
             node("best movie", SUPER_SCORE, MOVIE_1, "ESPACE_LAC | THURSDAY | 11:05 | 12:05")
         );
+        Collections.shuffle(nodes);
 
         EventGraph graph = new EventGraph(nodes);
         List<EventNode> best = graph.findBestRoadmap();
@@ -158,6 +163,7 @@ public class GraphTest {
                 node("movie 2 medium", MEDIUM_SCORE, MOVIE_2, "CASINO | SUNDAY | 12:00 | 13:00"),
                 node("movie 3 average", AVERAGE_SCORE, MOVIE_3, "MCL | SUNDAY | 14:00 | 15:00")
         );
+        Collections.shuffle(nodes);
 
         EventGraph graph = new EventGraph(nodes);
         List<EventNode> best = graph.findBestRoadmap();
