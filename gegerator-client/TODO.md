@@ -105,6 +105,8 @@ du ratio de préférence, et se rappeler  que les OtherActivity n'ont
 pas de cinéma donc il faudrait  normaliser le score entre ces deux
 types d'événements.
 
+==> Done
+
 5. Plomberie pour acheminer les prédictions: 
 - faire tourner l'assistant dans un worker thread
 - déclencher le calcul lorsque le modèle ou les paramètres sont 
@@ -121,16 +123,20 @@ l'assistant, et le mode pour déterminer quelle intance de la Roadmap
 au final doit être fournie aux services.
 
 
-Finitions : 
-
-7. Ajouter des tests jasmine/protractor,
-  
-8. Finitions:
-- packager l'appli,
-- écrire la doc,
+7. Finitions : 
+- Ajouter des raccourcis claviers (voir plus bas),
+- fixed le scrolling dans l'onglet "Résumé"
 - au démarrage faire un petit message console pour dire 
-- quand c'est prêt.
+  quand c'est prêt.
 
+######################### V3 ############################
+
+1. Faire un retour utilisateur avec Thomas ?
+
+2. implémenter les remarques
+
+3. Quand c'est sec, consolider les tests jasmine et 
+  protractor + doc
 
 ## Features à envisager
 
@@ -141,8 +147,11 @@ Finitions :
 - Une barre de filtre (position statique) pour n'afficher
   que les films choisis.
 
+- Ajouter une vue condensée
 
-## Remarques Thomas
+- Faire un éditeur de film plus avancé, dans une page à part ? 
+
+## Remarques Thomas & autres
 
 - Rajouter des raccourcis claviers : valider les dialog avec
   Enter, ou encore de quoi créer des films ou sessions à 
@@ -150,6 +159,7 @@ Finitions :
 
 - Ajouter un bouton pour créer un film à la volée depuis 
   l'interface Session.
+
 
 - Réfléchir à la possibilité d'un algorithme d'optimisation 
   linéaire sous contraintes : une seule fonction objectif
