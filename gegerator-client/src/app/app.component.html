@@ -3,6 +3,7 @@
     <div id="app-header">
         <div class="app-header--centerpart">
             <div id="app-title" class="sect-title">Gegerator</div>
+            <span>(since : {{timer$ | async}})</span>
             <div id="app-buttonbar">
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
                 <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>

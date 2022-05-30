@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
@@ -13,6 +13,7 @@ import { ConfigDialog } from './components/configuration/configdialog/configdial
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
+import { TimerService } from './services/timer.service';
 
 @Component({
   selector: 'app-root',
@@ -27,9 +28,12 @@ export class AppComponent implements OnInit{
   wizconf!: WizardConfiguration
   roadmap!: FestivalRoadmap
 
+  timer$!: Observable<number>
+
   constructor(private store: Store, 
     private dialog: MatDialog,
-    private modeService: ModeService
+    private modeService: ModeService,
+    private timerService: TimerService
     ){}
 
   ngOnInit(): void {
@@ -39,7 +43,9 @@ export class AppComponent implements OnInit{
     this.store.select(selectConfiguration).subscribe(wizconf => this.wizconf = wizconf)
     // Note : no need to take care of unsubscribing here since the App lives until, 
     // well, the end of the App
+    this.timer$ = this.timerService.timer$
   }
+
 
   uploadAppState(): void{
     const dialogRef = this.dialog.open(UploadDialog, {
