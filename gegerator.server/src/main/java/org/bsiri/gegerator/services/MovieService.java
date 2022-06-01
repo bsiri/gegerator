@@ -1,62 +1,27 @@
 package org.bsiri.gegerator.services;
 
 import org.bsiri.gegerator.domain.Movie;
-import org.bsiri.gegerator.exceptions.DuplicateNameException;
-import org.bsiri.gegerator.repositories.MovieRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
+public interface MovieService {
+    Flux<Movie> findAll();
 
+    Mono<Movie> findById(long id);
 
-@Service
-public class MovieService {
-
-    private MovieRepository repo;
-
-    public MovieService(@Autowired MovieRepository repo){
-        this.repo = repo;
-    }
-
-    public Flux<Movie> findAll(){
-        return repo.findAll();
-    }
-
-    public Mono<Movie> findById(long id){
-        return repo.findById(id);
-    }
-
-    public Flux<Movie> findAllPlannedInSession(){
-        return repo.findAllPlannedInSession();
-    }
+    Flux<Movie> findAllPlannedInSession();
 
     @Transactional
-    public Mono<Movie> save(Movie movie){
-        return repo.save(movie)
-                .onErrorMap(
-                        DataIntegrityViolationException.class,
-                        ex -> new DuplicateNameException((movie.getTitle()))
-                );
-    }
+    Mono<Movie> save(Movie movie);
 
     // alias for "save"
     @Transactional
-    public Mono<Movie> update(Movie movie){
-        return save(movie);
-    }
+    Mono<Movie> update(Movie movie);
 
     @Transactional
-    public Mono<Void> deleteById(long id){
-        return repo.deleteById(id);
-    }
+    Mono<Void> deleteById(long id);
 
     @Transactional
-    public Mono<Void> deleteAll(){
-        return repo.deleteAll();
-    }
-
+    Mono<Void> deleteAll();
 }

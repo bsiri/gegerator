@@ -73,6 +73,12 @@ public class EventGraph {
     }
 
     private void initEdges(){
+        // TODO : test with JMH if generating only
+        // an array of exactly size = card(outbound edges)
+        // could be faster for larger graphs : it would cost
+        // time with all the mallocs involved initially,
+        // but this could save time at exploration time
+        // since the graph is rather sparse.
         adjacency = new int[nodes.length][nodes.length];
         for (int iSrc = 0; iSrc < nodes.length; iSrc++){
             for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
@@ -145,7 +151,7 @@ public class EventGraph {
         private Set<Long> seenMovies = new HashSet<>();
 
         // keep track of score
-        private long bestScore = -10000;
+        private long bestScore = Long.MIN_VALUE;
         private EventNode[] bestRoadmap;
 
         ExplorationStack(int nodesCard){
@@ -182,6 +188,7 @@ public class EventGraph {
             if (currentScore > bestScore){
                 bestScore = currentScore;
                 bestRoadmap = new EventNode[topStack];
+
                 System.arraycopy(nodeStack, 0, bestRoadmap, 0, topStack);
             }
         }

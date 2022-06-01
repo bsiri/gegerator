@@ -1,10 +1,11 @@
-package org.bsiri.gegerator.services;
+package org.bsiri.gegerator.services.impl;
 
 
 import org.bsiri.gegerator.domain.Movie;
-import org.bsiri.gegerator.domain.MovieRating;
 import org.bsiri.gegerator.exceptions.DuplicateNameException;
 import org.bsiri.gegerator.repositories.MovieRepository;
+import org.bsiri.gegerator.services.MovieService;
+import org.bsiri.gegerator.services.impl.MovieServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +16,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.time.Duration;
 import static org.bsiri.gegerator.testinfra.TestBeans.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MovieServiceTest {
+public class MovieServiceImplTest {
 
     @Mock
     private MovieRepository repo;
@@ -28,7 +28,7 @@ public class MovieServiceTest {
 
     @BeforeEach
     public void setup(){
-        service = new MovieService(repo);
+        service = new MovieServiceImpl(repo);
     }
 
     @Test

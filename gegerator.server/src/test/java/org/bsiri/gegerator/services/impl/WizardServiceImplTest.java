@@ -1,19 +1,18 @@
-package org.bsiri.gegerator.services;
+package org.bsiri.gegerator.services.impl;
 
 import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.TheaterRating;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
 import org.bsiri.gegerator.graph.EventNode;
-import org.hamcrest.MatcherAssert;
+import org.bsiri.gegerator.services.*;
+
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.bsiri.gegerator.testinfra.TestBeans.*;
@@ -23,9 +22,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
-public class WizardServiceTest {
+public class WizardServiceImplTest {
 
-    private WizardService service;
+    private WizardServiceImpl service;
 
     private Scoring scoring = defaultScoring();
     @Mock
@@ -39,7 +38,7 @@ public class WizardServiceTest {
 
     @BeforeEach
     public void setup(){
-        service = new WizardService(
+        service = new WizardServiceImpl(
             scoring, configurationService, movieService, sessionService, activityService
         );
     }

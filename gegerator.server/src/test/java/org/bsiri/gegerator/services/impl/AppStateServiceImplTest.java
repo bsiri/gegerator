@@ -1,10 +1,11 @@
-package org.bsiri.gegerator.services;
+package org.bsiri.gegerator.services.impl;
 
 
 import org.assertj.core.util.Lists;
 import org.bsiri.gegerator.config.AppState;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
+import org.bsiri.gegerator.services.AppStateService;
 import org.hamcrest.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -21,7 +22,7 @@ import java.util.List;
 import static org.bsiri.gegerator.testinfra.TestBeans.*;
 
 
-public class AppStateServiceTest extends AbstractDBBasedServiceTest{
+public class AppStateServiceImplTest extends AbstractDBBasedServiceTest{
 
     @Autowired
     private AppStateService service;
