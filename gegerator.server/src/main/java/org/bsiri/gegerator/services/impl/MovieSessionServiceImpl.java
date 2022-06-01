@@ -4,6 +4,8 @@ import org.bsiri.gegerator.domain.MovieSession;
 import org.bsiri.gegerator.domain.EventRating;
 import org.bsiri.gegerator.repositories.MovieSessionRepository;
 import org.bsiri.gegerator.services.MovieSessionService;
+import org.bsiri.gegerator.services.aspect.FireModelChanged;
+import org.bsiri.gegerator.services.events.SessionsChangedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ public class MovieSessionServiceImpl implements MovieSessionService {
      */
     @Override
     @Transactional
+    @FireModelChanged(SessionsChangedEvent.class)
     public Mono<MovieSession> save(MovieSession movieSession){
         Mono<Void> rgUniqueMandatory = Mono.empty();
         if (movieSession.getRating() == EventRating.MANDATORY){
@@ -50,6 +53,7 @@ public class MovieSessionServiceImpl implements MovieSessionService {
 
     @Override
     @Transactional
+    @FireModelChanged(SessionsChangedEvent.class)
     public Mono<MovieSession> update(MovieSession movieSession){
         return save(movieSession);
     }

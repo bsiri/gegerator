@@ -124,6 +124,7 @@ au final doit être fournie aux services.
 
 
 7. Finitions : 
+- Bug : quand je renomme un OtherActivity, je perd son rating
 - Ajouter des raccourcis claviers (voir plus bas),
 - fixed le scrolling dans l'onglet "Résumé"
 - au démarrage faire un petit message console pour dire 
