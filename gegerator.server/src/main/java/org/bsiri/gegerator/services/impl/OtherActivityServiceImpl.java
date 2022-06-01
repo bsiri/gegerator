@@ -32,6 +32,7 @@ public class OtherActivityServiceImpl implements OtherActivityService {
     }
 
     @Override
+    @Transactional
     public Mono<OtherActivity> save(OtherActivity activity){
         return repo.save(activity)
                 .onErrorMap(DataIntegrityViolationException.class,
@@ -39,14 +40,17 @@ public class OtherActivityServiceImpl implements OtherActivityService {
     }
 
     @Override
+    @Transactional
     public Mono<OtherActivity> update(OtherActivity activity){
         return save(activity);
     }
 
     @Override
+    @Transactional
     public Mono<Void> deleteById(long id){ return repo.deleteById(id); }
 
     @Override
+    @Transactional
     public Mono<Void> deleteAll(){
         return repo.deleteAll();
     }

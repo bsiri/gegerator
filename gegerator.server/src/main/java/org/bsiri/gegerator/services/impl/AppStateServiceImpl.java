@@ -52,6 +52,7 @@ public class AppStateServiceImpl implements AppStateService {
 
 
     @Override
+    @Transactional
     public Mono<AppState> loadAppState(AppState appState){
 
         /*

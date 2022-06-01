@@ -38,6 +38,7 @@ public class MovieSessionServiceImpl implements MovieSessionService {
      * @return
      */
     @Override
+    @Transactional
     public Mono<MovieSession> save(MovieSession movieSession){
         Mono<Void> rgUniqueMandatory = Mono.empty();
         if (movieSession.getRating() == EventRating.MANDATORY){
@@ -48,16 +49,19 @@ public class MovieSessionServiceImpl implements MovieSessionService {
     }
 
     @Override
+    @Transactional
     public Mono<MovieSession> update(MovieSession movieSession){
         return save(movieSession);
     }
 
     @Override
+    @Transactional
     public Mono<Void> deleteById(long id){
         return sessionRepo.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Mono<Void> deleteAll(){
         return sessionRepo.deleteAll();
     }

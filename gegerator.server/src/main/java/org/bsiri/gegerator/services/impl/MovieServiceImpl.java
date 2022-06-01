@@ -38,6 +38,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional
     public Mono<Movie> save(Movie movie){
         return repo.save(movie)
                 .onErrorMap(
@@ -48,16 +49,19 @@ public class MovieServiceImpl implements MovieService {
 
     // alias for "save"
     @Override
+    @Transactional
     public Mono<Movie> update(Movie movie){
         return save(movie);
     }
 
     @Override
+    @Transactional
     public Mono<Void> deleteById(long id){
         return repo.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Mono<Void> deleteAll(){
         return repo.deleteAll();
     }
