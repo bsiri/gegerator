@@ -47,25 +47,27 @@ public class MovieSessionServiceImpl implements MovieSessionService {
         if (movieSession.getRating() == EventRating.MANDATORY){
             rgUniqueMandatory = sessionRepo.resetRatingsForSessionOfMovie(movieSession.getMovieId());
         }
-
         return rgUniqueMandatory.then(sessionRepo.save(movieSession));
+    }
+
+    @Override
+    @FireModelChanged(SessionsChangedEvent.class)
+    @Transactional
+    public Mono<MovieSession> update(MovieSession movieSession){
+        Mono<MovieSession> monoSessions = save(movieSession);
+        return monoSessions;
     }
 
     @Override
     @Transactional
     @FireModelChanged(SessionsChangedEvent.class)
-    public Mono<MovieSession> update(MovieSession movieSession){
-        return save(movieSession);
-    }
-
-    @Override
-    @Transactional
     public Mono<Void> deleteById(long id){
         return sessionRepo.deleteById(id);
     }
 
     @Override
     @Transactional
+    @FireModelChanged(SessionsChangedEvent.class)
     public Mono<Void> deleteAll(){
         return sessionRepo.deleteAll();
     }

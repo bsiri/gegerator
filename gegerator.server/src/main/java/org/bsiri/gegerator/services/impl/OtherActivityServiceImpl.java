@@ -4,6 +4,8 @@ import org.bsiri.gegerator.domain.OtherActivity;
 import org.bsiri.gegerator.exceptions.TimeParadoxException;
 import org.bsiri.gegerator.repositories.OtherActivityRepository;
 import org.bsiri.gegerator.services.OtherActivityService;
+import org.bsiri.gegerator.services.aspect.FireModelChanged;
+import org.bsiri.gegerator.services.events.OtherActivitiesChangedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class OtherActivityServiceImpl implements OtherActivityService {
 
     @Override
     @Transactional
+    @FireModelChanged(OtherActivitiesChangedEvent.class)
     public Mono<OtherActivity> save(OtherActivity activity){
         return repo.save(activity)
                 .onErrorMap(DataIntegrityViolationException.class,
@@ -41,16 +44,19 @@ public class OtherActivityServiceImpl implements OtherActivityService {
 
     @Override
     @Transactional
+    @FireModelChanged(OtherActivitiesChangedEvent.class)
     public Mono<OtherActivity> update(OtherActivity activity){
         return save(activity);
     }
 
     @Override
     @Transactional
+    @FireModelChanged(OtherActivitiesChangedEvent.class)
     public Mono<Void> deleteById(long id){ return repo.deleteById(id); }
 
     @Override
     @Transactional
+    @FireModelChanged(OtherActivitiesChangedEvent.class)
     public Mono<Void> deleteAll(){
         return repo.deleteAll();
     }

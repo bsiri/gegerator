@@ -1,20 +1,26 @@
 package org.bsiri.gegerator.services.aspect;
 
+import lombok.SneakyThrows;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.bsiri.gegerator.services.events.ModelChangeEvent;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.lang.reflect.InvocationTargetException;
 
+// @Order is very important : if that Advice was left with implicit Ordered.LOWEST_PRECEDENCE,
+// the Advice parameter binding would not work at all (and crash).
+@Order(0)
 @Component
 @Aspect
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class FireModelChangedAspect {
+
+    private static final String SERVICE_PACKAGE_NAME = "org.bsiri.gegerator.services";
 
     private ApplicationEventPublisher bus;
 
@@ -22,44 +28,57 @@ public class FireModelChangedAspect {
         this.bus = bus;
     }
 
-    @Pointcut("within(org.bsiri.gegerator.services..*)")
-    public void isServiceInterface(){
+    @Pointcut("within("+SERVICE_PACKAGE_NAME+"..*)")
+    public void isService(){
     }
 
-    @Pointcut("@annotation(fireEvent)")
-    public void annotatedWithFireEvent(FireModelChanged fireEvent){
+    @Pointcut("execution(org.reactivestreams.Publisher+ "+SERVICE_PACKAGE_NAME+".*.*(..))")
+    public void returnsAPublisher(){
     }
 
-    @Before("isServiceInterface() && @annotation(fireEvent)")
-    public void fireEvent(FireModelChanged fireEvent) {
-        try {
-            /*
-                FIXME:
-                - doesn't work because the AOP proxy is not executing in the
-                  same thread than the reactive stream
-                - even if it did work, the transaction is probably not yet
-                 committed when the method returns
-             */
-            Class<? extends ModelChangeEvent> eventType = fireEvent.value();
-            ModelChangeEvent event = eventType.getDeclaredConstructor().newInstance();
-            System.out.println("shooting event of class "+event.getClass().getSimpleName());
-            bus.publishEvent(event);
+    @Pointcut(value = "@annotation(fireModelChanged)", argNames = "fireModelChanged")
+    public void annotatedWith(FireModelChanged fireModelChanged){
+    }
+
+    @Around(value = "isService() && returnsAPublisher() && annotatedWith(fireModelChanged)",
+            argNames = "fireModelChanged")
+    public Object fireEventIfSuccess(ProceedingJoinPoint joinPoint,
+                                     FireModelChanged fireModelChanged) throws Throwable {
+        // Cast to Publisher guaranteed because typecheck done by the pointcut "returnsAPublisher"
+        Publisher<?> pusher = (Publisher<?>) joinPoint.proceed();
+        ModelChangeEvent event = createEvent(fireModelChanged.value());
+
+        if (isMono(pusher)){
+            return ((Mono)pusher).doOnSuccess((whatever) -> fire(event));
         }
-        catch(NoSuchMethodException |
-                SecurityException |
-                InstantiationException |
-                IllegalAccessException |
-                InvocationTargetException ex){
-            // TODO : better ?
-            System.out.println(ex);
+        else if (isFlux(pusher)){
+            return ((Flux)pusher).doOnComplete(() -> fire(event));
+        }
+        else{
+            // Not sure what this publisher is so we just fire right away
+            fire(event);
+            return pusher;
         }
     }
 
-    /*
-    @Around("@annotation(org.bsiri.gegerator.services.aspect.FireModelChanged)")
-    public Object hello(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("hello");
-        return joinPoint.proceed();
+    public void fire(ModelChangeEvent event){
+        // TODO : logging ?
+        bus.publishEvent(event);
     }
-    */
+
+    // Sneaky throwing event instanciation because come on, empty constructors on empty POJO can't fail
+    @SneakyThrows
+    private <E extends ModelChangeEvent> E createEvent(Class<E> eventType){
+        return eventType.getDeclaredConstructor().newInstance();
+    }
+
+
+    private boolean isFlux(Publisher<?> pusher){
+        return Flux.class.isAssignableFrom(pusher.getClass());
+    }
+
+    private boolean isMono(Publisher<?> pusher){
+        return Mono.class.isAssignableFrom(pusher.getClass());
+    }
+
 }
