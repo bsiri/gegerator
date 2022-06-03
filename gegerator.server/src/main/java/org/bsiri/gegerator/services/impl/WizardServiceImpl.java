@@ -12,6 +12,7 @@ import org.bsiri.gegerator.services.events.OtherActivitiesChangedEvent;
 import org.bsiri.gegerator.services.events.SessionsChangedEvent;
 import org.bsiri.gegerator.services.events.WizardConfChangedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public Flux<List<PlannableEvent>> bestRoadmapFlux() {
+    public Flux<List<PlannableEvent>> streamBestRoadmap() {
         return roadmapFlux.asFlux();
     }
 
@@ -190,12 +191,13 @@ public class WizardServiceImpl implements WizardService {
             // if skip fail : try buffer(THROTTLE)
             moviesFlux =  movieEvtFlux.asFlux()
                     .log()
-                    .skip(THROTTLE)
-                    .log()
-                    .switchMap(evt -> movieService.findAllPlannedInSession())
-                    .collectList()
-                    .flux()
+                    //.skip(THROTTLE)
+                    //.log()
+                    .map(evt -> movieService.findAllPlannedInSession().collectList().block())
                     .log();
+
+            // bootstrap : need to first at least once or
+            // the wizard will have no input to process
         }
 
         private void prepareSessionFlux(){
@@ -218,6 +220,16 @@ public class WizardServiceImpl implements WizardService {
             wizconfFlux = wcEvtFlux.asFlux()
                     .skip(THROTTLE)
                     .switchMap(evt -> confService.getWizardConfiguration());
+        }
+
+        // ********* events reaction *************
+
+        @EventListener
+        private void warmupWhenAppReady(ApplicationReadyEvent appReady){
+            movieEvtFlux.tryEmitNext(new MoviesChangedEvent());
+            sessionEvtFlux.tryEmitNext(new SessionsChangedEvent());
+            actEvtFlux.tryEmitNext(new OtherActivitiesChangedEvent());
+            wcEvtFlux.tryEmitNext(new WizardConfChangedEvent());
         }
 
         @EventListener
