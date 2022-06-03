@@ -159,10 +159,11 @@ public class WizardServiceImpl implements WizardService {
         private MovieSessionService sessionService;
         private OtherActivityService activityService;
 
-        Sinks.Many<MoviesChangedEvent> movieEvtFlux = Sinks.many().unicast().onBackpressureBuffer();
-        Sinks.Many<SessionsChangedEvent> sessionEvtFlux = Sinks.many().unicast().onBackpressureBuffer();
-        Sinks.Many<OtherActivitiesChangedEvent> actEvtFlux = Sinks.many().unicast().onBackpressureBuffer();
-        Sinks.Many<WizardConfChangedEvent> wcEvtFlux = Sinks.many().unicast().onBackpressureBuffer();
+        // left with package access for test purposes
+        Sinks.Many<MoviesChangedEvent> movieEvtFlux = newSink();
+        Sinks.Many<SessionsChangedEvent> sessionEvtFlux = newSink();
+        Sinks.Many<OtherActivitiesChangedEvent> actEvtFlux = newSink();
+        Sinks.Many<WizardConfChangedEvent> wcEvtFlux = newSink();
 
         Flux<List<Movie>> moviesFlux = null;
         Flux<List<MovieSession>> sessionsFlux = null;
@@ -188,16 +189,10 @@ public class WizardServiceImpl implements WizardService {
         }
 
         private void prepareMoviesFlux(){
-            // if skip fail : try buffer(THROTTLE)
-            moviesFlux =  movieEvtFlux.asFlux()
-                    .log()
-                    //.skip(THROTTLE)
-                    //.log()
-                    .map(evt -> movieService.findAllPlannedInSession().collectList().block())
-                    .log();
+            moviesFlux = movieEvtFlux.asFlux()
+                    .sample(THROTTLE)
+                    .flatMap(evt -> movieService.findAllPlannedInSession().collectList() );
 
-            // bootstrap : need to first at least once or
-            // the wizard will have no input to process
         }
 
         private void prepareSessionFlux(){
@@ -251,6 +246,12 @@ public class WizardServiceImpl implements WizardService {
         @EventListener
         private void onWizconfChanged(WizardConfChangedEvent event){
             wcEvtFlux.tryEmitNext(event);
+        }
+
+        <R> Sinks.Many<R> newSink(){
+            return Sinks.many()
+                    .unicast()
+                    .onBackpressureBuffer();
         }
 
     }
