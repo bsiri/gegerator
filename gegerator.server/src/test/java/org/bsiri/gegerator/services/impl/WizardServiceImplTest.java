@@ -5,7 +5,6 @@ import org.bsiri.gegerator.config.TheaterRating;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
 import org.bsiri.gegerator.graph.EventNode;
-import org.bsiri.gegerator.services.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -27,19 +26,14 @@ public class WizardServiceImplTest {
     private WizardServiceImpl service;
 
     private Scoring scoring = defaultScoring();
+
     @Mock
-    private ConfigurationService configurationService;
-    @Mock
-    private MovieService movieService;
-    @Mock
-    private MovieSessionService sessionService;
-    @Mock
-    private OtherActivityService activityService;
+    private WizardServiceImpl.ModelChangeDetector changeDetector;
 
     @BeforeEach
     public void setup(){
         service = new WizardServiceImpl(
-            scoring, configurationService, movieService, sessionService, activityService
+            scoring, changeDetector
         );
     }
 
@@ -67,13 +61,14 @@ public class WizardServiceImplTest {
 
         List<EventNode> nodes = service.toEventNodes(
                 defaultWizconf(),
-                activities,
                 movies,
-                sessions);
+                sessions,
+                activities);
 
         List<Long> scores = nodes.stream().
                 map(EventNode::getScore)
                 .collect(Collectors.toList());
+
         List<PlannableEvent> plannable = nodes.stream()
                 .map(EventNode::getRepresentedEvent)
                 .collect(Collectors.toList());
@@ -117,6 +112,7 @@ public class WizardServiceImplTest {
     private List<OtherActivity> activities(){
         return Arrays.asList(thursdayGeromoise(), saturdaySoupeAuChoux());
     }
+
     // ************ sample WizardConfiguration *********************
 
     private WizardConfiguration defaultWizconf(){
@@ -134,6 +130,7 @@ public class WizardServiceImplTest {
     }
 
     // ***************** sample scoring ***************************
+
     public Scoring defaultScoring(){
         Scoring scoring = new Scoring();
 
@@ -153,4 +150,6 @@ public class WizardServiceImplTest {
 
         return scoring;
     }
+
+
 }

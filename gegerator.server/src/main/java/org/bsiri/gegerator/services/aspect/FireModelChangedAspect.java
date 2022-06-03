@@ -61,23 +61,23 @@ public class FireModelChangedAspect {
         }
     }
 
-    public void fire(ModelChangeEvent event){
+    private final void fire(ModelChangeEvent event){
         // TODO : logging ?
         bus.publishEvent(event);
     }
 
     // Sneaky throwing event instanciation because come on, empty constructors on empty POJO can't fail
     @SneakyThrows
-    private <E extends ModelChangeEvent> E createEvent(Class<E> eventType){
+    private final <E extends ModelChangeEvent> E createEvent(Class<E> eventType){
         return eventType.getDeclaredConstructor().newInstance();
     }
 
 
-    private boolean isFlux(Publisher<?> pusher){
+    private final boolean isFlux(Publisher<?> pusher){
         return Flux.class.isAssignableFrom(pusher.getClass());
     }
 
-    private boolean isMono(Publisher<?> pusher){
+    private final boolean isMono(Publisher<?> pusher){
         return Mono.class.isAssignableFrom(pusher.getClass());
     }
 
