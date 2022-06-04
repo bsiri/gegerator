@@ -19,6 +19,7 @@ public class WizardController {
 
     public WizardController(@Autowired WizardService wizardService) {
         this.wizardService = wizardService;
+        this.wizardService.streamBestRoadmap();
     }
 
     @GetMapping(path="/roadmap", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

@@ -17,15 +17,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
-import reactor.core.publisher.Sinks.*;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple4;
 import reactor.util.function.Tuples;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -55,10 +54,22 @@ public class WizardServiceImpl implements WizardService {
                 changeDetector.sessionsFlux,
                 changeDetector.activitiesFlux,
                 this::toTuple)
+                .publishOn(Schedulers.parallel())
                 .sample(THROTTLE_TIME)  // Limit rate in case inputs are raining
                 .map(tuple -> toEventNodes(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()))
                 .map(this::findBestRoadmap)
-                .subscribe(roadmapFlux::tryEmitNext);
+                .onErrorReturn(new ArrayList<>())
+                .log()
+                .subscribe(
+                        roadmapFlux::tryEmitNext,
+                        this::logError,
+                        () -> System.out.println("damnit I completed !")
+                );
+    }
+
+    private void logError(Throwable error){
+        // TODO : a logger, maybe ?
+        error.printStackTrace();
     }
 
     @Override
