@@ -1,39 +1,65 @@
 package org.bsiri.gegerator.services.impl;
 
-import org.bsiri.gegerator.repositories.MovieRepository;
-import org.bsiri.gegerator.testinfra.SqlDataset;
+import lombok.SneakyThrows;
+import org.bsiri.gegerator.domain.Movie;
+import org.bsiri.gegerator.domain.MovieRating;
+import org.bsiri.gegerator.services.ConfigurationService;
+import org.bsiri.gegerator.services.MovieService;
+import org.bsiri.gegerator.services.MovieSessionService;
+import org.bsiri.gegerator.services.OtherActivityService;
+import static org.bsiri.gegerator.testinfra.TestBeans.*;
+
+import org.bsiri.gegerator.services.events.MoviesChangedEvent;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 import org.bsiri.gegerator.services.impl.WizardServiceImpl.ModelChangeDetector;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ModelChangeDetectorTests extends AbstractDBBasedServiceTest{
+@ExtendWith(MockitoExtension.class)
+public class ModelChangeDetectorTests {
 
-    private MovieRepository movieRepository;
+    @Mock private ConfigurationService confService;
+    @Mock private MovieService movieService;
+    @Mock private MovieSessionService sessionService;
+    @Mock private OtherActivityService actServices;
+
     private ModelChangeDetector changeDetector;
 
-    ModelChangeDetectorTests(
-            @Autowired MovieRepository movieRepository,
-            @Autowired ModelChangeDetector changeDetector
-            ){
-        this.movieRepository = movieRepository;
-        this.changeDetector = changeDetector;
+    @BeforeEach
+    public void setup(){
+        changeDetector = new ModelChangeDetector(
+                confService,
+                movieService,
+                sessionService,
+                actServices
+        );
     }
 
+    /*
+        That test is not really related to the actually implementation
+        but just serves to validate general bricks
+     */
     @Test
-    @SqlDataset("datasets/generic-datasets/appstate.sql")
     public void shouldThrottleEvents(){
 
-        Sinks.Many<SampleEvent> sampleEvts = Sinks.many().unicast().onBackpressureBuffer();
+        Sinks.Many<SampleEvent> sampleEvts = changeDetector.newSink();
 
         EventFactory factory = new EventFactory();
         Flux<SampleEvent> source = simulateEventBus(
@@ -56,25 +82,81 @@ public class ModelChangeDetectorTests extends AbstractDBBasedServiceTest{
                 .expectNextCount(1)
                 .verifyComplete();
 
-
-
     }
 
-    private Flux<SampleEvent> simulateEventBus(Flux<SampleEvent> ...fluxes){
-        Flux<SampleEvent> flux = Arrays.stream(fluxes).reduce((f1, f2) -> f1.concatWith(f2)).get();
+    @Test
+    public void shouldReloadMoviesOnEventWithThrottling(){
+        // **** Test setup ****
+        List<Movie> moviesBurst1 = Arrays.asList(tremors(), halloween(), theMist());
+        List<Movie> moviesBurst2 = Arrays.asList();
+        List<Movie> moviesBurst3 = Arrays.asList(decapitron());
+
+        when(movieService.findAllPlannedInSession()).thenReturn(
+            Flux.fromIterable(moviesBurst1),
+            Flux.fromIterable(moviesBurst2),
+            Flux.fromIterable(moviesBurst3),
+            Flux.error(new RuntimeException("too many calls !"))
+        );
+
+        // TODO : use a test publisher instead ?
+        MoviesChangedEvent event = new MoviesChangedEvent();
+        Supplier<MoviesChangedEvent> eventSupplier = () -> event;
+        Flux<MoviesChangedEvent> simulateUserActions = simulateEventBus(
+            fireAfterDelay(0, list(1, eventSupplier )),
+            fireAfterDelay(150, list(10, eventSupplier)),
+            fireAfterDelay(500, list(3, eventSupplier))
+        );
+
+        flushInto(simulateUserActions,
+                (evt) -> changeDetector.onMoviesChanged(evt),
+                // sorry to break the abstraction,
+                // but I need to complete that flux
+                () -> { completeSink("movieEvtFlux"); }
+        );
+
+        // ******* our verifying steps *******
+
+        StepVerifier.create(changeDetector.moviesFlux)
+                    .expectNext(moviesBurst1)
+                    .expectNoEvent(Duration.ofMillis(40))
+                    .expectNext(moviesBurst2)
+                    .expectNoEvent(Duration.ofMillis(240))
+                    .expectNext(moviesBurst3)
+                    .verifyComplete();
+    }
+
+    @SneakyThrows
+    private void completeSink(String sinkName) {
+        Field sinkField = ModelChangeDetector.class.getDeclaredField("movieEvtFlux");
+        ReflectionUtils.makeAccessible(sinkField);
+        Sinks.Many<?> sink = (Sinks.Many)ReflectionUtils.tryToReadFieldValue(sinkField, changeDetector).get();
+        Method complete = sinkField.getType().getMethod("emitComplete", Sinks.EmitFailureHandler.class);
+        ReflectionUtils.invokeMethod(complete, sink, Sinks.EmitFailureHandler.FAIL_FAST);
+    }
+
+    //* ********************  *************************
+
+    private <R> Flux<R> simulateEventBus(Flux<R> ...fluxes){
+        Flux<R> flux = Arrays.stream(fluxes).reduce((f1, f2) -> f1.concatWith(f2)).get();
         flux.subscribeOn(Schedulers.parallel());
         return flux;
     }
 
 
-    private void flushInto(Flux<SampleEvent> source, Sinks.Many<SampleEvent> sink){
+    private <R> void flushInto(Flux<R> source, Sinks.Many<R> sink){
         source.subscribe(sink::tryEmitNext,
                 (err) -> {},
                 () -> sink.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST));
     }
 
+    private <R> void flushInto(Flux<R> source, Consumer<R> onNext, Runnable onComplete){
+        source.subscribe(
+                onNext,
+                (err) ->{},
+                onComplete
+        );
+    }
 
-    // ******** utils ***********
     private class EventFactory{
         private int counter = 0;
         SampleEvent next(){
@@ -88,9 +170,9 @@ public class ModelChangeDetectorTests extends AbstractDBBasedServiceTest{
         public String toString(){return "event-"+ this.num;}
     }
 
-    private <R> List<R> list(int homMany, Supplier<R> supplier){
+    private <R> List<R> list(int howMany, Supplier<R> supplier){
         List<R> lst = new ArrayList<>();
-        for (int i=0;i<homMany; i++) lst.add(supplier.get());
+        for (int i=0;i<howMany; i++) lst.add(supplier.get());
         return lst;
     }
 

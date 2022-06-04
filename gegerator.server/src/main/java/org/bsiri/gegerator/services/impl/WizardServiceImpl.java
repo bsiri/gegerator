@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 @Service
 public class WizardServiceImpl implements WizardService {
 
+    private static final Duration THROTTLE_TIME = Duration.ofMillis(100);
+
     private Scoring scoring;
     private ModelChangeDetector changeDetector;
 
@@ -53,6 +55,7 @@ public class WizardServiceImpl implements WizardService {
                 changeDetector.sessionsFlux,
                 changeDetector.activitiesFlux,
                 this::toTuple)
+                .sample(THROTTLE_TIME)  // Limit rate in case inputs are raining
                 .map(tuple -> toEventNodes(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()))
                 .map(this::findBestRoadmap)
                 .subscribe(roadmapFlux::tryEmitNext);
@@ -159,12 +162,12 @@ public class WizardServiceImpl implements WizardService {
         private MovieSessionService sessionService;
         private OtherActivityService activityService;
 
-        // left with package access for test purposes
-        Sinks.Many<MoviesChangedEvent> movieEvtFlux = newSink();
-        Sinks.Many<SessionsChangedEvent> sessionEvtFlux = newSink();
-        Sinks.Many<OtherActivitiesChangedEvent> actEvtFlux = newSink();
-        Sinks.Many<WizardConfChangedEvent> wcEvtFlux = newSink();
+        private Sinks.Many<MoviesChangedEvent> movieEvtFlux = newSink();
+        private Sinks.Many<SessionsChangedEvent> sessionEvtFlux = newSink();
+        private Sinks.Many<OtherActivitiesChangedEvent> actEvtFlux = newSink();
+        private Sinks.Many<WizardConfChangedEvent> wcEvtFlux = newSink();
 
+        // left with package access for test purposes
         Flux<List<Movie>> moviesFlux = null;
         Flux<List<MovieSession>> sessionsFlux = null;
         Flux<List<OtherActivity>> activitiesFlux = null;
@@ -178,10 +181,11 @@ public class WizardServiceImpl implements WizardService {
             this.movieService = movieService;
             this.sessionService = sessionService;
             this.activityService = activityService;
+
+            initFluxes();
         }
 
-        @PostConstruct
-        private void init(){
+        private void initFluxes(){
             prepareMoviesFlux();
             prepareSessionFlux();
             prepareActivitiesFlux();
@@ -191,33 +195,35 @@ public class WizardServiceImpl implements WizardService {
         private void prepareMoviesFlux(){
             moviesFlux = movieEvtFlux.asFlux()
                     .sample(THROTTLE)
-                    .flatMap(evt -> movieService.findAllPlannedInSession().collectList() );
-
+                    .flatMap( evt -> movieService.findAllPlannedInSession().collectList() );
         }
 
         private void prepareSessionFlux(){
             sessionsFlux = sessionEvtFlux.asFlux()
-                    .skip(THROTTLE)
-                    .switchMap(evt -> sessionService.findAll())
-                    .collectList()
-                    .flux();
+                    .sample(THROTTLE)
+                    .flatMap(evt -> sessionService.findAll().collectList());
         }
 
         private void prepareActivitiesFlux(){
             activitiesFlux = actEvtFlux.asFlux()
-                    .skip(THROTTLE)
-                    .switchMap(evt -> activityService.findAll())
-                    .collectList()
-                    .flux();
+                    .sample(THROTTLE)
+                    .flatMap(evt -> activityService.findAll().collectList());
         }
 
         private void prepareWizconfFlux(){
             wizconfFlux = wcEvtFlux.asFlux()
-                    .skip(THROTTLE)
-                    .switchMap(evt -> confService.getWizardConfiguration());
+                    .sample(THROTTLE)
+                    .flatMap(evt -> confService.getWizardConfiguration());
         }
 
         // ********* events reaction *************
+
+        /*
+            Here we emit without caring whether the event was pushed,
+            because failure is not important.
+            Also the streams are not supposed to close for the whole
+            lifetime of the application.
+         */
 
         @EventListener
         private void warmupWhenAppReady(ApplicationReadyEvent appReady){
@@ -228,25 +234,27 @@ public class WizardServiceImpl implements WizardService {
         }
 
         @EventListener
-        private void onMoviesChanged(MoviesChangedEvent event){
+        void onMoviesChanged(MoviesChangedEvent event){
             // No check for the EmitResult : it's ok to fail
             movieEvtFlux.tryEmitNext(event);
         }
 
         @EventListener
-        private void onSessionsChanged(SessionsChangedEvent event){
+        void onSessionsChanged(SessionsChangedEvent event){
             sessionEvtFlux.tryEmitNext(event);
         }
 
         @EventListener
-        private void onActivitiesChanged(OtherActivitiesChangedEvent event){
+        void onActivitiesChanged(OtherActivitiesChangedEvent event){
             actEvtFlux.tryEmitNext(event);
         }
 
         @EventListener
-        private void onWizconfChanged(WizardConfChangedEvent event){
+        void onWizconfChanged(WizardConfChangedEvent event){
             wcEvtFlux.tryEmitNext(event);
         }
+
+        // ********* other builders ****************
 
         <R> Sinks.Many<R> newSink(){
             return Sinks.many()
