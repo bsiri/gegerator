@@ -4,7 +4,7 @@ package org.bsiri.gegerator.services.impl;
 import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
-import org.bsiri.gegerator.planner.GraphBasedPlanner;
+import org.bsiri.gegerator.planner.NaiveGraphPlanner;
 import org.bsiri.gegerator.planner.PlannerEvent;
 import org.bsiri.gegerator.services.*;
 import org.bsiri.gegerator.services.events.MoviesChangedEvent;
@@ -98,7 +98,7 @@ public class WizardServiceImpl implements WizardService {
     }
 
     List<PlannableEvent> findBestRoadmap(List<PlannerEvent> events){
-        WizardPlanner graph = new GraphBasedPlanner(events);
+        WizardPlanner graph = new NaiveGraphPlanner(events);
         return graph.findBestRoadmap().stream().map(PlannerEvent::getRepresentedEvent).collect(Collectors.toList());
     }
 

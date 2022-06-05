@@ -1,7 +1,7 @@
 package org.bsiri.gegerator.benchmark;
 
 
-import org.bsiri.gegerator.planner.GraphBasedPlanner;
+import org.bsiri.gegerator.planner.NaiveGraphPlanner;
 import org.bsiri.gegerator.planner.PlannerEvent;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
@@ -14,9 +14,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
-@Warmup(iterations = 2, time = 5, timeUnit = TimeUnit.MICROSECONDS)
-@Measurement(iterations = 5, time = 25, timeUnit = TimeUnit.MICROSECONDS)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@Warmup(iterations = 2, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 5, time = 25, timeUnit = TimeUnit.MILLISECONDS)
 public class PlannerBenchmark {
+
+    private static int NB_SESSIONS = 35;
+    private static int NB_ACTIVITIES = 3;
 
     @State(Scope.Benchmark)
     public static class DatasetState{
@@ -24,15 +28,19 @@ public class PlannerBenchmark {
 
         @Setup(Level.Iteration)
         public void newEvents(){
-            this.events = Datasets.shuffledSmallDataset();
+            //this.events = Datasets.shuffledSmallDataset();
+            this.events = Datasets.generateDatasetOf(NB_SESSIONS, NB_ACTIVITIES);
         }
 
     }
 
 
     @Benchmark
-    public List<PlannerEvent> benchGraphBasedPlanner(DatasetState dataset){
-        return new GraphBasedPlanner(dataset.events).findBestRoadmap();
+    /**
+     * This one is also the baseline
+     */
+    public List<PlannerEvent> benchNaiveGraphPlanner(DatasetState dataset){
+        return new NaiveGraphPlanner(dataset.events).findBestRoadmap();
     }
 
     /*

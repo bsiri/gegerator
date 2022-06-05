@@ -4,8 +4,6 @@ package org.bsiri.gegerator.planner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
 
 import static org.bsiri.gegerator.planner.PlannerEventHelper.*;
 import java.util.Arrays;
@@ -13,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GraphBasedPlannerTest {
+public class NaiveGraphPlannerTest {
 
     static private Long NO_MOVIE = null;
     static private Long MOVIE_1 = 1L;
@@ -47,7 +45,7 @@ public class GraphBasedPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        WizardPlanner graph = new NaiveGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("Movie 1 Super", "Movie 2 Super"));
@@ -69,7 +67,7 @@ public class GraphBasedPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        WizardPlanner graph = new NaiveGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super session"));
@@ -95,7 +93,7 @@ public class GraphBasedPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        WizardPlanner graph = new NaiveGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super movie", "average movie"));
@@ -115,7 +113,7 @@ public class GraphBasedPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        WizardPlanner graph = new NaiveGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("best movie"));
@@ -161,7 +159,7 @@ public class GraphBasedPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        WizardPlanner graph = new NaiveGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains(

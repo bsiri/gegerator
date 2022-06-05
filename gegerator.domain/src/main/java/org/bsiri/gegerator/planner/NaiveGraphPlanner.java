@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
 
-public class GraphBasedPlanner implements WizardPlanner {
+public class NaiveGraphPlanner implements WizardPlanner {
 
     private static Long ROOT_MOVIE = -9999L;
     private static Long SINK_MOVIE = -9998L;
@@ -58,7 +58,7 @@ public class GraphBasedPlanner implements WizardPlanner {
      */
     private int[][] adjacency;
 
-    public GraphBasedPlanner(Collection<PlannerEvent> evts){
+    public NaiveGraphPlanner(Collection<PlannerEvent> evts){
        initNodes(evts);
        initEdges();
     }
