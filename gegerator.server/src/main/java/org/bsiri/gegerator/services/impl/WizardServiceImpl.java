@@ -4,13 +4,14 @@ package org.bsiri.gegerator.services.impl;
 import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
-import org.bsiri.gegerator.graph.EventGraph;
-import org.bsiri.gegerator.graph.EventNode;
+import org.bsiri.gegerator.services.planner.GraphBasedPlanner;
+import org.bsiri.gegerator.services.planner.PlannerEvent;
 import org.bsiri.gegerator.services.*;
 import org.bsiri.gegerator.services.events.MoviesChangedEvent;
 import org.bsiri.gegerator.services.events.OtherActivitiesChangedEvent;
 import org.bsiri.gegerator.services.events.SessionsChangedEvent;
 import org.bsiri.gegerator.services.events.WizardConfChangedEvent;
+import org.bsiri.gegerator.services.planner.WizardPlanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -78,7 +79,7 @@ public class WizardServiceImpl implements WizardService {
     }
 
 
-     List<EventNode> toEventNodes(
+     List<PlannerEvent> toEventNodes(
                 WizardConfiguration wizconf,
                 List<Movie> movies,
                 List<MovieSession> sessions,
@@ -86,44 +87,33 @@ public class WizardServiceImpl implements WizardService {
 
         Map<Long, Movie> moviesById = movies.stream().collect(Collectors.toMap(Movie::getId, Function.identity()));
 
-        List<EventNode> events = sessions
+        List<PlannerEvent> events = sessions
                 .stream()
-                .map(session -> createNode(wizconf, session, moviesById.get(session.getMovieId())))
+                .map(session -> createPlannerEvent(wizconf, session, moviesById.get(session.getMovieId())))
                 .collect(Collectors.toList());
 
-        activities.stream().map(activity -> createNode(wizconf, activity)).forEach(events::add);
+        activities.stream().map(activity -> createPlannerEvent(wizconf, activity)).forEach(events::add);
 
         return events;
     }
 
-    List<PlannableEvent> findBestRoadmap(List<EventNode> events){
-        EventGraph graph = new EventGraph(events);
-        return graph.findBestRoadmap().stream().map(EventNode::getRepresentedEvent).collect(Collectors.toList());
+    List<PlannableEvent> findBestRoadmap(List<PlannerEvent> events){
+        WizardPlanner graph = new GraphBasedPlanner(events);
+        return graph.findBestRoadmap().stream().map(PlannerEvent::getRepresentedEvent).collect(Collectors.toList());
     }
 
-    EventNode createNode(WizardConfiguration wizconf, MovieSession session, Movie movie) {
+    PlannerEvent createPlannerEvent(WizardConfiguration wizconf, MovieSession session, Movie movie) {
         int finalscore = calculateSessionScore(wizconf, session, movie);
+        return PlannerEvent.of(session, movie, finalscore);
+    }
 
-        return new EventNode(
-            session,
-            String.format("%s - %s - %s - %s",
-                    session.getDay(),
-                    session.getStartTime(),
-                    session.getTheater(),
-                    movie.getTitle()
-            ),
-            finalscore,
-            movie.getId(),
-            session.getTheater(),
-                session.getDay(),
-                session.getStartTime(),
-                session.getStartTime().plus(movie.getDuration())
-            );
-
+    PlannerEvent createPlannerEvent(WizardConfiguration wizconf, OtherActivity activity){
+        int finalScore = scoring.getScore(activity.getRating());
+        return PlannerEvent.of(activity, finalScore);
     }
 
     int calculateSessionScore(WizardConfiguration wizconf, MovieSession session, Movie movie) {
-        // Take that Demeter, I'm a thug bro !
+        // Take that Demeter !
         int tScore = scoring.getScore(wizconf.getTheaterRating(session.getTheater()));
         int sScore = scoring.getScore(session.getRating());
         int mScore = scoring.getScore(movie.getRating());
@@ -131,24 +121,6 @@ public class WizardServiceImpl implements WizardService {
 
         int finalscore = (int)(((1.0-bias) * mScore) + (bias * tScore) + sScore);
         return finalscore;
-    }
-
-    EventNode createNode(WizardConfiguration wizconf, OtherActivity activity){
-        long finalScore = scoring.getScore(activity.getRating());
-        return new EventNode(
-            activity,
-            String.format("%s - %s - %s",
-                    activity.getDay(),
-                    activity.getStartTime(),
-                    activity.getDescription()
-            ),
-            finalScore,
-            null,
-            null,
-            activity.getDay(),
-            activity.getStartTime(),
-            activity.getEndTime()
-        );
     }
 
     private Tuple4<WizardConfiguration, List<Movie>, List<MovieSession>, List<OtherActivity>> toTuple(Object[] params){

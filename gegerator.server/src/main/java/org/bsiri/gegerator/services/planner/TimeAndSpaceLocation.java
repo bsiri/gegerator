@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.graph;
+package org.bsiri.gegerator.services.planner;
 
 import org.bsiri.gegerator.domain.Theater;
 

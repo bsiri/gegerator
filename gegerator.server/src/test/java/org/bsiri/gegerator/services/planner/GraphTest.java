@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.graph;
+package org.bsiri.gegerator.services.planner;
 
 
 import lombok.Value;
@@ -43,7 +43,7 @@ public class GraphTest {
      */
     @Test
     public void shouldPlanBestScores(){
-        List<EventNode> nodes = Arrays.asList(
+        List<PlannerEvent> nodes = Arrays.asList(
             node("Movie 2 Average", AVERAGE_SCORE, MOVIE_2, "MCL|THURSDAY|10:00|11:00"),
             node("Movie 2 Super", SUPER_SCORE, MOVIE_2, "PARADISO|FRIDAY|10:00|11:00"),
             node("Movie 1 Super", SUPER_SCORE, MOVIE_1, "PARADISO|THURSDAY|10:00|11:00"),
@@ -51,8 +51,8 @@ public class GraphTest {
         );
         Collections.shuffle(nodes);
 
-        EventGraph graph = new EventGraph(nodes);
-        List<EventNode> best = graph.findBestRoadmap();
+        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        List<PlannerEvent> best = graph.findBestRoadmap();
 
         assertThat(collectNames(best), contains("Movie 1 Super", "Movie 2 Super"));
 
@@ -66,15 +66,15 @@ public class GraphTest {
      */
     @Test
     public void shouldNotPlanSameMovieTwice(){
-        List<EventNode> nodes = Arrays.asList(
+        List<PlannerEvent> nodes = Arrays.asList(
             node("average session", AVERAGE_SCORE, MOVIE_1, "MCL | THURSDAY | 10:00 | 11:00"),
             node("super session", SUPER_SCORE, MOVIE_1, "MCL | FRIDAY | 10:00 | 11:00"),
             node("medium session", MEDIUM_SCORE, MOVIE_1, "MCL | SUNDAY | 10:00 | 11:00")
         );
         Collections.shuffle(nodes);
 
-        EventGraph graph = new EventGraph(nodes);
-        List<EventNode> best = graph.findBestRoadmap();
+        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        List<PlannerEvent> best = graph.findBestRoadmap();
 
         assertThat(collectNames(best), contains("super session"));
     }
@@ -92,15 +92,15 @@ public class GraphTest {
      */
     @Test
     public void shouldSacrificeAMovie(){
-        List<EventNode> nodes = Arrays.asList(
+        List<PlannerEvent> nodes = Arrays.asList(
             node("super movie", SUPER_SCORE, MOVIE_1, "ESPACE_LAC | FRIDAY | 10:00 | 11:00"),
             node("another super movie", SUPER_SCORE, MOVIE_2, "CASINO | FRIDAY | 10:30 | 11:30"),
             node("average movie", AVERAGE_SCORE, MOVIE_3, "ESPACE_LAC | FRIDAY | 11:15 | 12:15")
         );
         Collections.shuffle(nodes);
 
-        EventGraph graph = new EventGraph(nodes);
-        List<EventNode> best = graph.findBestRoadmap();
+        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        List<PlannerEvent> best = graph.findBestRoadmap();
 
         assertThat(collectNames(best), contains("super movie", "average movie"));
     }
@@ -113,14 +113,14 @@ public class GraphTest {
      */
     @Test
     public void shouldNoticeBothMoviesNotPossible(){
-        List<EventNode> nodes = Arrays.asList(
+        List<PlannerEvent> nodes = Arrays.asList(
             node("average movie", AVERAGE_SCORE, MOVIE_2, "MCL | THURSDAY | 10:00 | 11:00"),
             node("best movie", SUPER_SCORE, MOVIE_1, "ESPACE_LAC | THURSDAY | 11:05 | 12:05")
         );
         Collections.shuffle(nodes);
 
-        EventGraph graph = new EventGraph(nodes);
-        List<EventNode> best = graph.findBestRoadmap();
+        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        List<PlannerEvent> best = graph.findBestRoadmap();
 
         assertThat(collectNames(best), contains("best movie"));
     }
@@ -137,7 +137,7 @@ public class GraphTest {
      */
     @Test
     public void shouldMakeCompromisesAndPlanTheRestaurant(){
-        List<EventNode> nodes = Arrays.asList(
+        List<PlannerEvent> nodes = Arrays.asList(
                 // THURSDAY
                 node("movie 1 awfull", AWFUL_SCORE, MOVIE_1, "PARADISO | THURSDAY | 08:00 | 09:00"),
                 node("movie 2 super", SUPER_SCORE, MOVIE_2, "ESPACE_LAC | THURSDAY | 10:00 | 11:00"),
@@ -165,8 +165,8 @@ public class GraphTest {
         );
         Collections.shuffle(nodes);
 
-        EventGraph graph = new EventGraph(nodes);
-        List<EventNode> best = graph.findBestRoadmap();
+        WizardPlanner graph = new GraphBasedPlanner(nodes);
+        List<PlannerEvent> best = graph.findBestRoadmap();
 
         assertThat(collectNames(best), contains(
                 "movie 2 super",
@@ -181,19 +181,19 @@ public class GraphTest {
 
     // *********** Events builder functions *************
 
-    private List<String> collectNames(List<EventNode> nodes){
-        return nodes.stream().map(EventNode::getName).collect(Collectors.toList());
+    private List<String> collectNames(List<PlannerEvent> nodes){
+        return nodes.stream().map(PlannerEvent::getName).collect(Collectors.toList());
     }
 
 
-    private EventNode node(
+    private PlannerEvent node(
         String name,
         long score,
         Long movieId,
         String tasSpec
     ){
         TimeAndSpaceLocation tas = parseTimeAndSpaceLocationSpec(tasSpec);
-        return new EventNode(
+        return new PlannerEvent(
                 null,
                 name,
                 score,

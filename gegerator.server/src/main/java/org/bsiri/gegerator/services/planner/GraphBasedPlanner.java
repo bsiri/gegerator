@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.graph;
+package org.bsiri.gegerator.services.planner;
 
 import org.bsiri.gegerator.config.TheaterDistanceTravel;
 
@@ -7,12 +7,12 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
 
-public class EventGraph {
+public class GraphBasedPlanner implements WizardPlanner {
 
     private static Long ROOT_MOVIE = -9999L;
     private static Long SINK_MOVIE = -9998L;
 
-    private static final EventNode ROOT = new EventNode(
+    private static final PlannerEvent ROOT = new PlannerEvent(
             null,
             "ROOT",
             0,
@@ -23,7 +23,7 @@ public class EventGraph {
             LocalTime.of(0,2)
     );
 
-    private static final EventNode SINK = new EventNode(
+    private static final PlannerEvent SINK = new PlannerEvent(
             null,
             "SINK",
             0,
@@ -45,7 +45,7 @@ public class EventGraph {
      * of loop iterations * instead of exploring the whole N²
      * combinations.
      */
-    private EventNode[] nodes;
+    private PlannerEvent[] nodes;
 
     /* The value for each entry is 1 if a connection
      * is possible and 0 otherwise.
@@ -57,19 +57,19 @@ public class EventGraph {
      */
     private int[][] adjacency;
 
-    public EventGraph(Collection<EventNode> evts){
+    public GraphBasedPlanner(Collection<PlannerEvent> evts){
        initNodes(evts);
        initEdges();
     }
 
     // ************** Initialization *****************
 
-    private void initNodes(Collection<EventNode> orig){
-        List<EventNode> copy = new ArrayList<>(orig);
+    private void initNodes(Collection<PlannerEvent> orig){
+        List<PlannerEvent> copy = new ArrayList<>(orig);
         copy.add(ROOT);
         copy.add(SINK);
-        Collections.sort(copy, Comparator.comparing(EventNode::getDay).thenComparing(EventNode::getStartTime));
-        this.nodes = copy.toArray(new EventNode[]{});
+        Collections.sort(copy, Comparator.comparing(PlannerEvent::getDay).thenComparing(PlannerEvent::getStartTime));
+        this.nodes = copy.toArray(new PlannerEvent[]{});
     }
 
     private void initEdges(){
@@ -82,8 +82,8 @@ public class EventGraph {
         adjacency = new int[nodes.length][nodes.length];
         for (int iSrc = 0; iSrc < nodes.length; iSrc++){
             for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
-                EventNode src = nodes[iSrc];
-                EventNode dst = nodes[iDst];
+                PlannerEvent src = nodes[iSrc];
+                PlannerEvent dst = nodes[iDst];
                 if (! isTransitionFeasible(src, dst)) continue;
                 adjacency[iSrc][iDst] = 1;
             }
@@ -109,13 +109,14 @@ public class EventGraph {
 
     // ******************* Computation ************************
 
-    public List<EventNode> findBestRoadmap(){
+    @Override
+    public List<PlannerEvent> findBestRoadmap(){
         ExplorationStack stack = new ExplorationStack(nodes.length);
 
         // Note : node 0 is the ROOT node
         stack.push(nodes[0]);
         explore(0, stack);
-        List<EventNode> best = Arrays.asList(stack.bestRoadmap);
+        List<PlannerEvent> best = Arrays.asList(stack.bestRoadmap);
         stack.pop();
 
         // remove the ROOT and SINK nodes then exit
@@ -123,13 +124,13 @@ public class EventGraph {
     }
 
     private void explore(int nodeIndex, ExplorationStack stack){
-        EventNode node = nodes[nodeIndex];
+        PlannerEvent node = nodes[nodeIndex];
         if (node == SINK){
             stack.recordRoadmapIfBest();
             return;
         }
         for (int destIndex = nodeIndex+1; destIndex < nodes.length; destIndex++){
-            EventNode destNode = nodes[destIndex];
+            PlannerEvent destNode = nodes[destIndex];
 
             if (adjacency[nodeIndex][destIndex] == 0 ) continue;
             if (stack.alreadySeenMovie(destNode)) continue;
@@ -143,7 +144,7 @@ public class EventGraph {
     // ******************* Helper classes *********************
 
     private static final class ExplorationStack{
-        private EventNode[] nodeStack;
+        private PlannerEvent[] nodeStack;
         private int topStack = 0;
 
         // We also need to keep track of movies that has
@@ -152,28 +153,28 @@ public class EventGraph {
 
         // keep track of score
         private long bestScore = Long.MIN_VALUE;
-        private EventNode[] bestRoadmap;
+        private PlannerEvent[] bestRoadmap;
 
         ExplorationStack(int nodesCard){
-            nodeStack = new EventNode[nodesCard];
+            nodeStack = new PlannerEvent[nodesCard];
         }
 
-        void push(EventNode node){
+        void push(PlannerEvent node){
             nodeStack[topStack++]=node;
             if (node.getMovie() != null){
                 seenMovies.add(node.getMovie());
             }
         }
 
-        EventNode pop(){
-            EventNode node = nodeStack[--topStack];
+        PlannerEvent pop(){
+            PlannerEvent node = nodeStack[--topStack];
             if (node.getMovie() != null){
                 seenMovies.remove(node.getMovie());
             }
             return node;
         }
 
-        boolean alreadySeenMovie(EventNode node){
+        boolean alreadySeenMovie(PlannerEvent node){
             return seenMovies.contains(node.getMovie());
         }
 
@@ -187,7 +188,7 @@ public class EventGraph {
 
             if (currentScore > bestScore){
                 bestScore = currentScore;
-                bestRoadmap = new EventNode[topStack];
+                bestRoadmap = new PlannerEvent[topStack];
 
                 System.arraycopy(nodeStack, 0, bestRoadmap, 0, topStack);
             }

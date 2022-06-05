@@ -4,7 +4,7 @@ import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.TheaterRating;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
-import org.bsiri.gegerator.graph.EventNode;
+import org.bsiri.gegerator.services.planner.PlannerEvent;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -59,18 +59,18 @@ public class WizardServiceImplTest {
         List<MovieSession> sessions = sessions();
         List<OtherActivity> activities = activities();
 
-        List<EventNode> nodes = service.toEventNodes(
+        List<PlannerEvent> nodes = service.toEventNodes(
                 defaultWizconf(),
                 movies,
                 sessions,
                 activities);
 
         List<Long> scores = nodes.stream().
-                map(EventNode::getScore)
+                map(PlannerEvent::getScore)
                 .collect(Collectors.toList());
 
         List<PlannableEvent> plannable = nodes.stream()
-                .map(EventNode::getRepresentedEvent)
+                .map(PlannerEvent::getRepresentedEvent)
                 .collect(Collectors.toList());
 
 
