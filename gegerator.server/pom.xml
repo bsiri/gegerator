@@ -93,15 +93,30 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- exporting the test jar so we can use it in JMH -->
+			<!--
+				Exporting the test jar so we can use it in JMH
+				Also exporting the native classes jar because
+				the jar processed by spring boot plugin does not
+				expose the business code it embedds.
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.2</version>
 				<executions>
 					<execution>
+						<id>test-jar</id>
 						<goals>
 							<goal>test-jar</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>classes-jar</id>
+						<configuration>
+							<classifier>classes</classifier>
+						</configuration>
+						<goals>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
