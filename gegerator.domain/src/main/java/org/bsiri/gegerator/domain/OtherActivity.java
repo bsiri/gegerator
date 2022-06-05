@@ -1,11 +1,11 @@
 package org.bsiri.gegerator.domain;
 
-import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import lombok.*;
 
 @Getter
 @Setter

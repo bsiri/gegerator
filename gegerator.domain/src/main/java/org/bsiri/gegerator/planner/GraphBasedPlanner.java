@@ -1,6 +1,7 @@
-package org.bsiri.gegerator.services.planner;
+package org.bsiri.gegerator.planner;
 
-import org.bsiri.gegerator.config.TheaterDistanceTravel;
+
+import org.bsiri.gegerator.domain.TheaterDistanceTravel;
 
 import java.time.DayOfWeek;
 import java.time.Duration;

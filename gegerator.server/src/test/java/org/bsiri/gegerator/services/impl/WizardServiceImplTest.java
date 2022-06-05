@@ -4,7 +4,7 @@ import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.TheaterRating;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
-import org.bsiri.gegerator.services.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.PlannerEvent;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;

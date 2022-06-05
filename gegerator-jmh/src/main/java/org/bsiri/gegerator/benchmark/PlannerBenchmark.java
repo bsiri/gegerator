@@ -1,9 +1,8 @@
 package org.bsiri.gegerator.benchmark;
 
 
-import ch.qos.logback.core.joran.spi.EventPlayer;
-import org.bsiri.gegerator.services.planner.GraphBasedPlanner;
-import org.bsiri.gegerator.services.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.GraphBasedPlanner;
+import org.bsiri.gegerator.planner.PlannerEvent;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;

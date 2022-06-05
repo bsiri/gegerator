@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.services.planner;
+package org.bsiri.gegerator.planner;
 
 import lombok.Value;
 import org.bsiri.gegerator.domain.Movie;

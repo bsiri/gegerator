@@ -1,11 +1,11 @@
 package org.bsiri.gegerator.benchmark;
 
-import org.bsiri.gegerator.services.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.PlannerEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import static org.bsiri.gegerator.services.planner.PlannerEventHelper.*;
+import static org.bsiri.gegerator.planner.PlannerEventHelper.*;
 
 public class Datasets {
     static private Long NO_MOVIE = null;

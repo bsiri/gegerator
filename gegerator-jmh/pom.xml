@@ -27,14 +27,14 @@ questions.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.bsiri</groupId>
+    <groupId>org.bsiri.gegerator</groupId>
     <artifactId>gegerator-jmh</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>gegerator-jmh</name>
 
     <properties>
-        <gegerator.server.version>0.0.2-SNAPSHOT</gegerator.server.version>
+        <gegerator.domain.version>0.0.2-SNAPSHOT</gegerator.domain.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -59,16 +59,15 @@ questions.
 
         <!-- gegerator dependencies -->
         <dependency>
-            <groupId>org.bsiri</groupId>
-            <artifactId>gegerator.server</artifactId>
-            <version>${gegerator.server.version}</version>
-            <classifier>classes</classifier>
+            <groupId>org.bsiri.gegerator</groupId>
+            <artifactId>gegerator.domain</artifactId>
+            <version>${gegerator.domain.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.bsiri</groupId>
-            <artifactId>gegerator.server</artifactId>
-            <version>${gegerator.server.version}</version>
+            <groupId>org.bsiri.gegerator</groupId>
+            <artifactId>gegerator.domain</artifactId>
+            <version>${gegerator.domain.version}</version>
             <classifier>tests</classifier>
         </dependency>
     </dependencies>

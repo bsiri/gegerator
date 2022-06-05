@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.config;
+package org.bsiri.gegerator.domain;
 
 
 import org.bsiri.gegerator.domain.Theater;

@@ -8,7 +8,7 @@
 		<version>2.6.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>org.bsiri</groupId>
+	<groupId>org.bsiri.gegerator</groupId>
 	<artifactId>gegerator.server</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 	<name>gegerator.server</name>
@@ -33,6 +33,14 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
+		<!-- =====================
+		Domain
+		====================== -->
+		<dependency>
+			<groupId>org.bsiri.gegerator</groupId>
+			<artifactId>gegerator.domain</artifactId>
+			<version>${version}</version>
+		</dependency>
 		<!-- =====================
 		Persistence
 		====================== -->
