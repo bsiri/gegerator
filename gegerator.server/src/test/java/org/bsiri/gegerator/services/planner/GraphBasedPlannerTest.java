@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GraphTest {
+public class GraphBasedPlannerTest {
 
     static private Long NO_MOVIE = null;
     static private Long MOVIE_1 = 1L;
