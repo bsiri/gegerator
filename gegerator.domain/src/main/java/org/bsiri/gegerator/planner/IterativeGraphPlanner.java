@@ -16,7 +16,6 @@ import java.util.*;
  */
 public class IterativeGraphPlanner implements WizardPlanner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IterativeGraphPlanner.class);
 
     private static Long ROOT_MOVIE = -9999L;
     private static Long SINK_MOVIE = -9998L;
@@ -173,7 +172,6 @@ public class IterativeGraphPlanner implements WizardPlanner {
             PlannerEvent src = nodes[iSrc];
             iDest = lastExploredDestNodesStack[lastexploredTop];
 
-            LOGGER.info("resuming exploration from node {}, next explored : {}", iSrc, iDest);
 
             // Terminal condition
             if (src == SINK){
@@ -183,16 +181,8 @@ public class IterativeGraphPlanner implements WizardPlanner {
                     score += nodes[srcNodesStack[i]].getScore();
                 }
 
-                LOGGER.info("found the sink, score is {}", score);
-                List<Integer> path = new ArrayList<>();
-                for (int i=0; i<=srcNodesTop; i++){
-                    path.add(srcNodesStack[i]);
-                }
-                LOGGER.info("path is {}", path);
-
                 if (score > bestScore){
                     bestScore = score;
-                    LOGGER.info("new score is better, keeping path");
                     System.arraycopy(srcNodesStack, 0, bestRoadmap, 0, srcNodesTop+1);
                     roadmapTop = srcNodesTop;
                 }
@@ -211,7 +201,6 @@ public class IterativeGraphPlanner implements WizardPlanner {
 
                     // skip if no edge or if movie already seen
                     if (adjacency[iSrc][iDest] == 0 || seenMovies.contains(dest.getMovie())) {
-                        LOGGER.info("{}->{} : no path, or movie already seen", iSrc, iDest);
                         iDest++;
                         continue;
                     }
@@ -222,7 +211,6 @@ public class IterativeGraphPlanner implements WizardPlanner {
                     lastExploredDestNodesStack[lastexploredTop] = iDest+1;
 
                     // now we push things in stack and go explore next node
-                    LOGGER.info("exploring node {}", iDest);
                     srcNodesStack[++srcNodesTop] = iDest;
                     lastExploredDestNodesStack[++lastexploredTop] = iDest + 1;
                     if (dest.getMovie() != null) seenMovies.add(dest.getMovie());
@@ -237,7 +225,6 @@ public class IterativeGraphPlanner implements WizardPlanner {
                 // if we have finished exploring that node
                 // we pop the stacks
                 if (iDest == nodes.length){
-                    LOGGER.info("Done exploring node {}", iSrc);
                     srcNodesTop--;
                     lastexploredTop--;
                     if (seenMovies.contains(src.getMovie())) seenMovies.remove(src.getMovie());

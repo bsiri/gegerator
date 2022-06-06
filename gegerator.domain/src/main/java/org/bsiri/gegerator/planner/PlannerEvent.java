@@ -1,14 +1,17 @@
 package org.bsiri.gegerator.planner;
 
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.bsiri.gegerator.domain.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter
+@Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor
 public class PlannerEvent implements TimeAndSpaceLocation {
     private PlannableEvent representedEvent;

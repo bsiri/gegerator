@@ -1,0 +1,289 @@
+# JMH version: 1.35
+# VM version: JDK 1.8.0_292, OpenJDK 64-Bit Server VM, 25.292-b10
+# VM invoker: /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/jre/bin/java
+# VM options: <none>
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 5 ms each
+# Measurement: 5 iterations, 25 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: org.bsiri.gegerator.benchmark.PlannerBenchmark.benchDailyGraphPlanner
+
+# Run progress: 0,00% complete, ETA 00:00:01
+# Fork: 1 of 5
+# Warmup Iteration   1: edge count : 248
+nb call to explore : 27824765
+1076,177 ms/op
+# Warmup Iteration   2: edge count : 245
+nb call to explore : 30814760
+1087,621 ms/op
+Iteration   1: edge count : 255
+nb call to explore : 22916484
+851,046 ms/op
+Iteration   2: edge count : 261
+nb call to explore : 66502658
+2204,795 ms/op
+Iteration   3: edge count : 253
+nb call to explore : 73625127
+2360,131 ms/op
+Iteration   4: edge count : 242
+nb call to explore : 34022368
+1313,239 ms/op
+Iteration   5: edge count : 243
+nb call to explore : 32672386
+1263,104 ms/op
+
+# Run progress: 10,00% complete, ETA 00:01:34
+# Fork: 2 of 5
+# Warmup Iteration   1: edge count : 255
+nb call to explore : 82942206
+2891,118 ms/op
+# Warmup Iteration   2: edge count : 246
+nb call to explore : 30230474
+1005,979 ms/op
+Iteration   1: edge count : 256
+nb call to explore : 54744180
+1743,147 ms/op
+Iteration   2: edge count : 240
+nb call to explore : 36682494
+1190,270 ms/op
+Iteration   3: edge count : 259
+nb call to explore : 54833692
+1802,510 ms/op
+Iteration   4: edge count : 248
+nb call to explore : 62662820
+1924,862 ms/op
+Iteration   5: edge count : 253
+nb call to explore : 27548484
+900,211 ms/op
+
+# Run progress: 20,00% complete, ETA 00:01:28
+# Fork: 3 of 5
+# Warmup Iteration   1: edge count : 258
+nb call to explore : 84813247
+3058,017 ms/op
+# Warmup Iteration   2: edge count : 238
+nb call to explore : 23633133
+843,595 ms/op
+Iteration   1: edge count : 251
+nb call to explore : 94297518
+3099,478 ms/op
+Iteration   2: edge count : 253
+nb call to explore : 38508815
+1342,192 ms/op
+Iteration   3: edge count : 255
+nb call to explore : 56447561
+1863,266 ms/op
+Iteration   4: edge count : 256
+nb call to explore : 43453295
+1318,354 ms/op
+Iteration   5: edge count : 254
+nb call to explore : 163214196
+5770,954 ms/op
+
+# Run progress: 30,00% complete, ETA 00:01:32
+# Fork: 4 of 5
+# Warmup Iteration   1: edge count : 243
+nb call to explore : 44789392
+1457,442 ms/op
+# Warmup Iteration   2: edge count : 256
+nb call to explore : 134036182
+4439,872 ms/op
+Iteration   1: edge count : 265
+nb call to explore : 45774018
+1508,326 ms/op
+Iteration   2: edge count : 234
+nb call to explore : 28348791
+928,827 ms/op
+Iteration   3: edge count : 255
+nb call to explore : 67599136
+2337,868 ms/op
+Iteration   4: edge count : 254
+nb call to explore : 127713828
+4294,026 ms/op
+Iteration   5: edge count : 242
+nb call to explore : 20322469
+691,018 ms/op
+
+# Run progress: 40,00% complete, ETA 00:01:23
+# Fork: 5 of 5
+# Warmup Iteration   1: edge count : 242
+nb call to explore : 32888010
+1220,829 ms/op
+# Warmup Iteration   2: edge count : 266
+nb call to explore : 109011589
+3708,307 ms/op
+Iteration   1: edge count : 241
+nb call to explore : 34617309
+1111,457 ms/op
+Iteration   2: edge count : 244
+nb call to explore : 55696364
+1789,655 ms/op
+Iteration   3: edge count : 244
+nb call to explore : 44364664
+1477,844 ms/op
+Iteration   4: edge count : 246
+nb call to explore : 49322313
+1664,525 ms/op
+Iteration   5: edge count : 240
+nb call to explore : 15310905
+572,991 ms/op
+
+
+Result "org.bsiri.gegerator.benchmark.PlannerBenchmark.benchDailyGraphPlanner":
+  1812,964 ±(99.9%) 860,725 ms/op [Average]
+  (min, avg, max) = (572,991, 1812,964, 5770,954), stdev = 1149,044
+  CI (99.9%): [952,238, 2673,689] (assumes normal distribution)
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_292, OpenJDK 64-Bit Server VM, 25.292-b10
+# VM invoker: /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/jre/bin/java
+# VM options: <none>
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 5 ms each
+# Measurement: 5 iterations, 25 ms each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: org.bsiri.gegerator.benchmark.PlannerBenchmark.benchNaiveGraphPlanner
+
+# Run progress: 50,00% complete, ETA 00:01:07
+# Fork: 1 of 5
+# Warmup Iteration   1: edge count : 933
+nb call to explore : 60189864
+1657,326 ms/op
+# Warmup Iteration   2: edge count : 934
+nb call to explore : 31654566
+924,310 ms/op
+Iteration   1: edge count : 934
+nb call to explore : 35072384
+987,314 ms/op
+Iteration   2: edge count : 930
+nb call to explore : 57944608
+1665,203 ms/op
+Iteration   3: edge count : 934
+nb call to explore : 53599672
+1454,567 ms/op
+Iteration   4: edge count : 935
+nb call to explore : 65892192
+1766,667 ms/op
+Iteration   5: edge count : 936
+nb call to explore : 71779624
+1931,789 ms/op
+
+# Run progress: 60,00% complete, ETA 00:00:52
+# Fork: 2 of 5
+# Warmup Iteration   1: edge count : 935
+nb call to explore : 90047440
+2331,664 ms/op
+# Warmup Iteration   2: edge count : 934
+nb call to explore : 57671572
+1695,364 ms/op
+Iteration   1: edge count : 932
+nb call to explore : 80986628
+2205,157 ms/op
+Iteration   2: edge count : 935
+nb call to explore : 35123440
+1016,352 ms/op
+Iteration   3: edge count : 937
+nb call to explore : 50112474
+1412,631 ms/op
+Iteration   4: edge count : 934
+nb call to explore : 55121294
+1529,648 ms/op
+Iteration   5: edge count : 936
+nb call to explore : 37501446
+1092,644 ms/op
+
+# Run progress: 70,00% complete, ETA 00:00:38
+# Fork: 3 of 5
+# Warmup Iteration   1: edge count : 922
+nb call to explore : 19681944
+722,660 ms/op
+# Warmup Iteration   2: edge count : 928
+nb call to explore : 32345546
+1064,141 ms/op
+Iteration   1: edge count : 933
+nb call to explore : 32446032
+1036,250 ms/op
+Iteration   2: edge count : 937
+nb call to explore : 20887948
+674,355 ms/op
+Iteration   3: edge count : 935
+nb call to explore : 96749796
+2487,247 ms/op
+Iteration   4: edge count : 925
+nb call to explore : 83488656
+2369,355 ms/op
+Iteration   5: edge count : 942
+nb call to explore : 167288230
+4974,050 ms/op
+
+# Run progress: 80,00% complete, ETA 00:00:25
+# Fork: 4 of 5
+# Warmup Iteration   1: edge count : 930
+nb call to explore : 40047128
+1146,627 ms/op
+# Warmup Iteration   2: edge count : 937
+nb call to explore : 99482280
+2671,496 ms/op
+Iteration   1: edge count : 940
+nb call to explore : 50313760
+1396,434 ms/op
+Iteration   2: edge count : 937
+nb call to explore : 76277710
+2025,368 ms/op
+Iteration   3: edge count : 930
+nb call to explore : 25792264
+695,800 ms/op
+Iteration   4: edge count : 937
+nb call to explore : 129998584
+3749,783 ms/op
+Iteration   5: edge count : 935
+nb call to explore : 61426492
+1554,832 ms/op
+
+# Run progress: 90,00% complete, ETA 00:00:12
+# Fork: 5 of 5
+# Warmup Iteration   1: edge count : 937
+nb call to explore : 64812834
+1895,246 ms/op
+# Warmup Iteration   2: edge count : 942
+nb call to explore : 33166960
+1021,806 ms/op
+Iteration   1: edge count : 935
+nb call to explore : 91165632
+2335,970 ms/op
+Iteration   2: edge count : 931
+nb call to explore : 31272582
+825,773 ms/op
+Iteration   3: edge count : 942
+nb call to explore : 82035512
+2097,737 ms/op
+Iteration   4: edge count : 929
+nb call to explore : 58021662
+1424,413 ms/op
+Iteration   5: edge count : 929
+nb call to explore : 32348752
+901,267 ms/op
+
+
+Result "org.bsiri.gegerator.benchmark.PlannerBenchmark.benchNaiveGraphPlanner":
+  1744,424 ±(99.9%) 725,792 ms/op [Average]
+  (min, avg, max) = (674,355, 1744,424, 4974,050), stdev = 968,911
+  CI (99.9%): [1018,633, 2470,216] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:02:07
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+Benchmark                                Mode  Cnt     Score     Error  Units
+PlannerBenchmark.benchDailyGraphPlanner  avgt   25  1812,964 ± 860,725  ms/op
+PlannerBenchmark.benchNaiveGraphPlanner  avgt   25  1744,424 ± 725,792  ms/op
