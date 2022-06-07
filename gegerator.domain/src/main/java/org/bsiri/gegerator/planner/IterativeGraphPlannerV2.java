@@ -65,6 +65,11 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
      */
     private int[][] adjacency;
 
+
+    private int[] nodes_movies;
+    private long[] nodes_scores;
+    private int movies_count = 0;
+
     public IterativeGraphPlannerV2(Collection<PlannerEvent> evts){
        initNodes(evts);
        initEdges();
@@ -77,17 +82,41 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         copy.add(ROOT);
         copy.add(SINK);
 
-        // assign a pseudo movie to events that have none
-        // (typically, events that correspond to OtherActivities)
-        // This will help with eliminating all the nullchecks on movies
-        PrimitiveIterator.OfLong idStream = LongStream.iterate(-8000L, l -> l+1).iterator();
-        copy.stream().filter(e -> e.getMovie() == null)
-                .collect(Collectors.toList())
-                .forEach(e -> e.setMovie(idStream.next()));
-
-        // sort by date then return
+        // sort by date so that we can iterate more efficiently later
         Collections.sort(copy, Comparator.comparing(PlannerEvent::getDay).thenComparing(PlannerEvent::getStartTime));
         this.nodes = copy.toArray(new PlannerEvent[]{});
+
+        // Also populate the local arrays for movie ids and event scores
+        // In case no movie id is available (because of an eventless movie),
+        // a unique movie ID will be generated.
+        // Furthermore the movies are renumbered : here we don't store the
+        // movie ID directly but rather its index by order of encounter.
+        // This allows us to re-scale the values for much smaller range
+        // from 0 to card(movies).
+        Random r = new Random();
+        Map<Long, Integer> movieMap = new HashMap<>();
+        this.nodes_movies = new int[this.nodes.length];
+        this.nodes_scores = new long[this.nodes.length];
+
+        for (int i=0; i< nodes.length; i++){
+           PlannerEvent event = nodes[i];
+           Long movieId = event.getMovie();
+           if (movieId == null){
+               // generate a value in the negative range so that no collision
+               // occur with real movie IDs (which are all positive).
+               movieId = Long.valueOf(r.nextInt(7999) - 8000);
+           }
+           if (movieMap.containsKey(movieId)){
+               this.nodes_movies[i] = movieMap.get(movieId);
+           }
+           else{
+               movieMap.put(movieId, movies_count);
+               this.nodes_movies[i] = movies_count;
+               movies_count++;
+           }
+
+           this.nodes_scores[i] = event.getScore();
+        };
     }
 
     private void initEdges(){
@@ -171,21 +200,30 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         int[] nodesStack = new int[nodes.length];
         int[] edgesStack = new int[nodes.length];
         int stackTop = 0;
+        long currentScore = 0L;
 
 
         int saveStack[] = new int[nodes.length];
         int saveTop = 0;
         long bestScore = Long.MIN_VALUE;
 
-        Set<Long> seenMovies = new HashSet<>(nodes.length);
+        // an array of length cars(node_movies)
+        // values are :
+        // - 1 if the movie at this index has been seen
+        //   in the path currently examined,
+        // - 0 otherwise.
+        int[] seenMovies = new int[nodes_movies.length];
 
-        int iSrc;
-        int iDest;
-
-        // init with the ROOT node
+        // init with the ROOT node (index 0 by construction)
         nodesStack[stackTop] = 0;
         edgesStack[stackTop] = 1;
-        seenMovies.add(ROOT.getMovie());
+        currentScore += nodes_scores[0];
+        seenMovies[nodes_movies[0]] = 1;
+
+
+        // loop variables
+        int iSrc;
+        int iDest;
 
         nodeloop: while(stackTop >= 0){
             // restore the state
@@ -198,7 +236,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 PlannerEvent dest = nodes[iDest];
 
                 // skip if no edge or if movie already seen
-                if (adjacency[iSrc][iDest] == 0 || seenMovies.contains(dest.getMovie())) {
+                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movies[iDest]] == 1) {
                     iDest++;
                     continue;
                 }
@@ -212,8 +250,8 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 stackTop++;
                 nodesStack[stackTop] = iDest;
                 edgesStack[stackTop] = iDest + 1;
-
-                seenMovies.add(dest.getMovie());
+                currentScore += nodes_scores[iDest];
+                seenMovies[nodes_movies[iDest]] = 1;
 
 
                 // now that the stacks are ready, break
@@ -229,12 +267,9 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
             // This block of code replace the
             // "if (this == SINK)" condition tested in
             // other variants
-            long score = 0;
-            for (int i=0; i<=stackTop; i++){
-                score += nodes[nodesStack[i]].getScore();
-            }
-            if (score > bestScore){
-                bestScore = score;
+
+            if (currentScore > bestScore){
+                bestScore = currentScore;
                 System.arraycopy(nodesStack, 0, saveStack, 0, stackTop+1);
                 saveTop = stackTop;
             }
@@ -242,8 +277,8 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
             // if we have finished exploring that node
             // we pop the stacks
             stackTop--;
-            seenMovies.remove(src.getMovie());
-
+            seenMovies[nodes_movies[iSrc]] = 0;
+            currentScore -= nodes_scores[iSrc];
         }
 
         List<PlannerEvent> result = new ArrayList<>( saveTop);

@@ -14,15 +14,13 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-/*
 @Warmup(iterations = 5, time = 25, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 5, time = 25, timeUnit = TimeUnit.MILLISECONDS)
-*/
 @Fork(2)
 public class PlannerBenchmark {
 
-    private static int NB_SESSIONS = 16;
-    private static int NB_ACTIVITIES = 1;
+    private static int NB_SESSIONS = 50;
+    private static int NB_ACTIVITIES = 3;
 
     @State(Scope.Benchmark)
     public static class DatasetState{
@@ -52,12 +50,12 @@ public class PlannerBenchmark {
         return new IterativeGraphPlanner(dataset.events).findBestRoadmap();
     }
 */
-
+/*
     @Benchmark
     public List<PlannerEvent> benchNaiveGraphPlanner(DatasetState dataset){
         return new NaiveGraphPlanner(dataset.events).findBestRoadmap();
     }
-
+*/
     @Benchmark
     public List<PlannerEvent> benchIterativeGraphPlannerV2(DatasetState dataset){
         return new IterativeGraphPlannerV2(dataset.events).findBestRoadmap();
@@ -82,6 +80,7 @@ public class PlannerBenchmark {
     public static void main(String[] args) throws RuntimeException, RunnerException {
         Options opts = new OptionsBuilder()
                 .include(PlannerBenchmark.class.getSimpleName())
+                .include(VariousBenchmarks.class.getSimpleName())
                 .build();
         new Runner(opts).run();
     }
