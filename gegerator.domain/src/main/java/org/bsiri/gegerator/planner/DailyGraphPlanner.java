@@ -113,13 +113,9 @@ public class DailyGraphPlanner implements WizardPlanner {
     }
 
     private void initEdges(){
-        int[] outboundVertices = new int[nodes.length];
-        int nbOutbound = 0;
-
-        adjacency = new int[nodes.length][];
+        adjacency = new int[nodes.length][nodes.length];
         for (int iSrc = 0; iSrc < nodes.length; iSrc++){
             PlannerEvent src = nodes[iSrc];
-            nbOutbound = 0;
             for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
                 PlannerEvent dst = nodes[iDst];
                 if (dst.getDay() != src.getDay()) {
@@ -128,14 +124,12 @@ public class DailyGraphPlanner implements WizardPlanner {
                     // of the day. Indeed, here it is technically
                     // implemented as the first event of the next day,
                     // see definition
-                    outboundVertices[nbOutbound++] = iDst;
+                    adjacency[iSrc][iDst] = 1;
                     break;
                 };
                 if (! isTransitionFeasible(src, dst)) continue;
-                outboundVertices[nbOutbound++] = iDst;
+                adjacency[iSrc][iDst] = 1;
             }
-            adjacency[iSrc] = new int[nbOutbound];
-            System.arraycopy(outboundVertices, 0, adjacency[iSrc], 0, nbOutbound);
         }
     }
 
@@ -169,7 +163,22 @@ public class DailyGraphPlanner implements WizardPlanner {
         return best.stream().filter(e -> ! specialNodes.contains(e)).collect(Collectors.toList());
     }
 
+
+    public long countPaths(){
+        long[] nodepaths = new long[nodes.length];
+        nodepaths[nodes.length -1] = 1L;
+        for (int j=nodes.length-1; j>=0; j--){
+            for (int i= j+1; i < nodes.length; i++){
+                if (adjacency[j][i] == 1){
+                    nodepaths[j] += nodepaths[i];
+                }
+            }
+        }
+        return nodepaths[0];
+    }
+
     private void explore(int nodeIndex, ExplorationStack stack){
+        // broken
         PlannerEvent node = nodes[nodeIndex];
         if (node == SINK){
             stack.recordRoadmapIfBest();

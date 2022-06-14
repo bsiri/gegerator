@@ -131,6 +131,19 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         }
     }
 
+    public long countPaths(){
+        long[] nodepaths = new long[nodes.length];
+        nodepaths[nodes.length -1] = 1L;
+        for (int j=nodes.length-1; j>=0; j--){
+            for (int i= j+1; i < nodes.length; i++){
+                if (adjacency[j][i] == 1){
+                    nodepaths[j] += nodepaths[i];
+                }
+            }
+        }
+        return nodepaths[0];
+    }
+
     /**
      * Test whether if the start time of event 'dst' is after the endtime of 'src',
      * while also accounting for external factors such as travel time.
@@ -161,42 +174,6 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
 
     // CAUTION : this is insane
     private List<PlannerEvent> explore(){
-        /*
-            TODO : try the following, one after the other
-
-            - just find a better algorithm
-
-            - store the score and the movies in arrays, so
-            we can spare us some lookups
-
-            - try replace the set of seenMovies with a
-            array of flags that we can then test by
-            direct access.
-            (this requires to re-number the movies)
-            (test in micro JMH benchmark first)
-
-            - eliminate every autoboxing I see
-
-            - compute the score along the way (maintain
-            it in yet another stack) instead of recomputing
-            everytime a loop hits the SINK
-
-            - try reintroducing the concept of day scope
-            (see DailyGraphPlanner)
-
-            - try to use shorts instead of ints, with luck
-            it will help maintain arrays in caches closer
-            to CPU - quite a random thing to test by why not
-
-            - if it work, re-scale the scoring system so
-            that the total score can be an int
-
-            - cache lines in L1 are 64 bytes long. How
-            could I make my data fit in this ?
-
-         */
-
-
         int[] nodesStack = new int[nodes.length];
         int[] edgesStack = new int[nodes.length];
         int stackTop = 0;
@@ -209,16 +186,16 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
 
         // an array of length cars(node_movies)
         // values are :
-        // - 1 if the movie at this index has been seen
+        // - true if the movie at this index has been seen
         //   in the path currently examined,
-        // - 0 otherwise.
-        int[] seenMovies = new int[nodes_movies.length];
+        // - false otherwise.
+        boolean[] seenMovies = new boolean[nodes_movies.length];
 
         // init with the ROOT node (index 0 by construction)
         nodesStack[stackTop] = 0;
         edgesStack[stackTop] = 1;
         currentScore += nodes_scores[0];
-        seenMovies[nodes_movies[0]] = 1;
+        seenMovies[nodes_movies[0]] = true;
 
 
         // loop variables
@@ -233,10 +210,9 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
 
             // edges exploration, except the SINK (last position)
             while (iDest < nodes.length - 1) {
-                PlannerEvent dest = nodes[iDest];
 
                 // skip if no edge or if movie already seen
-                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movies[iDest]] == 1) {
+                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movies[iDest]] == true) {
                     iDest++;
                     continue;
                 }
@@ -251,7 +227,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 nodesStack[stackTop] = iDest;
                 edgesStack[stackTop] = iDest + 1;
                 currentScore += nodes_scores[iDest];
-                seenMovies[nodes_movies[iDest]] = 1;
+                seenMovies[nodes_movies[iDest]] = true;
 
 
                 // now that the stacks are ready, break
@@ -277,7 +253,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
             // if we have finished exploring that node
             // we pop the stacks
             stackTop--;
-            seenMovies[nodes_movies[iSrc]] = 0;
+            seenMovies[nodes_movies[iSrc]] = false;
             currentScore -= nodes_scores[iSrc];
         }
 

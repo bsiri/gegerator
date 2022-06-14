@@ -163,6 +163,8 @@ public class IterativeGraphPlannerV2Test {
         WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
+        System.out.println(((IterativeGraphPlannerV2)graph).countPaths());
+
         MatcherAssert.assertThat(collectNames(best), Matchers.contains(
                 "movie 2 super",
                 "movie 3 super",
