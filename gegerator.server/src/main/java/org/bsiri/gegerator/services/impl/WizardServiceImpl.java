@@ -4,14 +4,12 @@ package org.bsiri.gegerator.services.impl;
 import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
-import org.bsiri.gegerator.planner.NaiveGraphPlanner;
-import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.*;
 import org.bsiri.gegerator.services.*;
 import org.bsiri.gegerator.services.events.MoviesChangedEvent;
 import org.bsiri.gegerator.services.events.OtherActivitiesChangedEvent;
 import org.bsiri.gegerator.services.events.SessionsChangedEvent;
 import org.bsiri.gegerator.services.events.WizardConfChangedEvent;
-import org.bsiri.gegerator.planner.WizardPlanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -33,6 +31,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class WizardServiceImpl implements WizardService {
+
+    private static final Integer PLANNER_IMPL_THRESHOLD = 30;
 
     private static final Duration THROTTLE_TIME = Duration.ofMillis(100);
 
@@ -98,7 +98,7 @@ public class WizardServiceImpl implements WizardService {
     }
 
     List<PlannableEvent> findBestRoadmap(List<PlannerEvent> events){
-        WizardPlanner graph = new NaiveGraphPlanner(events);
+        WizardPlanner graph = createPlanner(events);
         return graph.findBestRoadmap().stream().map(PlannerEvent::getRepresentedEvent).collect(Collectors.toList());
     }
 
@@ -132,6 +132,16 @@ public class WizardServiceImpl implements WizardService {
         );
     }
 
+    private WizardPlanner createPlanner(List<PlannerEvent> events){
+        // if the problem is small enough -> use an exact solver
+        if (events.size() <= PLANNER_IMPL_THRESHOLD){
+            return new IterativeGraphPlannerV2(events);
+        }
+        // else, use an approximate solver
+        else{
+            return new RankedPathGraphPlanner(events);
+        }
+    }
 
     // ************** Internal event listener ********************/
 

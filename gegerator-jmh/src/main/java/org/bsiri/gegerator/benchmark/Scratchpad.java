@@ -1,6 +1,5 @@
 package org.bsiri.gegerator.benchmark;
 
-import org.bsiri.gegerator.planner.DailyGraphPlanner;
 import org.bsiri.gegerator.planner.IterativeGraphPlannerV2;
 import org.bsiri.gegerator.planner.PlannerEvent;
 import org.bsiri.gegerator.planner.RankedPathGraphPlanner;
@@ -19,14 +18,12 @@ public class Scratchpad {
         for (int i=0; i<10; i++){
             state.newEvents();
             IterativeGraphPlannerV2 v2 = new IterativeGraphPlannerV2(state.events);
-            DailyGraphPlanner daily = new DailyGraphPlanner(state.events);
             RankedPathGraphPlanner rank =  new RankedPathGraphPlanner(state.events);
 
             long v2Count = v2.countPaths();
-            long dailyCount = daily.countPaths();
             long rankCount = rank.countPaths();
 
-            System.out.println(String.format("v2 : %d, daily: %d, rank : %d", v2Count, dailyCount, rankCount));
+            System.out.println(String.format("v2 : %d,  rank : %d", v2Count, rankCount));
         }
     }
 

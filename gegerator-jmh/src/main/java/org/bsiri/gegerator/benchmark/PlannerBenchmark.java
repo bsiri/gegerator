@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(3)
 public class PlannerBenchmark {
 
-    private static int NB_SESSIONS = 32;
+    private static int NB_SESSIONS = 96;
     private static int NB_ACTIVITIES = 3;
 
     @State(Scope.Benchmark)
@@ -73,13 +73,13 @@ public class PlannerBenchmark {
     }
 */
 
-
+/*
     @Benchmark
     public List<PlannerEvent> benchIterativeGraphPlannerV2(DatasetState dataset){
         return new IterativeGraphPlannerV2(dataset.events).findBestRoadmap();
     }
 
-
+*/
     @Benchmark
     public List<PlannerEvent> benchRankedPathGraphPlanner(DatasetState state){
         return new RankedPathGraphPlanner(state.events).findBestRoadmap();
