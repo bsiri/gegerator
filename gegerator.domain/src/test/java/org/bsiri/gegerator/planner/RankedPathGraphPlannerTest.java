@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static org.bsiri.gegerator.planner.PlannerEventHelper.event;
 
-public class DailyGraphPlannerTest {
+public class RankedPathGraphPlannerTest {
 
     static private Long NO_MOVIE = null;
     static private Long MOVIE_1 = 1L;
@@ -23,7 +23,7 @@ public class DailyGraphPlannerTest {
     static private long OUTSTANDING_SCORE = 100000;
     static private long SUPER_SCORE = 1000;
     static private long MEDIUM_SCORE = 500;
-    static private long AVERAGE_SCORE = 0;
+    static private long AVERAGE_SCORE = 10;
     static private long AWFUL_SCORE = -1000;
 
 
@@ -40,13 +40,13 @@ public class DailyGraphPlannerTest {
     public void shouldPlanBestScores(){
         List<PlannerEvent> nodes = Arrays.asList(
             event("Movie 2 Average", AVERAGE_SCORE, MOVIE_2, "MCL|THURSDAY|10:00|11:00"),
-            event("Movie 2 Super", SUPER_SCORE, MOVIE_2, "PARADISO|FRIDAY|10:00|11:00"),
             event("Movie 1 Super", SUPER_SCORE, MOVIE_1, "PARADISO|THURSDAY|10:00|11:00"),
+            event("Movie 2 Super", SUPER_SCORE, MOVIE_2, "PARADISO|FRIDAY|10:00|11:00"),
             event("Movie 1 Average", AVERAGE_SCORE, MOVIE_1, "PARADISO|FRIDAY|10:00|11:00")
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new DailyGraphPlanner(nodes);
+        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("Movie 1 Super", "Movie 2 Super"));
@@ -68,7 +68,7 @@ public class DailyGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new DailyGraphPlanner(nodes);
+        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super session"));
@@ -94,7 +94,7 @@ public class DailyGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new DailyGraphPlanner(nodes);
+        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super movie", "average movie"));
@@ -114,7 +114,7 @@ public class DailyGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new DailyGraphPlanner(nodes);
+        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("best movie"));
@@ -160,7 +160,7 @@ public class DailyGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new DailyGraphPlanner(nodes);
+        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains(

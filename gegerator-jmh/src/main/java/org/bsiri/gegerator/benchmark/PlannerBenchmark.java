@@ -14,22 +14,38 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 5, time = 25, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 25, timeUnit = TimeUnit.MILLISECONDS)
-@Fork(2)
+
+@Warmup(iterations = 5, time = 10, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 5, time = 10, timeUnit = TimeUnit.MILLISECONDS)
+
+/*
+@Warmup(iterations = 2)
+@Measurement(iterations = 2)
+*/
+@Fork(3)
 public class PlannerBenchmark {
 
-    private static int NB_SESSIONS = 50;
+    private static int NB_SESSIONS = 32;
     private static int NB_ACTIVITIES = 3;
 
     @State(Scope.Benchmark)
     public static class DatasetState{
-        List<PlannerEvent>  events = new ArrayList<PlannerEvent>();
+        int nbsessions = NB_SESSIONS;
+        int nbactivities = NB_ACTIVITIES;
+        List<PlannerEvent>  events = new ArrayList<>();
+
+        public DatasetState() {
+        }
+
+        public DatasetState(int nbsessions, int nbactivities) {
+            this.nbsessions = nbsessions;
+            this.nbactivities = nbactivities;
+        }
 
         @Setup()
         public void newEvents(){
             //this.events = Datasets.shuffledSmallDataset();
-            this.events = Datasets.generateDatasetOf(NB_SESSIONS, NB_ACTIVITIES);
+            this.events = Datasets.generateDatasetOf(nbsessions, nbactivities);
         }
 
     }
@@ -56,9 +72,17 @@ public class PlannerBenchmark {
         return new NaiveGraphPlanner(dataset.events).findBestRoadmap();
     }
 */
+
+
     @Benchmark
     public List<PlannerEvent> benchIterativeGraphPlannerV2(DatasetState dataset){
         return new IterativeGraphPlannerV2(dataset.events).findBestRoadmap();
+    }
+
+
+    @Benchmark
+    public List<PlannerEvent> benchRankedPathGraphPlanner(DatasetState state){
+        return new RankedPathGraphPlanner(state.events).findBestRoadmap();
     }
 
     /*

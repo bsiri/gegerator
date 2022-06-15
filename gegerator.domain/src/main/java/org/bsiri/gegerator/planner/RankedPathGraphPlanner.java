@@ -28,23 +28,24 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
         Map<DayOfWeek, List<Node>> nodesByDay = groupyByDay(nodes);
 
-        thursdayGraph = new SubGraph(nodesByDay.get(DayOfWeek.THURSDAY));
-        fridayGraph = new SubGraph(nodesByDay.get(DayOfWeek.FRIDAY));
-        saturdayGraph = new SubGraph(nodesByDay.get(DayOfWeek.SATURDAY));
-        sundayGraph = new SubGraph(nodesByDay.get(DayOfWeek.SUNDAY));
+        thursdayGraph = new SubGraph(DayOfWeek.THURSDAY, nodesByDay.getOrDefault(DayOfWeek.THURSDAY, new ArrayList<>()));
+        fridayGraph = new SubGraph(DayOfWeek.FRIDAY, nodesByDay.getOrDefault(DayOfWeek.FRIDAY, new ArrayList<>()));;
+        saturdayGraph = new SubGraph(DayOfWeek.SATURDAY, nodesByDay.getOrDefault(DayOfWeek.SATURDAY, new ArrayList<>()));;
+        sundayGraph = new SubGraph(DayOfWeek.SUNDAY, nodesByDay.getOrDefault(DayOfWeek.SUNDAY, new ArrayList<>()));;
     }
 
 
     private List<Node> preprocess(Collection<PlannerEvent> events){
-         List<PlannerEvent> sortedByScore = events.stream().sorted(
+        // First, trunk the list to the MAX_SIZE top scores
+        List<PlannerEvent> sortedByScore = events.stream().sorted(
             Comparator.comparing(PlannerEvent::getScore)
                     .reversed()
                     .thenComparing(PlannerEvent::getDay)
         ).collect(Collectors.toList());
 
-
         List<PlannerEvent> shortlist = new ArrayList<>(sortedByScore.subList(0, Math.min(sortedByScore.size(), MAX_SIZE)));
 
+        // Create the nodes now
         List<Node> allNodes = shortlist.stream().map( event -> {
             long movieBit = moviesBitmask.retrieveOrAssign(event);
             long eventBit = eventsBitmask.retrieveOrAssign(event);
@@ -73,37 +74,78 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         return thursdayPaths.size() + fridayPaths.size()  + saturdayPaths.size() + sundayPaths.size();
     }
 
+    public void stats(){
+        thursdayGraph.stats();
+        fridayGraph.stats();
+        saturdayGraph.stats();
+        sundayGraph.stats();
+    }
 
     @Override
     public List<PlannerEvent> findBestRoadmap() {
 
-        /*
-            0. Ne conserver que les 64 événements les plus fortement valués ?
-               Voir si finalement une implem avec des node-edge explicitement
-               objets ne serait pas plus intéressant ?
+        List<Path> thursdayPaths = thursdayGraph.evaluateAllPaths();
+        List<Path> fridayPaths = fridayGraph.evaluateAllPaths();
+        List<Path> saturdayPaths = saturdayGraph.evaluateAllPaths();
+        List<Path> sundayPaths = sundayGraph.evaluateAllPaths();
 
-            1. Calculer les scores de tous les chemins de chaque sous graphe
-               en les scores et chemins par masques de films (long).
+        Path bestPath = electBestPath(thursdayPaths, fridayPaths, saturdayPaths, sundayPaths);
 
-            2. Ensuite, aggréger les chemins en écartant ceux qui sont
-               incompatibles en terme de films
-               (Long.bitCount(movie1) + Long.bitCount(movie2) = Long.bitCount(moviemask1 & moviemask2))
+        List<PlannerEvent> best = eventsBitmask.retrieveByMask(bestPath.allEventsMask)
+                .stream()
+                .sorted(Comparator.comparing(PlannerEvent::getDay)
+                        .thenComparing(PlannerEvent::getStartTime))
+                .collect(Collectors.toList());
 
-            3. Sélectionner le chemin reconstruit qui a le meilleur score.
+        return best;
 
-         */
-
-        return Collections.emptyList();
     }
+
+
+    private Path electBestPath(List<Path> ...pathLists){
+        if (pathLists.length == 0) return Path.empty();
+
+        List<Path> accum = sortKeepBest(pathLists[0]);
+        for (int i=1; i < pathLists.length; i++){
+            accum = mergeWhenPossible(accum, pathLists[i]);
+            accum = sortKeepBest(accum);
+        }
+
+        return accum.get(0);
+
+    }
+
+    private List<Path> mergeWhenPossible(List<Path> first, List<Path> second){
+        List<Path> result = new ArrayList<>();
+        for (Path prev: first){
+            for (Path next: second){
+                if (prev.noOverlap(next)){
+                    result.add(prev.merge(next));
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<Path> sortKeepBest(List<Path> paths){
+        List<Path> sortedByScore = paths.stream()
+                .sorted(Comparator.comparing(Path::getOverallScore).reversed())
+                .collect(Collectors.toList());
+        return sortedByScore.subList(0, Math.min(sortedByScore.size(), MAX_SIZE));
+    }
+
+
 
 
     // *************** subgraphs *****************
 
     private final class SubGraph{
+        DayOfWeek day;
         Node[] nodes;
         int[][] adjacency;
 
-        public SubGraph(List<Node> nodes) {
+        public SubGraph(DayOfWeek day, List<Node> nodes) {
+            this.day = day;
             List<Node> sortedNodes = sortByStartTime(nodes);
             initNodes(sortedNodes);
             initEdges();
@@ -131,20 +173,21 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             }
         }
 
-        /*
-        public long countPaths(){
-            long[] nodepaths = new long[nodes.length];
-            nodepaths[nodes.length -1] = 1L;
-            for (int j = nodes.length-1; j>=0; j--){
-                for (int i = j+1; i < nodes.length; i++){
-                    if (adjacency[j][i] == 1){
-                        nodepaths[j] += nodepaths[i];
-                    }
+        public void stats(){
+            long edgecount = 0;
+            for (int i=0; i<nodes.length; i++){
+                for (int j=i+1; j < nodes.length; j++){
+                    edgecount++;
                 }
             }
-            return nodepaths[0];
+
+            List<Path> paths = evaluateAllPaths();
+            long totalPath = paths.size();
+
+            long distinctmovies= Arrays.stream(nodes).map(n -> n.movieBit).distinct().count();
+            System.out.println(String.format("%s : %d movies, %d events, %d edges, %d path total, %d path distinct", day, distinctmovies, nodes.length, edgecount, totalPath));
         }
-         */
+
 
         List<Path> evaluateAllPaths(){
 
@@ -153,6 +196,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
                 pathsByNodes[i] = new ArrayList<Path>();
             }
 
+            // compute all paths
             for (int i = nodes.length -1; i >=0; i--){
                 Node currentNode = nodes[i];
                 List<Path> currentNodePaths = pathsByNodes[i];
@@ -166,11 +210,30 @@ public class RankedPathGraphPlanner implements WizardPlanner {
                 currentNodePaths.add(Path.justNode(currentNode) );
             }
 
-            return Arrays.stream(pathsByNodes)
+            List<Path> allpaths = Arrays.stream(pathsByNodes)
                     .flatMap(List::stream)
-                    // filter inconsistent results
-                    .filter(path -> Long.bitCount(path.allEventsMask) == Long.bitCount(path.allMoviesMask))
                     .collect(Collectors.toList());
+
+            // add the "nothing" path"
+            allpaths.add(Path.empty());
+
+            // prune redundant paths and return
+            return pruneUselessPaths(allpaths);
+        }
+
+        private List<Path> pruneUselessPaths(List<Path> paths){
+            Map<Long, Path> bestPathByMoviePanel = new HashMap<>(paths.size());
+
+            for (Path p : paths){
+                if (p.hasRedundancy()) continue;
+
+                Path former = bestPathByMoviePanel.get(p.allMoviesMask);
+                if (former == null || p.overallScore > former.overallScore){
+                    bestPathByMoviePanel.put(p.allMoviesMask, p);
+                }
+            }
+
+            return new ArrayList<>(bestPathByMoviePanel.values());
         }
 
         /**
@@ -206,6 +269,12 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         long allEventsMask = 0L;
         long overallScore = 0L;
 
+        // necessary because streams sometimes
+        // are angry with direct field access
+        public long getOverallScore() {
+            return overallScore;
+        }
+
         public Path(long allMoviesMask, long allEventsMask, long overallScore) {
             this.allMoviesMask = allMoviesMask;
             this.allEventsMask = allEventsMask;
@@ -220,7 +289,17 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             );
         }
 
-        public boolean canMerge(Path otherPath){
+        static Path empty(){
+            return new Path(
+                0, 0, 0
+            );
+        }
+
+        public boolean hasRedundancy(){
+            return Long.bitCount(allMoviesMask) != Long.bitCount(allEventsMask);
+        }
+
+        public boolean noOverlap(Path otherPath){
             return Long.bitCount(this.allMoviesMask | otherPath.allMoviesMask) ==
                     Long.bitCount(this.allEventsMask | otherPath.allEventsMask);
         }
@@ -263,14 +342,27 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
     private static class EventsBitmask{
         private Map<PlannerEvent, Long> eventBits = new HashMap<>(MAX_SIZE);
+        private Map<Long, PlannerEvent> reverseMapping = new HashMap<>(MAX_SIZE);
         private long cursor = 1L;
 
         long retrieveOrAssign(PlannerEvent evt){
-            if (!eventBits.containsKey(evt)){
-                eventBits.put(evt, cursor);
+            long mask = cursor;
+            eventBits.put(evt, cursor);
+            reverseMapping.put(cursor, evt);
+            cursor <<= 1;
+            return mask;
+        }
+
+        Collection<PlannerEvent> retrieveByMask(long mask){
+            List<PlannerEvent> result = new ArrayList<>();
+            long cursor = 1L;
+            for (int i=0; i<63; i++){
+                if ((mask & cursor) != 0){
+                    result.add(reverseMapping.get(cursor));
+                }
                 cursor <<= 1;
             }
-            return eventBits.get(evt);
+            return result;
         }
     }
 

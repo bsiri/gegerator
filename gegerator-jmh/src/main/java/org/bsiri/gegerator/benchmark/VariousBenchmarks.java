@@ -2,15 +2,23 @@ package org.bsiri.gegerator.benchmark;
 
 import org.openjdk.jmh.annotations.*;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+
+/*
+@Warmup(iterations = 5, time = 100, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 5, time = 100, timeUnit = TimeUnit.MILLISECONDS)
+*/
+/*
 @Warmup(iterations = 2)
 @Measurement(iterations = 2)
+*/
+
+
 @Fork(3)
 public class VariousBenchmarks {
 
@@ -82,7 +90,7 @@ public class VariousBenchmarks {
 
     // ************** score keeping test *********************
 
-
+/*
     // works best
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -128,9 +136,134 @@ public class VariousBenchmarks {
 
         return new Object[]{maxscore, nbOps};
     }
+*/
+
+    // **************** iteration techniques **********************
+
+    /*
+        Tests of reduced models for iteration
+     */
+
+    @Benchmark
+    public long bestIterNormal(RandomMatrices matrices){
+        int[][] adj = matrices.intadj;
+        int size = adj.length;
+
+        int[] stack = new int[size];
+        int[] next = new int[size];
+        int top = 0;
+        int score = 0;
+        int best = -99999;
+
+        stack[top] = 0;
+        next[top] = 1;
+        score = 0;
+
+        loop: while(top >=0){
+            int current = stack[top];
+            int dest = next[top];
+            while(dest < RND_MAT_SIZE){
+                if (adj[current][dest] == 0){
+                    dest++;
+                    continue;
+                }
+                next[top] = dest+1;
+
+                top++;
+                stack[top] = dest;
+                next[top] = dest+1;
+                score += dest;
+                continue loop;
+            }
+
+            if (score > best){
+                best = score;
+            }
+            score -= current;
+            top--;
+        }
+        return best;
+    }
+
+    @Benchmark
+    public long bestIterMasks(RandomMatrices matrices){
+       BitSet[] adj = matrices.bitmaskadj;
+       int size = adj.length;
+
+       int[] stack = new int[size];
+       int[] next = new int[size];
+       int top = 0;
+       int score = 0;
+       int best = -9999;
+
+       stack[top] = 0;
+       next[top] = 0;
+       score = 0;
+
+        loop: while(top >= 0){
+            int current = stack[top];
+            int dest = adj[current].nextSetBit(next[top]);
+
+            while(dest != -1){
+                next[top] = dest+1;
+
+                top++;
+                stack[top] = dest;
+                next[top] = dest+1;
+                score += dest;
+                continue loop;
+
+            }
+
+            if (score > best){
+                best = score;
+            }
+            score -= current;
+            top--;
+
+        }
+
+        return best;
+
+    }
+
+
+
 
     // **************** Benchmak states **********************
 
+    private static final int RND_MAT_SIZE = 16;
+
+    @State(Scope.Benchmark)
+    public static class RandomMatrices{
+        int [][] intadj;
+        BitSet[] bitmaskadj;
+        BitSet onemask;
+
+        @Setup()
+        public void setup(){
+            intadj = new int[RND_MAT_SIZE][RND_MAT_SIZE];
+            bitmaskadj = new BitSet[RND_MAT_SIZE];
+            onemask = new BitSet(RND_MAT_SIZE*RND_MAT_SIZE);
+
+            Random rnd = new Random();
+            int edgecount = 0;
+            for (int i=0; i < RND_MAT_SIZE; i++){
+                bitmaskadj[i] = new BitSet(RND_MAT_SIZE);
+                for (int j = i+1; j < RND_MAT_SIZE; j++){
+                    boolean hasEdge =  (rnd.nextInt(4) == 3);
+                    if (hasEdge){
+                        intadj[i][j] = 1;
+                        bitmaskadj[i].set(j);
+                        onemask.set(i*RND_MAT_SIZE+j);
+                        edgecount++;
+                    }
+                }
+            }
+            System.out.println("Sparsity : " + (double)edgecount/(RND_MAT_SIZE*RND_MAT_SIZE));
+        }
+
+    }
     @State(Scope.Benchmark)
     public static class CacheTestDataset{
         private int[] cached_nums;

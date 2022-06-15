@@ -15,14 +15,14 @@ scoring:
   theaters:
     HIGHEST: 1000
     HIGH: 100
-    DEFAULT: 0
+    DEFAULT: 10
     NEVER: -99999
 
   # Same scoring logic than for theaters.
   movies:
     HIGHEST: 1000
     HIGH: 100
-    DEFAULT: 0
+    DEFAULT: 10
     NEVER: -99999
 
   # Events ratings have a tremendous value

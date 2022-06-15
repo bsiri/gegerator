@@ -23,7 +23,7 @@ public class IterativeGraphPlannerV2Test {
     static private long OUTSTANDING_SCORE = 100000;
     static private long SUPER_SCORE = 1000;
     static private long MEDIUM_SCORE = 500;
-    static private long AVERAGE_SCORE = 0;
+    static private long AVERAGE_SCORE = 10;
     static private long AWFUL_SCORE = -1000;
 
 
