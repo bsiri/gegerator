@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { map, Observable, Subscription, takeWhile } from 'rxjs';
+import { combineLatestAll, combineLatestWith, map, Observable, Subscription, takeWhile } from 'rxjs';
+import { combineLatestInit } from 'rxjs/internal/observable/combineLatest';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { EventRatings } from 'src/app/models/plannable.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
@@ -9,9 +10,11 @@ import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
+import { Mode } from 'src/app/ngrx/appstate-models/mode.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
-import { selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
+import { selectUserRoadmap, selectWizardRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { ModeService } from 'src/app/services/mode.service';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
@@ -51,12 +54,24 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
 
     So we subscribe here once instead.
   */
+  mode$! : Observable<Mode>
   roadmap!: FestivalRoadmap
   subRoadmap: Subscription
 
 
-  constructor(private store: Store, private dialog: MatDialog) {
-    this.subRoadmap = this.store.select(selectUserRoadmap).subscribe(rmap => this.roadmap = rmap)
+  constructor(private store: Store, private modeService: ModeService, private dialog: MatDialog) {
+    this.mode$ = this.modeService.mode$
+    const userRoadmap$ = this.store.select(selectUserRoadmap)
+    const wizardRoadmap$ = this.store.select(selectWizardRoadmap)
+    
+    this.subRoadmap = this.mode$.pipe(
+      combineLatestWith(userRoadmap$, wizardRoadmap$),
+      map(([mode, userrm, wizardrm]) => mode == Mode.MANUAL ? userrm : wizardrm)
+    ).subscribe(roadmap => this.roadmap = roadmap)
+      
+     /*
+    this.subRoadmap = userRoadmap$.subscribe(rm => this.roadmap = rm)
+    */
   }
 
   ngOnInit(): void {

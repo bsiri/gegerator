@@ -84,3 +84,13 @@ export class FestivalRoadmap{
     }
 
 }
+
+/**
+ * A much shorter representation of a FestivalRoadmap.
+ * This interface is necessary because I need to store it 
+ * in the Store after all.
+ */
+export interface RoadmapData{
+    sessionIds: Array<number>
+    activityIds: Array<number>
+}

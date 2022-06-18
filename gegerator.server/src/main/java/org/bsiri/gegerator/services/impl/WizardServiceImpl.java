@@ -59,7 +59,7 @@ public class WizardServiceImpl implements WizardService {
                 .sample(THROTTLE_TIME)  // Limit rate in case inputs are raining
                 .map(tuple -> toEventNodes(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()))
                 .map(this::findBestRoadmap)
-                .onErrorReturn(new ArrayList<>())
+                //.onErrorReturn(new ArrayList<>())
                 .log()
                 .subscribe(
                         roadmapFlux::tryEmitNext,

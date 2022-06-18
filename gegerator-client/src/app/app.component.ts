@@ -13,6 +13,7 @@ import { ConfigDialog } from './components/configuration/configdialog/configdial
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
+import { WizardService } from './services/wizard.service';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +30,10 @@ export class AppComponent implements OnInit{
 
   constructor(private store: Store, 
     private dialog: MatDialog,
-    private modeService: ModeService
+    private modeService: ModeService,
+    // HACK : injecting the service just to have it bootstrapped, 
+    // find another way to achieve this.
+    private wizardService: WizardService
     ){}
 
   ngOnInit(): void {

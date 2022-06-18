@@ -55,6 +55,7 @@ import { EventLinkComponent } from './components/small-comps/event-link/event-li
 import { configurationReducer } from './ngrx/reducers/configuration.reducer';
 import { ConfigurationEffects } from './ngrx/effects/configuration.effects';
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
+import { wizardroadmapReducer } from './ngrx/reducers/wizard-roadmap.reducer';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,7 @@ import { ConfigDialog } from './components/configuration/configdialog/configdial
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movies: movieReducer, sessions: sessionReducer, activities: activityReducer, configuration: configurationReducer}, {}),
+    StoreModule.forRoot({movies: movieReducer, sessions: sessionReducer, activities: activityReducer, configuration: configurationReducer, wizardroadmap: wizardroadmapReducer}, {}),
     EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects, AppStateEffects, ConfigurationEffects]),
     FormsModule,
     ReactiveFormsModule,
