@@ -32,21 +32,21 @@ export class PlannedMovieSessionComponent{
   // *********** content & border styles **************
 
   get contentRendering(): SwItemContentRendering{
-    if (this._isDisabled()){
-      return "disabled"
-    }
     if (this._isOutstanding()){
       return "outstanding"
+    }
+    if (this._isDisabled()){
+      return "disabled"
     }
     return movieRatingClasses.get(this.session.movie.rating) ?? "normal"
   }
 
   get borderRendering(): SwItemBorderRendering{
-    if (this._isDisabled()){
-      return "disabled"
-    }
     if (this._isOutstanding()){
       return "outstanding"
+    }
+    if (this._isDisabled()){
+      return "disabled"
     }
     return sessionRatingClasses.get(this.session.rating) ?? "normal"
   }
@@ -54,7 +54,7 @@ export class PlannedMovieSessionComponent{
   _isDisabled(): boolean{
     const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]
 
-    // R1. If one of the ratings is 'NEVER', the session is disabled.
+    // R1. If one of the ratings is 'NEVER', the session is disabled
     if (movie.rating == MovieRatings.NEVER || session.rating == EventRatings.NEVER){
       return true
     }
