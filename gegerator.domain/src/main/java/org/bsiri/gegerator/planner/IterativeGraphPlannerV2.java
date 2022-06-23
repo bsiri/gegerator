@@ -157,8 +157,14 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         if (dayDiff != 0){
             return (dayDiff < 0);
         }
+        // Bugfix : to handle cases of late movies and time arithmetic issues that arise around
+        // midnight, here we "clock back" by 2 hours the times so that we have no problems.
+        // Other solution : using LocalDateTime instead of mere LocalTime ?
+        LocalTime srcEndTime = src.getEndTime().minus(Duration.ofMinutes(120));
+        LocalTime dstStartTime = dst.getStartTime().minus(Duration.ofMinutes(120));
+
         Duration travel = TheaterDistanceTravel.get(src.getTheater(), dst.getTheater());
-        return src.getEndTime().plus(travel).isBefore(dst.getStartTime());
+        return srcEndTime.plus(travel).isBefore(dstStartTime);
     }
 
     // ******************* Computation ************************

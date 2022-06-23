@@ -4,6 +4,8 @@ import org.bsiri.gegerator.domain.TheaterDistanceTravel;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -245,8 +247,14 @@ public class RankedPathGraphPlanner implements WizardPlanner {
          * @return
          */
         private boolean isTransitionFeasible(TimeAndSpaceLocation src, TimeAndSpaceLocation dst){
+            // Bugfix : to handle cases of late movies and time arithmetic issues that arise around
+            // midnight, here we "clock back" by 2 hours the times so that we have no problems.
+            // Other solution : using LocalDateTime instead of mere LocalTime ?
+            LocalTime srcEndTime = src.getEndTime().minus(Duration.ofMinutes(120));
+            LocalTime dstStartTime = dst.getStartTime().minus(Duration.ofMinutes(120));
+
             Duration travel = TheaterDistanceTravel.get(src.getTheater(), dst.getTheater());
-            return src.getEndTime().plus(travel).isBefore(dst.getStartTime());
+            return srcEndTime.plus(travel).isBefore(dstStartTime);
         }
     }
 

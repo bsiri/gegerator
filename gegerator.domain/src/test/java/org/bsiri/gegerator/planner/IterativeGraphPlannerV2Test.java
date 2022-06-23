@@ -122,6 +122,24 @@ public class IterativeGraphPlannerV2Test {
 
 
     /**
+     * BUG 1 : events starting at the same time don't precedes
+     * nor follows each other !
+     */
+    @Test
+    public void shouldNotPlanBothSessions(){
+        List<PlannerEvent> nodes = Arrays.asList(
+                event("movie 2 super", SUPER_SCORE, MOVIE_2, "ESPACE_LAC | THURSDAY | 22:00 | 23:48"),
+                event("movie 1 super", SUPER_SCORE, MOVIE_1, "PARADISO | THURSDAY | 22:00 | 23:30")
+        );
+        //Collections.shuffle(nodes);
+
+        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        List<PlannerEvent> best = graph.findBestRoadmap();
+
+        MatcherAssert.assertThat(best.size(), Matchers.equalTo(1));
+    }
+
+    /**
      * In this scenario :
      * - four movies are planned, four times (once for each score),
      * - plus a restaurant,
