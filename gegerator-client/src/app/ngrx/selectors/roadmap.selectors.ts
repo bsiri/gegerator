@@ -1,7 +1,9 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { EventRatings } from "src/app/models/plannable.model";
 import { FestivalRoadmap, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
+import { Mode } from "../appstate-models/mode.model";
 import { selectActivitieslist } from "./activity.selectors";
+import { selectMode } from "./mode.selectors";
 import { selectPlannedMovieSession } from "./session.selectors";
 
 
@@ -41,5 +43,15 @@ export const selectWizardRoadmap = createSelector(
             sessions.filter(session => wizardroadmapdata.sessionIds.includes(session.id)),
             activities.filter(act => wizardroadmapdata.activityIds.includes(act.id))
         )
+    }
+)
+
+
+export const selectActiveRoadmap = createSelector(
+    selectMode, 
+    selectUserRoadmap,
+    selectWizardRoadmap,
+    (mode, userRoadmap, wizardRoadmap) =>{
+        return (mode == Mode.MANUAL) ? userRoadmap : wizardRoadmap
     }
 )

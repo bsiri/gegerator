@@ -56,6 +56,7 @@ import { configurationReducer } from './ngrx/reducers/configuration.reducer';
 import { ConfigurationEffects } from './ngrx/effects/configuration.effects';
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 import { wizardroadmapReducer } from './ngrx/reducers/wizard-roadmap.reducer';
+import { modeReducer } from './ngrx/reducers/mode.reducers';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,13 @@ import { wizardroadmapReducer } from './ngrx/reducers/wizard-roadmap.reducer';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({movies: movieReducer, sessions: sessionReducer, activities: activityReducer, configuration: configurationReducer, wizardroadmap: wizardroadmapReducer}, {}),
+    StoreModule.forRoot({
+      movies: movieReducer, 
+      sessions: sessionReducer, 
+      activities: activityReducer, 
+      configuration: configurationReducer, 
+      wizardroadmap: wizardroadmapReducer, 
+      mode: modeReducer}, {}),
     EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects, AppStateEffects, ConfigurationEffects]),
     FormsModule,
     ReactiveFormsModule,

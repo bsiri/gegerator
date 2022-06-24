@@ -8,7 +8,7 @@ import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
-import { selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
+import { selectActiveRoadmap, selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 
 // A couple of interface
@@ -51,7 +51,7 @@ export class SummarypanelComponent implements OnInit, OnDestroy {
   roadmapSub!: Subscription
 
   constructor(private store: Store) {
-    this.roadmapSub = this.store.select(selectUserRoadmap).subscribe(rmap => this.roadmap = rmap)
+    this.roadmapSub = this.store.select(selectActiveRoadmap).subscribe(rmap => this.roadmap = rmap)
   }
 
   ngOnInit(): void {

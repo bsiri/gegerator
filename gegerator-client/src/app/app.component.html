@@ -11,8 +11,8 @@
                 <button mat-raised-button [matMenuTriggerFor]="mode" color="primary">Mode</button>
                 <mat-menu #mode>
                     <button mat-menu-item (click)="switchMode()" >
-                        <mat-label *ngIf="(mode$ | async) == Mode.MANUAL">Activer l'assistant</mat-label>
-                        <mat-label *ngIf="(mode$ | async) == Mode.WIZARD">Désactiver l'assistant</mat-label>
+                        <mat-label *ngIf="wizardmode == Mode.MANUAL">Activer l'assistant</mat-label>
+                        <mat-label *ngIf="wizardmode == Mode.WIZARD">Désactiver l'assistant</mat-label>
                     </button>
                     <button mat-menu-item (click)="openWizardConfiguration()">
                         Configurer l'assistant...

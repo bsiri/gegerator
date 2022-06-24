@@ -12,7 +12,7 @@ import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { Mode } from 'src/app/ngrx/appstate-models/mode.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
-import { selectUserRoadmap, selectWizardRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
+import { selectActiveRoadmap, selectUserRoadmap, selectWizardRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { ModeService } from 'src/app/services/mode.service';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
@@ -61,17 +61,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store, private modeService: ModeService, private dialog: MatDialog) {
     this.mode$ = this.modeService.mode$
-    const userRoadmap$ = this.store.select(selectUserRoadmap)
-    const wizardRoadmap$ = this.store.select(selectWizardRoadmap)
-    
-    this.subRoadmap = this.mode$.pipe(
-      combineLatestWith(userRoadmap$, wizardRoadmap$),
-      map(([mode, userrm, wizardrm]) => mode == Mode.MANUAL ? userrm : wizardrm)
-    ).subscribe(roadmap => this.roadmap = roadmap)
-      
-     /*
-    this.subRoadmap = userRoadmap$.subscribe(rm => this.roadmap = rm)
-    */
+    this.subRoadmap = this.store.select(selectActiveRoadmap).subscribe(rm => this.roadmap = rm)
   }
 
   ngOnInit(): void {
