@@ -50,10 +50,11 @@ la grille pour au moins une journée, et si possible plusieurs.
 Cela veux dire que les swimlane-items doivent être revus pour
 être plus compacts aussi.
 
-Elle présente des boutons "Créer Séance" et "Créer un événement"
-qui invoqueront les Dialogues de création idoines. Ces Dialogues 
-pourront aussi être appelés via une touche raccourcie, indiquée
-clairement sur les boutons.
+Elle présente aussi une barre d'utilitaires:
+- Boutons "Créer séances" et "Créer un événement"
+- Filtre pour mettre en évidence toutes les séances d'un même film
+  dans la grille.
+- Configuration et activation/désactivation de l'assistant.
 
 
 4. Dialogue Edition des Séances / Evenements.
@@ -96,6 +97,28 @@ Niveau UX :
 - Le raccourci pour Annuler est Echap.
 
 
-4. Page Résumé
+5. Filtre de films
 
-TODO : specs
+Le filtre pour afficher toutes les séances d'un même film est un 
+simple champ texte. Quand on saisit du texte, une recherche est 
+effectuée sur les titres (partial match, case insensitive).
+
+Les séances dont les films ne correspondent pas au critère seront 
+tout simplement masquées (invisibles).
+
+La touche Echap permet d'effacer rapidement le filtre.
+
+
+6. Page Résumé
+
+La page résumé devra indiquer synthétiquement:
+
+- Quels films sont planifiés, et à quelles séances
+- La roadmap.
+
+Elle présente également des boutons permettant permettant de
+choisir d'afficher ces informations soit pour la Roadmap
+utilisateur, soit la Roadmap suggérée par l'Assistant.
+
+Enfin, un bouton Exporter permet d'exporter au format texte 
+la Roadmap retenue.
