@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.bsiri.gegerator</groupId>
 	<artifactId>gegerator.server</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>1.0.0.PROTOTYPE</version>
 	<name>gegerator.server</name>
 	<description>Le serveur Gegerator</description>
 	<properties>
