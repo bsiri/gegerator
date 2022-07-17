@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
+import { UploadDialog } from './old-components/appstate/uploaddialog/uploaddialog.component';
 import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
 import { selectActiveRoadmap, selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
 import { ModeService } from './services/mode.service';
-import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
+import { ConfigDialog } from './old-components/configuration/configdialog/configdialog.component';
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';

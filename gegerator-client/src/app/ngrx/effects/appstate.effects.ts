@@ -3,7 +3,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { map, mergeMap, of, tap } from "rxjs";
-import { GenericPurposeDialog } from "src/app/components/genericpurposedialog/genericpurposedialog.component";
+import { GenericPurposeDialog } from "src/app/old-components/genericpurposedialog/genericpurposedialog.component";
 import { AppStateService } from "src/app/services/appstate.service";
 import { ActivityActions } from "../actions/activity.actions";
 import { AppStateActions } from "../actions/appstate.actions";

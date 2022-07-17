@@ -61,7 +61,7 @@ export class SessionDialog implements OnInit {
 
 
       // adding the filter logic for the autocomplete on movies
-      // see : https://material.angular.io/components/autocomplete/overview#adding-a-custom-filter
+      // see : https://material.angular.io/old-components/autocomplete/overview#adding-a-custom-filter
       this.filteredTitles = this.formGroup.get('title')!.valueChanges.pipe(
         startWith(''),
         map(value => {

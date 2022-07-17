@@ -5,7 +5,7 @@ import {
 
 import { catchError, EMPTY, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { GenericPurposeDialog } from '../components/genericpurposedialog/genericpurposedialog.component';
+import { GenericPurposeDialog } from '../old-components/genericpurposedialog/genericpurposedialog.component';
 
 
 const PRECONDITION_FAILED = 412
