@@ -1,0 +1,182 @@
+{
+  "wizardConfiguration" : {
+    "espaceLacRating" : "DEFAULT",
+    "casinoRating" : "DEFAULT",
+    "paradisoRating" : "DEFAULT",
+    "mclRating" : "DEFAULT",
+    "movieVsTheaterBias" : 0.5
+  },
+  "movies" : [ {
+    "id" : 3,
+    "title" : "Memory of water",
+    "duration" : "PT1H40M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 4,
+    "title" : "Zeria",
+    "duration" : "PT1H1M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 5,
+    "title" : "Watcher",
+    "duration" : "PT1H36M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 6,
+    "title" : "Nocebo",
+    "duration" : "PT1H36M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 7,
+    "title" : "Piaffe",
+    "duration" : "PT1H26M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 8,
+    "title" : "La Pietà",
+    "duration" : "PT1H24M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 9,
+    "title" : "Blood",
+    "duration" : "PT1H48M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 10,
+    "title" : "La Tour",
+    "duration" : "PT1H26M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 11,
+    "title" : "La Montagne",
+    "duration" : "PT1H55M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 12,
+    "title" : "Faux-semblants",
+    "duration" : "PT1H56M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 13,
+    "title" : "Night of the living dead",
+    "duration" : "PT1H36M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 14,
+    "title" : "The Host",
+    "duration" : "PT2H",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 15,
+    "title" : "Nos cérémonies",
+    "duration" : "PT1H44M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 16,
+    "title" : "Irati",
+    "duration" : "PT1H51M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 17,
+    "title" : "Tropique",
+    "duration" : "PT1H50M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 18,
+    "title" : "King on screen",
+    "duration" : "PT1H44M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 19,
+    "title" : "Lynch/Oz",
+    "duration" : "PT1H48M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 20,
+    "title" : "Communion Girl",
+    "duration" : "PT1H39M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 21,
+    "title" : "The elderly",
+    "duration" : "PT1H36M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 22,
+    "title" : "Venus",
+    "duration" : "PT1H40M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 23,
+    "title" : "Maurice le chat fabuleux",
+    "duration" : "PT1H33M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 24,
+    "title" : "Domingo et la brume",
+    "duration" : "PT1H32M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 25,
+    "title" : "Huesera",
+    "duration" : "PT1H33M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 26,
+    "title" : "En plein feu",
+    "duration" : "PT1H25M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 27,
+    "title" : "Project Wolf Hunting",
+    "duration" : "PT2H2M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 28,
+    "title" : "The price we pay",
+    "duration" : "PT1H25M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 29,
+    "title" : "Good night mommy",
+    "duration" : "PT1H39M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 30,
+    "title" : "Deux soeurs",
+    "duration" : "PT1H55M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 31,
+    "title" : "Us",
+    "duration" : "PT1H56M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 32,
+    "title" : "Trouble",
+    "duration" : "PT1H38M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 33,
+    "title" : "Bienvenu à Gattaca",
+    "duration" : "PT1H47M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 34,
+    "title" : "Holy Shit !",
+    "duration" : "PT1H30M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 35,
+    "title" : "Mad Heidi",
+    "duration" : "PT1H32M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 36,
+    "title" : "Meurtres sous contrôle",
+    "duration" : "PT1H31M",
+    "rating" : "DEFAULT"
+  } ],
+  "sessions" : [ ],
+  "activities" : [ ]
+}
