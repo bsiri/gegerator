@@ -31,7 +31,7 @@ public class PlannerBenchmark {
     private static int NB_SESSIONS = 96;
     private static int NB_ACTIVITIES = 3;
 
-    @State(Scope.Benchmark)
+    @State(Scope.Thread)
     public static class DatasetState{
         int nbsessions = NB_SESSIONS;
         int nbactivities = NB_ACTIVITIES;
@@ -45,7 +45,7 @@ public class PlannerBenchmark {
             this.nbactivities = nbactivities;
         }
 
-        @Setup()
+        @Setup(Level.Iteration)
         public void newEvents(){
             //this.events = Datasets.shuffledSmallDataset();
             this.events = Datasets.generateDatasetOf(nbsessions, nbactivities);
@@ -112,7 +112,6 @@ public class PlannerBenchmark {
     public static void main(String[] args) throws RuntimeException, RunnerException {
         Options opts = new OptionsBuilder()
                 .include(PlannerBenchmark.class.getSimpleName())
-                .include(VariousBenchmarks.class.getSimpleName())
                 .build();
         new Runner(opts).run();
     }

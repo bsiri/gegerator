@@ -1,6 +1,10 @@
 package org.bsiri.gegerator.benchmark;
 
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -309,6 +313,29 @@ public class VariousBenchmarks {
             IntStream intGen = IntStream.generate(() -> r.nextInt(10000));
             scores = intGen.limit(16).toArray();
         }
+    }
+
+    /*
+     * ============================== HOW TO RUN THIS TEST: ====================================
+     *
+     * Note JMH honors the default annotation settings. You can always override
+     * the defaults via the command line or API.
+     *
+     * You can run this test:
+     *
+     * a) Via the command line:
+     *    $ mvn clean install
+     *    $ java -jar target/microBenchmarks.jar VariousBenchmarks
+     *
+     * b) Via the Java API:
+     *    (see the JMH homepage for possible caveats when running from IDE:
+     *      http://openjdk.java.net/projects/code-tools/jmh/)
+     */
+    public static void main(String[] args) throws RuntimeException, RunnerException {
+        Options opts = new OptionsBuilder()
+                .include(VariousBenchmarks.class.getSimpleName())
+                .build();
+        new Runner(opts).run();
     }
 
 }
