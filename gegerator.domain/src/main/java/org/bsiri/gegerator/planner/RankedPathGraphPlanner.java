@@ -338,7 +338,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         long retrieveOrAssign(PlannerEvent evt){
             Long movieId = evt.getMovie();
             if (movieId == null){
-                movieId = Long.valueOf(-rnd.nextInt(1000)+1000);
+                movieId = Long.valueOf(rnd.nextInt(1000)-1500);
             }
             if (! movieBits.containsKey(movieId)){
                 movieBits.put(movieId, cursor);
