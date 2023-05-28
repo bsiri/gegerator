@@ -13,7 +13,7 @@ public class BlobPlanner implements WizardPlanner {
     Blobs blobs;
 
     public BlobPlanner(Collection<PlannerEvent> events){
-        Blobs blobs = Blobs.from(events);
+        blobs = Blobs.from(events);
     }
 
     @Override
