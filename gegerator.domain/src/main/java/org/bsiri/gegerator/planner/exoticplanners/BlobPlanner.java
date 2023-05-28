@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.planner.blobplanners;
+package org.bsiri.gegerator.planner.exoticplanners;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,12 +10,28 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This planner returns an approximation of the optimum, by taking a greedy approach.
+ * It is less accurate than RankedPathGraphPlanner, but much more (suspiciously even ?) faster.
+ *
+ * It works by having each movies competing for their timeslots (defined by the events in which
+ * they are planned), and in case of timeslot overlap the movie with best score gets to keep its timeslot.
+ * Evicted movies can then try another timeslot, which can lead to other conflicts etc. The solution
+ * is attained when no more conflicts occurs and the process stabilizes.
+ *
+ * The wording used in the implementation speaks of Blobs applying pressures on each others etc, but the
+ * core idea is the same.
+ *
+ * Use this planner if speed is absolutely required.
+ *
+ */
 public class BlobPlanner implements WizardPlanner {
 
     Blobs blobs;
 
     public BlobPlanner(Collection<PlannerEvent> events){
-        blobs = Blobs.from(events);
+        List<PlannerEvent> positiveScoreEvents = removeNegativeScore(events);
+        blobs = Blobs.from(positiveScoreEvents);
     }
 
     @Override
@@ -60,8 +76,7 @@ public class BlobPlanner implements WizardPlanner {
     }
 
     /**
-     * Will apply the pressures on the blobs (ie it is a mutating
-     * method).
+     * Compute the pressure applied to each Blob (note that they will be mutated).
      * Returns true if pressure was applied, or false if no pressure was applied.
      * @param blobarray
      * @return
@@ -104,6 +119,16 @@ public class BlobPlanner implements WizardPlanner {
         for (Blob b : array) b.resetPressure();
     }
 
+    /*
+     * This planner doesn't like negative scores, it makes it crash, so
+     * we need to remove them.
+     *
+     * @param events
+     * @return
+     */
+    List<PlannerEvent> removeNegativeScore(Collection<PlannerEvent> events){
+        return events.stream().filter(e -> e.getScore() >=0 ).collect(Collectors.toList());
+    }
 
     // **************** support classes ****************
 

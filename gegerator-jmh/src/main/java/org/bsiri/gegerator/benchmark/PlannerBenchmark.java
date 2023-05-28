@@ -2,6 +2,8 @@ package org.bsiri.gegerator.benchmark;
 
 
 import org.bsiri.gegerator.planner.*;
+import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
+import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -15,14 +17,15 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 
-@Warmup(iterations = 5, time = 10, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 10, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 3, time = 15)
+@Measurement(iterations = 3, time = 5)
 
 /*
 @Warmup(iterations = 2)
 @Measurement(iterations = 2)
 */
-@Fork(3)
+@Timeout(time =11)
+@Fork(1)
 public class PlannerBenchmark {
 
     private static int NB_SESSIONS = 96;
@@ -83,6 +86,11 @@ public class PlannerBenchmark {
     @Benchmark
     public List<PlannerEvent> benchRankedPathGraphPlanner(DatasetState state){
         return new RankedPathGraphPlanner(state.events).findBestRoadmap();
+    }
+
+    @Benchmark
+    public List<PlannerEvent> benchBlobPlanner(DatasetState state){
+        return new BlobPlanner(state.events).findBestRoadmap();
     }
 
     /*

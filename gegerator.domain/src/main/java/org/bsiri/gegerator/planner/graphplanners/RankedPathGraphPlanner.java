@@ -1,6 +1,8 @@
-package org.bsiri.gegerator.planner;
+package org.bsiri.gegerator.planner.graphplanners;
 
 import org.bsiri.gegerator.domain.TheaterDistanceTravel;
+import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.WizardPlanner;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -9,6 +11,18 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This planner returns an approximate optimum, sacrificing accuracy for speed.
+ * It should run fast enough for about 120 events, perhaps even more.
+ *
+ * It works using divide-and-conquer, by solving first an exact roadmap solution
+ * for each day separately, then trying to stitching them together. The stitching
+ * process however cannot guarantee that the result is the global optimum. Furthermore
+ * for technical reason, only the top 64 events (ranked by score) will be considered.
+ * The end result is usually not too shabby though.
+ *
+ * Choose this planner if you have many events in your grid.
+ */
 public class RankedPathGraphPlanner implements WizardPlanner {
 
     // this is not an arbitrary value : we want
@@ -91,6 +105,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         List<Path> saturdayPaths = saturdayGraph.evaluateAllPaths();
         List<Path> sundayPaths = sundayGraph.evaluateAllPaths();
 
+        //  stitching each roadmap together, trying to find the best one.
         Path bestPath = electBestPath(thursdayPaths, fridayPaths, saturdayPaths, sundayPaths);
 
         List<PlannerEvent> best = eventsBitmask.retrieveByMask(bestPath.allEventsMask)
@@ -169,7 +184,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
                 PlannerEvent src = nodes[iSrc].evt;
                 for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
                     PlannerEvent dst = nodes[iDst].evt;
-                    if (! isTransitionFeasible(src, dst)) continue;
+                    if (! src.isTransitionFeasible(dst)) continue;
                     adjacency[iSrc][iDst] = 1;
                 }
             }
@@ -191,6 +206,13 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         }
 
 
+        /*
+         * Evaluates all possible path and retuns all of them.
+         *
+         * The exploration of the adjacency matrix leverages the fact that nodes
+         * are sorted by start time (ie for i,j, if i < j then starttime(node(i)) < starttime(node(j)).
+         *
+         */
         List<Path> evaluateAllPaths(){
 
             List<Path>[] pathsByNodes = new List[nodes.length];
@@ -223,6 +245,12 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             return pruneUselessPaths(allpaths);
         }
 
+        /*
+         * Eliminates path that :
+         * - plan the same movie more than once (redundancy),
+         * - if multiple path are planning the same exact set of movies,
+         *   only keeps the one with the highest score.
+         */
         private List<Path> pruneUselessPaths(List<Path> paths){
             Map<Long, Path> bestPathByMoviePanel = new HashMap<>(paths.size());
 
@@ -238,26 +266,13 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             return new ArrayList<>(bestPathByMoviePanel.values());
         }
 
-        /**
-         * Test whether if the start time of event 'dst' is after the endtime of 'src',
-         * while also accounting for external factors such as travel time.
-         *
-         * @param src
-         * @param dst
-         * @return
-         */
-        private boolean isTransitionFeasible(TimeAndSpaceLocation src, TimeAndSpaceLocation dst){
-            // Bugfix : to handle cases of late movies and time arithmetic issues that arise around
-            // midnight, here we "clock back" by 2 hours the times so that we have no problems.
-            // Other solution : using LocalDateTime instead of mere LocalTime ?
-            LocalTime srcEndTime = src.getEndTime().minus(Duration.ofMinutes(120));
-            LocalTime dstStartTime = dst.getStartTime().minus(Duration.ofMinutes(120));
 
-            Duration travel = TheaterDistanceTravel.get(src.getTheater(), dst.getTheater());
-            return srcEndTime.plus(travel).isBefore(dstStartTime);
-        }
     }
 
+    /*
+     * Nodes in the graph represent their movie and event
+     * as a long, of which only one bit is '1'.
+     */
     private class Node{
         PlannerEvent evt;
         long movieBit = 0L;
@@ -271,14 +286,17 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             this.score = score;
         }
     }
-    
+
+    /*
+     * A Path keeps record of which events it is made of by storing
+     * all their eventBit in one long (ie, the result of ORing their
+     * event bit together). Same logic applies for movies.
+     */
     private static class Path{
         long allMoviesMask = 0L;
         long allEventsMask = 0L;
         long overallScore = 0L;
 
-        // necessary because streams sometimes
-        // are angry with direct field access
         public long getOverallScore() {
             return overallScore;
         }
@@ -330,6 +348,14 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
     }
 
+
+    /*
+     * This class will assign a single bit for each movies and also will keep tab
+     * of which movie corresponds to which bit (see Node).
+     *
+     * PlannerEvents of type OtherActivites have no movie, in that case a
+     * surrogate ID will be assigned.
+     */
     private static class MoviesBitmask{
         private Random rnd = new Random();
         private Map<Long, Long> movieBits = new HashMap<>(MAX_SIZE);
@@ -348,6 +374,9 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         }
     }
 
+    /*
+     * This class does the same than MoviesBitMask, but for events.
+     */
     private static class EventsBitmask{
         private Map<PlannerEvent, Long> eventBits = new HashMap<>(MAX_SIZE);
         private Map<Long, PlannerEvent> reverseMapping = new HashMap<>(MAX_SIZE);

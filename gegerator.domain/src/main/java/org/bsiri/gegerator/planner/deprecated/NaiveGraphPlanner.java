@@ -1,7 +1,9 @@
-package org.bsiri.gegerator.planner;
+package org.bsiri.gegerator.planner.deprecated;
 
 
 import org.bsiri.gegerator.domain.TheaterDistanceTravel;
+import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.WizardPlanner;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -85,34 +87,12 @@ public class NaiveGraphPlanner implements WizardPlanner {
             for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
                 PlannerEvent src = nodes[iSrc];
                 PlannerEvent dst = nodes[iDst];
-                if (! isTransitionFeasible(src, dst)) continue;
+                if (! src.isTransitionFeasible(dst)) continue;
                 adjacency[iSrc][iDst] = 1;
             }
         }
     }
 
-    /**
-     * Test whether if the start time of event 'dst' is after the endtime of 'src',
-     * while also accounting for external factors such as travel time.
-     *
-     * @param src
-     * @param dst
-     * @return
-     */
-    private boolean isTransitionFeasible(TimeAndSpaceLocation src, TimeAndSpaceLocation dst){
-        int dayDiff = src.getDay().compareTo(dst.getDay());
-        if (dayDiff != 0){
-            return (dayDiff < 0);
-        }
-        // Bugfix : to handle cases of late movies and time arithmetic issues that arise around
-        // midnight, here we "clock back" by 2 hours the times so that we have no problems.
-        // Other solution : using LocalDateTime instead of mere LocalTime ?
-        LocalTime srcEndTime = src.getEndTime().minus(Duration.ofMinutes(120));
-        LocalTime dstStartTime = dst.getStartTime().minus(Duration.ofMinutes(120));
-
-        Duration travel = TheaterDistanceTravel.get(src.getTheater(), dst.getTheater());
-        return srcEndTime.plus(travel).isBefore(dstStartTime);
-    }
 
     // ******************* Computation ************************
 

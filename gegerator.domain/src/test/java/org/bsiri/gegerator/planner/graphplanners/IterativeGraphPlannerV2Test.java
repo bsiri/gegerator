@@ -1,6 +1,10 @@
-package org.bsiri.gegerator.planner;
+package org.bsiri.gegerator.planner.graphplanners;
 
 
+import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.WizardPlanner;
+import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
+import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -12,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.bsiri.gegerator.planner.PlannerEventHelper.event;
 
-public class RankedPathGraphPlannerTest {
+public class IterativeGraphPlannerV2Test {
 
     static private Long NO_MOVIE = null;
     static private Long MOVIE_1 = 1L;
@@ -46,7 +50,7 @@ public class RankedPathGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("Movie 1 Super", "Movie 2 Super"));
@@ -68,7 +72,7 @@ public class RankedPathGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super session"));
@@ -94,7 +98,7 @@ public class RankedPathGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super movie", "average movie"));
@@ -114,11 +118,12 @@ public class RankedPathGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("best movie"));
     }
+
 
     /**
      * BUG 1 : events starting at the same time don't precedes
@@ -177,8 +182,10 @@ public class RankedPathGraphPlannerTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
+
+        System.out.println(((IterativeGraphPlannerV2)graph).countPaths());
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains(
                 "movie 2 super",

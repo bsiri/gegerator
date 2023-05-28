@@ -1,15 +1,19 @@
 package org.bsiri.gegerator.benchmark;
 
-import org.bsiri.gegerator.planner.IterativeGraphPlannerV2;
+import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
 import org.bsiri.gegerator.planner.PlannerEvent;
-import org.bsiri.gegerator.planner.RankedPathGraphPlanner;
+import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
+import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
 
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Scratchpad {
+
+    private static long getTotalScore(List<PlannerEvent> roadmap){
+        return roadmap.stream().map(PlannerEvent::getScore).reduce(0L, (acc, next) -> acc+next);
+    }
 
     private static final void comparePathCount(){
 
@@ -42,6 +46,19 @@ public class Scratchpad {
             System.out.println(String.format("%s, %s-%s : %s", evt.getDay(), evt.getStartTime(), evt.getEndTime(), theater));
         });
         System.out.println("total score : "+score);
+    }
+
+    private static void rankedPathVsBlobs(){
+        PlannerBenchmark.DatasetState state = new PlannerBenchmark.DatasetState(96, 3);
+        state.newEvents();
+
+        RankedPathGraphPlanner graph = new RankedPathGraphPlanner(state.events);
+        List<PlannerEvent> bestRankedPathRoadmap = graph.findBestRoadmap();
+        System.out.println("ranked path best score : "+getTotalScore(bestRankedPathRoadmap));
+
+        BlobPlanner blobs = new BlobPlanner(state.events);
+        List<PlannerEvent> bestBlobsRoadmap = blobs.findBestRoadmap();
+        System.out.println("blob best score : "+getTotalScore(bestBlobsRoadmap));
 
 
     }
@@ -57,7 +74,8 @@ public class Scratchpad {
     public static void main(String[] args) {
 //        comparePathCount();
 //        rankedstats();
-        samplebestpath();
+        //samplebestpath();
+        rankedPathVsBlobs();
     }
 
 }

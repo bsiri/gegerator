@@ -1,6 +1,10 @@
-package org.bsiri.gegerator.planner;
+package org.bsiri.gegerator.planner.deprecated;
 
 
+import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.WizardPlanner;
+import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
+import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;

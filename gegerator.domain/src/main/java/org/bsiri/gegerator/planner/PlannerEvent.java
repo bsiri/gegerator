@@ -19,12 +19,12 @@ public class PlannerEvent implements TimeAndSpaceLocation {
     private long score;
 
     /**
-     * Movie Id, may be null
+     * Movie Id (may be null if it represents an OtherActivity)
      */
     private Long movie;
 
     /**
-     * Theater, may be null
+     * Theater (may be null if represents an OtherActivity)
      */
     private Theater theater;
 

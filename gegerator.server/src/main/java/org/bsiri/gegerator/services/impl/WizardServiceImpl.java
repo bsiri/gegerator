@@ -5,6 +5,8 @@ import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
 import org.bsiri.gegerator.planner.*;
+import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
+import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.bsiri.gegerator.services.*;
 import org.bsiri.gegerator.services.events.MoviesChangedEvent;
 import org.bsiri.gegerator.services.events.OtherActivitiesChangedEvent;
@@ -23,7 +25,6 @@ import reactor.util.function.Tuples;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
