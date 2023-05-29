@@ -5,7 +5,6 @@ import org.bsiri.gegerator.planner.PlannerEvent;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -154,17 +153,22 @@ public class Datasets {
     }
 
     private static int randScore(){
-        return random.nextInt(100000)-50000;
+        //return random.nextInt(100000)-50000;
+        return random.nextInt(10000)+1;
     }
 
     private static boolean isConsistent(Collection<PlannerEvent> events, PlannerEvent candidateEvent){
         // we assume that the day and theater are all the same,
         // and we only focus on checking whether there is a conflict in times.
-        Optional<PlannerEvent> conflict = events.stream().filter(event -> overlap(event, candidateEvent) ).findAny();
+        Optional<PlannerEvent> conflict = events.stream().filter(event -> areInconsistent(event, candidateEvent) ).findAny();
         return ! conflict.isPresent();
     }
 
-    private static boolean overlap(PlannerEvent event1, PlannerEvent event2){
+    /*
+     * This method detects whether two events are inconsistent; ie if they happen
+     * at the same place and with overlapping timeslots.
+     */
+    private static boolean areInconsistent(PlannerEvent event1, PlannerEvent event2){
         // Not same day -> ok
         if (event1.getDay() != event2.getDay()){
             return false;
@@ -173,11 +177,11 @@ public class Datasets {
         if (event1.getTheater() != event2.getTheater()){
             return false;
         }
-        // time overlap ?
+        // time overlap ? one event must neatly happen before the other.
         boolean evt1BeforeEvt2 = event1.getEndTime().isBefore(event2.getStartTime());
-        boolean evt1AfterEvt2 = event1.getStartTime().isAfter(event2.getEndTime());
+        boolean evt2BeforeEvt1 = event2.getEndTime().isBefore(event1.getStartTime());
 
-        return ! (evt1BeforeEvt2 | evt1AfterEvt2);
+        return ! (evt1BeforeEvt2 || evt2BeforeEvt1);
 
     }
 

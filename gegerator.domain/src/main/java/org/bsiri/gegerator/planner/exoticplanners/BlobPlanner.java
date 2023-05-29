@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 /**
  * This planner returns an approximation of the optimum, by taking a greedy approach.
- * It is less accurate than RankedPathGraphPlanner, but much faster (about 1000 times, see jmh benchmarks).
+ * On average it is somewhat less accurate than RankedPathGraphPlanner (though beats it sometimes),
+ * but much faster (about 60 times, see jmh benchmarks).
  *
  * It works by having each movie competing for their timeslots (defined by the events in which
  * they are planned), and in case of timeslot overlap the movie with best score gets to keep its timeslot.
