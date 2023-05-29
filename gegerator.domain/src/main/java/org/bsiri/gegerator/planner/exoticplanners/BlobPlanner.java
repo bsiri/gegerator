@@ -3,6 +3,7 @@ package org.bsiri.gegerator.planner.exoticplanners;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.TimeAndSpaceLocation;
 import org.bsiri.gegerator.planner.WizardPlanner;
 
 import java.time.DayOfWeek;
@@ -12,22 +13,23 @@ import java.util.stream.Collectors;
 
 /**
  * This planner returns an approximation of the optimum, by taking a greedy approach.
- * It is less accurate than RankedPathGraphPlanner, but much more (suspiciously even ?) faster.
+ * It is less accurate than RankedPathGraphPlanner, but much faster (about 1000 times, see jmh benchmarks).
  *
- * It works by having each movies competing for their timeslots (defined by the events in which
+ * It works by having each movie competing for their timeslots (defined by the events in which
  * they are planned), and in case of timeslot overlap the movie with best score gets to keep its timeslot.
  * Evicted movies can then try another timeslot, which can lead to other conflicts etc. The solution
- * is attained when no more conflicts occurs and the process stabilizes.
+ * is reached when no more conflicts occurs and the process stabilizes. It will stabilize because evicted
+ * timeslots cannot be retried again so possibilities will exhaust eventually.
  *
  * The wording used in the implementation speaks of Blobs applying pressures on each others etc, but the
  * core idea is the same.
  *
- * Use this planner if speed is absolutely required.
+ * Use this planner if speed is absolutely required and near-optimum solution is enough.
  *
  */
 public class BlobPlanner implements WizardPlanner {
 
-    Blobs blobs;
+    private Blobs blobs;
 
     public BlobPlanner(Collection<PlannerEvent> events){
         List<PlannerEvent> positiveScoreEvents = removeNegativeScore(events);
@@ -76,7 +78,7 @@ public class BlobPlanner implements WizardPlanner {
     }
 
     /**
-     * Compute the pressure applied to each Blob (note that they will be mutated).
+     * Compute the pressure applied to each Blob (this is a mutating operation).
      * Returns true if pressure was applied, or false if no pressure was applied.
      * @param blobarray
      * @return
@@ -85,25 +87,31 @@ public class BlobPlanner implements WizardPlanner {
 
         boolean hadPressure = false;
 
+        // This loop takes advantages of the fact
+        // that blobs were sorted by start time :
+        // the closer in time, the closer in the array.
         for (int i=0; i<blobarray.length; i++){
             Blob b1 = blobarray[i];
-            for (int j=i+1; j<blobarray.length; j++){
-                Blob b2 = blobarray[j];
-                // detect conflict with immediate next blobs,
-                // since the blobs are sorted by starttime,
-                // we can shortcut the loop when no conflict is found
-                if (! blobs.areInConflict(b1, b2)) break;
 
+            // Detect conflict with immediate neighbors blobs,
+            // looping until a non-conflicting blob is
+            // encountered.
+            int next = i+1;
+            while (next < blobarray.length && blobs.areInConflict(b1, blobarray[next]))  {
+                Blob b2 = blobarray[next];
                 b1.applyPressure(b2.resistance);
                 b2.applyPressure(b1.resistance);
+                // record that pressure was applied at least once
+                // for this batch.
                 hadPressure = true;
+                next++;
             }
         }
 
         return hadPressure;
     }
 
-    int findMostPressuredBlob(Blob[] array){
+    private int findMostPressuredBlob(Blob[] array){
         int idx = -1;
         long maxPressure = Long.MIN_VALUE;
         for (int i=0; i<array.length; i++){
@@ -115,7 +123,7 @@ public class BlobPlanner implements WizardPlanner {
         return idx;
     }
 
-    void resetPressure(Blob[] array){
+    private void resetPressure(Blob[] array){
         for (Blob b : array) b.resetPressure();
     }
 
@@ -126,7 +134,7 @@ public class BlobPlanner implements WizardPlanner {
      * @param events
      * @return
      */
-    List<PlannerEvent> removeNegativeScore(Collection<PlannerEvent> events){
+    private List<PlannerEvent> removeNegativeScore(Collection<PlannerEvent> events){
         return events.stream().filter(e -> e.getScore() >=0 ).collect(Collectors.toList());
     }
 
@@ -136,11 +144,14 @@ public class BlobPlanner implements WizardPlanner {
 
 
         // Blobs are grouped by the movie ID.
-        // For each movies, blobs are sorted by resistance descending.
+        // For each movie, blobs are sorted by resistance descending.
         // Note that we use LinkedList, because we will often need to
         // remove the head of a given list.
         private Map<Long, LinkedList<Blob>> blobsByMovie;
 
+        // The conflict matrix describes which pairs of blobs are in conflict
+        // with each others. It is essentially a cache for the results of
+        // TimeAndSpaceLocation.overlap().
         private boolean[][] conflict;
 
         private Blobs(Collection<Blob> blobs){
@@ -177,8 +188,9 @@ public class BlobPlanner implements WizardPlanner {
 
             for (Blob from: blobs){
                 for (Blob to: blobs){
-                    if (! from.event.isTransitionFeasible(to.event)){
-                        conflict[from.blobId][to.blobId] = true;
+                    if (TimeAndSpaceLocation.overlap(from.event, to.event)){
+                        conflict[from.blobId][to.blobId]=true;
+                        conflict[to.blobId][from.blobId]=true;
                     }
                 }
             }
