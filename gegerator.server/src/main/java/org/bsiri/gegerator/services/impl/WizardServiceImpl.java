@@ -189,6 +189,8 @@ public class WizardServiceImpl implements WizardService {
         private void prepareMoviesFlux(){
             moviesFlux = movieEvtFlux.asFlux()
                     .sample(THROTTLE)
+                    // using findAllPlannedInSession() results in a bug here, do not use; you have been warned.
+                    // See comment in commit a8b0b5a940f1
                     //.flatMap( evt -> movieService.findAllPlannedInSession().collectList() );
                     .flatMap( evt -> movieService.findAll().collectList() );
         }
