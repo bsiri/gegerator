@@ -189,7 +189,8 @@ public class WizardServiceImpl implements WizardService {
         private void prepareMoviesFlux(){
             moviesFlux = movieEvtFlux.asFlux()
                     .sample(THROTTLE)
-                    .flatMap( evt -> movieService.findAllPlannedInSession().collectList() );
+                    //.flatMap( evt -> movieService.findAllPlannedInSession().collectList() );
+                    .flatMap( evt -> movieService.findAll().collectList() );
         }
 
         private void prepareSessionFlux(){

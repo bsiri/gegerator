@@ -91,7 +91,8 @@ public class ModelChangeDetectorTests {
         List<Movie> moviesBurst2 = Arrays.asList();
         List<Movie> moviesBurst3 = Arrays.asList(decapitron());
 
-        when(movieService.findAllPlannedInSession()).thenReturn(
+        //when(movieService.findAllPlannedInSession()).thenReturn(
+        when(movieService.findAll()).thenReturn(
             Flux.fromIterable(moviesBurst1),
             Flux.fromIterable(moviesBurst2),
             Flux.fromIterable(moviesBurst3),
