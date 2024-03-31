@@ -26,6 +26,11 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
-## Run while serving the actual backend
+## Run the proxy server 
 
 `npm run startproxy`
+(Note that gegerator.server should also be running in order to have data served as well)
+
+## Cleanup
+
+`npm run clean:dist`
