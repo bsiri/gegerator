@@ -40,7 +40,10 @@ public class WizardServiceImpl implements WizardService {
     private Scoring scoring;
     private ModelChangeDetector changeDetector;
 
-    private Sinks.Many<List<PlannableEvent>> roadmapFlux = Sinks.many().multicast().onBackpressureBuffer();
+    //private Sinks.Many<List<PlannableEvent>> roadmapFlux = Sinks.many().multicast().onBackpressureBuffer();
+
+    // initialized in the postconstruct
+    private Flux<List<PlannableEvent>> roadmapFlux = null;
 
     public WizardServiceImpl(@Autowired Scoring scoring,
                              @Autowired ModelChangeDetector changeDetector) {
@@ -50,23 +53,20 @@ public class WizardServiceImpl implements WizardService {
 
     @PostConstruct
     public void initRoadmapFlux(){
-        Flux.combineLatest(
+        this.roadmapFlux = Flux.combineLatest(
                 changeDetector.wizconfFlux,
                 changeDetector.moviesFlux,
                 changeDetector.sessionsFlux,
                 changeDetector.activitiesFlux,
                 this::toTuple)
-                .publishOn(Schedulers.parallel())
                 .sample(THROTTLE_TIME)  // Limit rate in case inputs are raining
+                .publishOn(Schedulers.parallel())
                 .map(tuple -> toEventNodes(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()))
                 .map(this::findBestRoadmap)
-                //.onErrorReturn(new ArrayList<>())
                 .log()
-                .subscribe(
-                        roadmapFlux::tryEmitNext,
-                        this::logError,
-                        () -> System.out.println("damnit I completed !")
-                );
+                .cache(1)
+                .onErrorContinue((ex, whatever) -> {this.logError(ex);})
+                .doOnComplete(() -> System.out.println("Damnit I completed !"));
     }
 
     private void logError(Throwable error){
@@ -76,7 +76,7 @@ public class WizardServiceImpl implements WizardService {
 
     @Override
     public Flux<List<PlannableEvent>> streamBestRoadmap() {
-        return roadmapFlux.asFlux();
+        return roadmapFlux;
     }
 
 
