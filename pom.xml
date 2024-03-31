@@ -20,6 +20,7 @@
 
     <modules>
         <module>gegerator.domain</module>
+        <module>gegerator-client</module>
         <module>gegerator.server</module>
     </modules>
 

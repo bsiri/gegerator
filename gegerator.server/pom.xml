@@ -42,6 +42,15 @@
 			<version>${version}</version>
 		</dependency>
 		<!-- =====================
+		Front end
+		====================== -->
+		<dependency>
+			<groupId>org.bsiri</groupId>
+			<artifactId>gegerator.client</artifactId>
+			<version>${version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- =====================
 		Persistence
 		====================== -->
 		<dependency>
