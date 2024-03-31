@@ -33,6 +33,8 @@ the various parts can/should be run separately.
 `npm run build` will build the webapp.
 about the front:
 * do remember to delete 'dist' when generating a clean distro (TODO: maven should do it)
+* if the ng proxy server (webpack) cannot find the backend, check proxy.conf.json to see if
+  the path aligns with application.yaml webflux base-path
 
 ### How do I run it ?
 

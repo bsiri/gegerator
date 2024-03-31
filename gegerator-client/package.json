@@ -7,7 +7,8 @@
     "startproxy": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "clean:dist": "rm -rf dist"
   },
   "private": true,
   "dependencies": {

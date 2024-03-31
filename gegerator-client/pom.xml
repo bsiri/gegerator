@@ -24,6 +24,7 @@
       </resources>
 
       <plugins>
+
         <plugin>
           <groupId>com.github.eirslett</groupId>
           <artifactId>frontend-maven-plugin</artifactId>
@@ -45,6 +46,16 @@
               <goals>
                 <goal>npm</goal>
               </goals>
+            </execution>
+            <execution>
+              <id>clean dist</id>
+              <phase>clean</phase>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <arguments>run clean:dist</arguments>
+              </configuration>
             </execution>
             <execution>
               <id>npm run build</id>

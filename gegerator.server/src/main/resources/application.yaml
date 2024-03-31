@@ -5,7 +5,7 @@ spring:
   h2:
     console.enabled: true
 
-  # webflux:
+  #webflux:
   #  base-path: /gegerator
 
 
