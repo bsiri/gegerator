@@ -15,13 +15,15 @@ import java.io.IOException;
 public class GegeratorConfig {
 
     /*
+    Note:
+        At the moment the application use no contextpath (ie, spring.webflux.base-path is '/').
+        It works because the frontend looks for its assets (img, js etc) at '/' too. However that behavior
+        is hardcoded. If we introduce a context path, the UI will break.
 
-    TODO: http://[...]/gegerator/index.html serves the page just fine... but
-    the web assets are not taking care of the contextPath (the /gegerator)
-    So maybe the solution is to configure this thing.
-
-    Alternately see if we can serve the angular app with the base-href configured
-    as the contextPath
+        A solution to this could be to configure the resource handler and make it so that
+        every request for css, js, img etc will be looked for in the classpath:/static location,
+        regardless to the actual request path. It is probably much simpler than fixing the error
+        on the client side.
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

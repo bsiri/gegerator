@@ -1,9 +1,19 @@
+# Profile for development
+
 spring:
   r2dbc:
     name: gegerator
 
+  # TODO: this doesn't work unfortunately
+  #datasource:
+  #  data: data-test.sql
+
+
+  # TODO: this does not work either !
   #h2:
   #  console.enabled: true
+
+
   #webflux:
   #  base-path: /gegerator
 

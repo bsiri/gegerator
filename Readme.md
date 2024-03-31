@@ -8,6 +8,8 @@ TODO: also read https://www.baeldung.com/spring-webflux-static-content
 
 ### Any release yet ?
 
+There is a 1.0.1.RELEASE
+
 No, and probably the tip of master branch is not stable. However a functional version 
 can be run if you revert to version `git checkout 1.0.0.PROTOTYPE`. See below 
 in the `Development` section for instructions about how to run it.
@@ -26,6 +28,12 @@ npm version: 8.1.0
 
 These instruction apply for development, where a fully standalone distro is not required and 
 the various parts can/should be run separately.
+
+### known bugs
+
+* Sometimes, the wizard does not work and the console displays: `Error with the wizard roadmap sse : [object Event]`
+==> the server refused the connection because the f* I know. The solution is to close the browser, 
+    kill the app, and try again .
 
 ### How do I build ?
 
