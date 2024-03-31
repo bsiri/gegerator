@@ -13,7 +13,11 @@ import java.lang.annotation.Target;
  *
  * Debug note: that annotation is processed by an aspect,
  * see {@link SqlDatasetProcessorAspect}. Remember this
- * if the stacktrace seems to make no sense.
+ * if a stacktrace seems to make no sense.
+ *
+ * Inspired by Spring's @Sql annotation, but that one
+ * works only for regular jdbc apps (doesn't work with
+ * r2dbc)
  *
  */
 @Target(ElementType.METHOD)

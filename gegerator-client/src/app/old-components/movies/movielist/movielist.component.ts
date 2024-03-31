@@ -15,12 +15,12 @@ import { MovieDialog } from '../moviedialog/moviedialog.component';
 })
 export class MovielistComponent implements OnInit {
 
-  // sort logic: consists of a flag, and of a subject 
+  // sort logic: consists of a flag, and of a subject
   sorted = false
   sortedsubject = new BehaviorSubject<boolean>(false)
 
-  // the movie filter in the template 
-  // will be fed into this subject. 
+  // the movie filter in the template
+  // will be fed into this subject.
   filtersubject = new BehaviorSubject<string>('')
 
   // the final model is the combination of the original model
@@ -30,9 +30,9 @@ export class MovielistComponent implements OnInit {
     map(([allMovies, filterString, isSorted]) => {
       let finalMovies = allMovies.slice()
 
-      finalMovies = allMovies.filter(m => 
-                  m.title.toLowerCase().includes(filterString
-                ));
+      finalMovies = allMovies.filter(m =>
+                    m.title.toLowerCase().includes(filterString.toLowerCase() )
+                  );
 
       if (isSorted){
         finalMovies = finalMovies.sort(
@@ -59,7 +59,7 @@ export class MovielistComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
   }
 
   filterMovies(evt: any): void {

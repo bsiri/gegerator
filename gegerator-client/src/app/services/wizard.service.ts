@@ -25,18 +25,31 @@ export class WizardService {
     private _zone: NgZone,
     private store: Store
   ){
-    this.source = new EventSource(wizardroadmapUrl)
-    this.source.onmessage = (msg) => {
+    this.source = this.initEventSource()
+  }
+
+  initEventSource(){
+    const source = new EventSource(wizardroadmapUrl)
+    source.onopen = () => { console.log('SSE socket connected') }
+    source.onmessage = (msg) => {
       const rdata = toRoadmapData(JSON.parse(msg.data))
       this._zone.run(() => {
         this.store.dispatch(WizardRoadmapActions.wizardroadmap_reloaded(rdata))
       })
     }
-    this.source.onerror = (msg) => {
+
+    // on error, log and retry a few moments later
+    source.onerror = (msg) => {
+      this.source.close()
       this._zone.run(() => {
-          console.log(`Error with the wizard roadmap sse : ${msg}`)
+          console.log(`Error with SSE socket (${msg}). Retrying ...`)
       })
+      setTimeout(() => {
+        this.source = this.initEventSource()
+      }, 10000)
     }
+
+    return source
   }
 }
 
