@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { WizardConfiguration, WizardConfigurationJSON } from '../ngrx/appstate-models/wizardconfiguration.model';
 
-const wizconfUrl = "/gegerator/configuration/wizard"
+const wizconfUrl = "./api/configuration/wizard"
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ const wizconfUrl = "/gegerator/configuration/wizard"
 export class ConfigurationService {
 
   constructor(private http: HttpClient) { }
-  
+
   getWizardConfiguration(): Observable<WizardConfiguration>{
     return this.http.get<WizardConfigurationJSON>(wizconfUrl)
     .pipe(

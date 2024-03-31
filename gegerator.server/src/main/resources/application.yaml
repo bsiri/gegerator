@@ -5,8 +5,8 @@ spring:
   h2:
     console.enabled: true
 
-  webflux:
-    base-path: /gegerator
+  # webflux:
+  #  base-path: /gegerator
 
 
 scoring:

@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 
 @RestController("configuration-controller")
-@RequestMapping(path = "/configuration", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/configuration", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ConfigurationController {
 
     private ConfigurationService service;

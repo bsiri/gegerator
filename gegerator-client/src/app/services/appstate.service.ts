@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
 import { AppState, AppStateJSON } from '../ngrx/appstate-models/app.state';
 
-const stateUrl = '/gegerator/app-state'
+const stateUrl = './api/app-state'
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppStateService {
-  
+
   constructor(private http: HttpClient) { }
 
   upload(file: File): Observable<AppState>{

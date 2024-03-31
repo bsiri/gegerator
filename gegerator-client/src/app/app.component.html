@@ -6,7 +6,7 @@
             <div id="app-buttonbar">
                 <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
                 <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
-                
+
                 <!-- Mode -->
                 <button mat-raised-button [matMenuTriggerFor]="mode" color="primary">Mode</button>
                 <mat-menu #mode>
@@ -33,30 +33,30 @@
                 </button>
 
                 <mat-menu #saveLoadMenu>
-                    <div><a mat-menu-item href="/gegerator/app-state?format=file">Sauver</a></div>
+                    <div><a mat-menu-item href="./api/app-state?format=file">Sauver</a></div>
                     <button mat-menu-item (click)="uploadAppState()">Charger</button>
                 </mat-menu>
             </div>
         </div>
     </div>
 
-    <mat-sidenav-container id="app-content" hasBackdrop="false">        
-        <mat-sidenav id="app-movie" 
-            #appmovie 
+    <mat-sidenav-container id="app-content" hasBackdrop="false">
+        <mat-sidenav id="app-movie"
+            #appmovie
             disableClose="true">
             <app-movielist></app-movielist>
         </mat-sidenav>
 
         <mat-sidenav-content>
             <app-session-section></app-session-section>
-        </mat-sidenav-content>  
+        </mat-sidenav-content>
 
-        <mat-sidenav id="app-summary" 
-            #appsummary 
+        <mat-sidenav id="app-summary"
+            #appsummary
             position="end"
             disableClose="true">
             <app-summarypanel></app-summarypanel>
-        </mat-sidenav>      
+        </mat-sidenav>
     </mat-sidenav-container>
 
 </div>

@@ -31,7 +31,7 @@ public class MovieControllerTest {
     public void shouldCreateMovie(){
         Movie carnosaur = movie(null, "Carnosaur", "PT1H29M", MovieRating.NEVER);
 
-        client.post().uri("/movies")
+        client.post().uri("/api/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(carnosaur))
                 .exchange()
@@ -47,7 +47,7 @@ public class MovieControllerTest {
 
         when(service.save(carnosaur)).thenReturn(Mono.error(new DuplicateNameException("Carnosaur")));
 
-        client.post().uri("/movies")
+        client.post().uri("/api/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(carnosaur))
                 .exchange()
@@ -68,7 +68,7 @@ public class MovieControllerTest {
 
         when(service.findById(flyId)).thenReturn(Mono.just(theFly));
 
-        client.get().uri("/movies/"+flyId)
+        client.get().uri("/api/movies/"+flyId)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()

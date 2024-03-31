@@ -30,7 +30,9 @@ the various parts can/should be run separately.
 ### How do I build ?
 
 `mvn clean install` will build the backend server.
-`npm build` will build the webapp. 
+`npm run build` will build the webapp.
+about the front:
+* do remember to delete 'dist' when generating a clean distro (TODO: maven should do it)
 
 ### How do I run it ?
 

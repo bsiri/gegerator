@@ -6,7 +6,7 @@ import { Days, Theaters } from '../models/referential.data';
 import { MovieSession, MovieSessionJSON } from '../models/session.model';
 import { Times } from '../models/time.utils';
 
-const sessionsUrl = "/gegerator/movie-sessions"
+const sessionsUrl = "./api/movie-sessions"
 
 @Injectable({
   providedIn: 'root'

@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController("movies-controller")
-@RequestMapping(path = "/movies", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
     private MovieService service;

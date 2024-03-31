@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 
 @RestController("otheractivities-controller")
-@RequestMapping(path = "/other-activities", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/other-activities", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OtherActivityController {
 
     private OtherActivityService service;

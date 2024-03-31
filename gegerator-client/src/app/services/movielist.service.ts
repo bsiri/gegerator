@@ -5,7 +5,7 @@ import { Movie, MovieJSON } from '../models/movie.model';
 import { Durations } from '../models/time.utils';
 
 
-const moviesUrl = "/gegerator/movies"
+const moviesUrl = "./api/movies"
 
 
 @Injectable({

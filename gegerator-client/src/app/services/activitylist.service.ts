@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { OtherActivity, OtherActivityJSON } from '../models/activity.model';
 
-const activitiesUrl = '/gegerator/other-activities'
+const activitiesUrl = './api/other-activities'
 
 @Injectable({
   providedIn: 'root'

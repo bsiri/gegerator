@@ -21,7 +21,7 @@ import java.io.*;
 
 
 @RestController("appstate-controller")
-@RequestMapping(path = "/app-state")
+@RequestMapping(path = "/api/app-state")
 public class AppStateController {
 
     private ObjectMapper objectMapper;

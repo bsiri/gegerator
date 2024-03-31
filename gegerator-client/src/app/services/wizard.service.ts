@@ -7,11 +7,11 @@ import { FestivalRoadmap, RoadmapData } from '../models/roadmap.model';
 import { MovieSessionJSON } from '../models/session.model';
 import { WizardRoadmapActions } from '../ngrx/actions/wizard-roadmap.actions';
 
-const wizardroadmapUrl = "/gegerator/wizard/roadmap"
+const wizardroadmapUrl = "./api/wizard/roadmap"
 
 /*
-  Sorry, here the code is dirty. 
-  NGRX imposes that selectors 
+  Sorry, here the code is dirty.
+  NGRX imposes that selectors
 */
 @Injectable({
   providedIn: 'root'
@@ -49,4 +49,4 @@ function toRoadmapData(data: Array<any>): RoadmapData{
 
 function isMovieSession(obj: any): obj is MovieSessionJSON{
   return 'movieId' in obj
-} 
+}

@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 @RestController
-@RequestMapping("/wizard")
+@RequestMapping("/api/wizard")
 public class WizardController {
 
     private WizardService wizardService;
