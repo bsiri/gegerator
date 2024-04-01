@@ -7,11 +7,16 @@ can quickly set you up with:
 ```bash
 git checkout 1.0.1-RELEASE
 mvn clean install
-cd gegerator.server
-java -jar target/gegerator.server-1.0.1-RELEASE.jar
+java -jar gegerator.server/target/gegerator.server-1.0.1-RELEASE.jar
 ```
 
 The app will be served at `http://localhost:8080`
+
+You can also build and run as a docker image, see "Create a distribution". The image 
+can be run as :
+```bash
+docker run --rm --name gegerator -p 8080:8080 bsiri/gegerator:1.0.1-RELEASE
+```
 
 ### Tooling version ?
 Java 11 recommended, should run on Java 8
@@ -108,4 +113,9 @@ Just run `mvn clean install` from the umbrella project, and go pick the main jar
 in gegerator.server/target
 
 ### Docker image
-TODO (docker file and documentation)
+First it requires the maven build so that gegerator.server jar exists. Then:
+```bash
+cd gegerator.server
+docker build . --build-arg="BUILD_VERSION=<version>" -t bsiri/gegerator:<version>
+```
+You can find the version in the parent pom, or in the name of the jars.
