@@ -2,12 +2,12 @@ Readme
 ---------
 Gegerator, a tool for planning as much events as possible at the Gerardmer movies festival.
 
-Latest is 1.0.1-RELEASE. Assuming you have Java and Maven ready (see below), you 
+Latest is 1.1.0-RELEASE. Assuming you have Java and Maven ready (see below), you 
 can quickly set you up with:
 ```bash
-git checkout 1.0.1-RELEASE
+git checkout 1.1.0-RELEASE
 mvn clean install
-java -jar gegerator.server/target/gegerator.server-1.0.1-RELEASE.jar
+java -jar gegerator.server/target/gegerator.server-1.1.0-RELEASE.jar
 ```
 
 The app will be served at `http://localhost:8080`
