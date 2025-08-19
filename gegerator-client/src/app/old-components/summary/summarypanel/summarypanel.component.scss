@@ -6,10 +6,11 @@
     height: 100%;
     background-color: $tertiary-pane-color;
     display: flex;
-    
+
     .pane{
         display:flex;
         flex-direction: column;
+        height: 100%;
     }
 
 
@@ -19,7 +20,7 @@
         padding: $small-gap 0;
         background-color: $secondary-pane-color;
     }
-    
+
     .pane-content{
         flex: 1;
         background-color: $tertiary-pane-color;
