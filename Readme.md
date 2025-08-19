@@ -15,7 +15,7 @@ The app will be served at `http://localhost:8080`
 You can also build and run as a docker image, see "Create a distribution". The image 
 can be run as :
 ```bash
-docker run --rm --name gegerator -p 8080:8080 bsiri/gegerator:1.0.1-RELEASE
+docker run --rm --name gegerator -p 8080:8080 bsiri/gegerator:1.1.0-RELEASE
 ```
 
 ### Tooling version ?
