@@ -32,8 +32,8 @@ public class OtherActivity implements RatableEvent, PlannableEvent{
 
     public void setDay(DayOfWeek day){
         // only days from thursday to sunday are allowed
-        if (day.getValue() < DayOfWeek.THURSDAY.getValue()){
-            throw new IllegalArgumentException("Days allowed are from THURSDAY to SUNDAY inclusive, but got : "+day.name());
+        if (day.getValue() < DayOfWeek.WEDNESDAY.getValue()){
+            throw new IllegalArgumentException("Days allowed are from WEDNESDAY to SUNDAY inclusive, but got : "+day.name());
         }
         this.day = day;
     }

@@ -13,14 +13,17 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 })
 export class Activitydialog implements OnInit {
 
-  // note: the ID is never modified by this form, 
+  // note: the ID is never modified by this form,
   // however we must remember it because enventually
-  // we will need to re-emit a Session with 
+  // we will need to re-emit a Session with
   // updated data on it
   id: number;
   formGroup!: FormGroup;
   sessionDayBoundaries = SESSION_DAY_BOUNDARIES
 
+  // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
+  // is an existing instance of an Activity, or a shim for a new Activity.
+  mode: string;
 
   // Form referential data
   Days = Days
@@ -28,7 +31,8 @@ export class Activitydialog implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<Activitydialog>,
     @Inject(MAT_DIALOG_DATA) activity: OtherActivity
-  ) { 
+  ) {
+    this.mode = (activity.id === undefined) ? 'create' : 'update'
     this.id = activity.id
 
     const strStartTime = Times.toString(activity.startTime)
@@ -38,10 +42,10 @@ export class Activitydialog implements OnInit {
       day: new FormControl(activity.day, [Validators.required]),
       description: new FormControl(activity.description, [Validators.required]),
       startTime: new FormControl(strStartTime, [
-        Validators.required, this.validateTime 
+        Validators.required, this.validateTime
       ]),
       endTime: new FormControl(strEndTime, [
-        Validators.required, this.validateTime 
+        Validators.required, this.validateTime
       ])
     })
 
@@ -53,6 +57,9 @@ export class Activitydialog implements OnInit {
   }
 
   confirm(): void{
+    if (this.formGroup.invalid){
+      return;
+    }
     const activity = this.toOtherActivity();
     this.dialogRef.close(activity);
   }
@@ -82,7 +89,7 @@ export class Activitydialog implements OnInit {
         const invalidStart = this.validateTime(controls.get('startTime')!)
         const invalidEnd = this.validateTime(controls.get('endTime')!)
 
-        // no point in checking the validity of the period if 
+        // no point in checking the validity of the period if
         // one of them is already incorrect
         if (invalidStart || invalidEnd){
           return null
@@ -110,13 +117,13 @@ export class Activitydialog implements OnInit {
 
 
   toOtherActivity(): OtherActivity{
-    const [day, description, strStartTime, strEndTime] = 
+    const [day, description, strStartTime, strEndTime] =
       ['day', 'description', 'startTime', 'endTime'].map(field => this._getFGValue(field))
     return new OtherActivity(
       this.id,
-      day, 
+      day,
       Times.fromString(strStartTime),
-      Times.fromString(strEndTime), 
+      Times.fromString(strEndTime),
       description
     )
   }

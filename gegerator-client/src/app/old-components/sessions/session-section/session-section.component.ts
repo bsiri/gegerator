@@ -142,6 +142,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
           newactivity.description
         )
         this.store.dispatch(ActivityActions.create_activity({activity}))
+        this.openNewActivity(newactivity.day)
       }
     })
   }
