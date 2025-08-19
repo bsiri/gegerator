@@ -2,18 +2,18 @@
 
 /*
     Theater : the instances of Theater in Gerardmer.
-    They should match the Theater class 
+    They should match the Theater class
     from the java model.
 
-    Could have been enums, but they prove difficult to 
-    work with in Angular templates, and I found using 
+    Could have been enums, but they prove difficult to
+    work with in Angular templates, and I found using
     this construct to be easier to manage.
 */
 
 import { Comparable } from "./comparable.interface";
 
 export interface Theater{
-    key: string, 
+    key: string,
     name: string
 }
 
@@ -43,7 +43,7 @@ export class Theaters{
 export class Day implements Comparable<Day>{
     constructor(
     public key: string,
-    public rank: number, 
+    public rank: number,
     public name: string
     ){}
 
@@ -53,13 +53,14 @@ export class Day implements Comparable<Day>{
 }
 
 export class Days{
-    static THURSDAY = new Day("THURSDAY", 0, "Jeudi");
-    static FRIDAY = new Day("FRIDAY", 1, "Vendredi");
-    static SATURDAY = new Day("SATURDAY", 2, "Samedi");
-    static SUNDAY = new Day("SUNDAY", 3, "Dimanche");
+    static WEDNESDAY = new Day("WEDNESDAY", 0, "Mercredi");
+    static THURSDAY = new Day("THURSDAY", 1, "Jeudi");
+    static FRIDAY = new Day("FRIDAY", 2, "Vendredi");
+    static SATURDAY = new Day("SATURDAY", 3, "Samedi");
+    static SUNDAY = new Day("SUNDAY", 4, "Dimanche");
 
     static enumerate(): readonly Day[]{
-        return [this.THURSDAY, this.FRIDAY, this.SATURDAY, this.SUNDAY];
+        return [this.WEDNESDAY, this.THURSDAY, this.FRIDAY, this.SATURDAY, this.SUNDAY];
     }
 
     static fromKey(key: string): Day{
