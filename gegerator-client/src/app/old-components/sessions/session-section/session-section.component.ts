@@ -38,7 +38,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
     A session row height
   */
   rowHeightInPixel: string = ''+SESSION_DAY_BOUNDARIES.sessionDayInPixel()+'px'
-  
+
 
   /*
     The proper model now
@@ -49,8 +49,8 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
   /*
     Note: here we subscribe directly and assign the roadmap by subscription
     It is so because we need to inject it in each and every PlannedMovieSession.
-    Doing so with an observable would lead to as many subscription wich would 
-    be very short lived. 
+    Doing so with an observable would lead to as many subscription wich would
+    be very short lived.
 
     So we subscribe here once instead.
   */
@@ -87,7 +87,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(SessionDialog, {
       autoFocus: 'first-tabbable',
       data: {
-        id: undefined, 
+        id: undefined,
         movie: undefined,
         theater: theater,
         day: day,
@@ -97,6 +97,15 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(newsession => {
       if (!!newsession){
+        /*
+          if a MovieSession model has been created:
+          - create it
+          - then reopen a new dialog for chain creation
+
+          Note to myself: calling again "openNewSession" in this block of code
+          is actually not a recursive call, because this is within a callback handler
+          and does not run in the same scope as the enclosing "openNewSession" execution.
+        */
         const movieSession = new MovieSession(
           newsession.id,
           newsession.movie.id,
@@ -106,6 +115,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
           EventRatings.DEFAULT
         )
         this.store.dispatch(SessionActions.create_session({session: movieSession}))
+        this.openNewSession(newsession.day, newsession.theater)
       }
     })
   }
@@ -114,7 +124,7 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(Activitydialog, {
       autoFocus: 'first-tabbable',
       data: {
-        id: undefined, 
+        id: undefined,
         day: day,
         startTime: undefined,
         endTime: undefined,
@@ -125,14 +135,14 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(newactivity => {
       if (!!newactivity){
         const activity = new OtherActivity(
-          newactivity.id, 
+          newactivity.id,
           newactivity.day,
-          newactivity.startTime, 
+          newactivity.startTime,
           newactivity.endTime,
           newactivity.description
         )
         this.store.dispatch(ActivityActions.create_activity({activity}))
       }
-    })  
+    })
   }
 }

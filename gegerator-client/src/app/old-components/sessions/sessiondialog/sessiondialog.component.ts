@@ -18,19 +18,22 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 })
 export class SessionDialog implements OnInit {
 
-  // note: these attributes are never modified by this form, 
+  // note: these attributes are never modified by this form,
   // however we must remember it because enventually
-  // we will need to re-emit a Session with 
+  // we will need to re-emit a Session with
   // updated data on it
   id: number;
   rating: EventRating
   formGroup!: FormGroup;
 
+  // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
+  // is an existing instance of a MovieSession, or a shim for a new MovieSession
+  mode: string;
 
   // Form referential data
   Days = Days
-  Theaters = Theaters  
-  availableMovies: ReadonlyArray<Movie> = []  
+  Theaters = Theaters
+  availableMovies: ReadonlyArray<Movie> = []
   filteredTitles: Observable<string[]>
   sessionDayBoundaries = SESSION_DAY_BOUNDARIES
 
@@ -38,14 +41,15 @@ export class SessionDialog implements OnInit {
     public dialogRef: MatDialogRef<SessionDialog>,
     @Inject(MAT_DIALOG_DATA) session: PlannedMovieSession,
     private store: Store
-  ) { 
+  ) {
 
       this.store.select(selectMovieslist).subscribe(movies => this.availableMovies = movies)
 
+      this.mode = (session.id === undefined) ? 'create' : 'update'
       this.id = session.id
       this.rating = session.rating
 
-      const title = session.movie?.title 
+      const title = session.movie?.title
       const strStartTime = Times.toString(session.startTime)
 
       this.formGroup = new FormGroup({
@@ -55,7 +59,7 @@ export class SessionDialog implements OnInit {
           Validators.required, this.validateMovie.bind(this)
         ]),
         startTime: new FormControl(strStartTime, [
-          Validators.required, this.validateTime 
+          Validators.required, this.validateTime
         ])
       })
 
@@ -76,6 +80,9 @@ export class SessionDialog implements OnInit {
 
   @HostListener('window:keyup.Enter', ['$event'])
   confirm(): void{
+    if (this.formGroup.invalid){
+      return;
+    }
     const session = this.toPlannedMovieSession();
     this.dialogRef.close(session);
   }
@@ -87,7 +94,7 @@ export class SessionDialog implements OnInit {
   // ********* validation *************
 
   private _findMovieByTitle(title:string): Movie | undefined{
-    return this.availableMovies.find(m=>m.title == title)    
+    return this.availableMovies.find(m=>m.title == title)
   }
 
   validateMovie(movControl: AbstractControl): ValidationErrors | null{
@@ -127,17 +134,17 @@ export class SessionDialog implements OnInit {
     const day = this._getFGValue('day')
     const theater = this._getFGValue('theater')
     const strStartTime = this._getFGValue('startTime')
-    
+
     // Note about the '!' : the movie cannot be undefined
     // here because the dialog already validated it.
     const movie = this._findMovieByTitle(title)!
     const startTime = Times.fromString(strStartTime)
-    
+
     return new PlannedMovieSession(
       this.id,
-      movie, 
-      theater, 
-      day, 
+      movie,
+      theater,
+      day,
       startTime,
       this.rating
     )

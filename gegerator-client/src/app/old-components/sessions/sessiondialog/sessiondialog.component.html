@@ -1,7 +1,17 @@
-<h1 *ngIf="id === undefined" mat-dialog-title>Ajouter une session</h1>
-<h1 *ngIf="id != undefined" mat-dialog-title>Modifier cette session</h1>
+
+<!--
+  Note: this dialog can be open in "create" mode or "edit" mode, depending on whether the
+  MovieSession object model edited by this dialog is a new instance or an existing instance.
+
+  This mode decides what will be:
+  - the title of the dialog,
+  - the label of the OK button
+-->
+
+<h1 *ngIf="mode === 'create'" mat-dialog-title>Ajouter une session</h1>
+<h1 *ngIf="mode === 'update'" mat-dialog-title>Modifier cette session</h1>
 <div mat-dialog-content [formGroup]="formGroup">
-    
+
     <div class="dialog-field">
         <span>Film : </span>
         <mat-autocomplete #moviesauto="matAutocomplete">
@@ -10,7 +20,7 @@
             </mat-option>
         </mat-autocomplete>
         <mat-form-field appearance="fill">
-            <input matInput formControlName="title" 
+            <input  (keyup.enter)="confirm()"  matInput formControlName="title"
                 [matAutocomplete]="moviesauto">
             <mat-error *ngIf="invalid('title')">Je le connais pas ton film là</mat-error>
         </mat-form-field>
@@ -20,7 +30,7 @@
         <label>Début : </label>
         <mat-form-field appearance="fill">
             <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
-            <input matInput formControlName="startTime">
+            <input (keyup.enter)="confirm()" matInput formControlName="startTime">
         </mat-form-field>
     </div>
 
@@ -28,7 +38,7 @@
         <span>Jour : </span>
         <mat-form-field appearance="fill">
             <mat-select formControlName="day">
-                <mat-option *ngFor="let sday of Days.enumerate()" [value]="sday">
+                <mat-option (keyup.enter)="confirm()" *ngFor="let sday of Days.enumerate()" [value]="sday">
                     {{sday.name}}
                   </mat-option>
             </mat-select>
@@ -39,7 +49,7 @@
         <span>Cinéma : </span>
         <mat-form-field appearance="fill">
             <mat-select formControlName="theater">
-                <mat-option *ngFor="let stheater of Theaters.enumerate()" [value]="stheater">
+                <mat-option (keyup.enter)="confirm()" *ngFor="let stheater of Theaters.enumerate()" [value]="stheater">
                     {{stheater.name}}
                   </mat-option>
             </mat-select>
@@ -48,6 +58,7 @@
 
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+    <button *ngIf="mode === 'create'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+    <button *ngIf="mode === 'update'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
     <button mat-button (click)="cancel()">Annuler</button>
 </div>
