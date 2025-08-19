@@ -5,7 +5,7 @@
 
   This mode decides what will be:
   - the title of the dialog,
-  - the label of the OK button
+  - the label of the buttons
 -->
 
 <h1 *ngIf="mode === 'create'" mat-dialog-title>Ajouter une activité</h1>
@@ -53,5 +53,7 @@
 <div mat-dialog-actions>
     <button *ngIf="mode === 'create'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
     <button *ngIf="mode === 'update'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
-    <button mat-button (click)="cancel()">Annuler</button>
+
+    <button *ngIf="mode === 'create'" mat-button (click)="cancel()">Fermer</button>
+    <button *ngIf="mode === 'update'" mat-button (click)="cancel()">Annuler</button>
 </div>
