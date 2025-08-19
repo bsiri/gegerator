@@ -56,6 +56,9 @@ export class MovieDialog implements OnInit {
   }
 
   confirm(): void{
+    if (this.formGroup.invalid){
+      return;
+    }
     const movie = this.toMovie();
     this.dialogRef.close(movie);
   }

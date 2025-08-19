@@ -13,7 +13,7 @@ export class Movie{
   toJSON(): MovieJSON{
     return {
       id: this.id,
-      title: this.title, 
+      title: this.title,
       duration: Durations.serialize(this.duration),
       rating: this.rating.key
     }
@@ -22,7 +22,7 @@ export class Movie{
   static fromJSON(json: MovieJSON){
     return new Movie(
       json.id,
-      json.title, 
+      json.title,
       Durations.deserialize(json.duration),
       MovieRatings.fromKey(json.rating)
     )
@@ -32,7 +32,7 @@ export class Movie{
     const _clone = new Movie(
       this.id,
       this.title,
-      this.duration, 
+      this.duration,
       this.rating
     )
     Object.assign(_clone, modifiers)
@@ -54,7 +54,7 @@ export interface MovieJSON{
 
 export class MovieRating implements Comparable<MovieRating>{
   constructor(
-    public key: string, 
+    public key: string,
     public rank: number,
     public name: string,
     public description: string){ }
@@ -65,26 +65,26 @@ export class MovieRating implements Comparable<MovieRating>{
 }
 
 export class MovieRatings{
-  static HIGHEST = new MovieRating( 
-    "HIGHEST", 
+  static HIGHEST = new MovieRating(
+    "HIGHEST",
     0,
     "Très haute",
     "Je veux absolument voir ce film"
   );
-  static HIGH = new MovieRating( 
+  static HIGH = new MovieRating(
     "HIGH",
     1,
-    "Haute", 
+    "Haute",
     "Je veux voir ce film, si on a le temps"
   );
-  static DEFAULT = new MovieRating( 
-    "DEFAULT", 
+  static DEFAULT = new MovieRating(
+    "DEFAULT",
     2,
     "Normale",
     "Je veux bien voir ce film, si on n'a rien d'autre à faire"
   );
-  static NEVER = new MovieRating( 
-    "NEVER", 
+  static NEVER = new MovieRating(
+    "NEVER",
     3,
     "Jamais",
     "Je ne veux jamais voir ce film"

@@ -14,7 +14,7 @@
     <div class="dialog-field">
         <label for="newmovie-title">Titre : </label>
         <mat-form-field appearance="fill">
-            <input id="newmovie-title" matInput formControlName="title">
+            <input id="newmovie-title" (keyup.enter)="confirm()" matInput formControlName="title">
             <mat-error *ngIf="invalid('title')">Il faut un titre à ce film !</mat-error>
         </mat-form-field>
     </div>
@@ -22,14 +22,14 @@
         <label for="newmovie-duration">Durée : </label>
         <mat-form-field appearance="fill">
             <mat-label>Ex: 1h26</mat-label>
-            <input id="newmovie-duration" matInput formControlName="duration">
+            <input id="newmovie-duration" (keyup.enter)="confirm()" matInput formControlName="duration">
         </mat-form-field>
     </div>
 
 </div>
 <div mat-dialog-actions>
     <button *ngIf="mode === 'create'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
-    <button *ngIf="mode === 'update'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">Confirmer</button>
+    <button *ngIf="mode === 'update'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
     <button mat-button (click)="cancel()">Annuler</button>
 </div>
 
