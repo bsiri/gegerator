@@ -13,18 +13,23 @@ const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 })
 export class MovieDialog implements OnInit {
 
-  // note: the following attributes are never modified by this form, 
+  // note: the following attributes are never modified by this form,
   // however we must remember it because enventually
-  // we will need to re-emit a Movie with 
+  // we will need to re-emit a Movie with
   // updated data on it
   id: number;
   rating: MovieRating;
   formGroup: FormGroup;
 
+  // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
+  // is an existing instance of a Movie, or a shim for a new Movie.
+  mode: string;
+
   constructor(
     public dialogRef: MatDialogRef<MovieDialog>,
     @Inject(MAT_DIALOG_DATA) movie: Movie
-  ) { 
+  ) {
+    this.mode = (movie.id === undefined) ? 'create' : 'update'
     this.id = movie.id;
     this.rating = movie.rating;
     this.formGroup = new FormGroup({

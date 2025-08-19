@@ -54,7 +54,17 @@ export class MovielistComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(newmovie => {
       if (!!newmovie){
+        /*
+          if a Movie model has been created:
+          - create it
+          - then reopen a new dialog for chain creation
+
+          Note to myself: calling again "openNewMovie" in this block of code
+          is actually not a recursive call, because this is within a callback handler
+          and does not run in the same scope as the enclosing "openNewMovie" execution.
+        */
         this.store.dispatch(MovieActions.create_movie({movie: newmovie}));
+        this.openNewMovie();
       }
     });
   }
