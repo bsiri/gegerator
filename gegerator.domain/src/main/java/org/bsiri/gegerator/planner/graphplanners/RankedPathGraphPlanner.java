@@ -29,6 +29,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     // to use longs as masks so we assume 64bits.
     private static final int MAX_SIZE = 64;
 
+    private SubGraph wednesdayGraph;
     private SubGraph thursdayGraph;
     private SubGraph fridayGraph;
     private SubGraph saturdayGraph;
@@ -44,6 +45,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
         Map<DayOfWeek, List<Node>> nodesByDay = groupyByDay(nodes);
 
+        wednesdayGraph = new SubGraph(DayOfWeek.WEDNESDAY, nodesByDay.getOrDefault(DayOfWeek.WEDNESDAY, new ArrayList<>()));
         thursdayGraph = new SubGraph(DayOfWeek.THURSDAY, nodesByDay.getOrDefault(DayOfWeek.THURSDAY, new ArrayList<>()));
         fridayGraph = new SubGraph(DayOfWeek.FRIDAY, nodesByDay.getOrDefault(DayOfWeek.FRIDAY, new ArrayList<>()));;
         saturdayGraph = new SubGraph(DayOfWeek.SATURDAY, nodesByDay.getOrDefault(DayOfWeek.SATURDAY, new ArrayList<>()));;
@@ -82,15 +84,17 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     }
 
     public long countPaths(){
+        List<Path> wednesdayPath = wednesdayGraph.evaluateAllPaths();
         List<Path> thursdayPaths = thursdayGraph.evaluateAllPaths();
         List<Path> fridayPaths = fridayGraph.evaluateAllPaths();
         List<Path> saturdayPaths = saturdayGraph.evaluateAllPaths();
         List<Path> sundayPaths = sundayGraph.evaluateAllPaths();
 
-        return thursdayPaths.size() + fridayPaths.size()  + saturdayPaths.size() + sundayPaths.size();
+        return wednesdayPath.size() + thursdayPaths.size() + fridayPaths.size()  + saturdayPaths.size() + sundayPaths.size();
     }
 
     public void stats(){
+        wednesdayGraph.stats();
         thursdayGraph.stats();
         fridayGraph.stats();
         saturdayGraph.stats();
@@ -100,13 +104,14 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     @Override
     public List<PlannerEvent> findBestRoadmap() {
 
+        List<Path> wednesdayPaths = wednesdayGraph.evaluateAllPaths();
         List<Path> thursdayPaths = thursdayGraph.evaluateAllPaths();
         List<Path> fridayPaths = fridayGraph.evaluateAllPaths();
         List<Path> saturdayPaths = saturdayGraph.evaluateAllPaths();
         List<Path> sundayPaths = sundayGraph.evaluateAllPaths();
 
         //  stitching each roadmap together, trying to find the best one.
-        Path bestPath = electBestPath(thursdayPaths, fridayPaths, saturdayPaths, sundayPaths);
+        Path bestPath = electBestPath(wednesdayPaths, thursdayPaths, fridayPaths, saturdayPaths, sundayPaths);
 
         List<PlannerEvent> best = eventsBitmask.retrieveByMask(bestPath.allEventsMask)
                 .stream()

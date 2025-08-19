@@ -35,7 +35,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
             0,
             ROOT_MOVIE,
             null,
-            DayOfWeek.WEDNESDAY,
+            DayOfWeek.TUESDAY,
             LocalTime.of(0, 1),
             LocalTime.of(0,2)
     );

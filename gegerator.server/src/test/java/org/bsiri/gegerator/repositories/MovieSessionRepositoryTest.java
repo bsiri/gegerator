@@ -32,7 +32,6 @@ public class MovieSessionRepositoryTest extends AbstractRepositoryTest{
     @Test
     @SqlDataset("datasets/generic-datasets/appstate.sql")
     public void shouldResetSessionRatingForTremors(){
-
         // The Tremor session of Friday used to be mandatory,
         // now it is default.
         repo.resetRatingsForSessionOfMovie(tremors().getId())

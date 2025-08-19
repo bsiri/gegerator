@@ -3,6 +3,7 @@ package org.bsiri.gegerator.repositories;
 import org.bsiri.gegerator.domain.MovieSession;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,6 +19,6 @@ public interface MovieSessionRepository extends ReactiveCrudRepository<MovieSess
     @Query("UPDATE movie_session SET rating = :#{"+EVENT_RATING+".DEFAULT}"+
             " where rating = :#{"+EVENT_RATING+".MANDATORY} "+
             " and movie_id = :movieId")
-    Mono<Void> resetRatingsForSessionOfMovie(long movieId);
+    Mono<Void> resetRatingsForSessionOfMovie(@Param("movieId") long movieId);
 
 }
