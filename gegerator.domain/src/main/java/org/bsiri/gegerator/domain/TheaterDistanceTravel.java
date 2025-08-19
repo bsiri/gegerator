@@ -13,13 +13,13 @@ public class TheaterDistanceTravel {
 
     static {
         record(ESPACE_LAC, ESPACE_LAC, 0);
-        record(ESPACE_LAC, CASINO, 5);
-        record(ESPACE_LAC, PARADISO, 15);
-        record(ESPACE_LAC, MCL, 30);
+        record(ESPACE_LAC, CASINO, 15);
+        record(ESPACE_LAC, PARADISO, 22);
+        record(ESPACE_LAC, MCL, 33);
 
         record(CASINO, CASINO, 0);
-        record(CASINO, PARADISO, 15);
-        record(CASINO, MCL, 30);
+        record(CASINO, PARADISO, 20);
+        record(CASINO, MCL, 27);
 
         record(PARADISO, PARADISO, 0);
         record(PARADISO, MCL, 15);
