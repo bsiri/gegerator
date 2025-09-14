@@ -1,3 +1,4 @@
+# TODO: configure tini to have a sigkill handler
 FROM openjdk:23-slim-bookworm
 ARG BUILD_VERSION
 ENV VERSION=$BUILD_VERSION

@@ -1,0 +1,12 @@
+apiVersion: v2
+name: gegerator
+type: application
+version: "1.0.1-SNAPSHOT"
+appVersion: "1.0.1-SNAPSHOT"
+description: Gegerateur est un outil d'aide à la plannification de planning de films pour les festivaliers du Festival de films fantastiques de Gerardmer.
+
+maintainers:
+  - name: bsiri
+home: "https://github.com/bsiri/gegerator"
+sources:
+  - "https://github.com/bsiri/gegerator"
