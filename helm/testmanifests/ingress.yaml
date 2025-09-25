@@ -5,6 +5,7 @@ metadata:
   namespace: gegerator
 spec:
   ingressClassName: nginx
+  host: gegerator.minikube.me
   rules:
     - host: gegerator.minikube.me
       http:
