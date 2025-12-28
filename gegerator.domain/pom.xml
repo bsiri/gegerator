@@ -5,15 +5,10 @@
     <parent>
         <groupId>org.bsiri.gegerator</groupId>
         <artifactId>gegerator</artifactId>
-        <version>${gegerator.version}</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gegerator.domain</artifactId>
-
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
 
     <dependencies>
         <dependency>

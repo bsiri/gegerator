@@ -10,18 +10,21 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.bsiri.gegerator</groupId>
     <artifactId>gegerator</artifactId>
-    <version>${gegerator.version}</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>gegerator</name>
     <description>Generateur de planning Gerardmer</description>
     <properties>
-        <gegerator.version>1.1.1-SNAPSHOT</gegerator.version>
+        <revision>1.1.1-SNAPSHOT</revision>
         <minmaven.version>3.8</minmaven.version>
-        <java.version>1.8</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <flattenplugin.version>1.7.3</flattenplugin.version>
         <enforcerplugin.version>3.6.2</enforcerplugin.version>
         <jarplugin.version>3.5.0</jarplugin.version>
         <frontendplugin.version>2.0.0</frontendplugin.version>
+        <surefireplugin.version>3.0.0-M5</surefireplugin.version>
     </properties>
 
     <modules>
@@ -38,6 +41,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${jarplugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefireplugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
