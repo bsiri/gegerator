@@ -10,12 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.bsiri.gegerator</groupId>
     <artifactId>gegerator</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0.RELEASE</version>
     <packaging>pom</packaging>
     <name>gegerator</name>
     <description>Generateur de planning Gerardmer</description>
     <properties>
-        <gegerator.version>1.1.0-SNAPSHOT</gegerator.version>
+        <gegerator.version>1.1.0-RELEASE</gegerator.version>
         <java.version>1.8</java.version>
     </properties>
 
