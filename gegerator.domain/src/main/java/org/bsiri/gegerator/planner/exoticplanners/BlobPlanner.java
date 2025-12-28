@@ -13,17 +13,24 @@ import java.util.stream.Collectors;
 
 /**
  * This planner returns an approximation of the optimum, by taking a greedy approach.
- * On average it is somewhat less accurate than RankedPathGraphPlanner (though beats it sometimes),
- * but much faster (about 60 times, see jmh benchmarks).
+ * On average, it is less accurate than RankedPathGraphPlanner (though beats it sometimes),
+ * but much faster (about 60 times faster, see jmh benchmarks).
  *
- * It works by having each movie competing for their timeslots (defined by the events in which
- * they are planned), and in case of timeslot overlap the movie with best score gets to keep its timeslot.
- * Evicted movies can then try another timeslot, which can lead to other conflicts etc. The solution
- * is reached when no more conflicts occurs and the process stabilizes. It will stabilize because evicted
- * timeslots cannot be retried again so possibilities will exhaust eventually.
+ * It works by having each movie competing for their timeslots, over multiple rounds, until a stable
+ * solution is reached.
  *
- * The wording used in the implementation speaks of Blobs applying pressures on each others etc, but the
- * core idea is the same.
+ * A Movie have as many timeslots as there are MovieSession that schedules that movie, and the
+ * score of the timeslot is the score of the underlying MovieSession. When a new round begins,
+ * the highest-score timeslot for each Movie are pitted against each others. Then, overlapping
+ * timeslots ("conflicts") are detected. If conflicts are detected, the scores are compared
+ * and at the end of the round the most contended timeslot is evicted. A new round then starts,
+ * until there are no more conflicts left.
+ *
+ * The wording used in the implementation speaks of Blobs applying pressures on each others etc,
+ * but the core idea is the same.
+ *
+ * A limitation of this algorithm is that it doesn't work well with negative score. In order to
+ * keep it simple, MovieSession with negative scores are ignored.
  *
  * Use this planner if speed is absolutely required and near-optimum solution is enough.
  *
@@ -44,8 +51,9 @@ public class BlobPlanner implements WizardPlanner {
 
         List<Blob> batch;
 
+        // keep the reaction alive until the solution is stable
         do {
-            batch = blobs.getNextBestBlobs();
+            batch = blobs.getNextBestBlobByMovie();
             batch.sort(Blob.compareByStartTime());
 
             isStable = pressurizeBlobs(batch);
@@ -62,12 +70,12 @@ public class BlobPlanner implements WizardPlanner {
         do {
 
             // making an array, so we can iterate faster by indices
-            Blob[] blobarray = batch.toArray(new Blob[batch.size()]);
+            Blob[] blobarray = batch.toArray(new Blob[0]);
             resetPressure(blobarray);
             hasPressure = applyPressures(blobarray);
 
             if (hasPressure) {
-                int indexMostPressured = findMostPressuredBlob(blobarray);
+                int indexMostPressured = findMostPressuredBlobIndex(blobarray);
                 Blob pressuredBlob = batch.remove(indexMostPressured);
                 blobs.disqualifyBlob(pressuredBlob);
                 initiallyStable = false;
@@ -79,8 +87,9 @@ public class BlobPlanner implements WizardPlanner {
     }
 
     /**
-     * Compute the pressure applied to each Blob (this is a mutating operation).
-     * Returns true if pressure was applied, or false if no pressure was applied.
+     * Assigns the blobs with their peer-pressure.
+     * Returns true if at least one Blob had pressure applied,
+     * or false if no Blob was pressured this round.
      * @param blobarray
      * @return
      */
@@ -88,20 +97,27 @@ public class BlobPlanner implements WizardPlanner {
 
         boolean hadPressure = false;
 
-        // This loop takes advantages of the fact
-        // that blobs were sorted by start time :
-        // the closer in time, the closer in the array.
         for (int i=0; i<blobarray.length; i++){
             Blob b1 = blobarray[i];
 
-            // Detect conflict with immediate neighbors blobs,
-            // looping until a non-conflicting blob is
-            // encountered.
+            /*
+             Blobs are pressured by any other blob that is conflicting
+             with it because of time overlap. The pressure is mutual: they
+             inflict their own resistance to each other and their own
+             pressure thus increase accordingly
+
+             Since the Blobs are sorted by start datetime, the proximity in
+             time between blobs is reflected by proximity of their indices
+             in the conflict matrix. This allows us to not fully explore the
+             matrix, because conflicting blobs tend to have clustered indices.
+            */
+
             int next = i+1;
             while (next < blobarray.length && blobs.areInConflict(b1, blobarray[next]))  {
                 Blob b2 = blobarray[next];
-                b1.applyPressure(b2.resistance);
-                b2.applyPressure(b1.resistance);
+                // blobs pressuring each others
+                b1.incrPressureBy(b2.resistance);
+                b2.incrPressureBy(b1.resistance);
                 // record that pressure was applied at least once
                 // for this batch.
                 hadPressure = true;
@@ -112,7 +128,7 @@ public class BlobPlanner implements WizardPlanner {
         return hadPressure;
     }
 
-    private int findMostPressuredBlob(Blob[] array){
+    private int findMostPressuredBlobIndex(Blob[] array){
         int idx = -1;
         long maxPressure = Long.MIN_VALUE;
         for (int i=0; i<array.length; i++){
@@ -132,6 +148,14 @@ public class BlobPlanner implements WizardPlanner {
      * This planner doesn't like negative scores, it makes it crash, so
      * we need to remove them.
      *
+     * Also negative scopes would mean Blobs with
+     * negative resistance: they would remove pressure on their conflicting
+     * peers. It could lead a crappy Blob to make a slightly less crappy Blob
+     * look more awesome than it really is.
+     *
+     * For the sake of simplicity, Sessions with negative scores are removed.
+     * This is one of the limitations of the algorithm.
+     *
      * @param events
      * @return
      */
@@ -143,25 +167,21 @@ public class BlobPlanner implements WizardPlanner {
 
     private static class Blobs {
 
-
-        // Blobs are grouped by the movie ID.
+        // Blobs are grouped by the Movie ID of the Movie they are championing.
         // For each movie, blobs are sorted by resistance descending.
         // Note that we use LinkedList, because we will often need to
         // remove the head of a given list.
         private Map<Long, LinkedList<Blob>> blobsByMovie;
 
         // The conflict matrix describes which pairs of blobs are in conflict
-        // with each others. It is essentially a cache for the results of
-        // TimeAndSpaceLocation.overlap().
+        // with each others, because the movie session they represent
+        // have overlapping timeslots (see #initConflictMatrix)
         private boolean[][] conflict;
 
         private Blobs(Collection<Blob> blobs){
             initBlobsByMovies(blobs);
             initConflictMatrix(blobs);
         }
-
-
-
 
         // ******** init ******************
 
@@ -172,7 +192,7 @@ public class BlobPlanner implements WizardPlanner {
             );
 
             // Create blobsByMovie
-            // see comment on the attribute for details
+            // see comment on the attribute 'blobsByMovie' for context.
             blobsByMovie = new HashMap<>(partitionBlobs.size());
             for (Map.Entry<Long, List<Blob>> entry: partitionBlobs.entrySet()){
                 Long movieId = entry.getKey();
@@ -211,8 +231,8 @@ public class BlobPlanner implements WizardPlanner {
             // so we can removeFirst
             bloblist.removeFirst();
 
-            // also disqualify the movie if no more blobs
-            // left for that movie
+            // if the list for the given movie happens to
+            // end up empty, remove it altogether from the pool.
             if (bloblist.isEmpty()){
                 blobsByMovie.remove(movieId);
             }
@@ -221,7 +241,7 @@ public class BlobPlanner implements WizardPlanner {
         /**
          * For each movie, return the next most resistant blob.
          */
-        List<Blob> getNextBestBlobs(){
+        List<Blob> getNextBestBlobByMovie(){
             // Note : should not throw NoSuchElementException
             // if Blobs is properly used, because disqualifyBlob
             // would also remove entries from the map if
@@ -242,29 +262,44 @@ public class BlobPlanner implements WizardPlanner {
             }
 
             return new Blobs(blobs);
-
         }
-
     }
 
     @Getter
     @EqualsAndHashCode(of = "blobId")
     private final static class Blob{
 
-        private static Random rnd = new Random(System.currentTimeMillis());
+        private static final Random rnd = new Random(System.currentTimeMillis());
 
-        int blobId;
+        final int blobId;
 
-        Long movieId;
-        private PlannerEvent event;
+        // payload attributes
+        final Long movieId;
+        final private PlannerEvent event;
+
+        // Algorithm attributes:
+        /*
+         pressure: the higher, the more likely this
+         blob will be evicted. Recomputed each round.
+        */
         private long pressure = 0;
-        private long resistance = 0;
+        /*
+         resistance: how "hard" this Blob is, and basically
+         how much pressure it will add to other Blobs it is
+         conflicting with.
+         Assigned once and finally, here
+        */
+        private final long resistance;
 
         public Blob(int blobId, PlannerEvent evt){
             this.blobId = blobId;
             this.event = evt;
             if (event.getMovie() == null){
-                this.movieId = Long.valueOf(rnd.nextInt(1000)-1500);
+                // assign a surrogate random id, picks a negative one to prevent conflict
+                // with events that have an actual movie id.
+                // TODO : collisions on ids are unlikely but still possible;
+                // if needed keep track of the surrogate ids already assigned
+                this.movieId = (long) (rnd.nextInt(1000) - 1500);
             } else{
                 this.movieId = evt.getMovie();
             }
@@ -274,7 +309,7 @@ public class BlobPlanner implements WizardPlanner {
 
         // **** core logic  ***
 
-        void applyPressure(long increment){
+        void incrPressureBy(long increment){
             pressure += increment;
         }
         void resetPressure(){
