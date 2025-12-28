@@ -238,8 +238,6 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 stackTop++;
                 nodesStack[stackTop] = iDest;
                 edgesStack[stackTop] = iDest + 1;
-                // TODO : never decremented, or tracked with a stack. To me it keeps
-                // increasing forever. Bug ?
                 currentScore += nodes_score[iDest];
                 seenMovies[nodes_movie_id[iDest]] = true;
 
