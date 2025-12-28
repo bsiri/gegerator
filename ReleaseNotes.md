@@ -1,6 +1,5 @@
 # Version 1.1.0
 
-- Added a Helm chart
 - Added Wednesday as a full day (since Gerardmer edition 2026)
 - Updated the travel time constraints between theaters
 - Create Dialogs: the "OK" button has been renamed to "Next", and will automatically reopen (unless closed with "Cancel")
