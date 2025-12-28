@@ -1,33 +1,37 @@
 package org.bsiri.gegerator.planner.graphplanners;
 
 
-import org.bsiri.gegerator.domain.TheaterDistanceTravel;
 import org.bsiri.gegerator.planner.PlannerEvent;
 import org.bsiri.gegerator.planner.WizardPlanner;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 /**
-    Slightly optimized version of IterativePlanner.
+    Slightly optimized version of IterativePlanner. Here again the event
+    grid is modeled as a graph between MovieSession that are technically
+    compatible (no overlap, and it is humanely possible to travel from
+     event A to event B in time), and the goal is to find which path
+     yields the highest score while still featuring a movie at most once.
 
-    Iterative Planner was rather crappy because of too many branch miss,
+    Iterative Planner v1 was rather crappy because of too many branch miss,
     so in this one we attempt to reduce the number of branches as well.
 
     This planner do an exhaustive search of optimum and returns an exact
-    solution, but work in reasonable time for low number of events
-    (about 30). For larger volumes you should consider alternative
-    implementations.
+    solution. It works in reasonable time for low number of events on a
+    consumer grade hardware (about 30 events), but will hog the cpu for
+    large number of events due to the exponential growth of the possible
+    paths in the graph (a full grid of four days have around 10^17
+    possible paths !).
+
+    For larger volumes you should consider alternative implementations.
  */
 public class IterativeGraphPlannerV2 implements WizardPlanner {
 
 
-    private static Long ROOT_MOVIE = -9999L;
-    private static Long SINK_MOVIE = -9998L;
+    private static final Long ROOT_MOVIE = -9999L;
+    private static final Long SINK_MOVIE = -9998L;
 
     private static final PlannerEvent ROOT = new PlannerEvent(
             null,
@@ -57,10 +61,10 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
      * event A, then event B cannot possibly end before the start
      * of event A.
      *
-     * Since our edges are modeled by an adjacency matrix (and not
-     * a proper Edge object), this allows us to shortcut a good amount
-     * of loop iterations * instead of exploring the whole N²
-     * combinations.
+     * Since the adjacency matrix structure reflects the structure
+     * of time (always onward), this allows us to shortcut a good
+     * amount of loop iterations (e.g., loop over i<j) instead of
+     * exploring the whole N² combinations.
      */
     private PlannerEvent[] nodes;
 
@@ -74,10 +78,8 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
      */
     private int[][] adjacency;
 
-
-    private int[] nodes_movies;
-    private long[] nodes_scores;
-    private int movies_count = 0;
+    private int[] nodes_movie_id;
+    private long[] nodes_score;
 
     public IterativeGraphPlannerV2(Collection<PlannerEvent> evts){
        initNodes(evts);
@@ -91,41 +93,53 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         copy.add(ROOT);
         copy.add(SINK);
 
-        // sort by date so that we can iterate more efficiently later
-        Collections.sort(copy, Comparator.comparing(PlannerEvent::getDay).thenComparing(PlannerEvent::getStartTime));
+        // sort by datetime so that we can iterate more efficiently later
+        copy.sort(
+                Comparator.comparing(PlannerEvent::getDay)
+                        .thenComparing(PlannerEvent::getStartTime)
+        );
         this.nodes = copy.toArray(new PlannerEvent[]{});
 
-        // Also populate the local arrays for movie ids and event scores
-        // In case no movie id is available (because of an eventless movie),
-        // a unique movie ID will be generated.
-        // Furthermore the movies are renumbered : here we don't store the
-        // movie ID directly but rather its index by order of encounter.
-        // This allows us to re-scale the values for much smaller range
-        // from 0 to card(movies).
+        /*
+         Populate the local arrays for movie ids and event scores.
+         For PlannerEvents that have no movie ID (e.g. OtherActivities),
+         a surrogate unique movie ID will be generated.
+
+        */
         Random r = new Random();
         Map<Long, Integer> movieMap = new HashMap<>();
-        this.nodes_movies = new int[this.nodes.length];
-        this.nodes_scores = new long[this.nodes.length];
 
+        // store which movie id corresponds to the i-th element
+        // of the adjacency matrix
+        this.nodes_movie_id = new int[this.nodes.length];
+        // same for the score of the session.
+        this.nodes_score = new long[this.nodes.length];
+
+        int movie_index = 0;
         for (int i=0; i< nodes.length; i++){
            PlannerEvent event = nodes[i];
            Long movieId = event.getMovie();
            if (movieId == null){
-               // generate a value in the negative range so that no collision
-               // occur with real movie IDs (which are all positive).
-               movieId = Long.valueOf(r.nextInt(7999) - 8000);
+               // Generate a surrogate ID, hoping that no collision occurs.
+               // We pick these surrogate ID in the negative range to limit
+               // the risk of collision with the other events.
+               movieId = (long) (r.nextInt(7999) - 8000);
            }
            if (movieMap.containsKey(movieId)){
-               this.nodes_movies[i] = movieMap.get(movieId);
+               // Note: here we coerce a long to an int.
+               // In practice this is manageable because there is not
+               // *that* many movies planned at a given instance of
+               // the festival!
+               this.nodes_movie_id[i] = movieMap.get(movieId);
            }
            else{
-               movieMap.put(movieId, movies_count);
-               this.nodes_movies[i] = movies_count;
-               movies_count++;
+               movieMap.put(movieId, movie_index);
+               this.nodes_movie_id[i] = movie_index;
+               movie_index++;
            }
 
-           this.nodes_scores[i] = event.getScore();
-        };
+           this.nodes_score[i] = event.getScore();
+        }
     }
 
     private void initEdges(){
@@ -162,9 +176,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         return best.subList(1, best.size());
     }
 
-
-
-    // CAUTION : this is insane
+    // CAUTION : very un-java code below
     private List<PlannerEvent> explore(){
         int[] nodesStack = new int[nodes.length];
         int[] edgesStack = new int[nodes.length];
@@ -172,55 +184,64 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         long currentScore = 0L;
 
 
-        int saveStack[] = new int[nodes.length];
-        int saveTop = 0;
+        int[] bestPath = new int[nodes.length];
         long bestScore = Long.MIN_VALUE;
+        int saveTop = 0;
 
-        // an array of length cars(node_movies)
-        // values are :
-        // - true if the movie at this index has been seen
+        // Values in that array are :
+        // - true if the movie at this index has already been seen
         //   in the path currently examined,
         // - false otherwise.
-        boolean[] seenMovies = new boolean[nodes_movies.length];
+        boolean[] seenMovies = new boolean[nodes_movie_id.length];
 
         // init with the ROOT node (index 0 by construction)
         nodesStack[stackTop] = 0;
         edgesStack[stackTop] = 1;
-        currentScore += nodes_scores[0];
-        seenMovies[nodes_movies[0]] = true;
-
+        currentScore += nodes_score[0];
+        seenMovies[nodes_movie_id[0]] = true;
 
         // loop variables
         int iSrc;
         int iDest;
 
+        /*
+         Note: keep in mind that here the code does a depth-first
+         exploration, and is logically recursive. However, in practice
+         the recursion implementation has been linearized using a stack
+         etc.
+
+         Thus, when the top loop (labelled "nodeloop") resumes,
+         it is usually with a different node of the graph than
+         the iteration before!
+        */
         nodeloop: while(stackTop >= 0){
             // restore the state
             iSrc = nodesStack[stackTop];
-            PlannerEvent src = nodes[iSrc];
             iDest = edgesStack[stackTop];
 
             // edges exploration, except the SINK (last position)
             while (iDest < nodes.length - 1) {
 
-                // skip if no edge or if movie already seen
-                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movies[iDest]] == true) {
+                // Skip if no edge or if movie already seen,
+                // and this test is well worth the branch prediction miss penalty.
+                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movie_id[iDest]]) {
                     iDest++;
                     continue;
                 }
 
-                // else, "dest" is eligible for exploration
-                // first, we save what will be the next dest to explore
-                // from this src node.
+                // Else, "dest" is eligible for exploration
+                // first, we save what will be the next "dest" to explore
+                // from this "src" node, once the stack unwinds to this point.
                 edgesStack[stackTop] = iDest+1;
 
-                // now we push things in stack and go explore next node
+                // now we push things in stack and go explore"dest" node
                 stackTop++;
                 nodesStack[stackTop] = iDest;
                 edgesStack[stackTop] = iDest + 1;
-                currentScore += nodes_scores[iDest];
-                seenMovies[nodes_movies[iDest]] = true;
-
+                // TODO : never decremented, or tracked with a stack. To me it keeps
+                // increasing forever. Bug ?
+                currentScore += nodes_score[iDest];
+                seenMovies[nodes_movie_id[iDest]] = true;
 
                 // now that the stacks are ready, break
                 // the main while loop will pop and the processing
@@ -228,30 +249,35 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 continue nodeloop;
             }
 
-            // we exit this loop once we reach the SINK,
-            // because the SINK is by construction the
-            // last node. So we can evaluate the value
-            // of the roadmap.
-            // This block of code replace the
-            // "if (this == SINK)" condition tested in
-            // other variants
+            /*
+             We exit this loop once we reach the SINK, because the SINK is by construction the
+             last node. So we can evaluate the value of the roadmap. At this stage we know
+             the path is a valid path (no conflict, and each movie seen at most once).
+
+             If that path is better, we save the score and the path.
+
+             This block of code replace the
+             "if (this == SINK)" condition tested in
+             other variants of this code.
+            */
 
             if (currentScore > bestScore){
                 bestScore = currentScore;
-                System.arraycopy(nodesStack, 0, saveStack, 0, stackTop+1);
+                System.arraycopy(nodesStack, 0, bestPath, 0, stackTop+1);
                 saveTop = stackTop;
             }
 
             // if we have finished exploring that node
             // we pop the stacks
             stackTop--;
-            seenMovies[nodes_movies[iSrc]] = false;
-            currentScore -= nodes_scores[iSrc];
+            seenMovies[nodes_movie_id[iSrc]] = false;
+            currentScore -= nodes_score[iSrc];
         }
 
+        // collect the result events.
         List<PlannerEvent> result = new ArrayList<>( saveTop);
         for (int i=0; i<=  saveTop; i++){
-            result.add(nodes[saveStack[i]]);
+            result.add(nodes[bestPath[i]]);
         }
 
         return result;

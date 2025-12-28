@@ -93,6 +93,7 @@ public class WizardServiceImpl implements WizardService {
                 .map(session -> createPlannerEvent(wizconf, session, moviesById.get(session.getMovieId())))
                 .collect(Collectors.toList());
 
+        // also add the OtherActivities to the list of events.
         activities.stream().map(activity -> createPlannerEvent(wizconf, activity)).forEach(events::add);
 
         return events;
@@ -108,7 +109,8 @@ public class WizardServiceImpl implements WizardService {
         return PlannerEvent.of(session, movie, finalscore);
     }
 
-    PlannerEvent createPlannerEvent(WizardConfiguration wizconf, OtherActivity activity){
+    PlannerEvent createPlannerEvent(WizardConfiguration ignored, OtherActivity activity){
+        // Unlike of the MovieSessions, OtherActivities scores do not depend on the wizzard configuration
         int finalScore = scoring.getScore(activity.getRating());
         return PlannerEvent.of(activity, finalScore);
     }

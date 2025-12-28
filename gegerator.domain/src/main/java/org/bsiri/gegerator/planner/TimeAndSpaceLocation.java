@@ -30,8 +30,10 @@ public interface TimeAndSpaceLocation {
 
     }
     /**
-     * Says whether it is timely feasible to walk to the other TimeAndSpaceLocation
-     * and still arrive before it starts.
+     * Test that:
+     * - the events are not overlapping,
+     * - it is timely feasible to walk to the other TimeAndSpaceLocation and still
+     * arrive before it starts.
      *
      * Formally : does the end time of this event + the travel time to the other, is
      * still less that the start time of the other ?
