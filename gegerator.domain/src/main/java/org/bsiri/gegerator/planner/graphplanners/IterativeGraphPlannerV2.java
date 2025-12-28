@@ -253,10 +253,6 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
              the path is a valid path (no conflict, and each movie seen at most once).
 
              If that path is better, we save the score and the path.
-
-             This block of code replace the
-             "if (this == SINK)" condition tested in
-             other variants of this code.
             */
 
             if (currentScore > bestScore){
