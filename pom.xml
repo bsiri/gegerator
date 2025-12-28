@@ -16,8 +16,12 @@
     <description>Generateur de planning Gerardmer</description>
     <properties>
         <gegerator.version>1.1.1-SNAPSHOT</gegerator.version>
+        <minmaven.version>3.8</minmaven.version>
         <java.version>1.8</java.version>
-        <flattenplugin.version>1.1.0</flattenplugin.version>
+        <flattenplugin.version>1.7.3</flattenplugin.version>
+        <enforcerplugin.version>3.6.2</enforcerplugin.version>
+        <jarplugin.version>3.5.0</jarplugin.version>
+        <frontendplugin.version>2.0.0</frontendplugin.version>
     </properties>
 
     <modules>
@@ -25,7 +29,18 @@
         <module>gegerator-client</module>
         <module>gegerator.server</module>
     </modules>
+
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${jarplugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <!-- reminder : no longer with Maven 4 once it's out -->
@@ -53,6 +68,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${enforcerplugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${minmaven.version}</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+
 </project>
