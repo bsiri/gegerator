@@ -75,12 +75,6 @@ the various parts can be run separately.
   only useful in gegerator-client, will delete the '/dist' directory
   (the output directory npm run build).
 
-### How do I run it ?
-
-At the moment you must run from the IDE, because there is no packaging yet so the web server cannot
-yet serve the webapp.
-
-So you will need to separately start the backend server and webpack (the Angular proxy).
 
 ### How do I start the backend server ?
 
@@ -97,14 +91,20 @@ see Webpack right below.
 From within gegerator-client, run : `npm run startproxy`
 This will run the Webpack (Angular proxy). It will be served at 'http://localhost:4200'.
 
-Note that Webpack will hot-reload the changes in the code of the front-end. If you access the application
-at 'http://localhost:8080', your code changes will not be reflected until gegerator.server is rebuilt.
+Note that Webpack will hot-reload the changes in the code of the front-end, which is what you
+want when developping the front-end app.
+
+Note: If you access the application on port '8080', ie at url 'http://localhost:8080', you will not see the 
+code served by Webpack (in dev mode), but that of the final frontend app (compiled, built and served statically from 
+within the server jar) instead. Thus your code changes will not be reflected until gegerator.server is rebuilt.
 
 ### Datasets
 
 The files in directory 'samples/' contain a few pre-populated grids with movies, events, ratings etc
 so you don't start from scratch everytime. You can upload it using the button with the Up/Down arrows icons. 
 
+Note: at the moment the samples are all for Gerardmer pre-2026 format; ie no sample is planning anything for Wednesday,
+which is the new extra-day added to the festival since 2026. You will have to populate that day yourself.
 
 # Create a distribution
 
