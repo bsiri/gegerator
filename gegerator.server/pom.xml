@@ -9,7 +9,6 @@
 	</parent>
 	<artifactId>gegerator.server</artifactId>
 	<name>gegerator.server</name>
-	<version>${gegerator.version}</version>
 	<description>Le serveur Gegerator</description>
 	<properties>
 		<java.version>1.8</java.version>

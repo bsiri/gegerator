@@ -8,7 +8,6 @@
       <version>${gegerator.version}</version>
     </parent>
     <artifactId>gegerator.client</artifactId>
-    <version>${gegerator.version}</version>
     <packaging>jar</packaging>
     <name>gegerator.client</name>
     <description>Le client web gegerator</description>

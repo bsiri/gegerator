@@ -28,6 +28,7 @@
     <build>
         <plugins>
             <plugin>
+                <!-- reminder : no longer with Maven 4 once it's out -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>${flattenplugin.version}</version>
