@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { UploadDialog } from './old-components/appstate/uploaddialog/uploaddialog.component';
+import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
 import { selectActiveRoadmap, selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
 import { ModeService } from './services/mode.service';
-import { ConfigDialog } from './old-components/configuration/configdialog/configdialog.component';
+import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
@@ -26,12 +26,12 @@ export class AppComponent implements OnInit{
   wizardmode = Mode.MANUAL
 
   wizconf!: WizardConfiguration
-  roadmap!: FestivalRoadmap 
+  roadmap!: FestivalRoadmap
 
-  constructor(private store: Store, 
+  constructor(private store: Store,
     private dialog: MatDialog,
     private modeService: ModeService,
-    // HACK : injecting the service just to have it bootstrapped, 
+    // HACK : injecting the service just to have it bootstrapped,
     // find another way to achieve this.
     private wizardService: WizardService
     ){}
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit{
     this.store.dispatch(AppStateActions.reload_appstate())
     this.store.select(selectActiveRoadmap).subscribe(rm => this.roadmap = rm)
     this.store.select(selectConfiguration).subscribe(wizconf => this.wizconf = wizconf)
-    // Note : no need to take care of unsubscribing here since the App lives until, 
+    // Note : no need to take care of unsubscribing here since the App lives until,
     // well, the end of the App
   }
 
@@ -91,7 +91,7 @@ export class AppComponent implements OnInit{
   }
 
   // quick and dirty way to remove the day from the 'toString()' output,
-  // but that's fragile and would never pass CR if there were one. But hey, 
+  // but that's fragile and would never pass CR if there were one. But hey,
   // that's my pet project so who cares :-)
   formatEventStr(event: PlannableEvent): string{
     return event.toString().replace(/^(.*?), /, '    ')

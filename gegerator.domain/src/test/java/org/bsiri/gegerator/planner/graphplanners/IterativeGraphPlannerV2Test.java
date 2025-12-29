@@ -3,8 +3,6 @@ package org.bsiri.gegerator.planner.graphplanners;
 
 import org.bsiri.gegerator.planner.PlannerEvent;
 import org.bsiri.gegerator.planner.WizardPlanner;
-import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
-import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,7 @@ import static org.bsiri.gegerator.planner.PlannerEventHelper.event;
 
 public class IterativeGraphPlannerV2Test {
 
-    static private Long NO_MOVIE = null;
+    static private Long SURROGATE_ID_1 = -1L;
     static private Long MOVIE_1 = 1L;
     static private Long MOVIE_2 = 2L;
     static private Long MOVIE_3 = 3L;
@@ -170,7 +168,7 @@ public class IterativeGraphPlannerV2Test {
                 // SATURDAY + RESTAURANT
                 event("movie 3 awfull", AWFUL_SCORE, MOVIE_3, "PARADISO | SATURDAY | 08:00 | 09:00"),
                 event("movie 4 super", SUPER_SCORE, MOVIE_4, "ESPACE_LAC | SATURDAY | 10:00 | 11:00"),
-                event("restaurant", OUTSTANDING_SCORE, NO_MOVIE, "| SATURDAY | 10:30 | 11:30"),
+                event("restaurant", OUTSTANDING_SCORE, SURROGATE_ID_1, "| SATURDAY | 10:30 | 11:30"),
                 event("movie 1 medium", MEDIUM_SCORE, MOVIE_1, "CASINO | SATURDAY | 12:00 | 13:00"),
                 event("movie 2 average", AVERAGE_SCORE, MOVIE_2, "MCL | SATURDAY | 14:00 | 15:00"),
 

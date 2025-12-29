@@ -22,15 +22,15 @@ public class Scoring {
     private Map<EventRating, Integer> events = new HashMap<>();
 
 
-    public int getScore(TheaterRating rating){
+    public int computeScore(TheaterRating rating){
         return theaters.get(rating);
     }
 
-    public int getScore(MovieRating rating){
+    public int computeScore(MovieRating rating){
         return movies.get(rating);
     }
 
-    public int getScore(EventRating rating){
+    public int computeScore(EventRating rating){
         return events.get(rating);
     }
 }
