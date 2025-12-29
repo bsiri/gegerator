@@ -1,3 +1,36 @@
 1. Material a refactoré ses dialogs, repasser dessus
 -> pour l'instant migrées en tant que "legacy-dialog"
 2. Pareil pour le theming
+
+
+TODO a migrer avant de passer à 18:
+A lire qui peut aider (l'autre lien est mort): https://v17.material.angular.dev/guide/mdc-migration
+autre resource utile: https://stackoverflow.com/questions/75296947/what-to-do-with-legacy-after-angular-v15-update
+
+
+    Cannot update to Angular Material v17 because the project is using the legacy Material components
+    that have been deleted. While Angular Material v16 is compatible with Angular v17, it is recommended
+    to switch away from the legacy components as soon as possible because they no longer receive bug fixes,
+    accessibility improvements and new features.
+
+    Read more about migrating away from legacy components: https://material.angular.io/guide/mdc-migration
+
+    Files in the project using legacy Material components:
+     - /src/app/app.component.ts
+     - /src/app/app.module.ts
+     - /src/app/components/appstate/uploaddialog/uploaddialog.component.ts
+     - /src/app/components/configuration/configdialog/configdialog.component.ts
+     - /src/app/components/genericpurposedialog/genericpurposedialog.component.ts
+     - /src/app/components/movies/movie/movie.component.ts
+     - /src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.ts
+     - /src/app/components/movies/moviedialog/moviedialog.component.ts
+     - /src/app/components/movies/movielist/movielist.component.ts
+     - /src/app/components/sessions/activitydialog/activitydialog.component.ts
+     - /src/app/components/sessions/event-rating-menu/event-rating-menu.component.ts
+     - /src/app/components/sessions/other-activity/other-activity.component.ts
+     - /src/app/components/sessions/planned-movie-session/planned-movie-session.component.ts
+     - /src/app/components/sessions/session-section/session-section.component.ts
+     - /src/app/components/sessions/sessiondialog/sessiondialog.component.ts
+     - /src/app/directives/context-menu.directive.ts
+     - /src/app/interceptors/errors.interceptor.ts
+     - /src/app/ngrx/effects/appstate.effects.ts
