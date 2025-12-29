@@ -1,8 +1,18 @@
 
-@use "sass:map"
+@use "@angular/material" as mat;
+@include mat.core();
+
+html {
+  color-scheme: light dark;
+  @include mat.theme((
+    color: mat.$violet-palette,
+    typography: Roboto,
+    density: 0
+  ));
+}
 
 
-/* TODO : no time for this shit, going with blunt replacements until I got this sorted out */
+/* TODO : no time for this shit, going with blunt replacements until I got this sorted out */;
 $app-primary: #4b0082;
 $app-accent: #add8e6;
 $app-warn: #ee7600;
