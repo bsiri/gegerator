@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Movie, MovieRating } from 'src/app/models/movie.model';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Durations } from 'src/app/models/time.utils';
 
 const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
@@ -19,7 +19,7 @@ export class MovieDialog implements OnInit {
   // updated data on it
   id: number;
   rating: MovieRating;
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
   // is an existing instance of a Movie, or a shim for a new Movie.
@@ -32,11 +32,11 @@ export class MovieDialog implements OnInit {
     this.mode = (movie.id === undefined) ? 'create' : 'update'
     this.id = movie.id;
     this.rating = movie.rating;
-    this.formGroup = new FormGroup({
-      title: new FormControl(movie.title, [
+    this.formGroup = new UntypedFormGroup({
+      title: new UntypedFormControl(movie.title, [
         Validators.required
       ]),
-      duration: new FormControl(Durations.toString(movie.duration), [
+      duration: new UntypedFormControl(Durations.toString(movie.duration), [
         Validators.required,
         validateDuration
       ])

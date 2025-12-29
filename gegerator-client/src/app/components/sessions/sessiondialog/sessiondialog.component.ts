@@ -1,5 +1,5 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, Observable, startWith } from 'rxjs';
@@ -24,7 +24,7 @@ export class SessionDialog implements OnInit {
   // updated data on it
   id: number;
   rating: EventRating
-  formGroup!: FormGroup;
+  formGroup!: UntypedFormGroup;
 
   // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
   // is an existing instance of a MovieSession, or a shim for a new MovieSession
@@ -52,13 +52,13 @@ export class SessionDialog implements OnInit {
       const title = session.movie?.title
       const strStartTime = Times.toString(session.startTime)
 
-      this.formGroup = new FormGroup({
-        day: new FormControl(session.day, [Validators.required]),
-        theater: new FormControl(session.theater, [Validators.required]),
-        title: new FormControl(title, [
+      this.formGroup = new UntypedFormGroup({
+        day: new UntypedFormControl(session.day, [Validators.required]),
+        theater: new UntypedFormControl(session.theater, [Validators.required]),
+        title: new UntypedFormControl(title, [
           Validators.required, this.validateMovie.bind(this)
         ]),
-        startTime: new FormControl(strStartTime, [
+        startTime: new UntypedFormControl(strStartTime, [
           Validators.required, this.validateTime
         ])
       })

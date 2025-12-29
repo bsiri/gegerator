@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
 import { Theaters } from 'src/app/models/referential.data';
@@ -14,18 +14,18 @@ export class ConfigDialog implements OnInit {
 
   Theaters = Theaters
   TheaterRatings = TheaterRatings
-  formGroup!: FormGroup
+  formGroup!: UntypedFormGroup
 
   movieVsTheaterBias!: number
 
   constructor(public dialogRef: MatDialogRef<ConfigDialog>,
     @Inject(MAT_DIALOG_DATA) wizconf: WizardConfiguration
   ) {
-    this.formGroup = new FormGroup({
-      espaceLacRating: new FormControl(wizconf.espaceLacRating),
-      casinoRating: new FormControl(wizconf.casinoRating),
-      paradisoRating: new FormControl(wizconf.paradisoRating),
-      mclRating: new FormControl(wizconf.mclRating)
+    this.formGroup = new UntypedFormGroup({
+      espaceLacRating: new UntypedFormControl(wizconf.espaceLacRating),
+      casinoRating: new UntypedFormControl(wizconf.casinoRating),
+      paradisoRating: new UntypedFormControl(wizconf.paradisoRating),
+      mclRating: new UntypedFormControl(wizconf.mclRating)
     })
     // mat-slider doesn't work with formgroups, so we 
     // manage the bias outside of it

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { Days } from 'src/app/models/referential.data';
@@ -18,7 +18,7 @@ export class Activitydialog implements OnInit {
   // we will need to re-emit a Session with
   // updated data on it
   id: number;
-  formGroup!: FormGroup;
+  formGroup!: UntypedFormGroup;
   sessionDayBoundaries = SESSION_DAY_BOUNDARIES
 
   // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
@@ -38,13 +38,13 @@ export class Activitydialog implements OnInit {
     const strStartTime = Times.toString(activity.startTime)
     const strEndTime = Times.toString(activity.endTime)
 
-    this.formGroup = new FormGroup({
-      day: new FormControl(activity.day, [Validators.required]),
-      description: new FormControl(activity.description, [Validators.required]),
-      startTime: new FormControl(strStartTime, [
+    this.formGroup = new UntypedFormGroup({
+      day: new UntypedFormControl(activity.day, [Validators.required]),
+      description: new UntypedFormControl(activity.description, [Validators.required]),
+      startTime: new UntypedFormControl(strStartTime, [
         Validators.required, this.validateTime
       ]),
-      endTime: new FormControl(strEndTime, [
+      endTime: new UntypedFormControl(strEndTime, [
         Validators.required, this.validateTime
       ])
     })
