@@ -13,5 +13,7 @@
   Update your code to remove any reference to @Directive/@Component moduleId property as it does not have any effect and will be removed in v17.
 - entryComponents is no longer available and any reference to it can be removed from the @NgModule and @Component public APIs.
 - QueryList.filter now supports type guard functions. Since the type will be narrowed, you may have to update your application code that relies on the old behavior.
+10. Angular core to v 17
+
 
 
