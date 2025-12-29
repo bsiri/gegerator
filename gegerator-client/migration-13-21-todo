@@ -1,0 +1,3 @@
+1. Material a refactoré ses dialogs, repasser dessus
+-> pour l'instant migrées en tant que "legacy-dialog"
+2. Pareil pour le theming

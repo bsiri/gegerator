@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Store } from '@ngrx/store';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { EventRating, EventRatings } from 'src/app/models/plannable.model';

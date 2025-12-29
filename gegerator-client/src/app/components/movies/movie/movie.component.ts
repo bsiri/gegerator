@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Store } from '@ngrx/store';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { MovieActions } from 'src/app/ngrx/actions/movie.actions';

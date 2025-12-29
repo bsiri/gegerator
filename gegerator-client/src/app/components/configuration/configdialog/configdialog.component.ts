@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSliderChange } from '@angular/material/slider';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatLegacySliderChange as MatSliderChange } from '@angular/material/legacy-slider';
 import { Theaters } from 'src/app/models/referential.data';
 import { TheaterRatings, WizardConfiguration } from 'src/app/ngrx/appstate-models/wizardconfiguration.model';
 

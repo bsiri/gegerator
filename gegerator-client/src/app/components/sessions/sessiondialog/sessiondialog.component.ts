@@ -1,6 +1,6 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { Store } from '@ngrx/store';
 import { map, Observable, startWith } from 'rxjs';
 import { Movie } from 'src/app/models/movie.model';
