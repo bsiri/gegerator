@@ -2,7 +2,6 @@ package org.bsiri.gegerator.services.impl;
 
 import lombok.SneakyThrows;
 import org.bsiri.gegerator.domain.Movie;
-import org.bsiri.gegerator.domain.MovieRating;
 import org.bsiri.gegerator.services.ConfigurationService;
 import org.bsiri.gegerator.services.MovieService;
 import org.bsiri.gegerator.services.MovieSessionService;
@@ -138,7 +137,7 @@ public class ModelChangeDetectorTests {
     //* ********************  *************************
 
     private <R> Flux<R> simulateEventBus(Flux<R> ...fluxes){
-        Flux<R> flux = Arrays.stream(fluxes).reduce((f1, f2) -> f1.concatWith(f2)).get();
+        Flux<R> flux = Arrays.stream(fluxes).reduce(Flux::concatWith).get();
         flux.subscribeOn(Schedulers.parallel());
         return flux;
     }

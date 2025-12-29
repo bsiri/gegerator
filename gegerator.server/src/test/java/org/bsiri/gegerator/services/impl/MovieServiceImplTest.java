@@ -43,7 +43,7 @@ public class MovieServiceImplTest {
                 .expectError(DuplicateNameException.class)
                 .verify();
 
-        service.update(halloween())
+        service.update(theMist())
                 .as(StepVerifier::create)
                 .expectError(DuplicateNameException.class)
                 .verify();    }
