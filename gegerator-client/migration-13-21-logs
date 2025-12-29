@@ -6,4 +6,6 @@
 4. Run ng update @angular/material@15 to update the Material components.
 5. app broken, material theming bullshit
 6. ng update @angular/core@16 @angular/cli@16
+7. ng update @angular/material@16
+
 
