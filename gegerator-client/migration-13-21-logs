@@ -2,4 +2,4 @@
 
 1. Run ng update @angular/core@14 @angular/cli@14 which should bring you to version 14 of Angular.
 2. Run ng update @angular/material@14.
-
+3.  In the application's project directory, run ng update @angular/core@15 @angular/cli@15 to update your application to Angular v15.
