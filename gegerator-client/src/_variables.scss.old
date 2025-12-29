@@ -1,16 +1,16 @@
 @use "sass:color";
 
+@import '~@angular/material/theming';
 
-/* TODO : no time for this shit, going with blunt replacements until I got this sorted out */
-$app-primary: #4b0082;
-$app-accent: #add8e6;
-$app-warn: #ee7600;
+// Copy the palettes from your selected theme (usually theme.scss).
+$app-primary: mat-palette($mat-indigo, 700, 300, 900);
+$app-accent: mat-palette($mat-light-blue);
+$app-warn: mat-palette($mat-deep-orange, A200);
 
-
-/* export the colors */
-$primary: $app-primary;
-$accent: $app-accent;
-$warn: $app-warn;
+// Create your Sass color vars (will be available in all the project)
+$primary: mat-color($app-primary);
+$accent: mat-color($app-accent);
+$warn: mat-color($app-warn);
 
 $primary-light-35: color.scale($primary, $lightness: +35%);
 $primary-dark-35: color.scale($primary, $lightness: -35%);
