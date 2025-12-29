@@ -1,20 +1,32 @@
-package org.bsiri.gegerator.planner.graphplanners;
+package org.bsiri.gegerator.planner;
 
 
-import org.bsiri.gegerator.planner.PlannerEvent;
-import org.bsiri.gegerator.planner.WizardPlanner;
+import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlanner;
+import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
+import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
+import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
+import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.bsiri.gegerator.planner.PlannerEventHelper.event;
 
-public class IterativeGraphPlannerV2Test {
+
+/**
+ * Class that runs the same tests for all our implementations, on
+ * various scenarios.
+ *
+ */
+public class GraphPlannerAllImplTest {
 
     static private Long SURROGATE_ID_1 = -1L;
     static private Long MOVIE_1 = 1L;
@@ -38,8 +50,9 @@ public class IterativeGraphPlannerV2Test {
      * The expected result is that session with super scores are
      * planned, and are consistent chronologically.
      */
-    @Test
-    public void shouldPlanBestScores(){
+    @ParameterizedTest
+    @MethodSource("enumeratePlanners")
+    public void shouldPlanBestScores(String plannerName, PlannerProvider plannerProvider){
         List<PlannerEvent> nodes = Arrays.asList(
             event("Movie 2 Average", AVERAGE_SCORE, MOVIE_2, "MCL|THURSDAY|10:00|11:00"),
             event("Movie 1 Super", SUPER_SCORE, MOVIE_1, "PARADISO|THURSDAY|10:00|11:00"),
@@ -48,7 +61,7 @@ public class IterativeGraphPlannerV2Test {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
+        WizardPlanner graph = plannerProvider.create(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("Movie 1 Super", "Movie 2 Super"));
@@ -61,8 +74,9 @@ public class IterativeGraphPlannerV2Test {
      * The expected result is that it is planned only once in the roadmap,
      * with the best score possible.
      */
-    @Test
-    public void shouldNotPlanSameMovieTwice(){
+    @ParameterizedTest
+    @MethodSource("enumeratePlanners")
+    public void shouldNotPlanSameMovieTwice(String plannerName, PlannerProvider plannerProvider){
         List<PlannerEvent> nodes = Arrays.asList(
             event("average session", AVERAGE_SCORE, MOVIE_1, "MCL | THURSDAY | 10:00 | 11:00"),
             event("super session", SUPER_SCORE, MOVIE_1, "MCL | FRIDAY | 10:00 | 11:00"),
@@ -70,7 +84,7 @@ public class IterativeGraphPlannerV2Test {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
+        WizardPlanner graph = plannerProvider.create(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super session"));
@@ -87,8 +101,9 @@ public class IterativeGraphPlannerV2Test {
      * and eventually the graph picks the one and third
      * because it's better than nothing.
      */
-    @Test
-    public void shouldSacrificeAMovie(){
+    @ParameterizedTest
+    @MethodSource("enumeratePlanners")
+    public void shouldSacrificeAMovie(String plannerName, PlannerProvider plannerProvider){
         List<PlannerEvent> nodes = Arrays.asList(
             event("super movie", SUPER_SCORE, MOVIE_1, "ESPACE_LAC | FRIDAY | 10:00 | 11:00"),
             event("another super movie", SUPER_SCORE, MOVIE_2, "CASINO | FRIDAY | 10:30 | 11:30"),
@@ -96,7 +111,7 @@ public class IterativeGraphPlannerV2Test {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
+        WizardPlanner graph = plannerProvider.create(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super movie", "average movie"));
@@ -108,34 +123,35 @@ public class IterativeGraphPlannerV2Test {
      * move fast enough to watch both movies, so it picks only the
      * best one.
      */
-    @Test
-    public void shouldNoticeBothMoviesNotPossible(){
+    @ParameterizedTest
+    @MethodSource("enumeratePlanners")
+    public void shouldNoticeBothMoviesNotPossible(String plannerName, PlannerProvider plannerProvider){
         List<PlannerEvent> nodes = Arrays.asList(
             event("average movie", AVERAGE_SCORE, MOVIE_2, "MCL | THURSDAY | 10:00 | 11:00"),
             event("best movie", SUPER_SCORE, MOVIE_1, "ESPACE_LAC | THURSDAY | 11:05 | 12:05")
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
+        WizardPlanner graph = plannerProvider.create(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("best movie"));
     }
 
-
     /**
      * BUG 1 : events starting at the same time don't precedes
      * nor follows each other !
      */
-    @Test
-    public void shouldNotPlanBothSessions(){
+    @ParameterizedTest
+    @MethodSource("enumeratePlanners")
+    public void shouldNotPlanBothSessions(String plannerName, PlannerProvider plannerProvider){
         List<PlannerEvent> nodes = Arrays.asList(
                 event("movie 2 super", SUPER_SCORE, MOVIE_2, "ESPACE_LAC | THURSDAY | 22:00 | 23:48"),
                 event("movie 1 super", SUPER_SCORE, MOVIE_1, "PARADISO | THURSDAY | 22:00 | 23:30")
         );
         //Collections.shuffle(nodes);
 
-        WizardPlanner graph = new RankedPathGraphPlanner(nodes);
+        WizardPlanner graph = plannerProvider.create(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
 
         MatcherAssert.assertThat(best.size(), Matchers.equalTo(1));
@@ -146,12 +162,13 @@ public class IterativeGraphPlannerV2Test {
      * - four movies are planned, four times (once for each score),
      * - plus a restaurant,
      * - three movies are picked at their best score,
-     * - the fourth at its next best score because of timing constraints
+     * - the fourth at its not-so-best score because of timing constraints
      *
      * @return
      */
-    @Test
-    public void shouldMakeCompromisesAndPlanTheRestaurant(){
+    @ParameterizedTest
+    @MethodSource("enumeratePlanners")
+    public void shouldMakeCompromisesAndPlanTheRestaurant(String plannerName, PlannerProvider plannerProvider){
         List<PlannerEvent> nodes = Arrays.asList(
                 // THURSDAY
                 event("movie 1 awfull", AWFUL_SCORE, MOVIE_1, "PARADISO | THURSDAY | 08:00 | 09:00"),
@@ -180,10 +197,8 @@ public class IterativeGraphPlannerV2Test {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = new IterativeGraphPlannerV2(nodes);
+        WizardPlanner graph = plannerProvider.create(nodes);
         List<PlannerEvent> best = graph.findBestRoadmap();
-
-        System.out.println(((IterativeGraphPlannerV2)graph).countPaths());
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains(
                 "movie 2 super",
@@ -200,5 +215,34 @@ public class IterativeGraphPlannerV2Test {
 
     private List<String> collectNames(List<PlannerEvent> nodes){
         return nodes.stream().map(PlannerEvent::getName).collect(Collectors.toList());
+    }
+
+    public interface PlannerProvider {
+        WizardPlanner create(List<PlannerEvent> events);
+    }
+
+    private static Stream<Arguments> enumeratePlanners() {
+        return Stream.of(
+                Arguments.of(
+                        RankedPathGraphPlanner.class.getSimpleName(),
+                        (PlannerProvider) RankedPathGraphPlanner::new
+                ),
+                Arguments.of(
+                        IterativeGraphPlannerV2.class.getSimpleName(),
+                        (PlannerProvider) IterativeGraphPlannerV2::new
+                ),
+                Arguments.of(
+                        BlobPlanner.class.getSimpleName(),
+                        (PlannerProvider) BlobPlanner::new
+                ),
+                Arguments.of(
+                        IterativeGraphPlanner.class.getSimpleName(),
+                        (PlannerProvider) IterativeGraphPlanner::new
+                ),
+                Arguments.of(
+                        NaiveGraphPlanner.class.getSimpleName(),
+                        (PlannerProvider) NaiveGraphPlanner::new
+                )
+        );
     }
 }

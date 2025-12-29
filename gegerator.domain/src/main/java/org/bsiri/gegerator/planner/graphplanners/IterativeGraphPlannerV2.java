@@ -101,13 +101,13 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         );
         this.nodes = copy.toArray(new PlannerEvent[]{});
 
-        // remap the movie id to fit in a short
-        Map<Long, Short> movieMap = new HashMap<>();
+        // remap the movie id to sequential ints
         this.nodes_movie = new int[this.nodes.length];
-        // same for the score of the session.
+        Map<Long, Short> movieMap = new HashMap<>();
+        Iterator<Integer> movieIdRemapperIndex = IntStream.range(0, nodes.length).iterator();
+
         this.nodes_score = new long[this.nodes.length];
 
-        Iterator<Integer> movieIdRemapperIndex = IntStream.range(0, nodes.length).iterator();
         for (int i=0; i< nodes.length; i++){
            PlannerEvent event = nodes[i];
            Long movieId = event.getMovie();
@@ -130,11 +130,10 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 // from session A to session B, do not create
                 // and edge
                 if (! src.isTransitionFeasible(dst)) continue;
-
-                // slight optimization: here we also test
-                // that both are not planning the same
-                // movie already (since the optimizer would
-                // never allow that anyway)
+                // Slight optimization: since the planner will never
+                // accept a solution with twice the same movie,
+                // we also prune here the transition if the two
+                // events are planning the same movie.
                 if (src.getMovie().equals(dst.getMovie())) continue;
 
                 adjacency[iSrc][iDst] = 1;
