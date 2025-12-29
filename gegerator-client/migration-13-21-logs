@@ -7,5 +7,6 @@
 5. app broken, material theming bullshit
 6. ng update @angular/core@16 @angular/cli@16
 7. ng update @angular/material@16
+8. ng update @ngrx/store@16
 
 
