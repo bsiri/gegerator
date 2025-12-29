@@ -4,4 +4,6 @@
 2. Run ng update @angular/material@14.
 3.  In the application's project directory, run ng update @angular/core@15 @angular/cli@15 to update your application to Angular v15.
 4. Run ng update @angular/material@15 to update the Material components.
+5. app broken, material theming bullshit
+6. ng update @angular/core@16 @angular/cli@16
 
