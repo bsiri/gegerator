@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { NgSwitch, NgSwitchCase } from '@angular/common';
+
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
@@ -21,7 +21,7 @@ export interface ConfirmDialogData{
     selector: 'app-confirmdialog',
     templateUrl: './genericpurposedialog.component.html',
     styleUrls: ['./genericpurposedialog.component.scss'],
-    imports: [NgSwitch, NgSwitchCase, MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatDialogActions, MatButton]
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatDialogActions, MatButton]
 })
 export class GenericPurposeDialog implements OnInit {
   content: string;

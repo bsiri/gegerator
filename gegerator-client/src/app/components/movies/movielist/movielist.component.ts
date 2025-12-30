@@ -8,7 +8,7 @@ import { MovieActions } from '../../../ngrx/actions/movie.actions';
 import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 import { MatButton } from '@angular/material/button';
-import { NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MovieComponent } from '../movie/movie.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -18,7 +18,7 @@ import { MatInput } from '@angular/material/input';
     selector: 'app-movielist',
     templateUrl: './movielist.component.html',
     styleUrls: ['./movielist.component.scss'],
-    imports: [MatButton, NgFor, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput, AsyncPipe]
+    imports: [MatButton, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput, AsyncPipe]
 })
 export class MovielistComponent implements OnInit {
 

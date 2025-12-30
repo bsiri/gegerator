@@ -7,14 +7,14 @@ import { TheaterRatings, WizardConfiguration } from 'src/app/ngrx/appstate-model
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
-import { NgFor } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-configdialog',
     templateUrl: './configdialog.component.html',
     styleUrls: ['./configdialog.component.scss'],
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, NgFor, MatOption, MatSlider, MatSliderThumb, MatDialogActions, MatButton]
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatSlider, MatSliderThumb, MatDialogActions, MatButton]
 })
 export class ConfigDialog implements OnInit {
 

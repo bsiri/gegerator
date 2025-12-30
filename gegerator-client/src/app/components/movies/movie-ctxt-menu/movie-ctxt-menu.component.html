@@ -1,30 +1,34 @@
 <div appContextMenu [recipient]="_anchor" [dialogRef]="dialogRef" >
-    <fieldset>
-        <legend>Avis Film :</legend>
-        <mat-radio-group 
-            aria-label="Select an option"
-            (change)="updateMovieRating($event)">
-            
-            <mat-radio-button *ngFor="let mr of MovieRatings.enumerate()" 
-                [value]="mr" class="radiobtn--block"
-                [disableRipple]="true"
-                [checked]="mr == movie.rating">
-                    {{mr.description}}
-            </mat-radio-button>
+  <fieldset>
+    <legend>Avis Film :</legend>
+    <mat-radio-group
+      aria-label="Select an option"
+      (change)="updateMovieRating($event)">
 
-        </mat-radio-group>      
-    </fieldset>
+      @for (mr of MovieRatings.enumerate(); track mr) {
+        <mat-radio-button
+          [value]="mr" class="radiobtn--block"
+          [disableRipple]="true"
+          [checked]="mr == movie.rating">
+          {{mr.description}}
+        </mat-radio-button>
+      }
 
-    <fieldset>
-        <legend>Plannifié dans : </legend>
-        <div class="limit-height">
-            <ul>
-                <li *ngFor="let s of sessions$ | async | orderByComparable:'day':'startTime'">
-                    <app-event-link [event]="s">
-                        {{s.format('%t : %d, %h')}}
-                    </app-event-link>
-                </li>
-            </ul>
-        </div>
-    </fieldset>
+    </mat-radio-group>
+  </fieldset>
+
+  <fieldset>
+    <legend>Plannifié dans : </legend>
+    <div class="limit-height">
+      <ul>
+        @for (s of sessions$ | async | orderByComparable:'day':'startTime'; track s) {
+          <li>
+            <app-event-link [event]="s">
+              {{s.format('%t : %d, %h')}}
+            </app-event-link>
+          </li>
+        }
+      </ul>
+    </div>
+  </fieldset>
 </div>

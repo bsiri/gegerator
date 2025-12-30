@@ -1,37 +1,51 @@
 
 <!--
-  Note: this dialog can be open in "create" mode or "edit" mode, depending on whether the
-  Movie object model edited by this dialog is a new instance or an existing instance.
+Note: this dialog can be open in "create" mode or "edit" mode, depending on whether the
+Movie object model edited by this dialog is a new instance or an existing instance.
 
-  This mode decides what will be:
-  - the title of the dialog,
-  - the label of the buttons
+This mode decides what will be:
+- the title of the dialog,
+- the label of the buttons
 -->
 
-<h1 *ngIf="mode === 'create'" mat-dialog-title>Ajouter un film</h1>
-<h1 *ngIf="mode === 'update'" mat-dialog-title>Modifier ce film</h1>
+@if (mode === 'create') {
+  <h1 mat-dialog-title>Ajouter un film</h1>
+}
+@if (mode === 'update') {
+  <h1 mat-dialog-title>Modifier ce film</h1>
+}
 <div mat-dialog-content [formGroup]="formGroup">
-    <div class="dialog-field">
-        <label for="newmovie-title">Titre : </label>
-        <mat-form-field appearance="fill">
-            <input id="newmovie-title" (keyup.enter)="confirm()" matInput formControlName="title">
-            <mat-error *ngIf="invalid('title')">Il faut un titre à ce film !</mat-error>
-        </mat-form-field>
-    </div>
-    <div class="dialog-field">
-        <label for="newmovie-duration">Durée : </label>
-        <mat-form-field appearance="fill">
-            <mat-label>Ex: 1h26</mat-label>
-            <input id="newmovie-duration" (keyup.enter)="confirm()" matInput formControlName="duration">
-        </mat-form-field>
-    </div>
+  <div class="dialog-field">
+    <label for="newmovie-title">Titre : </label>
+    <mat-form-field appearance="fill">
+      <input id="newmovie-title" (keyup.enter)="confirm()" matInput formControlName="title">
+      @if (invalid('title')) {
+        <mat-error>Il faut un titre à ce film !</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="dialog-field">
+    <label for="newmovie-duration">Durée : </label>
+    <mat-form-field appearance="fill">
+      <mat-label>Ex: 1h26</mat-label>
+      <input id="newmovie-duration" (keyup.enter)="confirm()" matInput formControlName="duration">
+    </mat-form-field>
+  </div>
 
 </div>
 <div mat-dialog-actions>
-    <button *ngIf="mode === 'create'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
-    <button *ngIf="mode === 'update'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+  @if (mode === 'create') {
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+  }
+  @if (mode === 'update') {
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+  }
 
-    <button *ngIf="mode === 'create'" mat-button (click)="cancel()">Fermer</button>
-    <button *ngIf="mode === 'update'" mat-button (click)="cancel()">Annuler</button>
+  @if (mode === 'create') {
+    <button mat-button (click)="cancel()">Fermer</button>
+  }
+  @if (mode === 'update') {
+    <button mat-button (click)="cancel()">Annuler</button>
+  }
 </div>
 

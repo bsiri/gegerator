@@ -1,18 +1,20 @@
 
 <div appContextMenu [recipient]="_anchor" [dialogRef]="dialogRef" >
-    <fieldset>
-        <legend>Avis Session :</legend>
-        <mat-radio-group 
-            aria-label="Select an option"
-            (change)="updateRating($event)">
+  <fieldset>
+    <legend>Avis Session :</legend>
+    <mat-radio-group
+      aria-label="Select an option"
+      (change)="updateRating($event)">
 
-            <mat-radio-button *ngFor="let er of EventRatings.enumerate()" 
-                [value]="er" class="radiobtn--block"
-                [disableRipple]="true"
-                [checked]="er == eventRating">
-                    {{er.description}}
-            </mat-radio-button>
-            
-        </mat-radio-group>    
-    </fieldset>
+      @for (er of EventRatings.enumerate(); track er) {
+        <mat-radio-button
+          [value]="er" class="radiobtn--block"
+          [disableRipple]="true"
+          [checked]="er == eventRating">
+          {{er.description}}
+        </mat-radio-button>
+      }
+
+    </mat-radio-group>
+  </fieldset>
 </div>

@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDia
 import { Movie, MovieRating } from 'src/app/models/movie.model';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Durations } from 'src/app/models/time.utils';
-import { NgIf } from '@angular/common';
+
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -15,7 +15,7 @@ const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
     selector: 'app-newmoviedialog',
     templateUrl: './moviedialog.component.html',
     styleUrls: ['./moviedialog.component.scss'],
-    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatError, MatLabel, MatDialogActions, MatButton]
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatError, MatLabel, MatDialogActions, MatButton]
 })
 export class MovieDialog implements OnInit {
 

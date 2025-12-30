@@ -1,41 +1,43 @@
 
 <div class="movielist">
-    <div class="movielist-header vert-small-pad">
-        <h1>Films</h1>
-        
-        <button mat-raised-button  
-        color="primary" 
-        aria-label="add a movie" 
-        (click)="openNewMovie()"
-        title="Ajouter un film"
-        >
-            Ajouter
-        </button>
-    </div>
+  <div class="movielist-header vert-small-pad">
+    <h1>Films</h1>
 
-    <div class="movielist-list padded vert-small-pad">
-        <div *ngFor="let movie of movies$ | async">
-            <div class="movie-margin">
-                <app-movie [movie]="movie"></app-movie>
-            </div>
-        </div>        
-    </div>
+    <button mat-raised-button
+      color="primary"
+      aria-label="add a movie"
+      (click)="openNewMovie()"
+      title="Ajouter un film"
+      >
+      Ajouter
+    </button>
+  </div>
 
-    <div class="movielist-search">
-        <div class="v-center">
-            <mat-icon>search</mat-icon>
-            <mat-form-field>
-                <mat-label>Rechercher...</mat-label>
-                <input matInput (keyup)="filterMovies($event)">
-            </mat-form-field>
+  <div class="movielist-list padded vert-small-pad">
+    @for (movie of movies$ | async; track movie) {
+      <div>
+        <div class="movie-margin">
+          <app-movie [movie]="movie"></app-movie>
         </div>
-        <button mat-raised-button aria-label="sort movies"
-        [color]="sorted ? 'primary' : 'secondary'" 
-        (click)="toggleSort()"
-        title="Trier par titre"
-        >
-            Trier
-        </button>       
+      </div>
+    }
+  </div>
+
+  <div class="movielist-search">
+    <div class="v-center">
+      <mat-icon>search</mat-icon>
+      <mat-form-field>
+        <mat-label>Rechercher...</mat-label>
+        <input matInput (keyup)="filterMovies($event)">
+      </mat-form-field>
     </div>
+    <button mat-raised-button aria-label="sort movies"
+      [color]="sorted ? 'primary' : 'secondary'"
+      (click)="toggleSort()"
+      title="Trier par titre"
+      >
+      Trier
+    </button>
+  </div>
 
 </div>

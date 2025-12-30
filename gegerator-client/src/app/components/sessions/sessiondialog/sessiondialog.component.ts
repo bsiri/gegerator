@@ -10,7 +10,7 @@ import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -22,7 +22,7 @@ import { MatButton } from '@angular/material/button';
     selector: 'app-sessiondialog',
     templateUrl: './sessiondialog.component.html',
     styleUrls: ['./sessiondialog.component.scss'],
-    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatAutocomplete, NgFor, MatOption, MatFormField, MatInput, MatAutocompleteTrigger, MatError, MatLabel, MatSelect, MatDialogActions, MatButton, AsyncPipe]
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatAutocomplete, MatOption, MatFormField, MatInput, MatAutocompleteTrigger, MatError, MatLabel, MatSelect, MatDialogActions, MatButton, AsyncPipe]
 })
 export class SessionDialog implements OnInit {
 

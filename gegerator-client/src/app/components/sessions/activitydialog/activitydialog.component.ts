@@ -5,7 +5,7 @@ import { OtherActivity } from 'src/app/models/activity.model';
 import { Days } from 'src/app/models/referential.data';
 import { Times } from 'src/app/models/time.utils';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
-import { NgIf, NgFor, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -16,7 +16,7 @@ import { MatButton } from '@angular/material/button';
     selector: 'app-activitydialog',
     templateUrl: './activitydialog.component.html',
     styleUrls: ['./activitydialog.component.scss'],
-    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, NgFor, MatOption, MatInput, MatLabel, MatError, NgStyle, MatDialogActions, MatButton]
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatInput, MatLabel, MatError, NgStyle, MatDialogActions, MatButton]
 })
 export class Activitydialog implements OnInit {
 

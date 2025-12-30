@@ -1,5 +1,7 @@
-<span *ngIf="event" class="pseudolink" (click)="showSelected(event.htmlId)">
+@if (event) {
+  <span class="pseudolink" (click)="showSelected(event.htmlId)">
     <ng-content>
-        <!-- whatever we need to put in there -->
+      <!-- whatever we need to put in there -->
     </ng-content>
-</span>
+  </span>
+}

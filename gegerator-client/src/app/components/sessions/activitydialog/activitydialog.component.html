@@ -1,59 +1,73 @@
 
 <!--
-  Note: this dialog can be open in "create" mode or "edit" mode, depending on whether the
-  Activity object model edited by this dialog is a new instance or an existing instance.
+Note: this dialog can be open in "create" mode or "edit" mode, depending on whether the
+Activity object model edited by this dialog is a new instance or an existing instance.
 
-  This mode decides what will be:
-  - the title of the dialog,
-  - the label of the buttons
+This mode decides what will be:
+- the title of the dialog,
+- the label of the buttons
 -->
 
-<h1 *ngIf="mode === 'create'" mat-dialog-title>Ajouter une activité</h1>
-<h1 *ngIf="mode === 'update'" mat-dialog-title>Modifier cette activité</h1>
+@if (mode === 'create') {
+  <h1 mat-dialog-title>Ajouter une activité</h1>
+}
+@if (mode === 'update') {
+  <h1 mat-dialog-title>Modifier cette activité</h1>
+}
 <div mat-dialog-content [formGroup]="formGroup">
 
-    <div class="dialog-field">
-        <span>Jour : </span>
-        <mat-form-field appearance="fill">
-            <mat-select formControlName="day">
-                <mat-option (keyup.enter)="confirm()" *ngFor="let sday of Days.enumerate()" [value]="sday">
-                    {{sday.name}}
-                  </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
+  <div class="dialog-field">
+    <span>Jour : </span>
+    <mat-form-field appearance="fill">
+      <mat-select formControlName="day">
+        @for (sday of Days.enumerate(); track sday) {
+          <mat-option (keyup.enter)="confirm()" [value]="sday">
+            {{sday.name}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-    <div class="dialog-field">
-        <label>Description : </label>
-        <mat-form-field appearance="fill">
-            <input (keyup.enter)="confirm()" matInput formControlName="description">
-        </mat-form-field>
-    </div>
+  <div class="dialog-field">
+    <label>Description : </label>
+    <mat-form-field appearance="fill">
+      <input (keyup.enter)="confirm()" matInput formControlName="description">
+    </mat-form-field>
+  </div>
 
-    <div class="dialog-field">
-        <label>Début : </label>
-        <mat-form-field appearance="fill">
-            <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
-            <input (keyup.enter)="confirm()" matInput formControlName="startTime">
-        </mat-form-field>
-    </div>
+  <div class="dialog-field">
+    <label>Début : </label>
+    <mat-form-field appearance="fill">
+      <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+      <input (keyup.enter)="confirm()" matInput formControlName="startTime">
+    </mat-form-field>
+  </div>
 
-    <div class="dialog-field">
-        <label>Fin : </label>
-        <mat-form-field appearance="fill">
-            <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
-            <input (keyup.enter)="confirm()" matInput formControlName="endTime">
-        </mat-form-field>
-    </div>
+  <div class="dialog-field">
+    <label>Fin : </label>
+    <mat-form-field appearance="fill">
+      <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+      <input (keyup.enter)="confirm()" matInput formControlName="endTime">
+    </mat-form-field>
+  </div>
 
 
-    <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'visible': 'hidden'}">Le début doit être avant la fin n'est-ce pas</mat-error>
+  <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'visible': 'hidden'}">Le début doit être avant la fin n'est-ce pas</mat-error>
 
 </div>
 <div mat-dialog-actions>
-    <button *ngIf="mode === 'create'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
-    <button *ngIf="mode === 'update'" mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+  @if (mode === 'create') {
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+  }
+  @if (mode === 'update') {
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+  }
 
-    <button *ngIf="mode === 'create'" mat-button (click)="cancel()">Fermer</button>
-    <button *ngIf="mode === 'update'" mat-button (click)="cancel()">Annuler</button>
+  @if (mode === 'create') {
+    <button mat-button (click)="cancel()">Fermer</button>
+  }
+  @if (mode === 'update') {
+    <button mat-button (click)="cancel()">Annuler</button>
+  }
 </div>

@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { EventRating } from 'src/app/models/plannable.model';
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-session-ratings',
     templateUrl: './session-ratings.component.html',
     styleUrls: ['./session-ratings.component.scss'],
-    imports: [NgIf, NgClass]
+    imports: [NgClass]
 })
 export class SessionRatingsComponent implements OnInit {
 
