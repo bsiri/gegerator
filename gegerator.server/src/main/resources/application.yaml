@@ -2,6 +2,15 @@ spring:
   r2dbc:
     name: gegerator
 
+  web:
+    resources:
+      # The new Angular builder now outputs client-side content
+      # in a directory named "/browser" (see angular.json, and the dist
+      # directory), then itself bundled by maven-frontend-plugin in "/static"
+      # (unzip -l the gegerator.client jar to see where all the assets
+      # land). Hence, we redefine the static assets location:
+      static-locations: classpath:/static/browser/
+
   #h2:
   #  console.enabled: true
   #webflux:
