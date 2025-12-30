@@ -22,9 +22,13 @@ spring:
   #h2:
   #  console.enabled: true
 
-
+  # Do not set base-path: it breaks requests to static assets (the client expects
+  # them to be at the base path '/')
+  # At the moment it's simpler to just configure each api controllers to serve at
+  # basepath /api instead of setting it globally and configure exceptions for
+  # static assets
   #webflux:
-  #  base-path: /gegerator
+  #  base-path: /api
 
 
 scoring:

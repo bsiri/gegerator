@@ -16,11 +16,15 @@ html {
   ));
 
   @include mat.button-overrides((
-    filled-container-shape: 5px,
-    text-container-shape: 5px,
-    outlined-container-shape: 5px,
-    protected-container-shape: 5px,
-    tonal-container-shape: 5px
-  ))
+    filled-container-shape: var(--mat-sys-corner-extra-small, 4px),
+    text-container-shape: var(--mat-sys-corner-extra-small, 4px),
+    outlined-container-shape: var(--mat-sys-corner-extra-small, 4px),
+    protected-container-shape: var(--mat-sys-corner-extra-small, 4px),
+    tonal-container-shape: var(--mat-sys-corner-extra-small, 4px)
+  ));
+
+  @include mat.card-overrides((
+    title-text-weight: 500
+  ));
 
 }
