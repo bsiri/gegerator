@@ -3,7 +3,8 @@ import { Times } from '../models/time.utils';
 import { Time } from "../models/time.model";
 
 @Pipe({
-  name: 'time'
+    name: 'time',
+    standalone: false
 })
 export class TimePipe implements PipeTransform {
 

@@ -13,9 +13,10 @@ import { EventRating, EventRatings } from 'src/app/models/plannable.model';
 
 
 @Component({
-  selector: 'app-planned-movie-session',
-  templateUrl: './planned-movie-session.component.html',
-  styleUrls: ['./planned-movie-session.component.scss']
+    selector: 'app-planned-movie-session',
+    templateUrl: './planned-movie-session.component.html',
+    styleUrls: ['./planned-movie-session.component.scss'],
+    standalone: false
 })
 export class PlannedMovieSessionComponent{
 

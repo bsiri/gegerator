@@ -12,9 +12,10 @@ import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
 @Component({
-  selector: 'app-sessiondialog',
-  templateUrl: './sessiondialog.component.html',
-  styleUrls: ['./sessiondialog.component.scss']
+    selector: 'app-sessiondialog',
+    templateUrl: './sessiondialog.component.html',
+    styleUrls: ['./sessiondialog.component.scss'],
+    standalone: false
 })
 export class SessionDialog implements OnInit {
 

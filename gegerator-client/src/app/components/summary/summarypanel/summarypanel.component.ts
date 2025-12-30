@@ -28,9 +28,10 @@ interface SessionsForRating{
 // ** main component **
 
 @Component({
-  selector: 'app-summarypanel',
-  templateUrl: './summarypanel.component.html',
-  styleUrls: ['./summarypanel.component.scss']
+    selector: 'app-summarypanel',
+    templateUrl: './summarypanel.component.html',
+    styleUrls: ['./summarypanel.component.scss'],
+    standalone: false
 })
 export class SummarypanelComponent implements OnInit, OnDestroy {
 

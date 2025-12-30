@@ -7,9 +7,10 @@ import { Durations } from 'src/app/models/time.utils';
 const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 
 @Component({
-  selector: 'app-newmoviedialog',
-  templateUrl: './moviedialog.component.html',
-  styleUrls: ['./moviedialog.component.scss']
+    selector: 'app-newmoviedialog',
+    templateUrl: './moviedialog.component.html',
+    styleUrls: ['./moviedialog.component.scss'],
+    standalone: false
 })
 export class MovieDialog implements OnInit {
 

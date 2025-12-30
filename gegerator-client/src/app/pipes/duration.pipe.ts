@@ -3,7 +3,8 @@ import {Duration, parse} from 'iso8601-duration';
 import { Durations } from '../models/time.utils';
 
 @Pipe({
-  name: 'duration'
+    name: 'duration',
+    standalone: false
 })
 export class DurationPipe implements PipeTransform {
 

@@ -18,9 +18,10 @@ import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.select
  * read straight from the MatDialogRef.componentInstance
  */
 @Component({
-  selector: 'app-movie-ctxt-menu',
-  templateUrl: './movie-ctxt-menu.component.html',
-  styleUrls: ['./movie-ctxt-menu.component.scss']
+    selector: 'app-movie-ctxt-menu',
+    templateUrl: './movie-ctxt-menu.component.html',
+    styleUrls: ['./movie-ctxt-menu.component.scss'],
+    standalone: false
 })
 export class MovieCtxtMenu implements OnInit {
 

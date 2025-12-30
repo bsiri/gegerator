@@ -9,7 +9,8 @@ import { Pipe, PipeTransform } from '@angular/core';
  * 
  */
 @Pipe({
-  name: 'orderByLowercase'
+    name: 'orderByLowercase',
+    standalone: false
 })
 export class OrderByLowercasePipe implements PipeTransform {
 

@@ -5,7 +5,8 @@ import { DialogPosition, MatDialogRef } from '@angular/material/dialog';
 const DIALOG_PADDING_PX = 24
 
 @Directive({
-  selector: '[appContextMenu]'
+    selector: '[appContextMenu]',
+    standalone: false
 })
 export class ContextMenuDirective implements AfterViewInit{
   @Input() recipient!: ContextMenuRecipient

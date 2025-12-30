@@ -20,9 +20,10 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
 
 @Component({
-  selector: 'app-session-section',
-  templateUrl: './session-section.component.html',
-  styleUrls: ['./session-section.component.scss']
+    selector: 'app-session-section',
+    templateUrl: './session-section.component.html',
+    styleUrls: ['./session-section.component.scss'],
+    standalone: false
 })
 export class SessionSectionComponent implements OnInit, OnDestroy {
 

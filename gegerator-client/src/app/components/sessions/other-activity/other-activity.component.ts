@@ -11,9 +11,10 @@ import { EventRatingMenu } from '../event-rating-menu/event-rating-menu.componen
 import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
 
 @Component({
-  selector: 'app-other-activity',
-  templateUrl: './other-activity.component.html',
-  styleUrls: ['./other-activity.component.scss']
+    selector: 'app-other-activity',
+    templateUrl: './other-activity.component.html',
+    styleUrls: ['./other-activity.component.scss'],
+    standalone: false
 })
 export class OtherActivityComponent implements OnInit {
 

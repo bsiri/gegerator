@@ -2,9 +2,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-uploaddialog',
-  templateUrl: './uploaddialog.component.html',
-  styleUrls: ['./uploaddialog.component.scss']
+    selector: 'app-uploaddialog',
+    templateUrl: './uploaddialog.component.html',
+    styleUrls: ['./uploaddialog.component.scss'],
+    standalone: false
 })
 export class UploadDialog implements OnInit {
 

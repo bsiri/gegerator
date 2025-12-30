@@ -7,9 +7,10 @@ import { Times } from 'src/app/models/time.utils';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 
 @Component({
-  selector: 'app-activitydialog',
-  templateUrl: './activitydialog.component.html',
-  styleUrls: ['./activitydialog.component.scss']
+    selector: 'app-activitydialog',
+    templateUrl: './activitydialog.component.html',
+    styleUrls: ['./activitydialog.component.scss'],
+    standalone: false
 })
 export class Activitydialog implements OnInit {
 

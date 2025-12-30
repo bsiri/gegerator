@@ -6,9 +6,10 @@ import { Theaters } from 'src/app/models/referential.data';
 import { TheaterRatings, WizardConfiguration } from 'src/app/ngrx/appstate-models/wizardconfiguration.model';
 
 @Component({
-  selector: 'app-configdialog',
-  templateUrl: './configdialog.component.html',
-  styleUrls: ['./configdialog.component.scss']
+    selector: 'app-configdialog',
+    templateUrl: './configdialog.component.html',
+    styleUrls: ['./configdialog.component.scss'],
+    standalone: false
 })
 export class ConfigDialog implements OnInit {
 

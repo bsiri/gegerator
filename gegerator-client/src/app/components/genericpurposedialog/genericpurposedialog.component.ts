@@ -14,9 +14,10 @@ export interface ConfirmDialogData{
 }
 
 @Component({
-  selector: 'app-confirmdialog',
-  templateUrl: './genericpurposedialog.component.html',
-  styleUrls: ['./genericpurposedialog.component.scss']
+    selector: 'app-confirmdialog',
+    templateUrl: './genericpurposedialog.component.html',
+    styleUrls: ['./genericpurposedialog.component.scss'],
+    standalone: false
 })
 export class GenericPurposeDialog implements OnInit {
   content: string;

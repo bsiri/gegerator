@@ -28,9 +28,10 @@ export type SwItemBorderRendering = "disabled" | "normal" | "salient" | "outstan
   based on the start time and duration of the Plannable it represents.
 */
 @Component({
-  selector: 'app-swimlane-item',
-  templateUrl: './swimlane-item.component.html',
-  styleUrls: ['./swimlane-item.component.scss']
+    selector: 'app-swimlane-item',
+    templateUrl: './swimlane-item.component.html',
+    styleUrls: ['./swimlane-item.component.scss'],
+    standalone: false
 })
 export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
 

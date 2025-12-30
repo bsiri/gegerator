@@ -9,9 +9,10 @@ import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 
 @Component({
-  selector: 'app-movielist',
-  templateUrl: './movielist.component.html',
-  styleUrls: ['./movielist.component.scss']
+    selector: 'app-movielist',
+    templateUrl: './movielist.component.html',
+    styleUrls: ['./movielist.component.scss'],
+    standalone: false
 })
 export class MovielistComponent implements OnInit {
 

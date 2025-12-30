@@ -11,9 +11,10 @@ import { EventRating, EventRatings } from 'src/app/models/plannable.model';
  * read straight from the MatDialogRef.componentInstance
  */
 @Component({
-  selector: 'app-event-rating-menu',
-  templateUrl: './event-rating-menu.component.html',
-  styleUrls: ['./event-rating-menu.component.scss']
+    selector: 'app-event-rating-menu',
+    templateUrl: './event-rating-menu.component.html',
+    styleUrls: ['./event-rating-menu.component.scss'],
+    standalone: false
 })
 export class EventRatingMenu implements OnInit {
 
