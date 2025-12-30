@@ -24,7 +24,8 @@
               "iso8601-duration"
             ],
             "outputPath": {
-              "base": "dist/gegerator-client"
+              "base": "dist/gegerator-client",
+              "browser": ""
             },
             "index": "src/index.html",
             "polyfills": [
@@ -97,7 +98,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
