@@ -86,7 +86,8 @@ export class SessionDialog implements OnInit {
   ngOnInit(): void {
   }
 
-  @HostListener('window:keyup.Enter', ['$event'])
+  //@HostListener('window:keyup.Enter', ['$event'])
+  @HostListener('window:keyup.Enter')
   confirm(): void{
     if (this.formGroup.invalid){
       return;
