@@ -1,4 +1,61 @@
 
-@use '@angular/material' as mat;
-@include mat.core();
+/* You can add global styles to this file, and also import other style files */
+html{
+    height: 100%;
+    padding: 0;
+}
 
+body{
+    height: 100%;
+    margin: 0;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+/* *********************** flex helpers ************************* */
+
+.flex-1{
+    display: flex;
+    flex: 1;
+}
+
+/* *********************** material icons ************************* */
+
+// why would Material define negative margin on the left and positive on the 
+// right for button icons is beyond me...
+.mat-mdc-button>.mat-icon.margin-auto{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* *********************** dialogs *********************** */
+.dialog-field{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    >span, .field-label{
+        display: flex;
+        margin-right: 8px;
+    }
+}
+
+
+// these are my own icons, not mat-icons
+.icon{
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    margin-right: 4px;
+}
+
+.v-center{
+    display: flex;
+    align-items: center;
+}
+
+// ********* misc ********

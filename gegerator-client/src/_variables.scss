@@ -24,9 +24,12 @@ $small-gap: 8px;
 
 // ***** mat-button customization ********
 @mixin small-button{
-    min-width: inherit;
-    padding: 0.1em;
+    min-width: fit-content;
+    height: fit-content;
+    padding: 0.5em;
     line-height: normal;
+    background-color: lightgray;
+    color: black;
 }
 
 @mixin delete-button{

@@ -11,7 +11,7 @@
     <a class="anchor" [id]="item.htmlId">
       <!-- see explanation for this <a> element in the .scss file-->
     </a>
-    <button mat-button (click)="requestDelete.emit()">
+    <button matMiniFab (click)="requestDelete.emit()">
       <mat-icon>remove</mat-icon>
     </button>
     <h4 class="swimlane-item-title">{{item.name}}</h4>
