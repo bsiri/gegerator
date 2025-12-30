@@ -16,6 +16,8 @@
 10. Angular core to v 17
 11. Angular to 17, have to refactor my old components before proceeding but the migration documentation has disappeared
 also bumped ngrx
+12. Ran the migration script to material mdc 
+13. Material 17
 
 
 
