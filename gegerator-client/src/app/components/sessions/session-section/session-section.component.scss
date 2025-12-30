@@ -1,6 +1,7 @@
 
 @use '../../../../_variables' as *;
 @use "sass:color";
+@use '@angular/material' as mat;
 // $color-high: color.scale($color-highest, $lightness: +50%);
 
 #sessions-mainview{
@@ -36,7 +37,7 @@
             top: 8px;
             z-index: 2;
             background-color: $secondary-pane-color;
-
+            @include mat.elevation(8);
 
             .session-header{
                 display: flex;

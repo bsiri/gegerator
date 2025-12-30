@@ -1,5 +1,5 @@
+/* *********************** global styles ************************* */
 
-/* You can add global styles to this file, and also import other style files */
 html{
     height: 100%;
     padding: 0;
@@ -8,11 +8,14 @@ html{
 body{
     height: 100%;
     margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    /* rescale everything down a bit */
+    font-size: 0.75em;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
+h1 {
+  margin: 0;
+}
 
 /* *********************** flex helpers ************************* */
 

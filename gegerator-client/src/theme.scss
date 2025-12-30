@@ -1,13 +1,16 @@
 
 
 @use '@angular/material' as mat;
+
+// elevation-classes() does not work, use directly mat.elevation(z) where needed
 //@include mat.elevation-classes();
 //@include mat.app-background();
 
 html {
   @include mat.theme((
     color: (
-      primary: mat.$violet-palette,
+      primary: mat.$blue-palette,
+      secondary: mat.$blue-palette,
       tertiary: mat.$orange-palette,
       theme-type: light,
     ),
@@ -15,6 +18,7 @@ html {
     density: 0
   ));
 
+  // not so round buttons please
   @include mat.button-overrides((
     filled-container-shape: var(--mat-sys-corner-extra-small, 4px),
     text-container-shape: var(--mat-sys-corner-extra-small, 4px),
@@ -25,6 +29,12 @@ html {
 
   @include mat.card-overrides((
     title-text-weight: 500
+  ));
+
+  // not so round sidenav please
+  @include mat.sidenav-overrides((
+    container-shape: var(--mat-sys-corner-extra-small, 4px),
+    container-width: fit-content
   ));
 
 }
