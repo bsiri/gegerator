@@ -8,8 +8,8 @@ describe('MovieDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MovieDialog ]
-    })
+    imports: [MovieDialog]
+})
     .compileComponents();
   });
 

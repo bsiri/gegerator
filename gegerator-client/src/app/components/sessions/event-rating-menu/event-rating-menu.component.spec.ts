@@ -8,8 +8,8 @@ describe('EventRatingMenu', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EventRatingMenu ]
-    })
+    imports: [EventRatingMenu]
+})
     .compileComponents();
   });
 

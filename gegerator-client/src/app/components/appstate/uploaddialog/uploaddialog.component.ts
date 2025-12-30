@@ -1,11 +1,14 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-uploaddialog',
     templateUrl: './uploaddialog.component.html',
     styleUrls: ['./uploaddialog.component.scss'],
-    standalone: false
+    imports: [MatDialogTitle, FormsModule, CdkScrollable, MatDialogContent, MatDialogActions, MatButton]
 })
 export class UploadDialog implements OnInit {
 

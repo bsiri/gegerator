@@ -8,10 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  * and you can expect runtime errors if you go sloppy.
  * 
  */
-@Pipe({
-    name: 'orderByLowercase',
-    standalone: false
-})
+@Pipe({ name: 'orderByLowercase' })
 export class OrderByLowercasePipe implements PipeTransform {
 
   transform<T extends any>(arr: T[], attrName: string): T[] {

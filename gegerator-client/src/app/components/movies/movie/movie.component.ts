@@ -7,12 +7,17 @@ import { Movie } from '../../../models/movie.model';
 import { GenericPurposeDialog, ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component';
 import { MovieCtxtMenu } from '../movie-ctxt-menu/movie-ctxt-menu.component';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
+import { DurationPipe } from '../../../pipes/duration.pipe';
 
 @Component({
     selector: 'app-movie',
     templateUrl: './movie.component.html',
     styleUrls: ['./movie.component.scss'],
-    standalone: false
+    imports: [MatCard, MatButton, MatIcon, MatCardHeader, MatCardTitle, MatCardContent, MovieRatingsComponent, DurationPipe]
 })
 export class MovieComponent implements OnInit, ContextMenuRecipient {
 

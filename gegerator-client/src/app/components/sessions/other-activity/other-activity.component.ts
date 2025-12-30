@@ -9,12 +9,13 @@ import { ConfirmOutput, GenericPurposeDialog } from '../../genericpurposedialog/
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { EventRatingMenu } from '../event-rating-menu/event-rating-menu.component';
 import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } from '../swimlane-item/swimlane-item.component';
+import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
 
 @Component({
     selector: 'app-other-activity',
     templateUrl: './other-activity.component.html',
     styleUrls: ['./other-activity.component.scss'],
-    standalone: false
+    imports: [SwimlaneItemComponent, SessionRatingsComponent]
 })
 export class OtherActivityComponent implements OnInit {
 

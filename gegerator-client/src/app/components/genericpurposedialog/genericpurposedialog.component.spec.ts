@@ -8,8 +8,8 @@ describe('Confirmdialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GenericPurposeDialog ]
-    })
+    imports: [GenericPurposeDialog]
+})
     .compileComponents();
   });
 

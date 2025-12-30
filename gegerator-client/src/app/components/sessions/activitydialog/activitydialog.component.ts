@@ -1,16 +1,22 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { Days } from 'src/app/models/referential.data';
 import { Times } from 'src/app/models/time.utils';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+import { NgIf, NgFor, NgStyle } from '@angular/common';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-activitydialog',
     templateUrl: './activitydialog.component.html',
     styleUrls: ['./activitydialog.component.scss'],
-    standalone: false
+    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, NgFor, MatOption, MatInput, MatLabel, MatError, NgStyle, MatDialogActions, MatButton]
 })
 export class Activitydialog implements OnInit {
 

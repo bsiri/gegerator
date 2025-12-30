@@ -8,8 +8,8 @@ describe('EventLinkComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EventLinkComponent ]
-    })
+    imports: [EventLinkComponent]
+})
     .compileComponents();
   });
 

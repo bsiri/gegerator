@@ -10,6 +10,12 @@ import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors'
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { selectActiveRoadmap, selectUserRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { NgFor, NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
+import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
+import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
+import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
+import { OrderByComparablePipe } from '../../../pipes/order-by-comparable.pipe';
 
 // A couple of interface
 // Think of them as entries of a Map<Rating, Ratable[]>, 
@@ -31,7 +37,7 @@ interface SessionsForRating{
     selector: 'app-summarypanel',
     templateUrl: './summarypanel.component.html',
     styleUrls: ['./summarypanel.component.scss'],
-    standalone: false
+    imports: [MatTabGroup, MatTab, NgFor, EventLinkComponent, NgIf, MovieRatingsComponent, NgTemplateOutlet, SessionRatingsComponent, AsyncPipe, OrderByComparablePipe]
 })
 export class SummarypanelComponent implements OnInit, OnDestroy {
 

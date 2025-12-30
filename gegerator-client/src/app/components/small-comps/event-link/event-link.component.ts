@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PlannableEvent } from 'src/app/models/plannable.model';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-event-link',
     templateUrl: './event-link.component.html',
     styleUrls: ['./event-link.component.scss'],
-    standalone: false
+    imports: [NgIf]
 })
 export class EventLinkComponent implements OnInit {
 

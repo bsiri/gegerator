@@ -8,8 +8,8 @@ describe('SwimlaneItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SwimlaneItemComponent ]
-    })
+    imports: [SwimlaneItemComponent]
+})
     .compileComponents();
   });
 

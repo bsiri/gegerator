@@ -18,12 +18,17 @@ import { ModeService } from 'src/app/services/mode.service';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
+import { NgFor, NgTemplateOutlet, NgStyle, AsyncPipe } from '@angular/common';
+import { OtherActivityComponent } from '../other-activity/other-activity.component';
+import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'app-session-section',
     templateUrl: './session-section.component.html',
     styleUrls: ['./session-section.component.scss'],
-    standalone: false
+    imports: [NgFor, NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, AsyncPipe]
 })
 export class SessionSectionComponent implements OnInit, OnDestroy {
 

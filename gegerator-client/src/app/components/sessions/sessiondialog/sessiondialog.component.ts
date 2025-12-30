@@ -1,6 +1,6 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, Observable, startWith } from 'rxjs';
 import { Movie } from 'src/app/models/movie.model';
@@ -10,12 +10,19 @@ import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-sessiondialog',
     templateUrl: './sessiondialog.component.html',
     styleUrls: ['./sessiondialog.component.scss'],
-    standalone: false
+    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatAutocomplete, NgFor, MatOption, MatFormField, MatInput, MatAutocompleteTrigger, MatError, MatLabel, MatSelect, MatDialogActions, MatButton, AsyncPipe]
 })
 export class SessionDialog implements OnInit {
 

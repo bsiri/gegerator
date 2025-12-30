@@ -8,8 +8,8 @@ describe('ActivityDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Activitydialog ]
-    })
+    imports: [Activitydialog]
+})
     .compileComponents();
   });
 

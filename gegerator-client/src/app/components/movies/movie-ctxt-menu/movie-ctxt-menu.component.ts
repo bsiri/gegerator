@@ -1,11 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatRadioChange } from '@angular/material/radio';
+import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { ContextMenuDirective } from '../../../directives/context-menu.directive';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
+import { OrderByComparablePipe } from '../../../pipes/order-by-comparable.pipe';
 
 
 /**
@@ -21,7 +25,7 @@ import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.select
     selector: 'app-movie-ctxt-menu',
     templateUrl: './movie-ctxt-menu.component.html',
     styleUrls: ['./movie-ctxt-menu.component.scss'],
-    standalone: false
+    imports: [ContextMenuDirective, MatRadioGroup, NgFor, MatRadioButton, EventLinkComponent, AsyncPipe, OrderByComparablePipe]
 })
 export class MovieCtxtMenu implements OnInit {
 

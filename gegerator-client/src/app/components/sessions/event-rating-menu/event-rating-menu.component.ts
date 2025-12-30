@@ -1,8 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatRadioChange } from '@angular/material/radio';
+import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { EventRating, EventRatings } from 'src/app/models/plannable.model';
+import { ContextMenuDirective } from '../../../directives/context-menu.directive';
+import { NgFor } from '@angular/common';
 
 /**
  * Menu that allow to select ratings for sessions and activities.
@@ -14,7 +16,7 @@ import { EventRating, EventRatings } from 'src/app/models/plannable.model';
     selector: 'app-event-rating-menu',
     templateUrl: './event-rating-menu.component.html',
     styleUrls: ['./event-rating-menu.component.scss'],
-    standalone: false
+    imports: [ContextMenuDirective, MatRadioGroup, NgFor, MatRadioButton]
 })
 export class EventRatingMenu implements OnInit {
 

@@ -8,8 +8,8 @@ describe('SessionDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SessionDialog ]
-    })
+    imports: [SessionDialog]
+})
     .compileComponents();
   });
 

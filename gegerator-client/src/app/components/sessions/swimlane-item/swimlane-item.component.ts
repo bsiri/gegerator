@@ -2,6 +2,10 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { PlannableEvent } from 'src/app/models/plannable.model';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+import { NgIf, NgClass, NgStyle } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { TimePipe } from '../../../pipes/time.pipe';
 
 
 /**
@@ -31,7 +35,7 @@ export type SwItemBorderRendering = "disabled" | "normal" | "salient" | "outstan
     selector: 'app-swimlane-item',
     templateUrl: './swimlane-item.component.html',
     styleUrls: ['./swimlane-item.component.scss'],
-    standalone: false
+    imports: [NgIf, NgClass, NgStyle, MatButton, MatIcon, TimePipe]
 })
 export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
 

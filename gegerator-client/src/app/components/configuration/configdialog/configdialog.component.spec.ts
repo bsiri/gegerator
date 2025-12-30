@@ -8,8 +8,8 @@ describe('ConfigDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConfigDialog ]
-    })
+    imports: [ConfigDialog]
+})
     .compileComponents();
   });
 

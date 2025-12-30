@@ -8,8 +8,8 @@ describe('MovieCtxtMenu', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MovieCtxtMenu ]
-    })
+    imports: [MovieCtxtMenu]
+})
     .compileComponents();
   });
 

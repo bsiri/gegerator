@@ -8,8 +8,8 @@ describe('UploadDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UploadDialog ]
-    })
+    imports: [UploadDialog]
+})
     .compileComponents();
   });
 

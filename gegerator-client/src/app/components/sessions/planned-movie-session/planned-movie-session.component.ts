@@ -10,13 +10,15 @@ import { MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { EventRating, EventRatings } from 'src/app/models/plannable.model';
+import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
+import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
 
 
 @Component({
     selector: 'app-planned-movie-session',
     templateUrl: './planned-movie-session.component.html',
     styleUrls: ['./planned-movie-session.component.scss'],
-    standalone: false
+    imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent]
 })
 export class PlannedMovieSessionComponent{
 
