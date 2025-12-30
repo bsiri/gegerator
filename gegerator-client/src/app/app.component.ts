@@ -14,12 +14,21 @@ import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
 import { WizardService } from './services/wizard.service';
 import { ModeActions } from './ngrx/actions/mode.actions';
+import { MatButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { NgIf } from '@angular/common';
+import { MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { MovielistComponent } from './components/movies/movielist/movielist.component';
+import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
+import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    standalone: false
+    imports: [MatButton, MatMenuTrigger, MatMenu, MatMenuItem, NgIf, MatLabel, MatIcon, MatSidenavContainer, MatSidenav, MovielistComponent, MatSidenavContent, SessionSectionComponent, SummarypanelComponent]
 })
 export class AppComponent implements OnInit{
 
