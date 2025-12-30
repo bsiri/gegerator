@@ -1,24 +1,24 @@
 
-@use "@angular/material" as mat;
+
+@use '@angular/material' as mat;
 @include mat.core();
 
-html {
-  color-scheme: light dark;
-  @include mat.theme((
-    color: mat.$violet-palette,
-    typography: Roboto,
-    density: 0
-  ));
-}
 
+// If these must change, remember to redeclare them
+// in _variables.scss
+// (see : https://medium.com/@aleixsuau/how-to-use-angular-material-2-sass-variables-in-your-components-76ce0203f126)
+// + https://v17.material.angular.dev/guide/theming
+$app-primary: mat.define-palette(mat.$indigo-palette, 700, 300, 900);
+$app-accent: mat.define-palette(mat.$blue-palette);
+$app-warn: mat.define-palette(mat.$orange-palette, A200);
 
-/* TODO : no time for this shit, going with blunt replacements until I got this sorted out */;
-$app-primary: #4b0082;
-$app-accent: #add8e6;
-$app-warn: #ee7600;
+// create theme
+$app-theme: mat.define-light-theme((
+   color:(
+    primary: $app-primary,
+    accent: $app-accent,
+    warn: $app-warn
+   )
+));
 
-
-/* export the colors */
-$primary: $app-primary;
-$accent: $app-accent;
-$warn: $app-warn;
+@include mat.core-theme($app-theme);
