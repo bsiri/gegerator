@@ -35,14 +35,14 @@ This mode decides what will be:
 </div>
 <div mat-dialog-actions>
   @if (mode === 'create') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+    <button matButton (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
   }
   @if (mode === 'update') {
     <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
   }
 
   @if (mode === 'create') {
-    <button mat-button (click)="cancel()">Fermer</button>
+    <button matButton (click)="cancel()">Fermer</button>
   }
   @if (mode === 'update') {
     <button mat-button (click)="cancel()">Annuler</button>
