@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, Directive, ElementRef, Inject, Input, ViewRef } from '@angular/core';
-import { LegacyDialogPosition as DialogPosition, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { DialogPosition, MatDialogRef } from '@angular/material/dialog';
 
 // magic number to account for the Dialog padding
 const DIALOG_PADDING_PX = 24

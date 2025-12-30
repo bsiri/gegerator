@@ -4,7 +4,7 @@ import {
 } from '@angular/common/http';
 
 import { catchError, EMPTY, Observable } from 'rxjs';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { GenericPurposeDialog } from '../components/genericpurposedialog/genericpurposedialog.component';
 
 

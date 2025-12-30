@@ -1,6 +1,6 @@
 @use  '../../../../_variables.scss' as *;
 
-.mat-card{
+.mat-mdc-card{
     border-radius: 15px;
     cursor:pointer;
     border: 3px groove $primary;
@@ -8,7 +8,7 @@
     overflow-wrap: anywhere;
 }
 
-.mat-card:hover{
+.mat-mdc-card:hover{
     background-color: $primary;
     color:white;
 }
@@ -17,7 +17,10 @@
     let cancel a few properties of .mat-button
     so that we can make those buttons smaller
 */
-.mat-card-del-button, .mat-button{
+/*
+    TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.
+*/
+.mat-card-del-button, .mat-mdc-button{
     @include small-button;
     @include delete-button;
     float: right;

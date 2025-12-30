@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
 import { Mode } from './ngrx/appstate-models/mode.model';

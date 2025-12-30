@@ -115,7 +115,7 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
 /*
     The delete buttons
 */
-.mat-button{
+.mat-mdc-button{
     @include small-button;
     @include delete-button;
     float: right;

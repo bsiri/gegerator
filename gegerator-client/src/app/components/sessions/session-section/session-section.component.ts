@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { combineLatestAll, combineLatestWith, map, Observable, Subscription, takeWhile } from 'rxjs';
 import { combineLatestInit } from 'rxjs/internal/observable/combineLatest';
