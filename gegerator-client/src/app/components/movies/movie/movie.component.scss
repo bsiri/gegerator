@@ -1,22 +1,23 @@
 @use  '../../../../_variables.scss' as *;
 
+// wish I could have defined sass variables using 
+// material system color, but they are not exposed here
 
 .mat-mdc-card{
     cursor:pointer;
-    border: 3px groove $primary;
+    border: 3px groove var(--mat-sys-primary);
     // assessing: removing width constraint
     //max-width: 300px;
     overflow-wrap: anywhere;
 }
 
 .mat-mdc-card:hover{
-    background-color: $accent;
-    color:white;
+    background-color: hsl(from var(--mat-sys-primary) h s calc(l + 20));
+    color: var(--mat-sys-on-primary);
 }
 
-
-//    let cancel a few properties of .mat-mdc-button
-//    so that we can make those buttons smaller
+// let cancel a few properties of .mat-mdc-button
+// so that we can make those buttons smaller
 
 .mat-mdc-button{
     @include small-button;
