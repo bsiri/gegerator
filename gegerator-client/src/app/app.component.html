@@ -4,11 +4,11 @@
     <div class="app-header--centerpart">
       <div id="app-title" class="sect-title">Gegerator</div>
       <div id="app-buttonbar">
-        <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
-        <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
+        <button matButton="filled" color="primary" (click)="appmovie.toggle()"><span style="white-space: nowrap;">&lt; Films</span></button>
+        <button matButton="filled" color="primary" (click)="appsummary.toggle()"><span style="white-space: nowrap;">Résumé &gt;</span></button>
 
         <!-- Mode -->
-        <button mat-raised-button [matMenuTriggerFor]="mode" color="primary">Mode</button>
+        <button matButton="filled" [matMenuTriggerFor]="mode" color="primary">Mode</button>
         <mat-menu #mode>
           <button mat-menu-item (click)="switchMode()" >
             @if (wizardmode == Mode.MANUAL) {
@@ -24,7 +24,7 @@
         </mat-menu>
 
         <!-- Export the roadmap -->
-        <button mat-raised-button [matMenuTriggerFor]="exportMenu" color="primary">Exporter</button>
+        <button matButton="filled" [matMenuTriggerFor]="exportMenu" color="primary">Exporter</button>
 
         <mat-menu #exportMenu>
           <button mat-menu-item (click)="exportRoadmap()">Exporter la Roadmap</button>
@@ -32,8 +32,8 @@
 
 
         <!-- Save/Load button menu -->
-        <button mat-raised-button [matMenuTriggerFor]="saveLoadMenu" color="primary">
-          <mat-icon style="transform: rotate(90deg);">compare_arrows</mat-icon>
+        <button matButton="filled" [matMenuTriggerFor]="saveLoadMenu" color="primary">
+          <mat-icon style="transform: rotate(90deg);" class="fix-margin">compare_arrows</mat-icon>
         </button>
 
         <mat-menu #saveLoadMenu>

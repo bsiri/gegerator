@@ -2,15 +2,15 @@
 
 
 .mat-mdc-card{
-    //border-radius: 15px;
     cursor:pointer;
     border: 3px groove $primary;
-    max-width: 300px;
+    // assessing: removing width constraint
+    //max-width: 300px;
     overflow-wrap: anywhere;
 }
 
 .mat-mdc-card:hover{
-    background-color: $primary;
+    background-color: $accent;
     color:white;
 }
 
@@ -29,4 +29,8 @@
 
 .icon-container{
     margin-top: 1em;
+}
+
+.txt-medium{
+  font: var(--mat-sys-body-medium);
 }

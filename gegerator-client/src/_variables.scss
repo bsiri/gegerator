@@ -26,10 +26,8 @@ $small-gap: 8px;
 @mixin small-button{
     min-width: fit-content;
     height: fit-content;
-    padding: 0.3em;
+    padding: 0.3rem;
     line-height: normal;
-    background-color: lightgray;
-    color: black;
 }
 
 @mixin delete-button{

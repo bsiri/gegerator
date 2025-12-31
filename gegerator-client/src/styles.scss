@@ -28,9 +28,12 @@ h1 {
 
 // why would Material define negative margin on the left and positive on the 
 // right for button icons is beyond me...
-.mat-mdc-button>.mat-icon.margin-auto{
-  margin-left:auto;
-  margin-right:auto;
+.mat-mdc-button>.mat-icon, 
+.mat-mdc-unelevated-button>.mat-icon {
+  &.fix-margin {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* *********************** dialogs *********************** */
