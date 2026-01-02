@@ -59,4 +59,7 @@ html {
     filled-container-color: var(--mat-sys-surface-container)
   ));
 
+   @include mat.menu-overrides((
+    item-label-text-weight: vars.$font-weight-normal
+   ))
 }
