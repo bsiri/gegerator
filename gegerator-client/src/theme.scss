@@ -14,6 +14,7 @@ html {
     color: (
       primary: custom-theme.$primary-palette,
       tertiary: custom-theme.$tertiary-palette,
+      error: mat.$orange-palette,
       theme-type: light,
     ),
     typography: Roboto,
@@ -37,12 +38,18 @@ html {
   ));
 
   @include mat.card-overrides((
-    title-text-weight: 500,
+    title-text-weight: vars.$font-weight-lightbold,
     title-text-size: vars.$font-size-large
   ));
 
   @include mat.dialog-overrides((
     container-shape: var(--mat-sys-corner-extra-small, vars.$radius-small)
-  ))
+  ));
+
+  @include mat.form-field-overrides((
+    subscript-text-size: vars.$font-size-small,
+    filled-label-text-size: vars.$font-size-content,
+    filled-label-display: block
+  ));
 
 }
