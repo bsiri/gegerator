@@ -14,7 +14,6 @@ html {
     color: (
       primary: custom-theme.$primary-palette,
       tertiary: custom-theme.$tertiary-palette,
-      error: mat.$orange-palette,
       theme-type: light,
     ),
     typography: Roboto,
@@ -49,7 +48,15 @@ html {
   @include mat.form-field-overrides((
     subscript-text-size: vars.$font-size-small,
     filled-label-text-size: vars.$font-size-content,
-    filled-label-display: block
+    // necessary to force the display because the 
+    // general density of -6 would force it to be hidden 
+    // otherwise
+    filled-label-display: block,
+    filled-label-text-color: vars.$color-fieldlabel,
+    error-text-color: vars.$color-warn,
+    filled-error-label-text-color: vars.$color-warn,
+    filled-error-hover-label-text-color: vars.$color-warn,
+    filled-container-color: hsl(from var(--mat-sys-surface-container) h s calc(l - 0))
   ));
 
 }
