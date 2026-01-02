@@ -37,12 +37,8 @@ html {
   ));
 
   @include mat.card-overrides((
-    title-text-weight: 500
-  ));
-
-  // not so many spacing please
-  @include mat.radio-overrides((
-    label-text-line-height: 1rem
+    title-text-weight: 500,
+    title-text-size: vars.$font-size-large
   ));
 
   @include mat.dialog-overrides((

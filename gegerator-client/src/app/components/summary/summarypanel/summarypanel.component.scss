@@ -1,10 +1,10 @@
-@use '../../../../_variables.scss' as *;
+@use '../../../../_variables.scss' as vars;
 
 .summary-panel{
     max-width: 400px;
     border-left: 2px solid black;
     height: 100%;
-    background-color: $tertiary-pane-color;
+    background-color: vars.$tertiary-pane-color;
     display: flex;
 
     .pane{
@@ -15,16 +15,16 @@
 
 
     h1{
-        @include sect-title;
+        @include vars.sect-title;
         margin: 0;
-        padding: $small-gap 0;
-        background-color: $secondary-pane-color;
+        padding: vars.$gap-small 0;
+        background-color: vars.$secondary-pane-color;
     }
 
     .pane-content{
         flex: 1;
-        background-color: $tertiary-pane-color;
-        padding: $default-gap;
+        background-color: vars.$tertiary-pane-color;
+        padding: vars.$gap-default;
         overflow-y: auto;
     }
 
@@ -33,5 +33,5 @@
 
 // cheating a bit
 :host ::ng-deep .mat-mdc-tab-header{
-    background-color: $secondary-pane-color;
+    background-color: vars.$secondary-pane-color;
 }

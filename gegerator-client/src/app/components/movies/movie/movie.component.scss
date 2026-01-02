@@ -1,4 +1,4 @@
-@use  '../../../../_variables.scss' as *;
+@use  '../../../../_variables.scss' as vars;
 
 // wish I could have defined sass variables using 
 // material system color, but they are not exposed here
@@ -20,8 +20,8 @@
 // so that we can make those buttons smaller
 
 .mat-mdc-button{
-    @include small-button;
-    @include delete-button;
+    @include vars.small-button;
+    @include vars.delete-button;
 }
 
 .rating-nobackdrop{
@@ -29,9 +29,9 @@
 }
 
 .icon-container{
-    margin-top: 1em;
+    margin-top: vars.$gap-default;
 }
 
-.txt-medium{
-  font: var(--mat-sys-body-medium);
-}
+// .txt-medium{
+//   font: var(--mat-sys-body-medium);
+// }

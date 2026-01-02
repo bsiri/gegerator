@@ -1,22 +1,31 @@
 @use 'src/_variables.scss' as vars;
 
-/* *********************** global styles ************************* */
+/* *********************** default & resets ************************* */
 
 html{
     height: 100%;
     padding: 0;
+
+    p, label, span, legend {
+        font-size: vars.$font-size-content;
+    }
 }
 
 body{
     height: 100%;
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    /* rescale everything down a bit */
-    font-size: 0.75em;
 }
 
 h1 {
   margin: 0;
+  font-size: vars.$font-size-header;
+  font-weight: vars.$font-weight-header;
+}
+
+h2 {
+    font-size: vars.$font-size-large;
+  font-weight: vars.$font-weight-header;
 }
 
 /* *********************** flex helpers ************************* */
