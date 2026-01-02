@@ -56,7 +56,7 @@ html {
     error-text-color: vars.$color-warn,
     filled-error-label-text-color: vars.$color-warn,
     filled-error-hover-label-text-color: vars.$color-warn,
-    filled-container-color: hsl(from var(--mat-sys-surface-container) h s calc(l - 0))
+    filled-container-color: var(--mat-sys-surface-container)
   ));
 
 }

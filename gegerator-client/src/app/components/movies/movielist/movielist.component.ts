@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, combineLatestWith, debounceTime, map, mergeMap, Observable, withLatestFrom } from 'rxjs';
@@ -21,6 +21,9 @@ import { MatInput } from '@angular/material/input';
     imports: [MatButton, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput, AsyncPipe]
 })
 export class MovielistComponent implements OnInit {
+
+  // reference to the search bar element
+  searchbar = viewChild<ElementRef<HTMLDivElement>>('movielist_search');
 
   // sort logic: consists of a flag, and of a subject
   sorted = false
@@ -77,6 +80,22 @@ export class MovielistComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterContentInit(): void {
+    // removing the subscript element that
+    // material adds below the search input field by default
+    // (it messes with the layout and serves no purpose here)
+    // (see related CSS attempts that did not work)
+    const searchbarEl = this.searchbar()?.nativeElement;
+    if (! searchbarEl ){
+      // should not happen
+      return;
+    }
+    const el = searchbarEl.querySelector('.mat-mdc-form-field-subscript-wrapper');
+    if (el){
+      el.remove();
+    }
   }
 
   filterMovies(evt: any): void {
