@@ -1,6 +1,7 @@
 
 
 @use '@angular/material' as mat;
+@use 'src/_variables.scss' as vars;
 @use 'src/app/custom/_theme-colors.scss' as custom-theme;
 
 // elevation-classes() does not work, use directly mat.elevation(z) where needed
@@ -16,26 +17,36 @@ html {
       theme-type: light,
     ),
     typography: Roboto,
-    density: 0
+    density: -6
   ));
 
   // not so round buttons please
   @include mat.button-overrides((
-    filled-container-shape: var(--mat-sys-corner-extra-small, 4px),
-    text-container-shape: var(--mat-sys-corner-extra-small, 4px),
-    outlined-container-shape: var(--mat-sys-corner-extra-small, 4px),
-    protected-container-shape: var(--mat-sys-corner-extra-small, 4px),
-    tonal-container-shape: var(--mat-sys-corner-extra-small, 4px)
+    filled-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    text-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    outlined-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    protected-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    tonal-container-shape: var(--mat-sys-corner-large, vars.$radius-large)
+  ));
+
+
+  // not so round sidenav please
+  @include mat.sidenav-overrides((
+    container-shape: var(--mat-sys-corner-none, vars.$radius-none),
+    container-width: fit-content
   ));
 
   @include mat.card-overrides((
     title-text-weight: 500
   ));
 
-  // not so round sidenav please
-  @include mat.sidenav-overrides((
-    container-shape: var(--mat-sys-corner-extra-small, 4px),
-    container-width: fit-content
+  // not so many spacing please
+  @include mat.radio-overrides((
+    label-text-line-height: 1rem
   ));
+
+  @include mat.dialog-overrides((
+    container-shape: var(--mat-sys-corner-extra-small, vars.$radius-small)
+  ))
 
 }

@@ -1,7 +1,5 @@
 @use "sass:color";
 @use "sass:map";
-@use '@angular/material' as mat;
-
 
 
 // the ugly main colors
@@ -12,9 +10,14 @@ $tertiary-pane-color: beige ;
 
 // ***** spacings and layouts ***********
 
-$default-gap: 1em;
-$small-gap: 8px;
+$radius-large: 15px;
+$radius-small: 4px;
+$radius-none: 0px;
 
+$gap-default: 1em;
+$gap-small: 8px;
+
+$padding-xlarge: 24px;
 
 
 // ***** mat-button customization ********

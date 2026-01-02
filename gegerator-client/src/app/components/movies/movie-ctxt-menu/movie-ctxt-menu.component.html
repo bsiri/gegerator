@@ -1,4 +1,4 @@
-<div appContextMenu [recipient]="_anchor" [dialogRef]="dialogRef" >
+<div appContextMenu [recipient]="_anchor" [dialogRef]="dialogRef" class="ctxt-menu-padding">
   <fieldset>
     <legend>Avis Film :</legend>
     <mat-radio-group
@@ -18,7 +18,7 @@
   </fieldset>
 
   <fieldset>
-    <legend>Plannifié dans : </legend>
+    <legend>Planifié dans : </legend>
     <div class="limit-height">
       <ul>
         @for (s of sessions$ | async | orderByComparable:'day':'startTime'; track s) {

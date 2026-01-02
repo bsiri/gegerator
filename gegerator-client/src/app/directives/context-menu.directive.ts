@@ -1,8 +1,8 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, Directive, ElementRef, Inject, Input, ViewRef } from '@angular/core';
 import { DialogPosition, MatDialogRef } from '@angular/material/dialog';
 
-// magic number to account for the Dialog padding
-const DIALOG_PADDING_PX = 24
+// magic number to account for the Dialog padding when rendering on the left
+const DIALOG_PADDING_PX = 28
 
 @Directive({ selector: '[appContextMenu]' })
 export class ContextMenuDirective implements AfterViewInit{

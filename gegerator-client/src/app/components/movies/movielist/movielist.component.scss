@@ -33,7 +33,7 @@
 
 
     .movie-margin {
-        margin-bottom: $default-gap;
+        margin-bottom: $gap-default;
     }
 
     .movielist-search{
@@ -45,15 +45,15 @@
 }
 
 .padded{
-    padding: $default-gap;
+    padding: $gap-default;
 }
 
 .vert-small-pad{
-    padding-top: $default-gap;
-    padding-bottom: $default-gap;
+    padding-top: $gap-default;
+    padding-bottom: $gap-default;
 }
 
 .hor-small-pad{
-    padding-left: $small-gap;
-    padding-right: $small-gap;
+    padding-left: $gap-small;
+    padding-right: $gap-small;
 }

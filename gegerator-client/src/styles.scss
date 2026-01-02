@@ -1,3 +1,5 @@
+@use 'src/_variables.scss' as vars;
+
 /* *********************** global styles ************************* */
 
 html{
@@ -65,3 +67,7 @@ h1 {
 }
 
 // ********* misc ********
+
+.ctxt-menu-padding{
+    padding: vars.$padding-xlarge;
+}
