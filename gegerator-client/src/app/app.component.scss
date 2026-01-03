@@ -14,7 +14,7 @@ $title-size: 48px;
      #app-header{
         padding: 16px 0;
         width: 100%;
-        background-color: $primary-pane-color;
+        background-color: $color-primary-pane;
         text-align: center;
 
         .app-header--centerpart{
@@ -24,7 +24,7 @@ $title-size: 48px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            width: 40%;
+            width: fit-content;
             // adding +5px to account for letters like 'g'
             // that spills below the baseline (aka the descender line)
             line-height: calc($title-size + 5px);

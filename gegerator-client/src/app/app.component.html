@@ -1,62 +1,66 @@
 <div id="app-mainview">
 
-    <div id="app-header">
-        <div class="app-header--centerpart">
-            <div id="app-title" class="sect-title">Gegerator</div>
-            <div id="app-buttonbar">
-                <button mat-raised-button color="primary" (click)="appmovie.toggle()">&lt; Films</button>
-                <button mat-raised-button color="primary" (click)="appsummary.toggle()">Résumé &gt;</button>
+  <div id="app-header">
+    <div class="app-header--centerpart">
+      <div id="app-title" class="sect-title">Gegerator</div>
+      <div id="app-buttonbar">
+        <button matButton="filled" color="primary" (click)="appmovie.toggle()"><span style="white-space: nowrap;">&lt; Films</span></button>
+        <button matButton="filled" color="primary" (click)="appsummary.toggle()"><span style="white-space: nowrap;">Résumé &gt;</span></button>
 
-                <!-- Mode -->
-                <button mat-raised-button [matMenuTriggerFor]="mode" color="primary">Mode</button>
-                <mat-menu #mode>
-                    <button mat-menu-item (click)="switchMode()" >
-                        <mat-label *ngIf="wizardmode == Mode.MANUAL">Activer l'assistant</mat-label>
-                        <mat-label *ngIf="wizardmode == Mode.WIZARD">Désactiver l'assistant</mat-label>
-                    </button>
-                    <button mat-menu-item (click)="openWizardConfiguration()">
-                        Configurer l'assistant...
-                    </button>
-                </mat-menu>
+        <!-- Mode -->
+        <button matButton="filled" [matMenuTriggerFor]="mode" color="primary">Mode</button>
+        <mat-menu #mode>
+          <button mat-menu-item (click)="switchMode()" >
+            @if (wizardmode == Mode.MANUAL) {
+              <mat-label>Activer l'assistant</mat-label>
+            }
+            @if (wizardmode == Mode.WIZARD) {
+              <mat-label>Désactiver l'assistant</mat-label>
+            }
+          </button>
+          <button mat-menu-item (click)="openWizardConfiguration()">
+            Configurer l'assistant...
+          </button>
+        </mat-menu>
 
-                <!-- Export the roadmap -->
-                <button mat-raised-button [matMenuTriggerFor]="exportMenu" color="primary">Exporter</button>
+        <!-- Export the roadmap -->
+        <button matButton="filled" [matMenuTriggerFor]="exportMenu" color="primary">Exporter</button>
 
-                <mat-menu #exportMenu>
-                    <button mat-menu-item (click)="exportRoadmap()">Exporter la Roadmap</button>
-                </mat-menu>
+        <mat-menu #exportMenu>
+          <button mat-menu-item (click)="exportRoadmap()">Exporter la Roadmap</button>
+        </mat-menu>
 
 
-                <!-- Save/Load button menu -->
-                <button mat-raised-button [matMenuTriggerFor]="saveLoadMenu" color="primary">
-                    <mat-icon style="transform: rotate(90deg);">compare_arrows</mat-icon>
-                </button>
+        <!-- Save/Load button menu -->
+        <button matButton="filled" [matMenuTriggerFor]="saveLoadMenu" color="primary">
+          <mat-icon style="transform: rotate(90deg);" class="fix-margin">compare_arrows</mat-icon>
+        </button>
 
-                <mat-menu #saveLoadMenu>
-                    <div><a mat-menu-item href="./api/app-state?format=file">Sauver</a></div>
-                    <button mat-menu-item (click)="uploadAppState()">Charger</button>
-                </mat-menu>
-            </div>
-        </div>
+        <mat-menu #saveLoadMenu>
+          <div><a mat-menu-item href="./api/app-state?format=file">Sauver</a></div>
+          <button mat-menu-item (click)="uploadAppState()">Charger</button>
+        </mat-menu>
+      </div>
     </div>
+  </div>
 
-    <mat-sidenav-container id="app-content" hasBackdrop="false">
-        <mat-sidenav id="app-movie"
-            #appmovie
-            disableClose="true">
-            <app-movielist></app-movielist>
-        </mat-sidenav>
+  <mat-sidenav-container id="app-content" hasBackdrop="false">
+    <mat-sidenav id="app-movie"
+      #appmovie
+      disableClose="true">
+      <app-movielist></app-movielist>
+    </mat-sidenav>
 
-        <mat-sidenav-content>
-            <app-session-section></app-session-section>
-        </mat-sidenav-content>
+    <mat-sidenav-content>
+      <app-session-section></app-session-section>
+    </mat-sidenav-content>
 
-        <mat-sidenav id="app-summary"
-            #appsummary
-            position="end"
-            disableClose="true">
-            <app-summarypanel></app-summarypanel>
-        </mat-sidenav>
-    </mat-sidenav-container>
+    <mat-sidenav id="app-summary"
+      #appsummary
+      position="end"
+      disableClose="true">
+      <app-summarypanel></app-summarypanel>
+    </mat-sidenav>
+  </mat-sidenav-container>
 
 </div>

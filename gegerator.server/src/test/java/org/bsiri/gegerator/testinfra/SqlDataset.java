@@ -7,17 +7,18 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation that will trigger the injection of
- * the designated SQL dataset into the database.
- * The content of the database will be truncated beforehand,
- * see {@link DatasetLoader}.
+ * the designated SQL dataset into the database, and
+ * if present is picked up by {@link SqlDatasetTestExecutionListener}.
+ * The content of the database will be truncated beforehand.
  *
- * Debug note: that annotation is processed by an aspect,
- * see {@link SqlDatasetProcessorAspect}. Remember this
- * if a stacktrace seems to make no sense.
+ * Debug note: that annotation is processed by
  *
  * Inspired by Spring's @Sql annotation, but that one
  * works only for regular jdbc apps (doesn't work with
  * r2dbc)
+ *
+ * Update 2025-12-28: yup, problem still live and kicking:
+ * https://github.com/spring-projects/spring-framework/pull/34350
  *
  */
 @Target(ElementType.METHOD)

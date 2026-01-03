@@ -1,0 +1,31 @@
+<span #_container>
+    <mat-card
+        appearance="outlined"
+        title="dbclick : éditer, click droit : noter" 
+        (dblclick)="updateMovie()" 
+        (contextmenu)="updateRating()">    
+        
+        <mat-card-header>  
+            <div class="flex-1">
+              <mat-card-title>{{movie.title}}</mat-card-title>
+            </div>
+            <button mat-button (click)="confirmThenDelete()">
+                <mat-icon class="fix-margin">remove</mat-icon>
+            </button>
+        </mat-card-header>
+        
+        <mat-card-content>
+            <div class="txt-medium">
+              <p>
+                <label>durée : </label><span>{{movie.duration | duration}}</span>
+              </p>
+            </div>
+
+            <!-- icons -->
+            <div class="icon-container">
+                <app-movie-ratings [rating]="movie.rating"></app-movie-ratings>
+            </div>
+            <!-- /icons -->
+        </mat-card-content>
+    </mat-card>
+</span>

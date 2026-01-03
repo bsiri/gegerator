@@ -1,0 +1,86 @@
+
+<!--
+Note: this dialog can be open in "create" mode or "edit" mode, depending on whether the
+MovieSession object model edited by this dialog is a new instance or an existing instance.
+
+This mode decides what will be:
+- the title of the dialog,
+- the label of the buttons
+-->
+
+@if (mode === 'create') {
+  <h1 mat-dialog-title>Ajouter une session</h1>
+}
+@if (mode === 'update') {
+  <h1 mat-dialog-title>Modifier cette session</h1>
+}
+<div mat-dialog-content [formGroup]="formGroup">
+
+  <div class="dialog-field">
+    <span>Film : </span>
+    <mat-autocomplete #moviesauto="matAutocomplete">
+      @for (title of filteredTitles | async; track title) {
+        <mat-option [value]="title">
+          {{title}}
+        </mat-option>
+      }
+    </mat-autocomplete>
+    <mat-form-field appearance="fill">
+      <input  (keyup.enter)="confirm()"  matInput formControlName="title"
+        [matAutocomplete]="moviesauto">
+      @if (invalid('title')) {
+        <mat-error>Je le connais pas ton film là</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="dialog-field">
+    <label>Début : </label>
+    <mat-form-field appearance="fill">
+      <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+      <input (keyup.enter)="confirm()" matInput formControlName="startTime">
+    </mat-form-field>
+  </div>
+
+  <div class="dialog-field">
+    <span>Jour : </span>
+    <mat-form-field appearance="fill">
+      <mat-select formControlName="day">
+        @for (sday of Days.enumerate(); track sday) {
+          <mat-option (keyup.enter)="confirm()" [value]="sday">
+            {{sday.name}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="dialog-field">
+    <span>Cinéma : </span>
+    <mat-form-field appearance="fill">
+      <mat-select formControlName="theater">
+        @for (stheater of Theaters.enumerate(); track stheater) {
+          <mat-option (keyup.enter)="confirm()" [value]="stheater">
+            {{stheater.name}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+</div>
+<div mat-dialog-actions>
+  @if (mode === 'create') {
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+  }
+  @if (mode === 'update') {
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+  }
+
+  @if (mode === 'create') {
+    <button mat-button (click)="cancel()">Fermer</button>
+  }
+  @if (mode === 'update') {
+    <button mat-button (click)="cancel()">Annuler</button>
+  }
+</div>

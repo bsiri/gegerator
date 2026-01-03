@@ -1,46 +1,71 @@
+@use 'src/_variables.scss' as vars;
 
-/* You can add global styles to this file, and also import other style files */
-html{ 
+/* *********************** default & resets ************************* */
+
+html{
     height: 100%;
     padding: 0;
+
+    p, label, span, legend {
+        font-size: vars.$font-size-content;
+    }
 }
 
 body{
     height: 100%;
     margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+h1 {
+  margin: 0;
+  font-size: vars.$font-size-header;
+  font-weight: vars.$font-weight-header;
+}
 
+h2 {
+  font-size: vars.$font-size-large;
+  font-weight: vars.$font-weight-header;
+}
 
-/* Rules for sizing the icon. */
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-24 { font-size: 24px; }
-.material-icons.md-36 { font-size: 36px; }
-.material-icons.md-48 { font-size: 48px; }
+h4 {
+    margin-block-start: 0;
+    margin: 0;
+}
 
-/* Rules for using icons as black on a light background. */
-.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
-.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+/* *********************** flex helpers ************************* */
 
-/* Rules for using icons as white on a dark background. */
-.material-icons.md-light { color: rgba(255, 255, 255, 1); }
-.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+.flex-1{
+    display: flex;
+    flex: 1;
+}
 
+/* *********************** material icons ************************* */
 
-/* dialogs*/
+// why would Material define negative margin on the left and positive on the 
+// right for button icons is beyond me...
+.mat-mdc-button>.mat-icon, 
+.mat-mdc-unelevated-button>.mat-icon {
+  &.fix-margin {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* *********************** dialogs *********************** */
 .dialog-field{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     >span, .field-label{
         display: flex;
         margin-right: 8px;
-    }   
+    }
 }
 
+
+// these are my own icons, not mat-icons
 .icon{
     background-size: contain;
     background-repeat: no-repeat;
@@ -56,3 +81,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 // ********* misc ********
+
+.ctxt-menu-padding{
+    padding: vars.$padding-xlarge;
+}

@@ -25,7 +25,7 @@ public class WizardServiceImplTest {
 
     private WizardServiceImpl service;
 
-    private Scoring scoring = defaultScoring();
+    private final Scoring scoring = defaultScoring();
 
     @Mock
     private WizardServiceImpl.ModelChangeDetector changeDetector;
@@ -41,7 +41,7 @@ public class WizardServiceImplTest {
     @Test
     public void testScoring(){
         int halloweenDefaultScore = service.calculateSessionScore(defaultWizconf(), sundayHalloween(), halloween());
-        // with no particular scoring on theater applied, the expected scode is :
+        // with no particular scoring on theater applied, the expected score is :
         // (0.5*score_halloween) + (0.5*score_paradiso) + score_session
         // = 0.5*1000 + 0.5*0 + 0
         assertThat(500, equalTo(halloweenDefaultScore));

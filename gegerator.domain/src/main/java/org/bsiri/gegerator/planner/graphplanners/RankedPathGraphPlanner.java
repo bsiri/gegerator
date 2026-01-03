@@ -1,13 +1,10 @@
 package org.bsiri.gegerator.planner.graphplanners;
 
-import org.bsiri.gegerator.domain.TheaterDistanceTravel;
+import lombok.Getter;
 import org.bsiri.gegerator.planner.PlannerEvent;
 import org.bsiri.gegerator.planner.WizardPlanner;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,17 +24,20 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
     // this is not an arbitrary value : we want
     // to use longs as masks so we assume 64bits.
-    private static final int MAX_SIZE = 64;
+    private static final int NB_MAX_EVENTS = 64;
+    // Number of path to consider per day
+    // Also set to 64, but this is coincidental and arbitrary
+    private static final int NB_MAX_BEST_PATHS = 64;
 
-    private SubGraph wednesdayGraph;
-    private SubGraph thursdayGraph;
-    private SubGraph fridayGraph;
-    private SubGraph saturdayGraph;
-    private SubGraph sundayGraph;
+    private final SubGraph wednesdayGraph;
+    private final SubGraph thursdayGraph;
+    private final SubGraph fridayGraph;
+    private final SubGraph saturdayGraph;
+    private final SubGraph sundayGraph;
 
     // "global" variables
-    private MoviesBitmask moviesBitmask = new MoviesBitmask();
-    private EventsBitmask eventsBitmask = new EventsBitmask();
+    private final MoviesBitmask moviesBitmask = new MoviesBitmask();
+    private final EventsBitmask eventsBitmask = new EventsBitmask();
 
 
     public RankedPathGraphPlanner(Collection<PlannerEvent> originalEvents) {
@@ -54,17 +54,18 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
 
     private List<Node> preprocess(Collection<PlannerEvent> events){
-        // First, trunk the list to the MAX_SIZE top scores
-        List<PlannerEvent> sortedByScore = events.stream().sorted(
+        // First, trunk the list to the NB_MAX_EVENTS top scores
+        List<PlannerEvent> shortlist = events.stream().sorted(
             Comparator.comparing(PlannerEvent::getScore)
                     .reversed()
                     .thenComparing(PlannerEvent::getDay)
-        ).collect(Collectors.toList());
-
-        List<PlannerEvent> shortlist = new ArrayList<>(sortedByScore.subList(0, Math.min(sortedByScore.size(), MAX_SIZE)));
+                ).limit(NB_MAX_EVENTS)
+                .toList();
 
         // Create the nodes now
-        List<Node> allNodes = shortlist.stream().map( event -> {
+        List<Node> allNodes = shortlist.stream().map(event -> {
+            // bitmasks are accessed as side-effect in the stream,
+            // so we force sequential stream
             long movieBit = moviesBitmask.retrieveOrAssign(event);
             long eventBit = eventsBitmask.retrieveOrAssign(event);
             return new Node(
@@ -73,7 +74,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
                 eventBit,
                 event.getScore()
             );
-        }).collect(Collectors.toList());
+        }).toList();
 
         return allNodes;
     }
@@ -111,9 +112,9 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         List<Path> sundayPaths = sundayGraph.evaluateAllPaths();
 
         //  stitching each roadmap together, trying to find the best one.
-        Path bestPath = electBestPath(wednesdayPaths, thursdayPaths, fridayPaths, saturdayPaths, sundayPaths);
+        Path bestPath = electBestPath(new List[]{wednesdayPaths, thursdayPaths, fridayPaths, saturdayPaths, sundayPaths});
 
-        List<PlannerEvent> best = eventsBitmask.retrieveByMask(bestPath.allEventsMask)
+        List<PlannerEvent> best = eventsBitmask.retrieveEventsByMask(bestPath.allEventsMask)
                 .stream()
                 .sorted(Comparator.comparing(PlannerEvent::getDay)
                         .thenComparing(PlannerEvent::getStartTime))
@@ -124,7 +125,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     }
 
 
-    private Path electBestPath(List<Path> ...pathLists){
+    private Path electBestPath(List<Path>[] pathLists){
         if (pathLists.length == 0) return Path.empty();
 
         List<Path> accum = sortKeepBest(pathLists[0]);
@@ -150,10 +151,10 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     }
 
     private List<Path> sortKeepBest(List<Path> paths){
-        List<Path> sortedByScore = paths.stream()
+        return paths.stream()
                 .sorted(Comparator.comparing(Path::getOverallScore).reversed())
+                .limit(NB_MAX_BEST_PATHS)
                 .collect(Collectors.toList());
-        return sortedByScore.subList(0, Math.min(sortedByScore.size(), MAX_SIZE));
     }
 
 
@@ -189,12 +190,23 @@ public class RankedPathGraphPlanner implements WizardPlanner {
                 PlannerEvent src = nodes[iSrc].evt;
                 for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
                     PlannerEvent dst = nodes[iDst].evt;
+                    // If it is temporally not possible to make it in time
+                    // from event A to event B, skip
                     if (! src.isTransitionFeasible(dst)) continue;
+                    // Slight optimization: since the planner will never
+                    // accept a solution with twice the same movie,
+                    // we also prune here the transition if the two
+                    // events are planning the same movie.
+                    if (src.getMovie().equals(dst.getMovie())) continue;
+
                     adjacency[iSrc][iDst] = 1;
                 }
             }
         }
 
+        /**
+         * Showing statistics on the considered graph, useful for debugging
+         */
         public void stats(){
             long edgecount = 0;
             for (int i=0; i<nodes.length; i++){
@@ -207,7 +219,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             long totalPath = paths.size();
 
             long distinctmovies= Arrays.stream(nodes).map(n -> n.movieBit).distinct().count();
-            System.out.println(String.format("%s : %d movies, %d events, %d edges, %d path total, %d path distinct", day, distinctmovies, nodes.length, edgecount, totalPath));
+            System.out.printf("%s : %d movies, %d events, %d edges, %d path total%n", day, distinctmovies, nodes.length, edgecount, totalPath);
         }
 
 
@@ -233,7 +245,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
                     if (adjacency[i][j] == 0) continue;
                     List<Path> destPaths = pathsByNodes[j];
                     for (Path destP : destPaths){
-                        currentNodePaths.add(destP.augment(currentNode));
+                        currentNodePaths.add(destP.includeNode(currentNode));
                     }
                 }
                 currentNodePaths.add(Path.justNode(currentNode) );
@@ -276,7 +288,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
 
     /*
      * Nodes in the graph represent their movie and event
-     * as a long, of which only one bit is '1'.
+     * as a single bit (stored in a long)
      */
     private class Node{
         PlannerEvent evt;
@@ -300,11 +312,8 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     private static class Path{
         long allMoviesMask = 0L;
         long allEventsMask = 0L;
+        @Getter
         long overallScore = 0L;
-
-        public long getOverallScore() {
-            return overallScore;
-        }
 
         public Path(long allMoviesMask, long allEventsMask, long overallScore) {
             this.allMoviesMask = allMoviesMask;
@@ -312,7 +321,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             this.overallScore = overallScore;
         }
 
-        public Path augment(Node node){
+        public Path includeNode(Node node){
             return new Path(
                 this.allMoviesMask | node.movieBit,
                     this.allEventsMask | node.eventBit,
@@ -327,10 +336,14 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         }
 
         public boolean hasRedundancy(){
+            // check that there are as many movies as sessions,
+            // otherwise it means one movie has been planned at least twice
             return Long.bitCount(allMoviesMask) != Long.bitCount(allEventsMask);
         }
 
         public boolean noOverlap(Path otherPath){
+            // check that the combined number of movies and combined number of
+            // events are indeed consistent
             return Long.bitCount(this.allMoviesMask | otherPath.allMoviesMask) ==
                     Long.bitCount(this.allEventsMask | otherPath.allEventsMask);
         }
@@ -357,20 +370,15 @@ public class RankedPathGraphPlanner implements WizardPlanner {
     /*
      * This class will assign a single bit for each movies and also will keep tab
      * of which movie corresponds to which bit (see Node).
-     *
-     * PlannerEvents of type OtherActivites have no movie, in that case a
-     * surrogate ID will be assigned.
      */
     private static class MoviesBitmask{
-        private Random rnd = new Random();
-        private Map<Long, Long> movieBits = new HashMap<>(MAX_SIZE);
+        private final Map<Long, Long> movieBits = new HashMap<>(NB_MAX_EVENTS);
         private long cursor = 1L;
 
         long retrieveOrAssign(PlannerEvent evt){
+            // one same movie ID might be presented multiple times
+            // so we must check its presence first
             Long movieId = evt.getMovie();
-            if (movieId == null){
-                movieId = Long.valueOf(rnd.nextInt(1000)-1500);
-            }
             if (! movieBits.containsKey(movieId)){
                 movieBits.put(movieId, cursor);
                 cursor <<= 1;
@@ -383,8 +391,8 @@ public class RankedPathGraphPlanner implements WizardPlanner {
      * This class does the same than MoviesBitMask, but for events.
      */
     private static class EventsBitmask{
-        private Map<PlannerEvent, Long> eventBits = new HashMap<>(MAX_SIZE);
-        private Map<Long, PlannerEvent> reverseMapping = new HashMap<>(MAX_SIZE);
+        private final Map<PlannerEvent, Long> eventBits = new HashMap<>(NB_MAX_EVENTS);
+        private final Map<Long, PlannerEvent> reverseMapping = new HashMap<>(NB_MAX_EVENTS);
         private long cursor = 1L;
 
         long retrieveOrAssign(PlannerEvent evt){
@@ -395,7 +403,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
             return mask;
         }
 
-        Collection<PlannerEvent> retrieveByMask(long mask){
+        Collection<PlannerEvent> retrieveEventsByMask(long mask){
             List<PlannerEvent> result = new ArrayList<>();
             long cursor = 1L;
             for (int i=0; i<63; i++){

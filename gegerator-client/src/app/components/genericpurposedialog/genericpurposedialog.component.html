@@ -1,0 +1,46 @@
+
+<div>
+  @switch (type) {
+    <!-- confirm dialog -->
+    @case ('confirm') {
+      <div>
+        <h1 mat-dialog-title>Confirmer</h1>
+        <div mat-dialog-content>
+          <mat-icon class="icon-confirm">help_outline</mat-icon>
+          <p class="dialog-content-flex" [innerHtml]="content"></p>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-raised-button (click)="confirm()">Oui</button>
+          <button mat-raised-button (click)="cancel()">Non</button>
+        </div>
+      </div>
+    }
+    <!-- info dialog -->
+    @case ('info') {
+      <div>
+        <h1 mat-dialog-title>Information</h1>
+        <div mat-dialog-content>
+          <mat-icon color="secondary">info</mat-icon>
+          <p class="dialog-content-flex" [innerHtml]="content"></p>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-raised-button (click)="cancel()">OK</button>
+        </div>
+      </div>
+    }
+    <!-- error dialog -->
+    @case ('error') {
+      <div>
+        <h1 mat-dialog-title>Erreur !</h1>
+        <div mat-dialog-content>
+          <mat-icon class="icon-error">error</mat-icon>
+          <p class="dialog-content-flex" [innerHtml]="content"></p>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-raised-button (click)="cancel()">Fuck !</button>
+        </div>
+      </div>
+    }
+  }
+</div>
+
