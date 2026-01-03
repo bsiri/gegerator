@@ -55,15 +55,16 @@ $border-superfat: 6px;
 
 @mixin sect-title{
     font-family: "sans";
+    color: magenta;
     font-weight: bold;
     font-style: italic;
-    text-align: center;
-    color: magenta;
+    // text-align: center;
+    // font-family: "Outrun Future";
     /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
-/*
+    /*
     background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
     background-clip: text;
     color: transparent;
-*/
+    */
 }
 
