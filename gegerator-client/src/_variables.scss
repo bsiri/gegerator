@@ -32,7 +32,11 @@ $gap-default: 1em;
 $gap-small: 8px;
 
 $padding-xlarge: 24px;
+$padding-small: 8px;
 
+$border-thin: 1px;
+$border-fat: 3px;
+$border-superfat: 6px;
 
 // ***** mat-button customization ********
 @mixin small-button{

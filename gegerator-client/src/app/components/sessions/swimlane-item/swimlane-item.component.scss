@@ -1,4 +1,4 @@
-@use  "../../../../_variables" as *;
+@use  "../../../../_variables" as vars;
 @use "sass:color";
 
 $color-base-outstanding: #f7ec14;
@@ -43,8 +43,8 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
         to the parent cell height (see the session-section table).
     */
     box-sizing: border-box;
-    border-radius: 15px;
-    padding: 8px;
+    border-radius: vars.$radius-large;
+    padding: vars.$padding-small;
     cursor: pointer;
 
     overflow-y: hidden;
@@ -53,9 +53,15 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
     right: 2px;
 
     // default bordering and background
-    border: 3px solid $color-border-normal;
+    border: vars.$border-fat solid $color-border-normal;
     background-color: $color-content-normal;
 
+    .swimlane-item-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: vars.$gap-default;
+    }
     
     .swimlane-item-title{
         font-weight: bold;
@@ -64,6 +70,10 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
         white-space: nowrap;
     }
 
+    .swimlane-item-delete-button{
+        @include vars.small-button;
+        @include vars.delete-button;
+    }
 // ********* content styles *****
 
     &.content-disabled{
@@ -101,22 +111,13 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
     }
 
     &.border-salient{
-        border-width: 6px;
+        border-width: vars.$border-superfat;
         border-color: $color-border-salient;
     }
 
     &.border-outstanding{
-        border-width: 6px;
+        border-width: vars.$border-superfat;
         border-color: $color-border-outstanding;
     }
 
-}
-
-/*
-    The delete buttons
-*/
-.mat-mdc-button{
-    @include small-button;
-    @include delete-button;
-    float: right;
 }

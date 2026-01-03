@@ -12,10 +12,12 @@
       <!-- see explanation for this <a> element in the .scss file-->
     </a>
     
-    <button mat-button (click)="requestDelete.emit()">
-      <mat-icon class="fix-margin">remove</mat-icon>
-    </button>
-    <h4 class="swimlane-item-title" title="{{item.name}}">{{item.name}}</h4>
+    <div class="swimlane-item-header">
+      <h4 class="swimlane-item-title" title="{{item.name}}">{{item.name}}</h4>
+      <button class="swimlane-item-delete-button" mat-button (click)="requestDelete.emit()">
+        <mat-icon class="fix-margin">remove</mat-icon>
+      </button>
+    </div>
     <span>{{item.startTime | time}} - {{item.endTime | time}}</span>
     <ng-content>
       <!-- additional content goes here if any -->
