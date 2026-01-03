@@ -111,15 +111,15 @@ public class WizardServiceImpl implements WizardService {
 
     PlannerEvent createPlannerEvent(WizardConfiguration ignored, OtherActivity activity){
         // Unlike of the MovieSessions, OtherActivities scores do not depend on the wizzard configuration
-        int finalScore = scoring.computeScore(activity.getRating());
+        int finalScore = scoring.getScore(activity.getRating());
         return PlannerEvent.of(activity, finalScore);
     }
 
     int calculateSessionScore(WizardConfiguration wizconf, MovieSession session, Movie movie) {
         // Take that Demeter !
-        int tScore = scoring.computeScore(wizconf.getTheaterRating(session.getTheater()));
-        int sScore = scoring.computeScore(session.getRating());
-        int mScore = scoring.computeScore(movie.getRating());
+        int tScore = scoring.getScore(wizconf.getTheaterRating(session.getTheater()));
+        int sScore = scoring.getScore(session.getRating());
+        int mScore = scoring.getScore(movie.getRating());
         float bias = wizconf.getMovieVsTheaterBias();
 
         int finalscore = (int)(((1.0-bias) * mScore) + (bias * tScore) + sScore);
