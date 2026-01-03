@@ -5,6 +5,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Upgrade Angular version
 
 Great resource for a clean upgrade path: https://angular.dev/update-guide?v=13.0-21.0&l=1
+(do not forget to also upgrade ngrx at the same pace, one version at a time)
 
 
 ## Development server
