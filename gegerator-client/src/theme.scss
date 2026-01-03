@@ -2,7 +2,7 @@
 
 @use '@angular/material' as mat;
 @use 'src/_variables.scss' as vars;
-@use 'src/app/custom/_theme-colors.scss' as custom-theme;
+@use 'src/custom/_theme-colors.scss' as custom-theme;
 
 // elevation-classes() does not work, use directly mat.elevation(z) where needed
 //@include mat.elevation-classes();

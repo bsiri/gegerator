@@ -4,7 +4,7 @@
     max-width: 400px;
     border-left: 2px solid black;
     height: 100%;
-    background-color: vars.$tertiary-pane-color;
+    background-color: vars.$color-tertiary-pane;
     display: flex;
 
     .pane{
@@ -18,12 +18,12 @@
         @include vars.sect-title;
         margin: 0;
         padding: vars.$gap-small 0;
-        background-color: vars.$secondary-pane-color;
+        background-color: vars.$color-secondary-pane;
     }
 
     .pane-content{
         flex: 1;
-        background-color: vars.$tertiary-pane-color;
+        background-color: vars.$color-tertiary-pane;
         padding: vars.$gap-default;
         overflow-y: auto;
     }
@@ -33,5 +33,5 @@
 
 // cheating a bit
 :host ::ng-deep .mat-mdc-tab-header{
-    background-color: vars.$secondary-pane-color;
+    background-color: vars.$color-secondary-pane;
 }

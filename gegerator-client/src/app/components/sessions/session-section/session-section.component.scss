@@ -7,7 +7,7 @@
 #sessions-mainview{
     display: flex;
     justify-content: center;
-    background-color: $secondary-pane-color;
+    background-color: $color-secondary-pane;
     .sessions--center{
         flex: 0.7 0 min-content;
     }
@@ -36,7 +36,7 @@
             position: sticky;
             top: 8px;
             z-index: 2;
-            background-color: $secondary-pane-color;
+            background-color: $color-secondary-pane;
             @include mat.elevation(8);
 
             .session-header{
