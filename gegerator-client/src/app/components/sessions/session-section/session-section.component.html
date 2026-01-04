@@ -70,10 +70,10 @@
         </table>
         <!-- Insert timeline markers per steps = 2hours, and ignoring first -->
         @let tableBody = sessionTableBody;
-        <!-- @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(1,-1); track hourtime) { -->
-        @for (hourtime of []; track hourtime) {
+        @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(1,-1); track hourtime; let idx = $index) {
+        <!-- @for (hourtime of []; track hourtime) { -->
           <ng-container  [ngTemplateOutlet]="timelineMarker"
-            [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime}">
+            [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime, idx: idx}">
           </ng-container>
         }
         <!-- end timeline markers-->
@@ -101,7 +101,10 @@
 </ng-template>
 
 
-<ng-template #timelineMarker let-tablebody="tablebody" let-hourtime="hourtime">
+<ng-template #timelineMarker 
+    let-tablebody="tablebody" 
+    let-hourtime="hourtime"
+    let-idx="idx">
   <!--
       Note: at first I tried to use absolute positioning for the timeline marker,
       but in the end it was simpler to use relative positioning within the table body
@@ -110,8 +113,15 @@
       
       However this works because the table body and the table itself end in the same
       vertical position (ie no padding, borders, footers etc. after the tbody).
+
+      Also since those markers actually take space after the table (even with 0 height), 
+      I had to discount a bit more height depending on the index of the marker
+      (must account for the previous markers heights as well).
    -->
-  @let offset = - tablebody.getBoundingClientRect().height + SESSION_DAY_BOUNDARIES.offsetFromDayStartInPixel(hourtime);
+  @let tableHeight = tablebody.getBoundingClientRect().height;
+  @let offsetFromTop = SESSION_DAY_BOUNDARIES.offsetFromDayStartInPixel(hourtime);
+  @let discountThisHeight = (idx-1)*2.3;
+  @let offset = - tableHeight + offsetFromTop - discountThisHeight;
   <div class="timeline-marker" style="top: {{offset}}px;">
     <span class="timeline-marker--label marker-left">{{hourtime | time}}</span>
     <span class="timeline-marker--label marker-right">{{hourtime | time}}</span>
