@@ -9,7 +9,7 @@ import { Days, Theaters } from 'src/app/models/referential.data';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';
 import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
-import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
 import { AsyncPipe } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -43,7 +43,7 @@ export class SessionDialog implements OnInit {
   Theaters = Theaters
   availableMovies: ReadonlyArray<Movie> = []
   filteredTitles: Observable<string[]>
-  sessionDayBoundaries = SESSION_DAY_BOUNDARIES
+  plannableInterval = PLANNABLE_EVENT_TIME_INTERVAL
 
   constructor(
     public dialogRef: MatDialogRef<SessionDialog>,
@@ -121,7 +121,7 @@ export class SessionDialog implements OnInit {
     try{
       const rawValue = startTimeControl.value
       const time = Times.fromString(rawValue)
-      if (! SESSION_DAY_BOUNDARIES.isInRange(time)){
+      if (! PLANNABLE_EVENT_TIME_INTERVAL.isInRange(time)){
         throw { value: rawValue }
       }
       return null;

@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { Days } from 'src/app/models/referential.data';
 import { Times } from 'src/app/models/time.utils';
-import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
+import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
 import { NgStyle } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
@@ -26,7 +26,7 @@ export class Activitydialog implements OnInit {
   // updated data on it
   id: number;
   formGroup!: UntypedFormGroup;
-  sessionDayBoundaries = SESSION_DAY_BOUNDARIES
+  plannableInterval = PLANNABLE_EVENT_TIME_INTERVAL
 
   // mode == 'create' or 'update' depending on whether the MAT_DIALOG_DATA
   // is an existing instance of an Activity, or a shim for a new Activity.
@@ -76,11 +76,11 @@ export class Activitydialog implements OnInit {
   }
 
 
-  validateTime(startTimeControl: AbstractControl): ValidationErrors | null{
+  validateTime(timeControl: AbstractControl): ValidationErrors | null{
     try{
-      const rawValue = startTimeControl.value
+      const rawValue = timeControl.value
       const time = Times.fromString(rawValue)
-      if (! SESSION_DAY_BOUNDARIES.isInRange(time)){
+      if (! PLANNABLE_EVENT_TIME_INTERVAL.isInRange(time)){
         throw { value: rawValue }
       }
       return null;

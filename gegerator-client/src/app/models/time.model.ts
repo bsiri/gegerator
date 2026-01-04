@@ -1,5 +1,6 @@
 import { Duration } from "iso8601-duration";
 import { Comparable } from "./comparable.interface";
+import { Times } from "./time.utils";
 
 
 
@@ -47,4 +48,25 @@ export class Time implements Comparable<Time> {
 
         return new Time(newStartHours, newStartMinutes);
     }
+}
+
+export class TimeInterval {
+    constructor(
+        public start: Time,
+        public end: Time
+    ) { }
+
+    /**
+     * Returns whether the given time is withing the session day boundaries
+     * @param time 
+     */
+    isInRange(time: Time): boolean{
+        return Times.isAfter(time, this.start) && Times.isBefore(time, this.end)
+    }
+
+    toString(): string{
+        return `${Times.toString(this.start)} - ${Times.toString(this.end)}`
+    }
+
+
 }

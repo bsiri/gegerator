@@ -39,7 +39,7 @@ This mode decides what will be:
   <div class="dialog-field">
     <label>Début : </label>
     <mat-form-field appearance="fill">
-      <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+      <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="startTime">
     </mat-form-field>
   </div>
@@ -47,7 +47,7 @@ This mode decides what will be:
   <div class="dialog-field">
     <label>Fin : </label>
     <mat-form-field appearance="fill">
-      <mat-label>{{sessionDayBoundaries.toString()}}</mat-label>
+      <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="endTime">
     </mat-form-field>
   </div>

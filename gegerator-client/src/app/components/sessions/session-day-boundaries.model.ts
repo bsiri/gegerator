@@ -1,6 +1,6 @@
 import { Duration } from "iso8601-duration"
 import { Times } from "src/app/models/time.utils"
-import { Time } from "src/app/models/time.model"
+import { Time, TimeInterval } from "src/app/models/time.model"
 
 /*
     This constant defines the constants on which 
@@ -9,15 +9,16 @@ import { Time } from "src/app/models/time.model"
     PlannedMovieSessionComponent. See these classes
     for the specific of their usage.
 */
-export class SessionDayBoundaries{
+export class SessionDayBoundaries extends TimeInterval {
     
     private minuteLenInPixel: number
 
     constructor(
-        public dayBeginTime: Time, 
-        public dayEndTime: Time,
+        dayBeginTime: Time, 
+        dayEndTime: Time,
         public hourLenInPixels: number
     ){
+        super(dayBeginTime, dayEndTime)
         this.minuteLenInPixel = (this.hourLenInPixels / 60.0)
     }
 
@@ -34,8 +35,8 @@ export class SessionDayBoundaries{
      */
     enumerateHours(step: number = 1, skipFirstAndLast: boolean = false): Time[] {
         const hours: Time[] = []
-        const beginHour = this.dayBeginTime.hours + (skipFirstAndLast ? step : 0)
-        const endHour = this.dayEndTime.hours - (skipFirstAndLast ? step : 0)
+        const beginHour = this.start.hours + (skipFirstAndLast ? step : 0)
+        const endHour = this.end.hours - (skipFirstAndLast ? step : 0)
         for(let h = beginHour; h <= endHour; h += step){
             hours.push( new Time(h, 0) )
         }
@@ -47,8 +48,8 @@ export class SessionDayBoundaries{
         the Session section. 
     */
     sessionDayInPixel(): number{
-        const lenEnd = this.durationInPixel(this.dayEndTime)
-        const lenBegin = this.durationInPixel(this.dayBeginTime)
+        const lenEnd = this.durationInPixel(this.end)
+        const lenBegin = this.durationInPixel(this.start)
         // const extra = 2*this.hourLenInPixels
 
         // return (lenEnd - lenBegin) + extra
@@ -73,30 +74,29 @@ export class SessionDayBoundaries{
         Represent the offset in pixel that separate the given Time and the start of 
         the Session Day  .
     */
-    offsetFromDayBeginInPixel(time: Time): number {
-        return this.durationInPixel(time) - this.durationInPixel(this.dayBeginTime)
-    }
-
-    /**
-     * Returns whether the given time is withing the session day boundaries
-     * @param time 
-     */
-    isInRange(time: Time): boolean{
-        return Times.isAfter(time, this.dayBeginTime) && Times.isBefore(time, this.dayEndTime)
-    }
-
-    toString(): string{
-        return `${Times.toString(this.dayBeginTime)} - ${Times.toString(this.dayEndTime)}`
+    offsetFromDayStartInPixel(time: Time): number {
+        return this.durationInPixel(time) - this.durationInPixel(this.start)
     }
 
 }
+
+
+// ************************ constants **********************/
 
 /*
     A Day starts at 08:00 and ends at 26:00 (i.e. 2AM next day)
 */
 export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBoundaries(
-  {hours: 8, minutes: 0} as Time,
-  {hours:26, minutes: 0} as Time,
+  new Time(8,0),
+  new Time(26, 0),
   100
 )
- 
+
+/*
+    Events (like movie sessions) are plannable only from 08:00 to 23h59
+    (more exactly, the start of the event must be before 23:59)
+*/
+export const PLANNABLE_EVENT_TIME_INTERVAL: TimeInterval = new TimeInterval(
+    new Time(8,0),
+    new Time(23, 59)
+)

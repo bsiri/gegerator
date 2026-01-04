@@ -116,7 +116,7 @@ export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
     }
     const {startTime, endTime} = this.item
     this.heightInPixel = ''+SESSION_DAY_BOUNDARIES.timeDifferenceInPixel(startTime, endTime)+'px' 
-    this.topPosInPixel = ''+SESSION_DAY_BOUNDARIES.offsetFromDayBeginInPixel(startTime)+'px' 
+    this.topPosInPixel = ''+SESSION_DAY_BOUNDARIES.offsetFromDayStartInPixel(startTime)+'px' 
   }
 
 
