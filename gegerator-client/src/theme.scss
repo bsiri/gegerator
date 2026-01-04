@@ -17,9 +17,11 @@ html {
       theme-type: light,
     ),
     typography: Roboto,
-    density: -6
+    // generally set to -5 for a more compact UI
+    density: -5
   ));
 
+  //// Button overrides
   // not so round buttons please
   @include mat.button-overrides((
     filled-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
@@ -29,37 +31,54 @@ html {
     tonal-container-shape: var(--mat-sys-corner-large, vars.$radius-large)
   ));
 
-
+  //// Sidenav overrides
   // not so round sidenav please
   @include mat.sidenav-overrides((
     container-shape: var(--mat-sys-corner-none, vars.$radius-none),
     container-width: fit-content
   ));
 
+  //// Card overrides
   @include mat.card-overrides((
     title-text-weight: vars.$font-weight-lightbold,
     title-text-size: vars.$font-size-large
   ));
 
+  //// Dialog overrides
   @include mat.dialog-overrides((
     container-shape: var(--mat-sys-corner-extra-small, vars.$radius-small)
   ));
 
+  //// Form Field overrides, 
+  // general fields
   @include mat.form-field-overrides((
-    subscript-text-size: vars.$font-size-small,
-    filled-label-text-size: vars.$font-size-content,
-    // necessary to force the display because the 
-    // general density of -6 would force it to be hidden 
-    // otherwise
-    filled-label-display: block,
-    filled-label-text-color: vars.$color-fieldlabel,
-    error-text-color: vars.$color-warn,
-    filled-error-label-text-color: vars.$color-warn,
-    filled-error-hover-label-text-color: vars.$color-warn,
-    filled-container-color: var(--mat-sys-surface-container)
+      filled-label-text-size: vars.$font-size-content,
+      // necessary to force the display of the label because 
+      // the general density of -5 would force it to be hidden 
+      // otherwise
+      filled-label-display: block,
+      filled-label-text-color: vars.$color-fieldlabel,
   ));
+  // some specifics for the dialogs now:
+  // (have to redeclare a bunch of them unfortunately
+  // because everything is reset in the mat-dialog-container scope)
+  mat-dialog-container {
+    // decompact the form fields a bit
+    @include mat.form-field-density(-1);
+    @include mat.form-field-overrides((
+      subscript-text-size: vars.$font-size-small,
+      filled-label-text-size: vars.$font-size-content,
+      filled-label-display: block,
+      filled-label-text-color: vars.$color-fieldlabel,
+      error-text-color: vars.$color-warn,
+      filled-error-label-text-color: vars.$color-warn,
+      filled-error-hover-label-text-color: vars.$color-warn,
+      filled-container-color: var(--mat-sys-surface-container)
+    ));
+  }
 
-   @include mat.menu-overrides((
+  //// Menu overrides
+  @include mat.menu-overrides((
     item-label-text-weight: vars.$font-weight-normal
-   ))
+  ))
 }
