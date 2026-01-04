@@ -22,12 +22,14 @@ import { OtherActivityComponent } from '../other-activity/other-activity.compone
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { TimePipe } from '../../../pipes/time.pipe';
+import { Time } from 'src/app/models/time.model';
 
 @Component({
     selector: 'app-session-section',
     templateUrl: './session-section.component.html',
     styleUrls: ['./session-section.component.scss'],
-    imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, AsyncPipe]
+    imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, AsyncPipe, TimePipe]
 })
 export class SessionSectionComponent implements OnInit, OnDestroy {
 

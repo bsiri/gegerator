@@ -70,8 +70,8 @@
         </table>
         @let tableBody = sessionTableBody;
         @if (tableBody){
-          <!-- Insert timeline markers per steps = 2hours, and ignoring first and last -->
-          @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2, true); track hourtime) {
+          <!-- Insert timeline markers per steps = 2hours, and ignoring first -->
+          @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(1); track hourtime) {
             <ng-container  [ngTemplateOutlet]="timelineMarker"
               [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime}">
             </ng-container>
@@ -112,6 +112,9 @@
       vertical position (ie no padding, borders, footers etc. after the tbody).
    -->
   @let offset = - tablebody.getBoundingClientRect().height + SESSION_DAY_BOUNDARIES.offsetFromDayBeginInPixel(hourtime);
-  <div class="timeline-marker" style="position: relative; top: {{offset}}px;">
+  <div class="timeline-marker" style="top: {{offset}}px;">
+    <span class="timeline-marker--label marker-left">{{hourtime | time}}</span>
+    <span class="timeline-marker--label marker-right">{{hourtime | time}}</span>
   </div>
+  <!-- <hr class="timeline-marker" style="top: {{offset}}px;"/> -->
 </ng-template>
