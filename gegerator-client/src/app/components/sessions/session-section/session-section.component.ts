@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { combineLatestAll, combineLatestWith, map, Observable, Subscription, takeWhile } from 'rxjs';
-import { combineLatestInit } from 'rxjs/internal/observable/combineLatest';
+import { map, Observable, Subscription } from 'rxjs';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { EventRatings } from 'src/app/models/plannable.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
@@ -12,7 +11,7 @@ import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { Mode } from 'src/app/ngrx/appstate-models/mode.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
-import { selectActiveRoadmap, selectUserRoadmap, selectWizardRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
+import { selectActiveRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { ModeService } from 'src/app/services/mode.service';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
@@ -23,22 +22,25 @@ import { OtherActivityComponent } from '../other-activity/other-activity.compone
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { TimePipe } from '../../../pipes/time.pipe';
+import { Time } from 'src/app/models/time.model';
 
 @Component({
     selector: 'app-session-section',
     templateUrl: './session-section.component.html',
     styleUrls: ['./session-section.component.scss'],
-    imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, AsyncPipe]
+    imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, AsyncPipe, TimePipe]
 })
 export class SessionSectionComponent implements OnInit, OnDestroy {
 
 
   /*
-    "Importing" Days and Theaters as properties of this Component
+    "Importing" Days, Theaters and SESSION_DAY_BOUNDARIES as properties of this Component
     allow for using them in the template.
   */
   Days = Days
   Theaters = Theaters
+  SESSION_DAY_BOUNDARIES = SESSION_DAY_BOUNDARIES
 
   /*
     A session row height

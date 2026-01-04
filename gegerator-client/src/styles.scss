@@ -1,5 +1,15 @@
 @use 'src/_variables.scss' as vars;
 
+/* ***************************** fonts ******************************* */
+
+// Remember: free for personal use only
+@font-face {
+    font-family: 'Outrun Future';
+    font-style: normal;
+    font-weight: 'normal';
+    src: url('assets/future.outrun-future.otf') format('opentype'),
+}
+
 /* *********************** default & resets ************************* */
 
 html{

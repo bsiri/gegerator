@@ -10,6 +10,8 @@ $color-tertiary-pane: beige ;
 $color-warn: rgb(255,110,64);
 $color-fieldlabel: rgba(0,0,0,0.6);
 
+$color-dimmed: rgba(209, 175, 118, 1);
+
 // ***** typography **************
 
 $font-size-header: 1.50rem;
@@ -21,7 +23,6 @@ $font-weight-header: 400;
 $font-weight-lightbold: 500;
 $font-weight-normal: 400;
 
-
 // ***** spacings and layouts ***********
 
 $radius-large: 15px;
@@ -32,7 +33,9 @@ $gap-default: 1em;
 $gap-small: 8px;
 
 $padding-xlarge: 24px;
+$padding-large: 16px;
 $padding-small: 8px;
+$padding-xss: 2px;
 
 $border-thin: 1px;
 $border-fat: 3px;
@@ -55,15 +58,17 @@ $border-superfat: 6px;
 
 @mixin sect-title{
     font-family: "sans";
+    color: magenta;
     font-weight: bold;
     font-style: italic;
-    text-align: center;
-    color: magenta;
-    /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
-/*
-    background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
-    background-clip: text;
-    color: transparent;
-*/
+    // text-align: center;
+    
+    &.neon{
+        /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
+        font-family: "Outrun Future";
+        background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
+        background-clip: text;
+        color: transparent;
+    }
 }
 

@@ -21,7 +21,28 @@ export class SessionDayBoundaries{
         this.minuteLenInPixel = (this.hourLenInPixels / 60.0)
     }
 
-    /*
+    /**
+     * Returns an array of Time objects representing each hour
+     * between the day begin time and day end time.
+     * 
+     * If step is provided, hours are enumerated with the given step.
+     * If skipFirstAndLast is true, the first and last hours are not included
+     * 
+     * @param step 
+     * @param skipFirstAndLast 
+     * @returns 
+     */
+    enumerateHours(step: number = 1, skipFirstAndLast: boolean = false): Time[] {
+        const hours: Time[] = []
+        const beginHour = this.dayBeginTime.hours + (skipFirstAndLast ? step : 0)
+        const endHour = this.dayEndTime.hours - (skipFirstAndLast ? step : 0)
+        for(let h = beginHour; h <= endHour; h += step){
+            hours.push( new Time(h, 0) )
+        }
+        return hours
+    }
+
+    /**
         Returns the height (in pixels) that a session Day should have when rendered in 
         the Session section. It also adds an extra 2 hours to account for midnight sessions.
     */

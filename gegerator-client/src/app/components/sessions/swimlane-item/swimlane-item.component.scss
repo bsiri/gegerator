@@ -51,6 +51,7 @@ $color-border-disabled: color.scale($color-base-disabled, $lightness: -35%);
     position: absolute;
     left: 2px;
     right: 2px;
+    z-index: 1;
 
     // default bordering and background
     border: vars.$border-fat solid $color-border-normal;

@@ -1,0 +1,2 @@
+1. cannot create other activities; it complains that timestart and timeend are wrong !
+2. session height do not align with the timeline markers; this indicates a bug in calculating the height wrt the duration of the session

@@ -38,7 +38,7 @@
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody #sessionTableBody>
             <tr [ngStyle]="{'height': rowHeightInPixel}">
               <td>
                 @for (activity of activitiesByDay(day) | async; track activity) {
@@ -68,6 +68,14 @@
             </tr>
           </tbody>
         </table>
+        <!-- Insert timeline markers per steps = 2hours, and ignoring first -->
+        @let tableBody = sessionTableBody;
+        @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(1); track hourtime) {
+          <ng-container  [ngTemplateOutlet]="timelineMarker"
+            [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime}">
+          </ng-container>
+        }
+        <!-- end timeline markers-->
       </div>
     }
   </div>
@@ -89,4 +97,23 @@
       <mat-icon class="fix-margin">add</mat-icon>
     </button>
   </div>
+</ng-template>
+
+
+<ng-template #timelineMarker let-tablebody="tablebody" let-hourtime="hourtime">
+  <!--
+      Note: at first I tried to use absolute positioning for the timeline marker,
+      but in the end it was simpler to use relative positioning within the table body
+      and substracting its height (considering the markups for the timeline are declared
+      after the table body in the template).
+      
+      However this works because the table body and the table itself end in the same
+      vertical position (ie no padding, borders, footers etc. after the tbody).
+   -->
+  @let offset = - tablebody.getBoundingClientRect().height + SESSION_DAY_BOUNDARIES.offsetFromDayBeginInPixel(hourtime);
+  <div class="timeline-marker" style="top: {{offset}}px;">
+    <span class="timeline-marker--label marker-left">{{hourtime | time}}</span>
+    <span class="timeline-marker--label marker-right">{{hourtime | time}}</span>
+  </div>
+  <!-- <hr class="timeline-marker" style="top: {{offset}}px;"/> -->
 </ng-template>

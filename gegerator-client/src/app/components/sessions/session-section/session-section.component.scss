@@ -1,5 +1,5 @@
 
-@use '../../../../_variables' as *;
+@use '../../../../_variables' as vars;
 @use "sass:color";
 @use '@angular/material' as mat;
 // $color-high: color.scale($color-highest, $lightness: +50%);
@@ -7,13 +7,13 @@
 #sessions-mainview{
     display: flex;
     justify-content: center;
-    background-color: $color-secondary-pane;
+    background-color: vars.$color-secondary-pane;
     .sessions--center{
         flex: 0.7 0 min-content;
     }
 
     .session-day{
-        margin: 8px 0;
+        margin: vars.$gap-small 0;
 
         display: flex;
         align-items: center;
@@ -31,12 +31,13 @@
             margin-bottom: 4px;
         }
 
+
         thead{
             border-bottom: 1px solid black;
             position: sticky;
-            top: 8px;
+            top: vars.$gap-small;
             z-index: 2;
-            background-color: $color-secondary-pane;
+            background-color: vars.$color-secondary-pane;
             @include mat.elevation(8);
 
             .session-header{
@@ -49,11 +50,11 @@
             .session-header--title{
                 display: inline;
                 margin: 0;
-                margin-right: 8px;
+                margin-right: vars.$gap-small;
             }
 
             .mdc-button{
-                @include small-button
+                @include vars.small-button
             }
 
 
@@ -77,4 +78,28 @@
             }
         }
     }
+
+    .timeline-marker{
+        position: relative;
+        border: 1px dashed vars.$color-dimmed;
+        height: 0px;
+        width: 100%;
+
+        .timeline-marker--label{ 
+            padding: vars.$padding-xss;
+            color: vars.$color-secondary-pane;
+            background-color: vars.$color-dimmed;
+
+            &.marker-left {
+                position: absolute;
+                transform: translate(-110%, -50%);
+            }
+            &.marker-right {
+                position: absolute;
+                right: 0;
+                transform: translate(110%, -50%);
+            }
+        }
+
+    }   
 }

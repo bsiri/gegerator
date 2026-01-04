@@ -2,7 +2,9 @@
 
   <div id="app-header">
     <div class="app-header--centerpart">
-      <div id="app-title" class="sect-title">Gegerator</div>
+      <div id="app-title" class="{{wizardmode == Mode.WIZARD ? 'neon' : ''}}">
+        Gegerator
+      </div>
       <div id="app-buttonbar">
         <button matButton="filled" color="primary" (click)="appmovie.toggle()"><span style="white-space: nowrap;">&lt; Films</span></button>
         <button matButton="filled" color="primary" (click)="appsummary.toggle()"><span style="white-space: nowrap;">Résumé &gt;</span></button>
