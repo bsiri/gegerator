@@ -68,15 +68,14 @@
             </tr>
           </tbody>
         </table>
+        <!-- Insert timeline markers per steps = 2hours, and ignoring first -->
         @let tableBody = sessionTableBody;
-        @if (tableBody){
-          <!-- Insert timeline markers per steps = 2hours, and ignoring first -->
-          @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(1); track hourtime) {
-            <ng-container  [ngTemplateOutlet]="timelineMarker"
-              [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime}">
-            </ng-container>
-          }
+        @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(1); track hourtime) {
+          <ng-container  [ngTemplateOutlet]="timelineMarker"
+            [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime}">
+          </ng-container>
         }
+        <!-- end timeline markers-->
       </div>
     }
   </div>
