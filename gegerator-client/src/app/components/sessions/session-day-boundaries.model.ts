@@ -94,7 +94,14 @@ export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBounda
 
 /*
     Events (like movie sessions) are plannable only from 08:00 to 23h59
-    (more exactly, the start of the event must be before 23:59)
+    because I cannot yet handle start and end times that goes over midnight
+    (it would mean handling the change of day and I have not yet implemented that).
+
+    This means that:
+    - other activities must start and end before midnight, because no time 
+      can technically be inputed after that,
+    - movie session must also start before midnight, but can end after that 
+      because the endtime is not inputed, but derived from its duration.
 */
 export const PLANNABLE_EVENT_TIME_INTERVAL: TimeInterval = new TimeInterval(
     new Time(8,0),
