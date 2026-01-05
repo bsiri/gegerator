@@ -1,5 +1,4 @@
 import { Duration } from "iso8601-duration"
-import { Times } from "src/app/models/time.utils"
 import { Time, TimeInterval } from "src/app/models/time.model"
 
 /*
@@ -8,6 +7,9 @@ import { Time, TimeInterval } from "src/app/models/time.model"
     the SessionSectionComponent and the 
     PlannedMovieSessionComponent. See these classes
     for the specific of their usage.
+
+    Note: I extend TimeInterval because I'm lazy but 
+    it should have been done with composition instead.
 */
 export class SessionDayBoundaries extends TimeInterval {
     
@@ -26,20 +28,27 @@ export class SessionDayBoundaries extends TimeInterval {
      * Returns an array of Time objects representing each hour
      * between the day begin time and day end time.
      * 
-     * If step is provided, hours are enumerated with the given step.
-     * If skipFirstAndLast is true, the first and last hours are not included
+     * The enumeration returns whole hours only, i.e. minutes are always 0.
+     * In case the start of the day is not at a whole hour (e.g. 08:30),
+     * the first hour returned will be the next whole hour (e.g. 09:00). 
      * 
      * @param step 
      * @param skipFirstAndLast 
      * @returns 
      */
-    enumerateHours(step: number = 1, skipFirstAndLast: boolean = false): Time[] {
+    enumerateHours(step: number = 1): Time[] {
         const hours: Time[] = []
-        const beginHour = this.start.hours + (skipFirstAndLast ? step : 0)
-        const endHour = this.end.hours - (skipFirstAndLast ? step : 0)
-        for(let h = beginHour; h <= endHour; h += step){
-            hours.push( new Time(h, 0) )
+        let currentHour = this.start.hours ?? 0
+        if((this.start.minutes ?? 0) > 0){
+            currentHour += 1
         }
+        const endHour = this.end.hours ?? 0
+
+        while(currentHour <= endHour){
+            hours.push( new Time(currentHour, 0) )
+            currentHour += step
+        }
+
         return hours
     }
 
@@ -83,11 +92,14 @@ export class SessionDayBoundaries extends TimeInterval {
 
 // ************************ constants **********************/
 
+// TODO: these are really configuration constants and should be 
+// moved to a configuration file at some point.
+
 /*
     A Day starts at 08:00 and ends at 26:00 (i.e. 2AM next day)
 */
 export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBoundaries(
-  new Time(8,0),
+  new Time(7, 30),
   new Time(26, 0),
   100
 )
