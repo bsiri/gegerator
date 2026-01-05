@@ -117,13 +117,25 @@
       Also since those markers actually take space after the table (even with 0 height, 
       the border-top takes 1px height), I had to discount a bit more height depending 
       on the index of the marker (must account for the previous markers heights as well).
+
+      -------
+      TODO: a cleaner solution would be absolute positioning within a relative container
+      since then the marker would take no space at all in the flow and I could rid of 
+      the discountThisHeight variable.
+
+      However when trying that, I had issues with locating the start position (y component) 
+      of the table body wrt the container because I suspect Angular's view rendering timing
+      clashed with my attempts to read the DOM element position. 
+      
+      I kept the solution above, because by the time the marker lines are rendered  the 
+      table body height is already known. However I also fear that on another browser this 
+      might not be the case.
    -->
   @let tableHeight = tablebody.getBoundingClientRect().height;
   @let offsetFromTop = SESSION_DAY_BOUNDARIES.offsetFromDayStartInPixel(hourtime);
   @let discountThisHeight = (idx-1);
   @let offset = - tableHeight + offsetFromTop - discountThisHeight;
   <div class="timeline-marker" style="top: {{offset}}px;">
-  <!-- <div class="timeline-marker" > -->
     <span class="timeline-marker--label marker-left">{{hourtime | time}}</span>
     <span class="timeline-marker--label marker-right">{{hourtime | time}}</span>
   </div>
