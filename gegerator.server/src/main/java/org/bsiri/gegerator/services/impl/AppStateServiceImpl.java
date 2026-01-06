@@ -19,11 +19,11 @@ import java.util.List;
 @Service
 public class AppStateServiceImpl implements AppStateService {
 
-    private ConfigurationService confService;
-    private MovieService movieService;
-    private MovieSessionService sessionService;
-    private OtherActivityService otherActivityService;
-    private R2dbcEntityTemplate template;
+    private final ConfigurationService confService;
+    private final MovieService movieService;
+    private final MovieSessionService sessionService;
+    private final OtherActivityService otherActivityService;
+    private final R2dbcEntityTemplate template;
 
     public AppStateServiceImpl(@Autowired ConfigurationService confService,
                            @Autowired MovieService movieService,
@@ -81,6 +81,27 @@ public class AppStateServiceImpl implements AppStateService {
         .thenMany(insertAll(appState.getMovies()))
         .thenMany(insertAll(appState.getSessions()))
         .thenMany(insertAll(appState.getActivities()))
+
+        // 3. We also need to reset the ID sequence generator for each table
+        /*
+            TODO: two solutions. Either something like
+            -  ALTER TABLE OTHER_ACTIVITY ALTER COLUMN ID RESTART WITH (
+                select max(ID)+1 from OTHER_ACTIVITY
+            );
+            or, more hacky:
+            - UPDATE TABLE INFORMATION_SCHEMA.COLUMNS
+                SET IDENTITY_BASE=(select max(ID) from OTHER_ACTIVITY)
+                where TABLE_NAME='OTHER_ACTIVITY'
+                and COLUMN_NAME='ID';
+
+            Also remember to find a way to have the H2 console enabled in dev
+            but not ship org.bsiri.gegerator.config.H2ConsoleConfiguration
+            in releases.
+
+            Also write a test.
+         */
+
+        // finally return the appstate
         .then(Mono.just(appState));
     }
 

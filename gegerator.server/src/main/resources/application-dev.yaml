@@ -13,14 +13,27 @@ spring:
       # land). Hence, we redefine the static assets location:
       static-locations: classpath:/static/browser/
 
-  # TODO: this doesn't work unfortunately
+  # TODO: this doesn't work unfortunately, I suppose this is again
+  # because this is a spring-reactive application
   #datasource:
   #  data: data-test.sql
 
-
-  # TODO: this does not work either !
+  #########################################
+  # H2 console will not work out of the box either due to this app
+  # being a spring-reactive app. However there is a workaround,
+  # see class org.bsiri.gegerator.config.H2ConsoleConfiguration.
+  # Basically:
+  # 1. run the app with profile "dev" (eg with --spring.profiles.active=dev)
+  # 2. access the console at: http://localhost:8082/
+  # 3: db url is jdbc:h2:mem:gegerator, login/pwd = sa/<blank>
+  # (remember that "gegerator" is technically the value of "spring.r2dbc.name" above)
+  #
+  # Anyway the h2 console snippet below will not work, left it there
+  # as documentation.
   #h2:
-  #  console.enabled: true
+  #  console:
+  #    enabled: true
+  ##########################################
 
   # Do not set base-path: it breaks requests to static assets (the client expects
   # them to be at the base path '/')

@@ -38,8 +38,18 @@ public class OtherActivityServiceImpl implements OtherActivityService {
     @FireModelChanged(OtherActivitiesChangedEvent.class)
     public Mono<OtherActivity> save(OtherActivity activity){
         return repo.save(activity)
-                .onErrorMap(DataIntegrityViolationException.class,
-                        ex -> new TimeParadoxException(activity.getStartTime(), activity.getEndTime()));
+                .onErrorMap(
+                        DataIntegrityViolationException.class,
+                        /*
+                         Note: NORMALLY, integrity violation should be thrown in case
+                         of constraint check failed on the start time and end time.
+                         However, the same exception would be thrown in other cases like
+                         duplicate PK... which SHOULD normally not happen.
+                         However, if the app throws a TimeParadoxException that makes no sense,
+                         remember that the exception handling here is, say, "optimistic".
+                        */
+                        ex -> new TimeParadoxException(activity.getStartTime(), activity.getEndTime())
+                );
     }
 
     @Override
