@@ -16,7 +16,7 @@ import org.springframework.context.event.EventListener;
 
     However that class is going to ship with the release at the moment, unless I rework
     it as a separate artifact and make it embeddable only if built with a dedicated maven
-    profile, I'll do that later.
+    profile, I'll do that later. Maybe.
 
     Kudos to: https://medium.com/@padiahrohit/enable-h2-console-in-java-reactive-environmant-dcfcfdd6858a
  */
