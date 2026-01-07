@@ -100,6 +100,7 @@ public class AppStateServiceImpl implements AppStateService {
 
             Also write a test.
          */
+        .then(resetSequences())
 
         // finally return the appstate
         .then(Mono.just(appState));
@@ -109,5 +110,29 @@ public class AppStateServiceImpl implements AppStateService {
     private <T> Flux<T> insertAll(Collection<T> elements){
         return Flux.fromIterable(elements).flatMap(template::insert);
     }
+
+    /*
+     * Reinitialize all the ID sequences for these three tables: movie, movie_session and
+     * other activities.
+     *
+     * These represent the complete database at the moment.
+     * This sql is obviously tightly coupled to H2 SQL. TODO: neve change the
+     *  DB engine :-)
+     * @return
+     */
+    private Mono<Void> resetSequences(){
+        return template.getDatabaseClient().sql("""
+            alter table OTHER_ACTIVITY alter column ID restart with(
+                select max(ID)+1 from OTHER_ACTIVITY
+            );
+            alter table MOVIE alter column ID restart with(
+                select max(ID)+1 from MOVIE
+            );
+            alter table MOVIE_SESSION alter column ID restart with (
+                select max(ID)+1 from MOVIE_SESSION
+            );
+        """).then();
+    }
+
 
 }
