@@ -14,10 +14,7 @@
 
     .session-day{
         margin: vars.$gap-small 0;
-
-        display: flex;
-        align-items: center;
-        flex-direction: column;
+        position: relative;
     }
 
     .session-day-table{
@@ -80,8 +77,8 @@
     }
 
     .timeline-marker{
-        position: relative;
-        border: 1px dashed vars.$color-dimmed;
+        position: absolute;
+        border-top: 1px dashed vars.$color-dimmed;
         height: 0px;
         width: 100%;
 

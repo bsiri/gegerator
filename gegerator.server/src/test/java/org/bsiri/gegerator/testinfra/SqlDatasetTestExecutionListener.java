@@ -1,5 +1,6 @@
 package org.bsiri.gegerator.testinfra;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -30,7 +31,7 @@ public class SqlDatasetTestExecutionListener implements TestExecutionListener {
      * @throws Exception
      */
     @Override
-    public void beforeTestMethod(TestContext testContext) throws Exception {
+    public void beforeTestMethod(@Nonnull TestContext testContext) throws Exception {
         TestExecutionListener.super.beforeTestMethod(testContext);
         findDatastName(testContext)
                 .ifPresent( dataset -> {
@@ -47,7 +48,7 @@ public class SqlDatasetTestExecutionListener implements TestExecutionListener {
      * @throws Exception
      */
     @Override
-    public void afterTestExecution(TestContext testContext) throws Exception {
+    public void afterTestExecution(@Nonnull TestContext testContext) throws Exception {
 
         TestExecutionListener.super.beforeTestMethod(testContext);
         findDatastName(testContext)

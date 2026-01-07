@@ -1,6 +1,5 @@
 import { Duration } from "iso8601-duration"
-import { Times } from "src/app/models/time.utils"
-import { Time } from "src/app/models/time.model"
+import { Time, TimeInterval } from "src/app/models/time.model"
 
 /*
     This constant defines the constants on which 
@@ -8,16 +7,20 @@ import { Time } from "src/app/models/time.model"
     the SessionSectionComponent and the 
     PlannedMovieSessionComponent. See these classes
     for the specific of their usage.
+
+    Note: I extend TimeInterval because I'm lazy but 
+    it should have been done with composition instead.
 */
-export class SessionDayBoundaries{
+export class SessionDayBoundaries extends TimeInterval {
     
     private minuteLenInPixel: number
 
     constructor(
-        public dayBeginTime: Time, 
-        public dayEndTime: Time,
+        dayBeginTime: Time, 
+        dayEndTime: Time,
         public hourLenInPixels: number
     ){
+        super(dayBeginTime, dayEndTime)
         this.minuteLenInPixel = (this.hourLenInPixels / 60.0)
     }
 
@@ -25,33 +28,41 @@ export class SessionDayBoundaries{
      * Returns an array of Time objects representing each hour
      * between the day begin time and day end time.
      * 
-     * If step is provided, hours are enumerated with the given step.
-     * If skipFirstAndLast is true, the first and last hours are not included
+     * The enumeration returns whole hours only, i.e. minutes are always 0.
+     * In case the start of the day is not at a whole hour (e.g. 08:30),
+     * the first hour returned will be the next whole hour (e.g. 09:00). 
      * 
      * @param step 
      * @param skipFirstAndLast 
      * @returns 
      */
-    enumerateHours(step: number = 1, skipFirstAndLast: boolean = false): Time[] {
+    enumerateHours(step: number = 1): Time[] {
         const hours: Time[] = []
-        const beginHour = this.dayBeginTime.hours + (skipFirstAndLast ? step : 0)
-        const endHour = this.dayEndTime.hours - (skipFirstAndLast ? step : 0)
-        for(let h = beginHour; h <= endHour; h += step){
-            hours.push( new Time(h, 0) )
+        let currentHour = this.start.hours ?? 0
+        if((this.start.minutes ?? 0) > 0){
+            currentHour += 1
         }
+        const endHour = this.end.hours ?? 0
+
+        while(currentHour <= endHour){
+            hours.push( new Time(currentHour, 0) )
+            currentHour += step
+        }
+
         return hours
     }
 
     /**
         Returns the height (in pixels) that a session Day should have when rendered in 
-        the Session section. It also adds an extra 2 hours to account for midnight sessions.
+        the Session section. 
     */
     sessionDayInPixel(): number{
-        const lenEnd = this.durationInPixel(this.dayEndTime)
-        const lenBegin = this.durationInPixel(this.dayBeginTime)
-        const extra = 2*this.hourLenInPixels
+        const lenEnd = this.durationInPixel(this.end)
+        const lenBegin = this.durationInPixel(this.start)
+        // const extra = 2*this.hourLenInPixels
 
-        return (lenEnd - lenBegin) + extra
+        // return (lenEnd - lenBegin) + extra
+        return (lenEnd - lenBegin) 
     }
 
     /*
@@ -72,27 +83,39 @@ export class SessionDayBoundaries{
         Represent the offset in pixel that separate the given Time and the start of 
         the Session Day  .
     */
-    offsetFromDayBeginInPixel(time: Time): number {
-        return this.durationInPixel(time) - this.durationInPixel(this.dayBeginTime)
-    }
-
-    /**
-     * Returns whether the given time is withing the session day boundaries
-     * @param time 
-     */
-    isInRange(time: Time): boolean{
-        return Times.isAfter(time, this.dayBeginTime) && Times.isBefore(time, this.dayEndTime)
-    }
-
-    toString(): string{
-        return `${Times.toString(this.dayBeginTime)} - ${Times.toString(this.dayEndTime)}`
+    offsetFromDayStartInPixel(time: Time): number {
+        return this.durationInPixel(time) - this.durationInPixel(this.start)
     }
 
 }
 
+
+// ************************ constants **********************/
+
+// TODO: these are really configuration constants and should be 
+// moved to a configuration file at some point.
+
+/*
+    A Day starts at 08:00 and ends at 26:00 (i.e. 2AM next day)
+*/
 export const SESSION_DAY_BOUNDARIES: SessionDayBoundaries = new SessionDayBoundaries(
-  {hours: 8, minutes: 0} as Time,
-  {hours:23, minutes: 59} as Time,
+  new Time(7, 30),
+  new Time(26, 0),
   100
 )
- 
+
+/*
+    Events (like movie sessions) are plannable only from 08:00 to 23h59
+    because I cannot yet handle start and end times that goes over midnight
+    (it would mean handling the change of day and I have not yet implemented that).
+
+    This means that:
+    - other activities must start and end before midnight, because no time 
+      can technically be inputed after that,
+    - movie session must also start before midnight, but can end after that 
+      because the endtime is not inputed, but derived from its duration.
+*/
+export const PLANNABLE_EVENT_TIME_INTERVAL: TimeInterval = new TimeInterval(
+    new Time(8,0),
+    new Time(23, 59)
+)

@@ -19,11 +19,11 @@ import java.util.List;
 @Service
 public class AppStateServiceImpl implements AppStateService {
 
-    private ConfigurationService confService;
-    private MovieService movieService;
-    private MovieSessionService sessionService;
-    private OtherActivityService otherActivityService;
-    private R2dbcEntityTemplate template;
+    private final ConfigurationService confService;
+    private final MovieService movieService;
+    private final MovieSessionService sessionService;
+    private final OtherActivityService otherActivityService;
+    private final R2dbcEntityTemplate template;
 
     public AppStateServiceImpl(@Autowired ConfigurationService confService,
                            @Autowired MovieService movieService,
@@ -81,6 +81,11 @@ public class AppStateServiceImpl implements AppStateService {
         .thenMany(insertAll(appState.getMovies()))
         .thenMany(insertAll(appState.getSessions()))
         .thenMany(insertAll(appState.getActivities()))
+
+        // 3. We also need to reset the ID sequence generator for each table
+        .then(resetSequences())
+
+        // finally return the appstate
         .then(Mono.just(appState));
     }
 
@@ -88,5 +93,29 @@ public class AppStateServiceImpl implements AppStateService {
     private <T> Flux<T> insertAll(Collection<T> elements){
         return Flux.fromIterable(elements).flatMap(template::insert);
     }
+
+    /*
+     * Reinitialize all the ID sequences for these three tables: movie, movie_session and
+     * other activities.
+     *
+     * These represent the complete database at the moment.
+     * This sql is obviously tightly coupled to H2 SQL. TODO: neve change the
+     *  DB engine :-)
+     * @return
+     */
+    private Mono<Void> resetSequences(){
+        return template.getDatabaseClient().sql("""
+            alter table OTHER_ACTIVITY alter column ID restart with(
+                select max(ID)+1 from OTHER_ACTIVITY
+            );
+            alter table MOVIE alter column ID restart with(
+                select max(ID)+1 from MOVIE
+            );
+            alter table MOVIE_SESSION alter column ID restart with (
+                select max(ID)+1 from MOVIE_SESSION
+            );
+        """).then();
+    }
+
 
 }

@@ -23,7 +23,6 @@ import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-m
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TimePipe } from '../../../pipes/time.pipe';
-import { Time } from 'src/app/models/time.model';
 
 @Component({
     selector: 'app-session-section',

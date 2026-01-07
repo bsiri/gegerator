@@ -11,8 +11,6 @@ spring:
       # land). Hence, we redefine the static assets location:
       static-locations: classpath:/static/browser/
 
-  #h2:
-  #  console.enabled: true
 
   # Do not set base-path: it breaks requests to static assets (the client expects
   # them to be at the base path '/')
