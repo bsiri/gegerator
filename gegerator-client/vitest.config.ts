@@ -2,6 +2,8 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
+    environment: 'jsdom',
+    globals: true,
     reporters: ['junit', 'json'],
     outputFile: {
       junit: './test-results/junit-report.xml',
