@@ -98,8 +98,8 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "runnerConfig": "vitest.config.js",
-            "reporters": ["progress", "kjhtml"],
+            "runnerConfig": "vitest.config.ts",
+            "reporters": ["progress", "kjhtml"]
           }
         }
       }
