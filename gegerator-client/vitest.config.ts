@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    reporters: ['junit', 'json'],
+    reporters: ['default','junit', 'json'],
     outputFile: {
       junit: './test-results/junit-report.xml',
       json: './test-results/json-report.json'
