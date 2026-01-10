@@ -1,5 +1,4 @@
 import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 
 import { environment } from './environments/environment';
@@ -20,7 +19,6 @@ import { OtherActivityEffects } from './app/ngrx/effects/activity.effects';
 import { AppStateEffects } from './app/ngrx/effects/appstate.effects';
 import { ConfigurationEffects } from './app/ngrx/effects/configuration.effects';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -79,8 +77,7 @@ bootstrapApplication(AppComponent, {
             MatSliderModule
         ),
         provideHttpClient(withInterceptorsFromDi()), 
-        httpInterceptorProviders,
-        provideAnimations()
+        httpInterceptorProviders
     ]
 })
   .catch(err => console.error(err));
