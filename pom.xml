@@ -15,7 +15,7 @@
     <name>gegerator</name>
     <description>Generateur de planning Gerardmer</description>
     <properties>
-        <revision>1.1.1-SNAPSHOT</revision>
+        <revision>1.1.1.RELEASE</revision>
         <minmaven.version>3.8</minmaven.version>
         <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.source>17</maven.compiler.source>
