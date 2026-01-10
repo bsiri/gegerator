@@ -19,22 +19,18 @@ docker run --rm --name gegerator -p 8080:8080 bsiri/gegerator:1.1.1.RELEASE
 ```
 
 If you also use `--spring.profile.actives=dev`, the H2 console will be exposed at 
-`http://localhost:8082`. Obvisouly do not use that in production !
+`http://localhost:8082`. Obviously do not use that in production !
 
 ### Tooling version ?
-Java 11 recommended, should run on Java 8
+Java 17 recommended, should run on Java 8
 Maven 3.8.6
-Node server (for development): v16.13.0
-Npm version: 8.1.0
-Browser Ecmascript 12+
+Node server (for development): v22.21.1
+Npm version: 10.9.4
+Browser : ES2022
 
 ### Known bugs
 * When refreshing the page, if the Wizard was enabled, you will need to 
   re-enable it again
-* The `Résumé` panel on the right does not show a scrollbar when the content 
-  overflows at the bottom.
-* If one define a context path, eg by running with `-Dspring.webflux.base-path=something`,
-  the front-end breaks.
 
 # Development
 
