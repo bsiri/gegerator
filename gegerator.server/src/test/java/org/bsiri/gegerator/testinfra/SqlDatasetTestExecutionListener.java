@@ -1,5 +1,6 @@
 package org.bsiri.gegerator.testinfra;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -30,12 +31,30 @@ public class SqlDatasetTestExecutionListener implements TestExecutionListener {
      * @throws Exception
      */
     @Override
-    public void beforeTestMethod(TestContext testContext) throws Exception {
+    public void beforeTestMethod(@Nonnull TestContext testContext) throws Exception {
         TestExecutionListener.super.beforeTestMethod(testContext);
         findDatastName(testContext)
                 .ifPresent( dataset -> {
                     DatabaseClient dbClient = getDatabaseClient(testContext);
                     load(dbClient, dataset);
+                });
+    }
+
+    /**
+     * Cleans the database after tests.
+     *
+     * @param testContext the test context in which the test method will be
+     * executed; never {@code null}
+     * @throws Exception
+     */
+    @Override
+    public void afterTestExecution(@Nonnull TestContext testContext) throws Exception {
+
+        TestExecutionListener.super.beforeTestMethod(testContext);
+        findDatastName(testContext)
+                .ifPresent( dataset -> {
+                    DatabaseClient dbClient = getDatabaseClient(testContext);
+                    cleanTruncate(dbClient);
                 });
     }
 
@@ -76,6 +95,13 @@ public class SqlDatasetTestExecutionListener implements TestExecutionListener {
         catch(IOException ex){
             throw new RuntimeException(ex);
         }
+    }
+
+    private void cleanTruncate(DatabaseClient dbClient){
+        dbClient.sql(TRUNCATE_ALL)
+                .then()
+                .block();
+
     }
 
 }

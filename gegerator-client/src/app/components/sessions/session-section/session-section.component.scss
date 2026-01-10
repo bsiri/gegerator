@@ -1,0 +1,102 @@
+
+@use '../../../../_variables' as vars;
+@use "sass:color";
+@use '@angular/material' as mat;
+// $color-high: color.scale($color-highest, $lightness: +50%);
+
+#sessions-mainview{
+    display: flex;
+    justify-content: center;
+    background-color: vars.$color-secondary-pane;
+    .sessions--center{
+        flex: 0.7 0 min-content;
+    }
+
+    .session-day{
+        margin: vars.$gap-small 0;
+        position: relative;
+    }
+
+    .session-day-table{
+        width: 100%;
+        table-layout: fixed;
+        overflow-y: hidden;
+        border-collapse: collapse;
+
+        .session-day--title{
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+
+        thead{
+            border-bottom: 1px solid black;
+            position: sticky;
+            top: vars.$gap-small;
+            z-index: 2;
+            background-color: vars.$color-secondary-pane;
+            @include mat.elevation(8);
+
+            .session-header{
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .session-header--title{
+                display: inline;
+                margin: 0;
+                margin-right: vars.$gap-small;
+            }
+
+            .mdc-button{
+                @include vars.small-button
+            }
+
+
+        }
+
+        tbody tr{
+            td{
+                border-collapse: collapse;
+                position: relative;
+
+                border-left: 1px solid black;
+                border-right: 1px solid black;
+
+                &:first-child{
+                    border-left: 0;
+                }
+
+                &:last-child{
+                    border-right: 0;
+                }
+            }
+        }
+    }
+
+    .timeline-marker{
+        position: absolute;
+        border-top: 1px dashed vars.$color-dimmed;
+        height: 0px;
+        width: 100%;
+
+        .timeline-marker--label{ 
+            padding: vars.$padding-xss;
+            color: vars.$color-secondary-pane;
+            background-color: vars.$color-dimmed;
+
+            &.marker-left {
+                position: absolute;
+                transform: translate(-110%, -50%);
+            }
+            &.marker-right {
+                position: absolute;
+                right: 0;
+                transform: translate(110%, -50%);
+            }
+        }
+
+    }   
+}

@@ -1,32 +1,51 @@
 @use "sass:color";
+@use "sass:map";
 
-@import '~@angular/material/theming';
 
-// Copy the palettes from your selected theme (usually theme.scss).
-$app-primary: mat-palette($mat-indigo, 700, 300, 900);
-$app-accent: mat-palette($mat-light-blue);
-$app-warn: mat-palette($mat-deep-orange, A200);
+// the ugly colors
+$color-primary-pane: orange;
+$color-secondary-pane: khaki;
+$color-tertiary-pane: beige ;
 
-// Create your Sass color vars (will be available in all the project)
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent);
-$warn: mat-color($app-warn);
+$color-warn: rgb(255,110,64);
+$color-fieldlabel: rgba(0,0,0,0.6);
 
-$primary-light-35: color.scale($primary, $lightness: +35%);
-$primary-dark-35: color.scale($primary, $lightness: -35%);
+$color-dimmed: rgba(209, 175, 118, 1);
 
+// ***** typography **************
+
+$font-size-header: 1.50rem;
+$font-size-large: 1.25rem;
+$font-size-content: 0.875rem;
+$font-size-small: 0.65625rem;
+
+$font-weight-header: 400;
+$font-weight-lightbold: 500;
+$font-weight-normal: 400;
 
 // ***** spacings and layouts ***********
 
-$default-gap: 1em;
-$small-gap: 8px;
+$radius-large: 15px;
+$radius-small: 4px;
+$radius-none: 0px;
 
+$gap-default: 1em;
+$gap-small: 8px;
 
+$padding-xlarge: 24px;
+$padding-large: 16px;
+$padding-small: 8px;
+$padding-xss: 2px;
+
+$border-thin: 1px;
+$border-fat: 3px;
+$border-superfat: 6px;
 
 // ***** mat-button customization ********
 @mixin small-button{
-    min-width: inherit;
-    padding: 0.1em;
+    min-width: fit-content;
+    height: fit-content;
+    padding: 0.3rem;
     line-height: normal;
 }
 
@@ -39,19 +58,17 @@ $small-gap: 8px;
 
 @mixin sect-title{
     font-family: "sans";
+    color: magenta;
     font-weight: bold;
     font-style: italic;
-    text-align: center;
-    color: magenta;
-    /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
-/*
-    background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
-    background-clip: text;
-    color: transparent;
-*/
+    // text-align: center;
+    
+    &.neon{
+        /* WIP : see https://bootcamp.uxdesign.cc/gradient-text-in-css-609068d3f953 */
+        font-family: "Outrun Future";
+        background-image: linear-gradient(90deg, rgba(34,36,217,1) 0%, rgba(130,138,18,1) 50%, rgba(255,0,239,1) 100%);
+        background-clip: text;
+        color: transparent;
+    }
 }
-
-$primary-pane-color: orange;
-$secondary-pane-color: khaki;
-$tertiary-pane-color: beige ;
 

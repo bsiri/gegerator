@@ -1,4 +1,6 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
+// Noob note: these override the main tsconfig.json settings, to tailor the 
+// build for the app client side (ignoring tests, and server-side (none in my case))
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {

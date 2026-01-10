@@ -7,6 +7,7 @@ import org.bsiri.gegerator.planner.WizardPlanner;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
     Slightly optimized version of IterativePlanner. Here again the event
@@ -78,7 +79,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
      */
     private int[][] adjacency;
 
-    private int[] nodes_movie_id;
+    private int[] nodes_movie;
     private long[] nodes_score;
 
     public IterativeGraphPlannerV2(Collection<PlannerEvent> evts){
@@ -100,44 +101,21 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         );
         this.nodes = copy.toArray(new PlannerEvent[]{});
 
-        /*
-         Populate the local arrays for movie ids and event scores.
-         For PlannerEvents that have no movie ID (e.g. OtherActivities),
-         a surrogate unique movie ID will be generated.
+        // remap the movie id to sequential ints
+        this.nodes_movie = new int[this.nodes.length];
+        Map<Long, Short> movieMap = new HashMap<>();
+        Iterator<Integer> movieIdRemapperIndex = IntStream.range(0, nodes.length).iterator();
 
-        */
-        Random r = new Random();
-        Map<Long, Integer> movieMap = new HashMap<>();
-
-        // store which movie id corresponds to the i-th element
-        // of the adjacency matrix
-        this.nodes_movie_id = new int[this.nodes.length];
-        // same for the score of the session.
         this.nodes_score = new long[this.nodes.length];
 
-        int movie_index = 0;
         for (int i=0; i< nodes.length; i++){
            PlannerEvent event = nodes[i];
            Long movieId = event.getMovie();
-           if (movieId == null){
-               // Generate a surrogate ID, hoping that no collision occurs.
-               // We pick these surrogate ID in the negative range to limit
-               // the risk of collision with the other events.
-               movieId = (long) (r.nextInt(7999) - 8000);
-           }
-           if (movieMap.containsKey(movieId)){
-               // Note: here we coerce a long to an int.
-               // In practice this is manageable because there is not
-               // *that* many movies planned at a given instance of
-               // the festival!
-               this.nodes_movie_id[i] = movieMap.get(movieId);
-           }
-           else{
-               movieMap.put(movieId, movie_index);
-               this.nodes_movie_id[i] = movie_index;
-               movie_index++;
-           }
-
+           short remappedId = movieMap.computeIfAbsent(
+                   movieId,
+                   (whatever) -> movieIdRemapperIndex.next().shortValue()
+           );
+           this.nodes_movie[i] = remappedId;
            this.nodes_score[i] = event.getScore();
         }
     }
@@ -148,7 +126,16 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
             for (int iDst = iSrc+1; iDst < nodes.length; iDst++){
                 PlannerEvent src = nodes[iSrc];
                 PlannerEvent dst = nodes[iDst];
+                // If impossible to make it in time to walk
+                // from session A to session B, do not create
+                // and edge
                 if (! src.isTransitionFeasible(dst)) continue;
+                // Slight optimization: since the planner will never
+                // accept a solution with twice the same movie,
+                // we also prune here the transition if the two
+                // events are planning the same movie.
+                if (src.getMovie().equals(dst.getMovie())) continue;
+
                 adjacency[iSrc][iDst] = 1;
             }
         }
@@ -192,13 +179,13 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
         // - true if the movie at this index has already been seen
         //   in the path currently examined,
         // - false otherwise.
-        boolean[] seenMovies = new boolean[nodes_movie_id.length];
+        boolean[] seenMovies = new boolean[nodes_movie.length];
 
         // init with the ROOT node (index 0 by construction)
         nodesStack[stackTop] = 0;
         edgesStack[stackTop] = 1;
         currentScore += nodes_score[0];
-        seenMovies[nodes_movie_id[0]] = true;
+        seenMovies[nodes_movie[0]] = true;
 
         // loop variables
         int iSrc;
@@ -224,7 +211,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
 
                 // Skip if no edge or if movie already seen,
                 // and this test is well worth the branch prediction miss penalty.
-                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movie_id[iDest]]) {
+                if (adjacency[iSrc][iDest] == 0 || seenMovies[nodes_movie[iDest]]) {
                     iDest++;
                     continue;
                 }
@@ -234,12 +221,12 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
                 // from this "src" node, once the stack unwinds to this point.
                 edgesStack[stackTop] = iDest+1;
 
-                // now we push things in stack and go explore"dest" node
+                // now we push things in stack and go explore "dest" node
                 stackTop++;
                 nodesStack[stackTop] = iDest;
                 edgesStack[stackTop] = iDest + 1;
                 currentScore += nodes_score[iDest];
-                seenMovies[nodes_movie_id[iDest]] = true;
+                seenMovies[nodes_movie[iDest]] = true;
 
                 // now that the stacks are ready, break
                 // the main while loop will pop and the processing
@@ -264,7 +251,7 @@ public class IterativeGraphPlannerV2 implements WizardPlanner {
             // if we have finished exploring that node
             // we pop the stacks
             stackTop--;
-            seenMovies[nodes_movie_id[iSrc]] = false;
+            seenMovies[nodes_movie[iSrc]] = false;
             currentScore -= nodes_score[iSrc];
         }
 

@@ -2,7 +2,6 @@ package org.bsiri.gegerator.services.impl;
 
 import lombok.SneakyThrows;
 import org.bsiri.gegerator.domain.Movie;
-import org.bsiri.gegerator.domain.MovieRating;
 import org.bsiri.gegerator.services.ConfigurationService;
 import org.bsiri.gegerator.services.MovieService;
 import org.bsiri.gegerator.services.MovieSessionService;
@@ -84,12 +83,16 @@ public class ModelChangeDetectorTests {
 
     }
 
+    /**
+     * Test the throttling when too many events arrive at once
+     *
+     */
     @Test
     public void shouldReloadMoviesOnEventWithThrottling(){
         // **** Test setup ****
-        List<Movie> moviesBurst1 = Arrays.asList(tremors(), halloween(), theMist());
-        List<Movie> moviesBurst2 = Arrays.asList();
-        List<Movie> moviesBurst3 = Arrays.asList(decapitron());
+        List<Movie> moviesBurst1 = List.of(tremors(), halloween(), theMist());
+        List<Movie> moviesBurst2 = List.of();
+        List<Movie> moviesBurst3 = List.of(decapitron());
 
         //when(movieService.findAllPlannedInSession()).thenReturn(
         when(movieService.findAll()).thenReturn(
@@ -112,7 +115,7 @@ public class ModelChangeDetectorTests {
                 (evt) -> changeDetector.onMoviesChanged(evt),
                 // sorry to break the abstraction,
                 // but I need to complete that flux
-                () -> { completeSink("movieEvtFlux"); }
+                () -> completeSink("movieEvtFlux")
         );
 
         // ******* our verifying steps *******
@@ -126,6 +129,10 @@ public class ModelChangeDetectorTests {
                     .verifyComplete();
     }
 
+    /*
+     * hacky way to complete a sink
+     * @param sinkName
+     */
     @SneakyThrows
     private void completeSink(String sinkName) {
         Field sinkField = ModelChangeDetector.class.getDeclaredField("movieEvtFlux");
@@ -138,7 +145,7 @@ public class ModelChangeDetectorTests {
     //* ********************  *************************
 
     private <R> Flux<R> simulateEventBus(Flux<R> ...fluxes){
-        Flux<R> flux = Arrays.stream(fluxes).reduce((f1, f2) -> f1.concatWith(f2)).get();
+        Flux<R> flux = Arrays.stream(fluxes).reduce(Flux::concatWith).get();
         flux.subscribeOn(Schedulers.parallel());
         return flux;
     }

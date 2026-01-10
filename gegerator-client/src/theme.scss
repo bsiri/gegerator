@@ -1,25 +1,84 @@
 
-@import '~@angular/material/theming';
-@include mat-core();
+
+@use '@angular/material' as mat;
+@use 'src/_variables.scss' as vars;
+@use 'src/custom/_theme-colors.scss' as custom-theme;
+
+// elevation-classes() does not work, use directly mat.elevation(z) where needed
+//@include mat.elevation-classes();
+//@include mat.app-background();
 
 
-// If these must change, remember to redeclare them 
-// in _variables.scss
-// (see : https://medium.com/@aleixsuau/how-to-use-angular-material-2-sass-variables-in-your-components-76ce0203f126)
-$app-primary: mat-palette($mat-indigo, 700, 300, 900);
-$app-accent: mat-palette($mat-light-blue);
-$app-warn: mat-palette($mat-deep-orange, A200);
+html {
+  @include mat.theme((
+    color: (
+      primary: custom-theme.$primary-palette,
+      tertiary: custom-theme.$tertiary-palette,
+      theme-type: light,
+    ),
+    typography: Roboto,
+    // generally set to -5 for a more compact UI
+    density: -5
+  ));
 
-// create theme
-$app-theme: mat-light-theme(
-    $app-primary,
-    $app-accent,
-    $app-warn
-);
+  //// Button overrides
+  // not so round buttons please
+  @include mat.button-overrides((
+    filled-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    text-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    outlined-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    protected-container-shape: var(--mat-sys-corner-large, vars.$radius-large),
+    tonal-container-shape: var(--mat-sys-corner-large, vars.$radius-large)
+  ));
 
-@include angular-material-theme($app-theme);
+  //// Sidenav overrides
+  // not so round sidenav please
+  @include mat.sidenav-overrides((
+    container-shape: var(--mat-sys-corner-none, vars.$radius-none),
+    container-width: fit-content
+  ));
 
-// export the colors
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent);
-$warn: mat-color($app-warn);
+  //// Card overrides
+  @include mat.card-overrides((
+    title-text-weight: vars.$font-weight-lightbold,
+    title-text-size: vars.$font-size-large
+  ));
+
+  //// Dialog overrides
+  @include mat.dialog-overrides((
+    container-shape: var(--mat-sys-corner-extra-small, vars.$radius-small)
+  ));
+
+  //// Form Field overrides, 
+  // general fields
+  @include mat.form-field-overrides((
+      filled-label-text-size: vars.$font-size-content,
+      // necessary to force the display of the label because 
+      // the general density of -5 would force it to be hidden 
+      // otherwise
+      filled-label-display: block,
+      filled-label-text-color: vars.$color-fieldlabel,
+  ));
+  // some specifics for the dialogs now:
+  // (have to redeclare a bunch of them unfortunately
+  // because everything is reset in the mat-dialog-container scope)
+  mat-dialog-container {
+    // decompact the form fields a bit
+    @include mat.form-field-density(-1);
+    @include mat.form-field-overrides((
+      subscript-text-size: vars.$font-size-small,
+      filled-label-text-size: vars.$font-size-content,
+      filled-label-display: block,
+      filled-label-text-color: vars.$color-fieldlabel,
+      error-text-color: vars.$color-warn,
+      filled-error-label-text-color: vars.$color-warn,
+      filled-error-hover-label-text-color: vars.$color-warn,
+      filled-container-color: var(--mat-sys-surface-container)
+    ));
+  }
+
+  //// Menu overrides
+  @include mat.menu-overrides((
+    item-label-text-weight: vars.$font-weight-normal
+  ))
+}

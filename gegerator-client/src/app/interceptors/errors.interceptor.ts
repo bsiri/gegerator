@@ -5,7 +5,7 @@ import {
 
 import { catchError, EMPTY, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { GenericPurposeDialog } from '../old-components/genericpurposedialog/genericpurposedialog.component';
+import { GenericPurposeDialog } from '../components/genericpurposedialog/genericpurposedialog.component';
 
 
 const PRECONDITION_FAILED = 412
@@ -52,6 +52,6 @@ export class ErrorsInterceptor implements HttpInterceptor {
   _openDialog(message: string){
     this.dialog.open(GenericPurposeDialog, {
       data: {html: message, type: "error"}
-    });      
+    });
   }
 }

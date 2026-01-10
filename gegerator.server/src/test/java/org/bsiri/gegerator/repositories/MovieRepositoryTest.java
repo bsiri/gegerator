@@ -15,7 +15,7 @@ import static org.bsiri.gegerator.testinfra.TestBeans.*;
 import java.time.Duration;
 
 
-public class MovieRepositoryTest extends AbstractRepositoryTest {
+public class MovieRepositoryTest  extends AbstractRepositoryTest {
 
     @Autowired
     MovieRepository repo;

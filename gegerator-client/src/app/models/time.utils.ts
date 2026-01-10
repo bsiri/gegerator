@@ -121,10 +121,11 @@ function _toString(value: Time | Duration, sep: string = 'h'): string{
     if (!value){
         return "";
     }
-
+    const hours = (value.hours ?? 0) %24
     const minutes = value.minutes ?? 0
+    const twodigitsHours = twoDigitsStr(hours)
     const twodigitsMinutes = twoDigitsStr(minutes)
-    return `${value.hours}${sep}${twodigitsMinutes}`;    
+    return `${twodigitsHours}${sep}${twodigitsMinutes}`;    
 }
 
 function _fromString(strValue: string, expr: RegExp) : TimeDurationLike {

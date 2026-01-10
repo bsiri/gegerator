@@ -64,7 +64,16 @@ public class PlannerEvent implements TimeAndSpaceLocation {
                         activity.getDescription()
                 ),
                 score,
-                null,
+                /*
+                 FIXME: here we assign a Long because we have to (the Planner
+                  expects one), but it does not represent a Movie.
+                    Here we use a surrogate ID instead.
+                    Using minus (activity.getId() works fine for our purpose:
+                    - no conflict with movie ids (no movie id is negative),
+                    - no conflict with other activities (per definition of an OtherActivity id)
+                  Still this is semantically sloppy.
+                */
+                - activity.getId(),
                 null,
                 activity.getDay(),
                 activity.getStartTime(),

@@ -1,0 +1,120 @@
+
+<div id="sessions-mainview">
+  <div class="sessions--center">
+    @for (day of Days.enumerate(); track day) {
+      <div class="session-day">
+        <table class="session-day-table">
+          <thead>
+            <tr>
+              <th class="th-day" colspan="5">
+                <h1 class="session-day--title">{{day.name}}</h1>
+              </th>
+            </tr>
+            <tr>
+              <th class="th-col">
+                <ng-container [ngTemplateOutlet]="activityHeader"
+                  [ngTemplateOutletContext]="{day:day}">
+                </ng-container>
+              </th>
+              <th class="th-col">
+                <ng-container [ngTemplateOutlet]="sessionHeader"
+                  [ngTemplateOutletContext]="{day:day, theater: Theaters.ESPACE_LAC}">
+                </ng-container>
+              </th>
+              <th class="th-col">
+                <ng-container [ngTemplateOutlet]="sessionHeader"
+                  [ngTemplateOutletContext]="{day:day, theater: Theaters.CASINO}">
+                </ng-container>
+              </th>
+              <th class="th-col">
+                <ng-container [ngTemplateOutlet]="sessionHeader"
+                  [ngTemplateOutletContext]="{day:day, theater: Theaters.PARADISO}">
+                </ng-container>
+              </th>
+              <th class="th-col">
+                <ng-container [ngTemplateOutlet]="sessionHeader"
+                  [ngTemplateOutletContext]="{day:day, theater: Theaters.MCL}">
+                </ng-container>
+              </th>
+            </tr>
+          </thead>
+          <tbody #sessionTableBody>
+            <tr [ngStyle]="{'height': rowHeightInPixel}">
+              <td>
+                @for (activity of activitiesByDay(day) | async; track activity) {
+                  <app-other-activity [activity]="activity" [roadmap]="roadmap"></app-other-activity>
+                }
+              </td>
+              <td>
+                @for (session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC) | async; track session) {
+                  <app-planned-movie-session [session]="session" [roadmap]="roadmap"></app-planned-movie-session>
+                }
+              </td>
+              <td>
+                @for (session of sessionsByDayAndTheater(day, Theaters.CASINO) | async; track session) {
+                  <app-planned-movie-session [session]="session" [roadmap]="roadmap"></app-planned-movie-session>
+                }
+              </td>
+              <td>
+                @for (session of sessionsByDayAndTheater(day, Theaters.PARADISO) | async; track session) {
+                  <app-planned-movie-session [session]="session" [roadmap]="roadmap"></app-planned-movie-session>
+                }
+              </td>
+              <td>
+                @for (session of sessionsByDayAndTheater(day, Theaters.MCL) | async; track session) {
+                  <app-planned-movie-session [session]="session" [roadmap]="roadmap"></app-planned-movie-session>
+                }
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Insert timeline markers per steps = 2hours, and ignoring first at 08:00-->
+        @let tableBody = sessionTableBody;
+        @for (hourtime of SESSION_DAY_BOUNDARIES.enumerateHours(2).slice(0,-1); track $index; ){
+          <ng-container  [ngTemplateOutlet]="timelineMarker"
+            [ngTemplateOutletContext]="{tablebody: tableBody, hourtime: hourtime}">
+          </ng-container>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<ng-template #activityHeader let-day="day">
+  <div class="session-header">
+    <h2 class="session-header--title">Autres activités</h2>
+    <button matButton="filled" color="primary" (click)="openNewActivity(day)">
+      <mat-icon class="fix-margin">add</mat-icon>
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #sessionHeader let-day="day" let-theater="theater">
+  <div class="session-header">
+    <h2 class="session-header--title">{{theater.name}}</h2>
+    <button matButton="filled" color="primary" (click)="openNewSession(day, theater)">
+      <mat-icon class="fix-margin">add</mat-icon>
+    </button>
+  </div>
+</ng-template>
+
+
+<ng-template #timelineMarker 
+    let-tablebody="tablebody" 
+    let-hourtime="hourtime">
+  <!-- 
+    Those are using "position: absolute" with respect to the session-day container
+    to be able to overlay the timeline markers on top of the session rows.
+    Their "top" position is computed based on the start of the table (day start) plus
+    the offset in pixel from day start for the given hourtime.
+
+    See session-section.component.scss for the css of the container (.session-day) 
+    and the marker (.timeline-marker).
+  -->
+  @let dayOffset = SESSION_DAY_BOUNDARIES.offsetFromDayStartInPixel(hourtime);
+  @let offset = tablebody.offsetTop + dayOffset;
+  <div class="timeline-marker" style="top: {{offset}}px;">
+    <span class="timeline-marker--label marker-left">{{hourtime | time}}</span>
+    <span class="timeline-marker--label marker-right">{{hourtime | time}}</span>
+  </div>
+</ng-template>

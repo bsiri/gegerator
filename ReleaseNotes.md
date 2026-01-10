@@ -1,3 +1,11 @@
+# Version 1.1.1
+
+- Added timeline marker in the main view, to give better visual cue on the passing of time.
+- Cosmetics and bugfixes
+- Security fixes mostly by upgrading to Angular 21.
+- When running with `--spring.profiles.active=dev`, exposes the H2 console at `http://localhost:8082`. Note meant for
+    production of course.
+
 # Version 1.1.0
 
 - Added Wednesday as a full day (since Gerardmer edition 2026)
