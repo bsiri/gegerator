@@ -6,7 +6,6 @@ import { environment } from './environments/environment';
 import { httpInterceptorProviders } from './app/interceptors/interceptorprovider';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { AppRoutingModule } from './app/app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { movieReducer } from './app/ngrx/reducers/movie.reducer';
 import { sessionReducer } from './app/ngrx/reducers/session.reducer';
@@ -36,6 +35,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderModule } from '@angular/material/slider';
 import { AppComponent } from './app/app.component';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
@@ -43,14 +43,42 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        provideZoneChangeDetection(),importProvidersFrom(BrowserModule, AppRoutingModule, HttpClientModule, StoreModule.forRoot({
-            movies: movieReducer,
-            sessions: sessionReducer,
-            activities: activityReducer,
-            configuration: configurationReducer,
-            wizardroadmap: wizardroadmapReducer,
-            mode: modeReducer
-        }, {}), EffectsModule.forRoot([MovieEffects, MovieSessionEffects, OtherActivityEffects, AppStateEffects, ConfigurationEffects]), FormsModule, ReactiveFormsModule, MatDialogModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSidenavModule, MatSelectModule, MatAutocompleteModule, MatRadioModule, MatTabsModule, MatMenuModule, MatSliderModule),
+        provideZoneChangeDetection(),
+        importProvidersFrom(
+            BrowserModule, 
+            AppRoutingModule, 
+            StoreModule.forRoot({
+                movies: movieReducer,
+                sessions: sessionReducer,
+                activities: activityReducer,
+                configuration: configurationReducer,
+                wizardroadmap: wizardroadmapReducer,
+                mode: modeReducer
+            }, {}), 
+            EffectsModule.forRoot([
+                MovieEffects, 
+                MovieSessionEffects, 
+                OtherActivityEffects, 
+                AppStateEffects, 
+                ConfigurationEffects
+            ]), 
+            FormsModule,
+            ReactiveFormsModule, 
+            MatDialogModule, 
+            MatCardModule, 
+            MatButtonModule, 
+            MatIconModule, 
+            MatFormFieldModule, 
+            MatInputModule, 
+            MatSidenavModule, 
+            MatSelectModule, 
+            MatAutocompleteModule, 
+            MatRadioModule, 
+            MatTabsModule, 
+            MatMenuModule, 
+            MatSliderModule
+        ),
+        provideHttpClient(withInterceptorsFromDi()), 
         httpInterceptorProviders,
         provideAnimations()
     ]
