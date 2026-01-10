@@ -37,6 +37,8 @@ the specific purpose of testing. Here it mainly specifies what should be include
 from the test scope (for instance we don't want the test suites located in node_modules).
 The file `tsconfig.spec.json` is referenced by both `angular.json` and `vitest.config.ts`.
 
+TODO: I will compplete the documentation later since I am considering analogjs for testing, 
+so the configuration will change shortly again and there is no point documenting it yet.
 
 
 ## Running end-to-end tests
