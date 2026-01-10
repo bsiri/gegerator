@@ -98,7 +98,11 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "runnerConfig": "vitest.config.ts"
+            "runnerConfig": "vitest.config.ts",
+            "exclude": [
+              "test-waiting-migration/**",
+              "node_modules/**"
+            ]
           }
         }
       }

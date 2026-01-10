@@ -11,4 +11,9 @@
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
   ]
+  ,
+  "exclude": [
+    "test-waiting-migration/**",
+    "node_modules/**"
+  ]
 }
