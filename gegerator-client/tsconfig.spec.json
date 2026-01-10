@@ -10,8 +10,9 @@
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
-  ]
-  ,
+  ],
+  // Exclude broken tests and node_modules from compilation
+  // since they are not scheduled to run anyway.
   "exclude": [
     "test-waiting-migration/**",
     "node_modules/**"
