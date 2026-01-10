@@ -1,4 +1,6 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
+// Noob note: this is the main typescript configuration file for the project
+// that are common to all sub-projects (eg, app and tests).
 {
   "compileOnSave": false,
   "compilerOptions": {
