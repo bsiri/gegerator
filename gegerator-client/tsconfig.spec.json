@@ -2,6 +2,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "types": ["vitest","vite/client"],
     "outDir": "./out-tsc/spec"
   },
   "files": [

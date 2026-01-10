@@ -35,6 +35,12 @@ Note: with these the commands would run in watch mode (abort with Ctrl-C). If yo
 
 See at the end of this file for more context about frameworks and configuration.
 
+### Debug test
+
+Run `npm run test:debug`. This will start the test suite but immediately wait for a Node inspector to attach. The console will output the debug URL, that you have to give to your debugger so that it can attach.
+
+Note: on VsCode it's even simpler: 1. Open the debug menu and select "Javascript Debug Terminal", then 2. run `npm run test:debug`. The debugger will attach automatically. 
+
 ## Running end-to-end tests
 
 (TODO: none at the moment, maybe some day)
