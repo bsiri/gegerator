@@ -18,8 +18,8 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <span>Jour : </span>
-    <mat-form-field appearance="fill" >
-      <mat-select formControlName="day" class="testid-oa-day">
+    <mat-form-field appearance="fill" class="testid-oa-day">
+      <mat-select formControlName="day">
         @for (sday of Days.enumerate(); track sday) {
           <mat-option (keyup.enter)="confirm()" [value]="sday"
             class="testid-oa-opt-{{sday.key}}"
@@ -48,7 +48,7 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <label>Fin : </label>
-    <mat-form-field appearance="fill" class="testid-oat-endtime">
+    <mat-form-field appearance="fill" class="testid-oa-endtime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="endTime">
     </mat-form-field>
@@ -60,12 +60,12 @@ This mode decides what will be:
 </div>
 <div mat-dialog-actions>
   @if (mode === 'create') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-ok">
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-submit">
       Suivant
     </button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-ok">
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-submit">
       OK
     </button>
   }

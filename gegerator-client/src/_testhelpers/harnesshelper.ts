@@ -12,78 +12,25 @@ import { ButtonHarnessFilters, MatButtonHarness } from "@angular/material/button
  */
 export type ClassTestId = string
 
-export function loaderHelper(loader: HarnessLoader){
-  return {
-    // MatSelect helper
-    async withSelect(spec: SelectHarnessFilters| ClassTestId): Promise<MatSelectHarnessHelper>{
-      const _sel = _toHarnessFilter(spec)
-      const selectInput = await loader.getHarness(MatSelectHarness.with(_sel))
-
-      return {
-        getHarness: async() => {
-            return selectInput
-        },
-        selectOption: async (optSelector) => {
-            const _optsel = _toHarnessFilter(optSelector)
-            await selectInput.open()
-            await selectInput.clickOptions(_optsel)
-        },
-        getSelectedOption: async () => {
-            const selected = await selectInput.getOptions({isSelected: true})
-            return selected[0]
-        }
-      }
-    },
-    // Text field helper
-    async withTextField(spec: FormFieldHarnessFilters | ClassTestId): Promise<TextFieldHarnessHelper>{
-        const _sel = _toHarnessFilter(spec)
-        const textField = await loader.getHarness(MatFormFieldHarness.with(_sel))
-        return {
-            getHarness: async () => {
-                return textField
-            },
-            setText: async (text) => {
-                /*
-                Keeping this aside, could be handy if my other method 
-                does not work
-                const cl = await loader.getChildLoader(_sel.selector!)
-                const ctrl = await cl.getHarness(MatInputHarness)
-                await ctrl.setValue(text)
-                */
-                const host = await textField.host();
-                const ctrl = (host as any).element.querySelector('input') as HTMLInputElement
-                ctrl.value = text
-            }
-        }
-    },
-    // Button helper
-    async withButton(spec: ButtonHarnessFilters | ClassTestId): Promise<ButtonHarnessHelper> {
-        const _sel = _toHarnessFilter(spec)
+export function harnessHelper(loader: HarnessLoader){
+    function sel(testid: ClassTestId){
+        return {selector: ".testid-"+testid}
     }
-  }
-}
-
-function  _toHarnessFilter<T extends BaseHarnessFilters>(spec: T | ClassTestId) : T{
-    if (typeof(spec) == 'string'){
-        return {selector: ".testid-"+spec} as T
-    } else {
-        return spec
+    return {
+        select: async (testid: ClassTestId) => {
+            return loader.getHarness(MatSelectHarness.with(sel(testid)))
+        },
+        option: async (testid: ClassTestId) => {
+            return loader.getHarness(MatOptionHarness.with(sel(testid)))
+        },
+        text: async (testid: ClassTestId) => {
+            return loader.getHarness(MatInputHarness.with(sel(testid)))
+        },
+        button: async (testid: ClassTestId) => {
+            return loader.getHarness(MatButtonHarness.with(sel(testid)))
+        },
+        formfield: async (testid: ClassTestId) => {
+            return loader.getHarness(MatFormFieldHarness.with(sel(testid)))
+        }
     }
-}
-
-
-export interface MatSelectHarnessHelper {
-    getHarness(): Promise<MatSelectHarness>
-    selectOption(selector: OptionHarnessFilters | ClassTestId): Promise<void>
-    getSelectedOption(): Promise<MatOptionHarness>
-}
-
-export interface TextFieldHarnessHelper {
-    getHarness(): Promise<MatFormFieldHarness>
-    setText(text: string): Promise<void>
-}
-
-export interface ButtonHarnessHelper {
-    getHarness(): Promise<ButtonHarnessFilters>
-    click(): Promise<void>
 }
