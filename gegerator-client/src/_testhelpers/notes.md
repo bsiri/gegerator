@@ -44,7 +44,7 @@ await harnessHost.dispatchEvent('keyup', {key: "Enter"})
 
 The most rugged and portable approach is probably using native javascript `dispatchEvent`, albeit a bit more verbose. 
 
-This method belongs to the interface `EventTarget` from the standard javascript jdk. Its parameter is a standard javascript event. 
+This method belongs to the interface `EventTarget` from the standard javascript jdk. Its parameter is a standard javascript event. Note that this one is synchronous, unlike the Angular wrapper described above.
 
 
 ```typescript

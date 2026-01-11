@@ -5,12 +5,13 @@ import { Times } from 'src/app/models/time.utils';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import {HarnessLoader, TestKey} from '@angular/cdk/testing';
+import {HarnessLoader, TestElement, TestKey} from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { harnessHelper  } from 'src/_testhelpers/harnesshelper';
 import { stringify } from 'node:querystring';
 import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
 
 // ********* Renreder template behavior test ************ //
 
@@ -100,39 +101,8 @@ describe('ActivityDialog-Template', async() => {
     const helper = harnessHelper(loader)
     const endInput = await helper.text('oa-endtime input')
     const endInputHost = await endInput.host()
-    
-    /*
-      Solution 1: just inputing enter
 
-      await endInputHost.sendKeys(TestKey.ENTER)
-    */
-
-    /*
-      Solution 2: native javascript event + HTMLInputElement trigger
-
-      const rawelement = fixture.debugElement.query(By.css('.testid-oa-endtime input'))
-      const enterEvent = new KeyboardEvent('keyup', {key: "Enter"})
-      rawelement.nativeElement.dispatchEvent(enterEvent)
-    */
-    
-    /*
-      Solution 3 : direct trigger of the angular listener
-      (requires to be written in the template, so less portable if 
-      event listening has been done elsewhere)
-
-      const rawelement = fixture.debugElement.query(By.css('.testid-oa-endtime input'))
-      rawelement.triggerEventHandler('keyup.enter')
-
-    */
-
-    /*
-      Solution 4 : angular wrapper around the native solution 
-      await endInputHost.dispatchEvent('keyup', {key: "Enter"})
-    */
-      
-    await endInputHost.sendKeys(TestKey.ENTER)
-    
-
+    await endInputHost.dispatchEvent('keyup', {key: "Enter"})
     await fixture.whenStable()
     
     // assert that the dialog closes and returns 
@@ -140,9 +110,9 @@ describe('ActivityDialog-Template', async() => {
     const viClose = (dialogRef.close) as Mock
     expect(viClose).toHaveBeenCalled()
     expect(viClose.mock.calls[0][0]).not.toBeUndefined()
-
-
   });
+
+
 
 })
 
