@@ -1,6 +1,6 @@
 import { BaseHarnessFilters, HarnessLoader } from "@angular/cdk/testing"
 import { MatOptionHarness, OptionHarnessFilters } from "@angular/material/core/testing"
-import { FormFieldHarnessFilters, MatFormFieldControlHarness, MatFormFieldHarness } from "@angular/material/form-field/testing"
+import { FormFieldHarnessFilters, MatErrorHarness, MatFormFieldControlHarness, MatFormFieldHarness } from "@angular/material/form-field/testing"
 import { MatSelectHarness, SelectHarnessFilters } from "@angular/material/select/testing"
 import { MatInputHarness } from "@angular/material/input/testing"
 import { ButtonHarnessFilters, MatButtonHarness } from "@angular/material/button/testing"
@@ -31,6 +31,9 @@ export function harnessHelper(loader: HarnessLoader){
         },
         formfield: async (testid: ClassTestId) => {
             return loader.getHarness(MatFormFieldHarness.with(sel(testid)))
+        },
+        error: async (testid: ClassTestId) => {
+            return loader.getHarness(MatErrorHarness.with(sel(testid)))
         }
     }
 }

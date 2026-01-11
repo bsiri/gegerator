@@ -46,9 +46,9 @@ describe('ActivityDialog-Template', async() => {
 
   it('should update the activity configuration', async ()=>{
     await fixture.whenStable();
-
-    // update the Day
     const helper = harnessHelper(loader)
+
+    // update the Day (slow)
     const daySelector = await helper.select("oa-day mat-select")
     await daySelector.open()
     const optFriday = (await daySelector.getOptions({text: Days.FRIDAY.name}))[0]
@@ -86,10 +86,18 @@ describe('ActivityDialog-Template', async() => {
   it('should close and do nothing', async () => {
     await fixture.whenStable()
     const helper = harnessHelper(loader)
+
+    // change the description
+    const descriptionInput = await helper.text("oa-description input")
+    await descriptionInput.setValue('changed the description')
+    
+    // cancel
     const cancelButton = await helper.button('oa-cancel')
     await cancelButton.click()
+
     await fixture.whenStable()
 
+    // assert the dialog closed without changing anything
     const viClose = (dialogRef.close) as Mock
     expect(viClose).toHaveBeenCalled()
     expect(viClose.mock.calls[0][0]).toBeUndefined()
@@ -109,10 +117,78 @@ describe('ActivityDialog-Template', async() => {
     // an instance (ie not undefined)
     const viClose = (dialogRef.close) as Mock
     expect(viClose).toHaveBeenCalled()
-    expect(viClose.mock.calls[0][0]).not.toBeUndefined()
+    expect(viClose.mock.calls[0][0]).toBeTruthy()
   });
 
+  it('should says when data are invalid and refuse to submit', async ()=> {
+    await fixture.whenStable();
+    const helper = harnessHelper(loader)
+    
+    // First input bogus data
+    // bogus description
+    const descriptionInput = await helper.text("oa-description input")
+    await descriptionInput.setValue('') // blank
 
+    // bogus starttime
+    const startInput = await helper.text("oa-starttime input")
+    await startInput.setValue("at noon") // malformed time format
+
+    // bogus endtime
+    const endInput = await helper.text("oa-endtime input")
+    await endInput.setValue("03h00") // this one is out of PLANNABLE_EVENT_TIME_INTERVAL
+
+    // (try to) submit
+    const submitButton = await helper.button("oa-submit")
+    await submitButton.click()
+    await fixture.whenStable()
+    
+    // Assert that the dialog has not submitted
+    const viClose = (dialogRef.close) as Mock
+    expect(viClose).not.toHaveBeenCalled()
+
+    // Assert that the button is disabled anyway
+    expect(await submitButton.isDisabled()).toBe(true)
+
+    // Assert that all the from control are invalid
+    const descField = await helper.formfield('oa-description')
+    const startField = await helper.formfield('oa-starttime')
+    const endField = await helper.formfield('oa-endtime')
+
+    expect(await descField.isControlValid(), "description here is blank").toBe(false)
+    expect(await startField.isControlValid(), "start time here is malformed").toBe(false)
+    expect(await endField.isControlValid(), "end time here is outside of allowed range").toBe(false)
+  })
+
+  it('should display the time paradox error when start time is after end time', async () => {
+    await fixture.whenStable();
+    const helper = harnessHelper(loader)
+    // this sucks but we have to select the native element, 
+    // the harness is useless here
+    const timeparadoxError = fixture.debugElement.query(
+      By.css('.testid-oa-errtimeparadox')
+    )
+    // initially that message is hidden
+    expect(timeparadoxError.styles['visibility']).toBe('hidden')
+    
+
+    // insert a time paradox
+    const startInput = await helper.text("oa-starttime input")
+    const endInput = await helper.text("oa-endtime input")
+
+    await startInput.setValue("13h00") 
+    await endInput.setValue("12h00") 
+
+    // give focus to another field
+    const descInput = await helper.text('oa-description input')
+    await descInput.focus()
+    await fixture.whenStable()
+
+    // Assert that the message at the bottom is now visibl"
+
+    // initially that message is hidden
+    expect(timeparadoxError.styles['visibility']).toBe('visible')
+
+  })
 
 })
 

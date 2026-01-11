@@ -131,7 +131,10 @@ function _toString(value: Time | Duration, sep: string = 'h'): string{
 function _fromString(strValue: string, expr: RegExp) : TimeDurationLike {
     const match = strValue.trim().match(expr)
     if (! match){
-      throw { value: strValue} as ValidationErrors;
+        throw { 
+            error: "invalid time format",  
+            value: strValue
+        } as ValidationErrors;
     }
     const [hours, minutes] = match.slice(1).map(i => parseInt(i));
     return {hours, minutes};           

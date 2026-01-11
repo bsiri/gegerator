@@ -64,6 +64,8 @@ export class TimeInterval {
         return Times.isAfter(time, this.start) && Times.isBefore(time, this.end)
     }
 
+    // TODO : this is a duplicate of Times.toStrInterval, rationalize, clean 
+    // this up some day
     toString(): string{
         return `${Times.toString(this.start)} - ${Times.toString(this.end)}`
     }
