@@ -18,10 +18,12 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <span>Jour : </span>
-    <mat-form-field appearance="fill">
-      <mat-select formControlName="day">
+    <mat-form-field appearance="fill" >
+      <mat-select formControlName="day" class="testid-oa-day">
         @for (sday of Days.enumerate(); track sday) {
-          <mat-option (keyup.enter)="confirm()" [value]="sday">
+          <mat-option (keyup.enter)="confirm()" [value]="sday"
+            class="testid-oa-opt-{{sday.key}}"
+          >
             {{sday.name}}
           </mat-option>
         }
@@ -31,14 +33,14 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <label>Description : </label>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-oa-description">
       <input (keyup.enter)="confirm()" matInput formControlName="description">
     </mat-form-field>
   </div>
 
   <div class="dialog-field">
     <label>Début : </label>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-oa-starttime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="startTime">
     </mat-form-field>
@@ -46,7 +48,7 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <label>Fin : </label>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-oat-endtime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="endTime">
     </mat-form-field>
@@ -58,16 +60,20 @@ This mode decides what will be:
 </div>
 <div mat-dialog-actions>
   @if (mode === 'create') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-ok">
+      Suivant
+    </button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-ok">
+      OK
+    </button>
   }
 
   @if (mode === 'create') {
-    <button mat-button (click)="cancel()">Fermer</button>
+    <button mat-button (click)="cancel()" class="testid-oa-cancel">Fermer</button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="cancel()">Annuler</button>
+    <button mat-button (click)="cancel()" class="testid-oa-cancel">Annuler</button>
   }
 </div>

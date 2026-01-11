@@ -20,6 +20,14 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+# Developping tests
+
+Need the following docs:
+
+- https://angular.dev/guide/testing
+- https://material.angular.dev/guide/using-component-harnesses
+- https://vitest.fr/
+
 ## Running unit tests
 
     **NOTE** At the moment it appears that `npx vitest` would not work for Component testing, unless I install and configure @analogjs/platform + angular plugin, which I don't want because it is just overkill. Try again at the next major version of vitest maybe.

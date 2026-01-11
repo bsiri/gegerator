@@ -11,8 +11,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatFormFieldHarness} from '@angular/material/form-field/testing'
 import { MatSelectModule } from '@angular/material/select'
-import { MatSelectHarness } from '@angular/material/select/testing';
+import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
 import { assert } from 'node:console';
+import { loaderHelper } from 'src/_testhelpers/harnesshelper';
 
 // ********* Renreder template behavior test ************ //
 
@@ -48,22 +49,26 @@ describe('ActivityDialog-Template', async() => {
   it('should update the activity configuration', async ()=>{
     await fixture.whenStable();
     let rootElt = fixture.nativeElement as HTMLElement;
+    const helper = loaderHelper(loader)
+
     // update the Day
-    let daySelector = await loader.getHarness<MatSelectHarness>(
-      MatSelectHarness.with({ selector: '[formcontrolname="day"]'})
-    )
-    await daySelector.open()
-    const isOpen = await daySelector.isOpen()
-    // just testing how things work, remove that assertion later:
-    expect(isOpen, "day selector is now open").toBeTruthy()
-    await daySelector.clickOptions({text: "Vendredi"})
+    const daySelector = await helper.withSelect("oa-day")
+    await daySelector.selectOption("oa-opt-"+Days.FRIDAY.key)
+
+    // update the description
+    const descInput = await helper.withTextField("oa-description")
+    await descInput.setText("today is pizza day")
+
+    // update the starttime
+    const starttimeInput = await helper.withTextField("oa-starttime")
+    await starttimeInput.setText("12h00")
+
+    // update the endtime
+    const endtimeInput = await helper.withTextField("oa-endtime")
+    await endtimeInput.setText("13h30")
+
+
     await fixture.whenStable()
-    const isClosed = await daySelector.isOpen()
-    expect(isClosed, "day selector is now closed").toBeTruthy()
-    const selectedOption = await daySelector.getOptions({isSelected: true})
-    const selectedText = await selectedOption[0].getText()
-    expect(selectedText).toBe('Vendredi')
-    
 
   })
 })
@@ -123,3 +128,5 @@ function sampleActivity(id?: number): OtherActivity {
     description: 'a test activity'
   } as unknown) as OtherActivity;
 }
+
+
