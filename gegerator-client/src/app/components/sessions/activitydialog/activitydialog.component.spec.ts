@@ -78,7 +78,39 @@ describe('ActivityDialog-Template', async() => {
     expect(closedArg).toHaveProperty('startTime', Times.fromString("12h00"))
     expect(closedArg).toHaveProperty('endTime', Times.fromString("13h30"))
 
+  });
+
+  it('should close and do nothing', async () => {
+    await fixture.whenStable()
+    const helper = harnessHelper(loader)
+    const cancelButton = await helper.button('oa-cancel')
+    await cancelButton.click()
+    await fixture.whenStable()
+
+    const viClose = (dialogRef.close) as Mock
+    expect(viClose).toHaveBeenCalled()
+    expect(viClose.mock.calls[0][0]).toBeUndefined()
+
   })
+
+  it('should submit on enter', async () => {
+    await fixture.whenStable()
+    const helper = harnessHelper(loader)
+    const endInput = await helper.text('oa-endtime input')
+    const endInputHost = await endInput.host()
+    endInputHost.sendKeys('enter')
+    // endInputHost.dispatchEvent('keyup.enter')
+    await fixture.whenStable()
+    
+    // assert that the dialog closes and returns 
+    // an instance (ie not undefined)
+    const viClose = (dialogRef.close) as Mock
+    expect(viClose).toHaveBeenCalled()
+    expect(viClose.mock.calls[0][0]).not.toBeUndefined()
+
+
+  });
+
 })
 
 // ********** Component behavior test ********* //

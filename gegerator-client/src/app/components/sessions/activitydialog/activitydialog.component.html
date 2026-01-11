@@ -55,7 +55,11 @@ This mode decides what will be:
   </div>
 
 
-  <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'visible': 'hidden'}">Le début doit être avant la fin n'est-ce pas</mat-error>
+  <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'visible': 'hidden'}"
+    class="testid-oa-timeerror"
+  >
+    Le début doit être avant la fin n'est-ce pas
+  </mat-error>
 
 </div>
 <div mat-dialog-actions>
