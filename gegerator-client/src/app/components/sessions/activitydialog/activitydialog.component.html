@@ -18,11 +18,11 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <span>Jour : </span>
-    <mat-form-field appearance="fill" class="testid-oa-day">
+    <mat-form-field appearance="fill" class="testid-oad-day">
       <mat-select formControlName="day">
         @for (sday of Days.enumerate(); track sday) {
           <mat-option (keyup.enter)="confirm()" [value]="sday"
-            class="testid-oa-opt-{{sday.key}}"
+            class="testid-oad-opt-{{sday.key}}"
           >
             {{sday.name}}
           </mat-option>
@@ -33,14 +33,14 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <label>Description : </label>
-    <mat-form-field appearance="fill" class="testid-oa-description">
+    <mat-form-field appearance="fill" class="testid-oad-description">
       <input (keyup.enter)="confirm()" matInput formControlName="description">
     </mat-form-field>
   </div>
 
   <div class="dialog-field">
     <label>Début : </label>
-    <mat-form-field appearance="fill" class="testid-oa-starttime">
+    <mat-form-field appearance="fill" class="testid-oad-starttime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="startTime">
     </mat-form-field>
@@ -48,7 +48,7 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <label>Fin : </label>
-    <mat-form-field appearance="fill" class="testid-oa-endtime">
+    <mat-form-field appearance="fill" class="testid-oad-endtime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="endTime">
     </mat-form-field>
@@ -56,7 +56,7 @@ This mode decides what will be:
 
 
   <mat-error [ngStyle]="{'visibility': formGroup.errors?.['invalid_period'] ? 'visible': 'hidden'}"
-    class="testid-oa-errtimeparadox"
+    class="testid-oad-errtimeparadox"
   >
     Le début doit être avant la fin n'est-ce pas
   </mat-error>
@@ -64,20 +64,20 @@ This mode decides what will be:
 </div>
 <div mat-dialog-actions>
   @if (mode === 'create') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-submit">
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oad-submit">
       Suivant
     </button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oa-submit">
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-oad-submit">
       OK
     </button>
   }
 
   @if (mode === 'create') {
-    <button mat-button (click)="cancel()" class="testid-oa-cancel">Fermer</button>
+    <button mat-button (click)="cancel()" class="testid-oad-cancel">Fermer</button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="cancel()" class="testid-oa-cancel">Annuler</button>
+    <button mat-button (click)="cancel()" class="testid-oad-cancel">Annuler</button>
   }
 </div>
