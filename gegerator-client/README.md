@@ -36,12 +36,17 @@ Run either:
 
 `npm run test`: the tests are run through angular.json, that then delegates to vitest.
 
-`npx vitest`: run vitest directly. Note that only this one will produce test reporters report, in the (transient) folder 'test-results'.
+`ng test`: run the tests from angular-cli (vitest configuration still applies)
 
+`npx vitest`: run vitest directly. Note that only this one will produce test reporters report, in the (transient) folder 'test-results'.
 
 Note: with these the commands would run in watch mode (abort with Ctrl-C). If you need the test process to terminate instead, use `npm run test:once` or `npx vitest --run` instead.
 
 See at the end of this file for more context about frameworks and configuration.
+
+    Running only one specific suite / test:
+    the parameter '--include' does not work apparently. However there is a workaround: you can suffix a test spec with `.only` and vitest would then run only that one. for exemple: `describe.only` or `it.only`.
+    Remember to remove it once the troubleshooting is done with !
 
 ### Debug test
 

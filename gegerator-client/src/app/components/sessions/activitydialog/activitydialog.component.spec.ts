@@ -5,13 +5,11 @@ import { Times } from 'src/app/models/time.utils';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import {HarnessLoader, TestElement, TestKey} from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { harnessHelper  } from 'src/_testhelpers/harnesshelper';
-import { stringify } from 'node:querystring';
 import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 
 // ********* Renreder template behavior test ************ //
 
@@ -245,6 +243,8 @@ function sampleActivity(id?: number): OtherActivity {
     startTime: Times.fromString('9h00'),
     endTime: Times.fromString('10h00'),
     description: 'a test activity'
+    // note: the Rating is configured elsewhere, wont be 
+    // tested in this testsuite
   } as unknown) as OtherActivity;
 }
 

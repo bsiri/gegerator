@@ -17,16 +17,16 @@ This mode decides what will be:
 <div mat-dialog-content [formGroup]="formGroup" class="large-dialog-content">
   <div class="dialog-field">
     <label for="newmovie-title">Titre : </label>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-md-title">
       <input id="newmovie-title" (keyup.enter)="confirm()" matInput formControlName="title">
       @if (invalid('title')) {
-        <mat-error>Il faut un titre à ce film !</mat-error>
+        <mat-error class="testid-md-title-error">Il faut un titre à ce film !</mat-error>
       }
     </mat-form-field>
   </div>
   <div class="dialog-field">
     <label for="newmovie-duration">Durée : </label>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-md-duration">
       <mat-label>Ex: 1h26</mat-label>
       <input id="newmovie-duration" (keyup.enter)="confirm()" matInput formControlName="duration">
     </mat-form-field>
@@ -35,17 +35,25 @@ This mode decides what will be:
 </div>
 <div mat-dialog-actions>
   @if (mode === 'create') {
-    <button matButton (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+    <button matButton (click)="confirm()" 
+      [disabled]="formGroup.invalid" class="testid-md-submit"
+    >
+      Suivant
+    </button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+    <button mat-button (click)="confirm()" 
+      [disabled]="formGroup.invalid" class="testid-md-submit" 
+    >
+      OK
+    </button>
   }
 
   @if (mode === 'create') {
-    <button matButton (click)="cancel()">Fermer</button>
+    <button matButton (click)="cancel()" class="testid-md-cancel">Fermer</button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="cancel()">Annuler</button>
+    <button mat-button (click)="cancel()" class="testid-md-cancel">Annuler</button>
   }
 </div>
 
