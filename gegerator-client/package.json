@@ -8,6 +8,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:debug": "ng test --debug",
+    "test:once": "ng test --watch=false",
+    "test:ci": "npx vitest --run",
     "clean:dist": "rm -rf dist"
   },
   "private": true,

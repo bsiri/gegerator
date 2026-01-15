@@ -9,7 +9,10 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     // ignore legacy/obsolete test files and node_modules tests
-    exclude: ['test-waiting-migration/**', 'node_modules/**'],
+    exclude: [
+      'test-waiting-migration/**', 
+      'node_modules/**'
+    ],
     reporters: ['default','junit', 'json'],
     outputFile: {
       junit: './test-results/junit-report.xml',

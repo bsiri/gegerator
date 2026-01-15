@@ -33,7 +33,7 @@ export namespace Durations{
 
     // *** Human readable representation ***
     export function toString(duration: Duration): string{
-        return _toString(duration)
+        return _toString(duration, 'h', false)
     }
 
     export function fromString(strDuration: string): Duration{
@@ -58,7 +58,7 @@ export namespace Durations{
 export namespace Times{
     // *** Human readable representation ***
     export function toString(time: Time): string{
-        return _toString(time, 'h')    
+        return _toString(time, 'h', true)    
     }
 
     export function fromString(strTime: string): Time{
@@ -117,21 +117,24 @@ export namespace Times{
 }
 
 
-function _toString(value: Time | Duration, sep: string = 'h'): string{
+function _toString(value: Time | Duration, sep: string = 'h', paddHours: boolean = false): string{
     if (!value){
         return "";
     }
     const hours = (value.hours ?? 0) %24
     const minutes = value.minutes ?? 0
-    const twodigitsHours = twoDigitsStr(hours)
-    const twodigitsMinutes = twoDigitsStr(minutes)
-    return `${twodigitsHours}${sep}${twodigitsMinutes}`;    
+    const fmtHours = (paddHours) ? twoDigitsStr(hours) : hours
+    const fmtMinues = twoDigitsStr(minutes)
+    return `${fmtHours}${sep}${fmtMinues}`;    
 }
 
 function _fromString(strValue: string, expr: RegExp) : TimeDurationLike {
     const match = strValue.trim().match(expr)
     if (! match){
-      throw { value: strValue} as ValidationErrors;
+        throw { 
+            error: "invalid time format",  
+            value: strValue
+        } as ValidationErrors;
     }
     const [hours, minutes] = match.slice(1).map(i => parseInt(i));
     return {hours, minutes};           

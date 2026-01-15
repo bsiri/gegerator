@@ -57,7 +57,6 @@ export class Activitydialog implements OnInit {
     })
 
     this.formGroup.addValidators(this.validatePeriod.bind(this))
-
   }
 
   ngOnInit(): void {
@@ -79,9 +78,15 @@ export class Activitydialog implements OnInit {
   validateTime(timeControl: AbstractControl): ValidationErrors | null{
     try{
       const rawValue = timeControl.value
+      // Times.fromString will throw if cannot parse
       const time = Times.fromString(rawValue)
       if (! PLANNABLE_EVENT_TIME_INTERVAL.isInRange(time)){
-        throw { value: rawValue }
+        const {start, end} = PLANNABLE_EVENT_TIME_INTERVAL
+        const strInterval = Times.toStrInterval(start, end)
+        throw {   
+          error: `Time is of of bounds of plannable events: ${strInterval}`,
+          value: rawValue 
+        }
       }
       return null;
     }

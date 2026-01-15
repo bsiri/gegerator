@@ -98,7 +98,11 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "runnerConfig": "vitest.config.ts"
+            "runnerConfig": "vitest.config.ts",
+            "reporters": [
+              ["junit", {"outputFile": "./test-results/junit-report.xml"}],
+              ["json", {"outputFile": "./test-results/json-report.json"}]
+            ]
           }
         }
       }
