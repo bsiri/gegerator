@@ -9,7 +9,7 @@ import { By } from '@angular/platform-browser';
 import { MovieDialog } from './moviedialog.component';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { Durations } from 'src/app/models/time.utils';
-import { assert } from 'node:console';
+import { Mode } from 'src/app/ngrx/appstate-models/mode.model';
 
 
 // ********* Renreder template behavior test ************ //
@@ -102,7 +102,6 @@ describe('MovieDialog-Template', async() => {
     const viClose = (dialogRef.close) as Mock
     expect(viClose).toHaveBeenCalled()
     expect(viClose.mock.calls[0][0]).toBeTruthy()
-
   })
 
   it('should say when data are invalid and refuse to submit', async () => {
@@ -149,6 +148,50 @@ describe('MovieDialog-Template', async() => {
   })
 
 })
+
+// ********* Component behavior test *********** //
+
+describe('MovieDalog-Component', async () => {
+  let dialogRef: any
+
+  beforeEach(() => {
+    dialogRef = { close: vi.fn() }
+  })
+
+  it('should instantiate and set create mode when id is undefined', async () => {
+    const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
+    expect(comp).toBeTruthy()
+    expect(comp.mode).toBe("create")
+  })
+  
+  it('should instantiate and set modification mode when id is set', async () => {
+    const comp = new MovieDialog(dialogRef as any, sampleMovie(1))
+    expect(comp).toBeTruthy()
+    expect(comp.mode).toBe("update")
+  })
+
+  it.only('confirm() should close dialog with a valid Movie when form is valid', async () =>{
+    const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
+    // emulate some changes
+    comp.formGroup.get('title')?.setValue('Greated show on Earth!')
+    comp.formGroup.get('duration')?.setValue('1h25')
+    comp.confirm()
+
+    expect(dialogRef.close).toHaveBeenCalled()
+    const resultMovie = dialogRef.close.mock.calls[0][0]
+    expect(resultMovie.title).toEqual("Greated show on Earth!")
+    expect(resultMovie.duration).toEqual(Durations.fromString('1h25'))
+  })
+
+  it('close() should close the dialog and abort the creation of the movie', async () => {
+    const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
+    comp.cancel()
+    expect(dialogRef.close).toHaveBeenCalled()
+    expect(dialogRef.close.mock.calls[0].length).toBe(0)
+  })
+
+})
+
 
 // ************ Helper functions *************** //
 

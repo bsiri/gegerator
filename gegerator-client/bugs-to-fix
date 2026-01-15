@@ -1,1 +1,1 @@
-1. When opening an existing movie for edit, the movie Duration uses the double-digits format for the hours. However the dialog expect the single digit format, so the validation fails. For example, for a movie duration of 1h25, the dialog will be populated with "01h25". 
+(None yet)
