@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { MatSliderChange, MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { Theaters } from 'src/app/models/referential.data';
 import { TheaterRatings, WizardConfiguration } from 'src/app/ngrx/appstate-models/wizardconfiguration.model';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -58,10 +58,6 @@ export class ConfigDialog implements OnInit {
       this._getFGValue('mclRating'),
       this.movieVsTheaterBias
     )
-  }
-
-  onBiasChanged($event: MatSliderChange): void{
-    this.movieVsTheaterBias = $event.value ?? 0.5
   }
 
   _getFGValue(fgName: string): any{

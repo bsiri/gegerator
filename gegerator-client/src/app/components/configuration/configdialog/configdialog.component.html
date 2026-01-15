@@ -56,7 +56,8 @@
       film
       <mat-slider
         color="primary"
-        min="0.0" max="1.0" step="0.1" #ngSlider><input matSliderThumb [value]="movieVsTheaterBias" (change)="onBiasChanged({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" />
+        min="0.0" max="1.0" step="0.1" #ngSlider>
+          <input matSliderThumb [(value)]="movieVsTheaterBias" />
       </mat-slider>
       cinéma
     </div>
