@@ -1,1 +1,2 @@
-(None yet)
+1. When the wizard mode is active, the roadmap selection is not updated in session view because Angular does not detect the changes.
+2. The sort button in the Movies view ("trier") should be a toggle, because currently there is no feedback that let you know whether the sort is active or

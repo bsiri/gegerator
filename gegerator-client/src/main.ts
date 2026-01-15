@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 
 
 import { environment } from './environments/environment';
@@ -41,7 +41,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        provideZoneChangeDetection(),
+        provideZonelessChangeDetection(),
         importProvidersFrom(
             BrowserModule, 
             AppRoutingModule, 
