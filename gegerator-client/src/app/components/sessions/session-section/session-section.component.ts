@@ -1,7 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { map, Observable, Subscription } from 'rxjs';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { EventRatings } from 'src/app/models/plannable.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
@@ -17,7 +16,7 @@ import { ModeService } from 'src/app/services/mode.service';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
-import { NgTemplateOutlet, NgStyle, AsyncPipe } from '@angular/common';
+import { NgTemplateOutlet, NgStyle } from '@angular/common';
 import { OtherActivityComponent } from '../other-activity/other-activity.component';
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component';
 import { MatButton } from '@angular/material/button';
@@ -25,13 +24,13 @@ import { MatIcon } from '@angular/material/icon';
 import { TimePipe } from '../../../pipes/time.pipe';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-session-section',
     templateUrl: './session-section.component.html',
     styleUrls: ['./session-section.component.scss'],
-    imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, AsyncPipe, TimePipe]
+    imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, TimePipe]
 })
-export class SessionSectionComponent implements OnInit, OnDestroy {
-
+export class SessionSectionComponent {
 
   /*
     "Importing" Days, Theaters and SESSION_DAY_BOUNDARIES as properties of this Component
@@ -48,46 +47,26 @@ export class SessionSectionComponent implements OnInit, OnDestroy {
 
 
   /*
-    The proper model now
+    Data model
   */
-  sessions$ = this.store.select(selectPlannedMovieSession)
-  activities$ = this.store.select(selectActivitieslist)
+  s_sessions = this.store.selectSignal(selectPlannedMovieSession)
+  s_activities = this.store.selectSignal(selectActivitieslist)
 
-  /*
-    Note: here we subscribe directly and assign the roadmap by subscription
-    It is so because we need to inject it in each and every PlannedMovieSession.
-    Doing so with an observable would lead to as many subscription wich would
-    be very short lived.
-
-    So we subscribe here once instead.
-  */
-  mode$! : Observable<Mode>
-  roadmap!: FestivalRoadmap
-  subRoadmap: Subscription
+  s_mode: Signal<Mode>
+  roadmap: Signal<FestivalRoadmap>
 
 
   constructor(private store: Store, private modeService: ModeService, private dialog: MatDialog) {
-    this.mode$ = this.modeService.mode$
-    this.subRoadmap = this.store.select(selectActiveRoadmap).subscribe(rm => this.roadmap = rm)
+    this.s_mode = this.modeService.s_mode
+    this.roadmap = this.store.selectSignal(selectActiveRoadmap)
   }
 
-  ngOnInit(): void {
+  sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
+    return this.s_sessions().filter(s => s.day == day && s.theater == theater)
   }
 
-  ngOnDestroy(): void{
-    this.subRoadmap.unsubscribe()
-  }
-
-  sessionsByDayAndTheater(day: Day, theater: Theater) : Observable<PlannedMovieSession[]>{
-    return this.sessions$.pipe(
-      map(sessions => sessions.filter(s => s.day == day && s.theater == theater))
-    )
-  }
-
-  activitiesByDay(day: Day) : Observable<OtherActivity[]>{
-    return this.activities$.pipe(
-      map(activities => activities.filter(a => a.day == day))
-    )
+  activitiesByDay(day: Day): OtherActivity[]{
+    return this.s_activities().filter(a => a.day == day)
   }
 
   openNewSession(day: Day, theater: Theater): void{
