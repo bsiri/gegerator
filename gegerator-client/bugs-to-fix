@@ -1,6 +1,5 @@
 0. TODO:
 - replace all ".subscribe" on stores by "selectSignal" so I don't need to migrate the complete redux plumbing (see app.ts)
-- assess why the documentation says I'm using selectors with props where in fact I'm not (see the selectors)
 
 
 1. When the wizard mode is active, the roadmap selection is not updated in session view because Angular does not detect the changes.

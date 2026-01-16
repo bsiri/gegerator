@@ -10,7 +10,7 @@ import { ContextMenuDirective } from '../../../directives/context-menu.directive
 import { AsyncPipe } from '@angular/common';
 import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
 import { OrderByComparablePipe } from '../../../pipes/order-by-comparable.pipe';
-
+import { toSignal } from '@angular/core/rxjs-interop';
 
 /**
  * Menu that allow to select ratings for movies.
@@ -42,9 +42,11 @@ export class MovieCtxtMenu implements OnInit {
    */
   movie : Movie
 
-  sessions$ = this.store.select(selectPlannedMovieSession).pipe(
-    map(sessions => sessions.filter(s => s.movie.id == this.movie.id))
-  )
+  sessions$ = this.store.select(selectPlannedMovieSession)
+                        .pipe(
+                          map(sessions => sessions.filter(s => s.movie.id == this.movie.id))
+                        )
+          
   
   constructor(
     private store: Store,
