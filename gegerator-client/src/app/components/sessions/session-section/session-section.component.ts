@@ -49,24 +49,24 @@ export class SessionSectionComponent {
   /*
     Data model
   */
-  s_sessions = this.store.selectSignal(selectPlannedMovieSession)
-  s_activities = this.store.selectSignal(selectActivitieslist)
+  $sessions = this.store.selectSignal(selectPlannedMovieSession)
+  $activities = this.store.selectSignal(selectActivitieslist)
 
-  s_mode: Signal<Mode>
-  roadmap: Signal<FestivalRoadmap>
+  $mode: Signal<Mode>
+  $roadmap: Signal<FestivalRoadmap>
 
 
   constructor(private store: Store, private modeService: ModeService, private dialog: MatDialog) {
-    this.s_mode = this.modeService.s_mode
-    this.roadmap = this.store.selectSignal(selectActiveRoadmap)
+    this.$mode = this.modeService.$mode
+    this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
   }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
-    return this.s_sessions().filter(s => s.day == day && s.theater == theater)
+    return this.$sessions().filter(s => s.day == day && s.theater == theater)
   }
 
   activitiesByDay(day: Day): OtherActivity[]{
-    return this.s_activities().filter(a => a.day == day)
+    return this.$activities().filter(a => a.day == day)
   }
 
   openNewSession(day: Day, theater: Theater): void{

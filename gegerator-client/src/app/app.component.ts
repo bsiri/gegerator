@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
@@ -24,6 +24,7 @@ import { SessionSectionComponent } from './components/sessions/session-section/s
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
@@ -31,26 +32,29 @@ import { SummarypanelComponent } from './components/summary/summarypanel/summary
 })
 export class AppComponent implements OnInit{
 
+  // exposing the enum Mode as an attribute 
+  // so that I can access them from the template
   Mode = Mode
-  wizardmode = Mode.MANUAL
 
-  wizconf!: Signal<WizardConfiguration>
-  roadmap!: Signal<FestivalRoadmap>
+  // Signals
+  $wizardmode: Signal<Mode>
+  $wizconf: Signal<WizardConfiguration>
+  $roadmap: Signal<FestivalRoadmap>
 
   constructor(private store: Store,
     private dialog: MatDialog,
-    // HACK : injecting the service just to have them bootstrapped.
-    // There surely is a better way to do this but for now I can live with it.
     private modeService: ModeService,
+    // HACK : injecting the WizardService just to have them bootstrapped.
+    // There surely is a better way to do this but for now I can live with it.
     private wizardService: WizardService
-    ){}
+    ){
+      this.$wizardmode = modeService.$mode
+      this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
+      this.$wizconf = this.store.selectSignal(selectConfiguration)
+    }
 
   ngOnInit(): void {
     this.store.dispatch(AppStateActions.reload_appstate())
-    this.roadmap = this.store.selectSignal(selectActiveRoadmap)
-    this.wizconf = this.store.selectSignal(selectConfiguration)
-    // Note : no need to take care of unsubscribing here since the App lives until,
-    // well, the end of the App
   }
 
   uploadAppState(): void{
@@ -68,7 +72,7 @@ export class AppComponent implements OnInit{
 
   exportRoadmap(){
     // Build the textual representation of the Roadmap
-    const planningMap = this.roadmap().dailyPlanning()
+    const planningMap = this.$roadmap().dailyPlanning()
     let planningStr = "=== Roadmap Gérardmer ===\n\n"
 
     for (let entry of planningMap.entries()) {
@@ -89,7 +93,7 @@ export class AppComponent implements OnInit{
   openWizardConfiguration(): void{
     const dialogRef = this.dialog.open(ConfigDialog, {
       autoFocus: 'first-tabbable',
-      data: this.wizconf().copy()
+      data: this.$wizconf().copy()
     })
 
     dialogRef.afterClosed().subscribe(newconf =>{
@@ -107,8 +111,7 @@ export class AppComponent implements OnInit{
   }
 
   switchMode(): void{
-    this.wizardmode = (this.wizardmode == Mode.MANUAL) ? Mode.WIZARD : Mode.MANUAL
-    this.store.dispatch(ModeActions.update_mode({newMode: this.wizardmode}))
+    this.store.dispatch(ModeActions.toggle_mode())
   }
 
 }

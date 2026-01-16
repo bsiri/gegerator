@@ -2,7 +2,7 @@
 
   <div id="app-header">
     <div class="app-header--centerpart">
-      <div id="app-title" class="{{wizardmode == Mode.WIZARD ? 'neon' : ''}}">
+      <div id="app-title" class="{{$wizardmode() == Mode.WIZARD ? 'neon' : ''}}">
         Gegerator
       </div>
       <div id="app-buttonbar">
@@ -13,10 +13,10 @@
         <button matButton="filled" [matMenuTriggerFor]="mode" color="primary">Mode</button>
         <mat-menu #mode>
           <button mat-menu-item (click)="switchMode()" >
-            @if (wizardmode == Mode.MANUAL) {
+            @if ($wizardmode() == Mode.MANUAL) {
               <mat-label>Activer l'assistant</mat-label>
             }
-            @if (wizardmode == Mode.WIZARD) {
+            @if ($wizardmode() == Mode.WIZARD) {
               <mat-label>Désactiver l'assistant</mat-label>
             }
           </button>
