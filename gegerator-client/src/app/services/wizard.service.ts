@@ -1,9 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { PlannableEvent } from '../models/plannable.model';
-import { FestivalRoadmap, RoadmapData } from '../models/roadmap.model';
+import { RoadmapData } from '../models/roadmap.model';
 import { MovieSessionJSON } from '../models/session.model';
 import { WizardRoadmapActions } from '../ngrx/actions/wizard-roadmap.actions';
 

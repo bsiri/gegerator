@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from '@angular/common/http'
-import { map, mergeMap, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http'
+import { map, Observable } from 'rxjs';
 import { Movie, MovieJSON } from '../models/movie.model';
-import { Durations } from '../models/time.utils';
-
 
 const moviesUrl = "./api/movies"
-
 
 @Injectable({
   providedIn: 'root'

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
@@ -16,7 +16,6 @@ import { WizardService } from './services/wizard.service';
 import { ModeActions } from './ngrx/actions/mode.actions';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-
 import { MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
@@ -35,21 +34,21 @@ export class AppComponent implements OnInit{
   Mode = Mode
   wizardmode = Mode.MANUAL
 
-  wizconf!: WizardConfiguration
-  roadmap!: FestivalRoadmap
+  wizconf!: Signal<WizardConfiguration>
+  roadmap!: Signal<FestivalRoadmap>
 
   constructor(private store: Store,
     private dialog: MatDialog,
+    // HACK : injecting the service just to have them bootstrapped.
+    // There surely is a better way to do this but for now I can live with it.
     private modeService: ModeService,
-    // HACK : injecting the service just to have it bootstrapped,
-    // find another way to achieve this.
     private wizardService: WizardService
     ){}
 
   ngOnInit(): void {
     this.store.dispatch(AppStateActions.reload_appstate())
-    this.store.select(selectActiveRoadmap).subscribe(rm => this.roadmap = rm)
-    this.store.select(selectConfiguration).subscribe(wizconf => this.wizconf = wizconf)
+    this.roadmap = this.store.selectSignal(selectActiveRoadmap)
+    this.wizconf = this.store.selectSignal(selectConfiguration)
     // Note : no need to take care of unsubscribing here since the App lives until,
     // well, the end of the App
   }
@@ -69,7 +68,7 @@ export class AppComponent implements OnInit{
 
   exportRoadmap(){
     // Build the textual representation of the Roadmap
-    const planningMap = this.roadmap.dailyPlanning()
+    const planningMap = this.roadmap().dailyPlanning()
     let planningStr = "=== Roadmap Gérardmer ===\n\n"
 
     for (let entry of planningMap.entries()) {
@@ -90,12 +89,12 @@ export class AppComponent implements OnInit{
   openWizardConfiguration(): void{
     const dialogRef = this.dialog.open(ConfigDialog, {
       autoFocus: 'first-tabbable',
-      data: this.wizconf.copy()
+      data: this.wizconf().copy()
     })
 
-    dialogRef.afterClosed().subscribe(wizconf =>{
-      if (!!wizconf){
-        this.store.dispatch(ConfigurationActions.update_wizconf({wizconf}))
+    dialogRef.afterClosed().subscribe(newconf =>{
+      if (!!newconf){
+        this.store.dispatch(ConfigurationActions.update_wizconf({wizconf: newconf}))
       }
     })
   }
