@@ -1,59 +1,55 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, Signal, signal, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
 
 import { MovieActions } from '../../../ngrx/actions/movie.actions';
 import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 import { MatButton } from '@angular/material/button';
-import { AsyncPipe } from '@angular/common';
 import { MovieComponent } from '../movie/movie.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { Movie } from 'src/app/models/movie.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-movielist',
     templateUrl: './movielist.component.html',
     styleUrls: ['./movielist.component.scss'],
-    imports: [MatButton, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput, AsyncPipe]
+    imports: [MatButton, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput]
 })
 export class MovielistComponent {
 
   // reference to the search bar element
   searchbar = viewChild<ElementRef<HTMLDivElement>>('movielist_search');
 
-  // sort logic: consists of a flag, and of a subject
-  sorted = false
-  sortedsubject = new BehaviorSubject<boolean>(false)
+  // sorting and filtering states, modifiable by the user
+  $sorted = signal(false)
+  $filterString = signal('')
 
-  // the movie filter in the template
-  // will be fed into this subject.
-  filtersubject = new BehaviorSubject<string>('')
+  // the final movie list outputed after sorting and filtering
+  $movies: Signal<Movie[]>
 
-  // the final model is the combination of the original model
-  // + the filtering and sorting logic
-  movies$ = this.store.select(selectMovieslist).pipe(
-    combineLatestWith(this.filtersubject, this.sortedsubject),
-    map(([allMovies, filterString, isSorted]) => {
-      let finalMovies = allMovies.slice()
+  constructor(private store: Store, private dialog: MatDialog) {
 
-      finalMovies = allMovies.filter(m =>
-                    m.title.toLowerCase().includes(filterString.toLowerCase() )
-                  );
-
-      if (isSorted){
+    const movieStore = this.store.selectSignal(selectMovieslist)
+    this.$movies = computed(() => {
+      // filter unconditionally
+      let finalMovies = movieStore().filter( m => { 
+        const _filter = this.$filterString().toLocaleLowerCase()
+        m.title.toLocaleLowerCase().includes(_filter)
+      })
+      // sort if requested only
+      if (this.$sorted()){
         finalMovies = finalMovies.sort(
           (m1, m2) => m1.title.localeCompare(m2.title)
         )
       }
       return finalMovies
     })
-  )
 
-  constructor(private store: Store, private dialog: MatDialog) {}
+  }
 
   openNewMovie(): void {
     const dialogRef = this.dialog.open(MovieDialog, {
@@ -97,12 +93,12 @@ export class MovielistComponent {
 
   filterMovies(evt: any): void {
     const value = evt.target.value;
-    this.filtersubject.next(value);
+    this.$filterString.set(value)
   }
 
   toggleSort(): void{
-    this.sorted = !this.sorted
-    this.sortedsubject.next(this.sorted)
+    const inverted = ! this.$sorted() 
+    this.$sorted.set(inverted)
   }
 
 }
