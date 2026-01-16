@@ -41,9 +41,12 @@ export class SummarypanelComponent {
   constructor(private store: Store) {
     this.$movies = this.store.selectSignal(selectMovieslist)
     this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
+
+    const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSession)
+    const activitiesStoreSignal = this.store.selectSignal(selectActivitieslist)
     this.$events = computed(() => {
-      const latestSessions = this.store.selectSignal(selectPlannedMovieSession)()
-      const latestActivities = this.store.selectSignal(selectActivitieslist)()
+      const latestSessions = sessionStoreSignal()
+      const latestActivities = activitiesStoreSignal()
       return [... latestSessions, ... latestActivities]
     })
   }

@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
@@ -15,6 +15,7 @@ import { SessionRatingsComponent } from '../../small-comps/session-ratings/sessi
 
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-planned-movie-session',
     templateUrl: './planned-movie-session.component.html',
     styleUrls: ['./planned-movie-session.component.scss'],

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { PlannableEvent } from 'src/app/models/plannable.model';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
@@ -32,6 +32,7 @@ export type SwItemBorderRendering = "disabled" | "normal" | "salient" | "outstan
   based on the start time and duration of the Plannable it represents.
 */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-swimlane-item',
     templateUrl: './swimlane-item.component.html',
     styleUrls: ['./swimlane-item.component.scss'],

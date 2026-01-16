@@ -1,22 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PlannableEvent } from 'src/app/models/plannable.model';
 
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-event-link',
     templateUrl: './event-link.component.html',
     styleUrls: ['./event-link.component.scss'],
     imports: []
 })
-export class EventLinkComponent implements OnInit {
+export class EventLinkComponent {
 
   @Input() event!: PlannableEvent
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
-  
   
   showSelected(target: string){
     const elt = document.getElementById(target)

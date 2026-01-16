@@ -1,16 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, OnInit, Signal } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
-import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
+import { Movie, MovieRatings } from 'src/app/models/movie.model';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
 import { ContextMenuDirective } from '../../../directives/context-menu.directive';
-import { AsyncPipe } from '@angular/common';
 import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
 import { OrderByComparablePipe } from '../../../pipes/order-by-comparable.pipe';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { PlannedMovieSession } from 'src/app/models/session.model';
 
 /**
  * Menu that allow to select ratings for movies.
@@ -22,10 +20,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
  * read straight from the MatDialogRef.componentInstance
  */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-movie-ctxt-menu',
     templateUrl: './movie-ctxt-menu.component.html',
     styleUrls: ['./movie-ctxt-menu.component.scss'],
-    imports: [ContextMenuDirective, MatRadioGroup, MatRadioButton, EventLinkComponent, AsyncPipe, OrderByComparablePipe]
+    imports: [ContextMenuDirective, MatRadioGroup, MatRadioButton, EventLinkComponent, OrderByComparablePipe]
 })
 export class MovieCtxtMenu implements OnInit {
 
@@ -40,20 +39,21 @@ export class MovieCtxtMenu implements OnInit {
   /**
    * Model
    */
-  movie : Movie
+  movie: Movie
+  $sessions: Signal<PlannedMovieSession[]>
 
-  sessions$ = this.store.select(selectPlannedMovieSession)
-                        .pipe(
-                          map(sessions => sessions.filter(s => s.movie.id == this.movie.id))
-                        )
-          
-  
   constructor(
     private store: Store,
     public dialogRef: MatDialogRef<MovieCtxtMenu>,
     @Inject(MAT_DIALOG_DATA) model: MovieCtxtMenuModel) {
     this.movie = model.movie
     this._anchor = model.anchor
+
+    const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSession)
+    this.$sessions = computed(() => {
+      const sessions = sessionStoreSignal()
+      return sessions.filter(s => s.movie.id = this.movie.id)
+    })
   }
 
   ngOnInit(): void {

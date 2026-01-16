@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
@@ -14,27 +14,24 @@ import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-rat
 import { DurationPipe } from '../../../pipes/duration.pipe';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-movie',
     templateUrl: './movie.component.html',
     styleUrls: ['./movie.component.scss'],
     imports: [MatCard, MatButton, MatIcon, MatCardHeader, MatCardTitle, MatCardContent, MovieRatingsComponent, DurationPipe]
 })
-export class MovieComponent implements OnInit, ContextMenuRecipient {
+export class MovieComponent implements ContextMenuRecipient {
 
   @ViewChild('_container') private _container!: ElementRef
 
   @Input() movie!: Movie;
   
-  
   public get location(): DOMRect {
     return this._container.nativeElement.getBoundingClientRect()
   }
 
-
   constructor(private store: Store, private dialog: MatDialog) { }
 
-  ngOnInit(): void {
-  }
 
   updateMovie(): void{
     const _clone = { ...this.movie}

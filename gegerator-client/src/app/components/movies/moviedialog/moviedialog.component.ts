@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Movie, MovieRating } from 'src/app/models/movie.model';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { MatButton } from '@angular/material/button';
 const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-newmoviedialog',
     templateUrl: './moviedialog.component.html',
     styleUrls: ['./moviedialog.component.scss'],

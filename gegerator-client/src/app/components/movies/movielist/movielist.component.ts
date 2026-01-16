@@ -1,8 +1,7 @@
-import { Component, ElementRef, OnInit, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, combineLatestWith, debounceTime, map, mergeMap, Observable, withLatestFrom } from 'rxjs';
-import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
 
 import { MovieActions } from '../../../ngrx/actions/movie.actions';
 import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
@@ -15,12 +14,13 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-movielist',
     templateUrl: './movielist.component.html',
     styleUrls: ['./movielist.component.scss'],
     imports: [MatButton, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput, AsyncPipe]
 })
-export class MovielistComponent implements OnInit {
+export class MovielistComponent {
 
   // reference to the search bar element
   searchbar = viewChild<ElementRef<HTMLDivElement>>('movielist_search');
@@ -77,9 +77,6 @@ export class MovielistComponent implements OnInit {
         this.openNewMovie();
       }
     });
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterContentInit(): void {
