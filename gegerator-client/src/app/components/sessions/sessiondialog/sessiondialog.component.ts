@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Inject, OnInit, Signal } from '@angular/core';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -25,7 +25,7 @@ import { MatButton } from '@angular/material/button';
     styleUrls: ['./sessiondialog.component.scss'],
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatAutocomplete, MatOption, MatFormField, MatInput, MatAutocompleteTrigger, MatError, MatLabel, MatSelect, MatDialogActions, MatButton, AsyncPipe]
 })
-export class SessionDialog implements OnInit {
+export class SessionDialog {
 
   // note: these attributes are never modified by this form,
   // however we must remember it because enventually
@@ -42,8 +42,10 @@ export class SessionDialog implements OnInit {
   // Form referential data
   Days = Days
   Theaters = Theaters
-  availableMovies: ReadonlyArray<Movie> = []
-  filteredTitles: Observable<string[]>
+
+  // Model data
+  $availableMovies: Signal<readonly Movie[]>
+  filteredTitles$: Observable<string[]>
   plannableInterval = PLANNABLE_EVENT_TIME_INTERVAL
 
   constructor(
@@ -52,7 +54,7 @@ export class SessionDialog implements OnInit {
     private store: Store
   ) {
 
-      this.store.select(selectMovieslist).subscribe(movies => this.availableMovies = movies)
+      this.$availableMovies = this.store.selectSignal(selectMovieslist)
 
       this.mode = (session.id === undefined) ? 'create' : 'update'
       this.id = session.id
@@ -75,19 +77,15 @@ export class SessionDialog implements OnInit {
 
       // adding the filter logic for the autocomplete on movies
       // see : https://material.angular.io/components/autocomplete/overview#adding-a-custom-filter
-      this.filteredTitles = this.formGroup.get('title')!.valueChanges.pipe(
+      this.filteredTitles$ = this.formGroup.get('title')!.valueChanges.pipe(
         startWith(''),
         map(value => {
-          const movieTitles = this.availableMovies.map(m=>m.title)
+          const movieTitles = this.$availableMovies().map(m=>m.title)
           return movieTitles.filter(title=> title.toLowerCase().includes(value.toLowerCase()))
         })
       )
   }
 
-  ngOnInit(): void {
-  }
-
-  //@HostListener('window:keyup.Enter', ['$event'])
   @HostListener('window:keyup.Enter')
   confirm(): void{
     if (this.formGroup.invalid){
@@ -104,7 +102,7 @@ export class SessionDialog implements OnInit {
   // ********* validation *************
 
   private _findMovieByTitle(title:string): Movie | undefined{
-    return this.availableMovies.find(m=>m.title == title)
+    return this.$availableMovies().find(m=>m.title == title)
   }
 
   validateMovie(movControl: AbstractControl): ValidationErrors | null{

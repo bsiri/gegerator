@@ -19,7 +19,7 @@ This mode decides what will be:
   <div class="dialog-field">
     <span>Film : </span>
     <mat-autocomplete #moviesauto="matAutocomplete">
-      @for (title of filteredTitles | async; track title) {
+      @for (title of filteredTitles$ | async; track title) {
         <mat-option [value]="title">
           {{title}}
         </mat-option>

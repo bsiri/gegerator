@@ -1,7 +1,11 @@
 import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Mode } from '../ngrx/appstate-models/mode.model';
 
+
+/*
+  Note to self: this service is effectively a Signal Store, so maybe I could do just that
+  as an Ngrx Signal Store ?
+*/
 @Injectable({
   providedIn: 'root'
 })
