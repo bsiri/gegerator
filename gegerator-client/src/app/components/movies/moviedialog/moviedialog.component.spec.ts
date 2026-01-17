@@ -170,7 +170,7 @@ describe('MovieDalog-Component', async () => {
     expect(comp.mode).toBe("update")
   })
 
-  it.only('confirm() should close dialog with a valid Movie when form is valid', async () =>{
+  it('confirm() should close dialog with a valid Movie when form is valid', async () =>{
     const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
     // emulate some changes
     comp.formGroup.get('title')?.setValue('Greated show on Earth!')
