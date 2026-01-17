@@ -6,14 +6,11 @@ import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
-import { selectActiveRoadmap } from './ngrx/selectors/roadmap.selectors';
-import { ModeService } from './services/mode.service';
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
-import { WizardService } from './services/wizard.service';
-import { ModeActions } from './ngrx/actions/mode.actions';
+import { RoadmapService } from './services/wizard.service';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatLabel } from '@angular/material/form-field';
@@ -22,6 +19,7 @@ import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/mat
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
 import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
+import { RoadmapStore } from './ngrx/stores/roadmap.store';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,13 +41,13 @@ export class AppComponent implements OnInit{
 
   constructor(private store: Store,
     private dialog: MatDialog,
-    private modeService: ModeService,
+    private roadmapStore: InstanceType<typeof RoadmapStore>,
     // HACK : injecting the WizardService just to have them bootstrapped.
     // There surely is a better way to do this but for now I can live with it.
-    private wizardService: WizardService
+    private roadmapService: RoadmapService
     ){
-      this.$wizardmode = modeService.$mode
-      this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
+      this.$wizardmode = roadmapStore.$mode
+      this.$roadmap = roadmapStore.$activeRoadmap
       this.$wizconf = this.store.selectSignal(selectConfiguration)
     }
 
@@ -111,15 +109,7 @@ export class AppComponent implements OnInit{
   }
 
   toggleMode(): void{
-    /*
-    FIXME : at the moment there is two distinct states for the wizard Mode:
-    - ModeService, at the moment effectively used only in this Component
-    - NgRx actions/reducers/selectors.
-    Until I unify the systems, I have to update the mode in both in this method.
-    TODO: think of how to refactor this and have one system.
-    */
-    this.store.dispatch(ModeActions.toggle_mode())
-    this.modeService.toggleMode()
+    this.roadmapStore.toggleMode()
   }
 
 }

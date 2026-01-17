@@ -89,7 +89,8 @@ export class FestivalRoadmap{
 }
 
 /**
- * A much shorter representation of a FestivalRoadmap.
+ * An exchange object (DTO) for conveying the ids that will be used 
+ * for building instances of FestivalRoadmap later.
  * This interface is necessary because I need to store it 
  * in the Store after all.
  */

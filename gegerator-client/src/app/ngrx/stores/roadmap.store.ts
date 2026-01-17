@@ -1,13 +1,11 @@
 
-import { FestivalRoadmap as RoadmapData, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
+import { FestivalRoadmap, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
 import { Mode } from "../appstate-models/mode.model";
 import { signalStore, withState, withHooks, withMethods, patchState, withComputed } from '@ngrx/signals';
 import { selectPlannedMovieSessions } from "../selectors/session.selectors";
 import { computed, inject } from "@angular/core";
-import { State, Store } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import { selectActivities } from "../selectors/activity.selectors";
-import { PlannedMovieSession } from "src/app/models/session.model";
-import { OtherActivity } from "src/app/models/activity.model";
 import { __importDefault } from "tslib";
 import { EventRatings } from "src/app/models/plannable.model";
 
@@ -28,28 +26,18 @@ import { EventRatings } from "src/app/models/plannable.model";
 interface RoadmapState {
     // all are private
     _mode: Mode,
-    _wizardRoadmap: RoadmapData,
+    _wizardRoadmapData: RoadmapData,
 }
 
 const initialState: RoadmapState = {
     _mode: Mode.MANUAL,
-    _wizardRoadmap: {
+    _wizardRoadmapData: {
         sessionIds: [],
         activityIds: []
     }
 }
 
 
-/*************************************************
- *  Hacky boilerplate: 
- * to access the other ngrx selectors I need, 
- * I first need to access the store (the vanilla 
- * ngrx store that serves the rest of the app).
- * 
- * I don't like it really but at the moment I don't 
- * know any other way.
- * 
- */
 
 export const RoadmapStore = signalStore(
     {providedIn: "root"},
@@ -58,13 +46,13 @@ export const RoadmapStore = signalStore(
         return {
             toggleMode() {
                 const newMode = (store._mode() == Mode.MANUAL) ? Mode.WIZARD : Mode.MANUAL
-                patchState(store, (state) => ({
+                patchState(store, {
                     _mode: newMode
-                }))
+                })
             }, 
             updateWizardRoadmap(newRoadmap: RoadmapData){
                 patchState(store, {
-                    _wizardRoadmap: newRoadmap
+                    _wizardRoadmapData: newRoadmap
                 })
             } 
         }
@@ -72,23 +60,24 @@ export const RoadmapStore = signalStore(
     withComputed((state) => {
 
         // *** inject the ngrx selectors we need *** //
+        // note: this is boilerplate and will hinder testability probably
         const ngrxStore = inject(Store)
         const $sessions = ngrxStore.selectSignal(selectPlannedMovieSessions)
         const $activities = ngrxStore.selectSignal(selectActivities)
 
         // *** computed signals sections *** //
         const $userRoadmap = computed(()=>{
-            return new RoadmapData(
+            return new FestivalRoadmap(
                 RoadmapAuthor.HUMAN,
                 $sessions().filter(session => session.rating == EventRatings.MANDATORY),
                 $activities().filter(act => act.rating = EventRatings.MANDATORY)
             )
         })
         const $wizardRoadmap = computed(() => {
-            return new RoadmapData(
+            return new FestivalRoadmap(
                 RoadmapAuthor.MACHINE,
-                $sessions().filter(session => state._wizardRoadmap.sessionIds().includes(session.id)),
-                $activities().filter(act => state._wizardRoadmap.activityIds().includes(act.id))
+                $sessions().filter(session => state._wizardRoadmapData.sessionIds().includes(session.id)),
+                $activities().filter(act => state._wizardRoadmapData.activityIds().includes(act.id))
             )
         })
         const $activeRoadmap = computed(() => {
