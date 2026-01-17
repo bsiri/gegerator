@@ -10,7 +10,7 @@ import { ConfigDialog } from './components/configuration/configdialog/configdial
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
-import { RoadmapService } from './services/wizard.service';
+import { RoadmapService } from './services/roadmap.service';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatLabel } from '@angular/material/form-field';
