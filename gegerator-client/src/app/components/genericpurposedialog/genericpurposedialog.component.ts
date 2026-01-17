@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -18,12 +18,13 @@ export interface ConfirmDialogData{
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-confirmdialog',
     templateUrl: './genericpurposedialog.component.html',
     styleUrls: ['./genericpurposedialog.component.scss'],
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatDialogActions, MatButton]
 })
-export class GenericPurposeDialog implements OnInit {
+export class GenericPurposeDialog {
   content: string;
   type: string;
 
@@ -35,9 +36,6 @@ export class GenericPurposeDialog implements OnInit {
     // at least we should html-encode it before usage.
     this.content = data.message || data.html || "Confirmer ?"
     this.type = data.type || "confirm"
-  }
-
-  ngOnInit(): void {
   }
 
   confirm(): void{

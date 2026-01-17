@@ -14,7 +14,7 @@
   </div>
 
   <div class="movielist-list padded vert-small-pad">
-    @for (movie of movies$ | async; track movie) {
+    @for (movie of $movies(); track movie.id) {
       <div>
         <div class="movie-margin">
           <app-movie [movie]="movie"></app-movie>
@@ -32,7 +32,7 @@
       </mat-form-field>
     </div>
     <button mat-raised-button aria-label="sort movies"
-      [color]="sorted ? 'primary' : 'secondary'"
+      [color]="$sorted() ? 'primary' : 'secondary'"
       (click)="toggleSort()"
       title="Trier par titre"
       >

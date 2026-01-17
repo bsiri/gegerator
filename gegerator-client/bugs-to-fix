@@ -1,1 +1,6 @@
-(None yet)
+
+# Small features
+1. The sort button in the Movies view ("trier") should be a toggle, because currently there is no feedback that let you know whether the sort is active or not.
+
+# Minor bugs
+1. Issue when resizing the window : the events and timelines can become misaligned. Fixed if the window is refreshed. This is a minor bug, handle when I feel bored.

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, inject, OnInit, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
@@ -6,25 +6,23 @@ import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
-import { selectActiveRoadmap, selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
-import { ModeService } from './services/mode.service';
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors';
 import { ConfigurationActions } from './ngrx/actions/configuration.actions';
-import { WizardService } from './services/wizard.service';
-import { ModeActions } from './ngrx/actions/mode.actions';
+import { RoadmapService } from './services/roadmap.service';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-
 import { MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { MovielistComponent } from './components/movies/movielist/movielist.component';
 import { SessionSectionComponent } from './components/sessions/session-section/session-section.component';
 import { SummarypanelComponent } from './components/summary/summarypanel/summarypanel.component';
+import { RoadmapStore } from './ngrx/stores/roadmap.store';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
@@ -32,26 +30,31 @@ import { SummarypanelComponent } from './components/summary/summarypanel/summary
 })
 export class AppComponent implements OnInit{
 
+  // exposing the enum Mode as an attribute 
+  // so that I can access them from the template
   Mode = Mode
-  wizardmode = Mode.MANUAL
 
-  wizconf!: WizardConfiguration
-  roadmap!: FestivalRoadmap
+  // stores
+  roadmapStore = inject(RoadmapStore)
+
+  // Signals
+  $wizconf: Signal<WizardConfiguration>
+  $wizardmode: Signal<Mode>
+  $roadmap: Signal<FestivalRoadmap>
 
   constructor(private store: Store,
     private dialog: MatDialog,
-    private modeService: ModeService,
-    // HACK : injecting the service just to have it bootstrapped,
-    // find another way to achieve this.
-    private wizardService: WizardService
-    ){}
+    // HACK : injecting the RoadmapService just to have them bootstrapped.
+    // There surely is a better way to do this but for now I can live with it.
+    private roadmapService: RoadmapService
+    ){
+      this.$wizconf = this.store.selectSignal(selectConfiguration)
+      this.$wizardmode = this.roadmapStore.$mode
+      this.$roadmap = this.roadmapStore.$activeRoadmap
+    }
 
   ngOnInit(): void {
     this.store.dispatch(AppStateActions.reload_appstate())
-    this.store.select(selectActiveRoadmap).subscribe(rm => this.roadmap = rm)
-    this.store.select(selectConfiguration).subscribe(wizconf => this.wizconf = wizconf)
-    // Note : no need to take care of unsubscribing here since the App lives until,
-    // well, the end of the App
   }
 
   uploadAppState(): void{
@@ -69,7 +72,7 @@ export class AppComponent implements OnInit{
 
   exportRoadmap(){
     // Build the textual representation of the Roadmap
-    const planningMap = this.roadmap.dailyPlanning()
+    const planningMap = this.$roadmap().dailyPlanning()
     let planningStr = "=== Roadmap Gérardmer ===\n\n"
 
     for (let entry of planningMap.entries()) {
@@ -90,12 +93,12 @@ export class AppComponent implements OnInit{
   openWizardConfiguration(): void{
     const dialogRef = this.dialog.open(ConfigDialog, {
       autoFocus: 'first-tabbable',
-      data: this.wizconf.copy()
+      data: this.$wizconf().copy()
     })
 
-    dialogRef.afterClosed().subscribe(wizconf =>{
-      if (!!wizconf){
-        this.store.dispatch(ConfigurationActions.update_wizconf({wizconf}))
+    dialogRef.afterClosed().subscribe(newconf =>{
+      if (!!newconf){
+        this.store.dispatch(ConfigurationActions.update_wizconf({wizconf: newconf}))
       }
     })
   }
@@ -107,9 +110,8 @@ export class AppComponent implements OnInit{
     return event.toString().replace(/^(.*?), /, '    ')
   }
 
-  switchMode(): void{
-    this.wizardmode = (this.wizardmode == Mode.MANUAL) ? Mode.WIZARD : Mode.MANUAL
-    this.store.dispatch(ModeActions.update_mode({newMode: this.wizardmode}))
+  toggleMode(): void{
+    this.roadmapStore.toggleMode()
   }
 
 }

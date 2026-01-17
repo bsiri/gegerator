@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { OtherActivity } from 'src/app/models/activity.model';
@@ -12,12 +12,13 @@ import { SwimlaneItemComponent, SwItemBorderRendering, SwItemContentRendering } 
 import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-other-activity',
     templateUrl: './other-activity.component.html',
     styleUrls: ['./other-activity.component.scss'],
     imports: [SwimlaneItemComponent, SessionRatingsComponent]
 })
-export class OtherActivityComponent implements OnInit {
+export class OtherActivityComponent {
 
   @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
 
@@ -26,9 +27,6 @@ export class OtherActivityComponent implements OnInit {
   @Input() roadmap!: FestivalRoadmap
 
   constructor(private store: Store, private dialog: MatDialog) {
-  }
-
-  ngOnInit(): void {
   }
 
   // *********** border styles **************

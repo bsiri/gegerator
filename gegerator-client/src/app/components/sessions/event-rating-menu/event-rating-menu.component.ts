@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
@@ -13,12 +13,13 @@ import { ContextMenuDirective } from '../../../directives/context-menu.directive
  * read straight from the MatDialogRef.componentInstance
  */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-event-rating-menu',
     templateUrl: './event-rating-menu.component.html',
     styleUrls: ['./event-rating-menu.component.scss'],
     imports: [ContextMenuDirective, MatRadioGroup, MatRadioButton]
 })
-export class EventRatingMenu implements OnInit {
+export class EventRatingMenu {
 
   public _anchor: ContextMenuRecipient
 
@@ -40,10 +41,6 @@ export class EventRatingMenu implements OnInit {
       this.eventRating = model.eventRating
       this._anchor = model.anchor
     }
-
-  ngOnInit(): void {
-  }
-
 
   updateRating($event: MatRadioChange): void{
     this.eventRating = $event.value

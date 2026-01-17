@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
@@ -11,6 +11,7 @@ import { MatSelect, MatOption } from '@angular/material/select';
 import { MatButton } from '@angular/material/button';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-configdialog',
     templateUrl: './configdialog.component.html',
     styleUrls: ['./configdialog.component.scss'],
@@ -20,9 +21,9 @@ export class ConfigDialog implements OnInit {
 
   Theaters = Theaters
   TheaterRatings = TheaterRatings
-  formGroup!: UntypedFormGroup
-
-  movieVsTheaterBias!: number
+  
+  formGroup: UntypedFormGroup
+  movieVsTheaterBias: number
 
   constructor(public dialogRef: MatDialogRef<ConfigDialog>,
     @Inject(MAT_DIALOG_DATA) wizconf: WizardConfiguration

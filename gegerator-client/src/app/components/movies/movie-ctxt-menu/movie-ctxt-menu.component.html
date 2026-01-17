@@ -21,7 +21,7 @@
     <legend>Planifié dans : </legend>
     <div class="limit-height">
       <ul>
-        @for (s of sessions$ | async | orderByComparable:'day':'startTime'; track s) {
+        @for (s of $sessions() | orderByComparable:'day':'startTime'; track s.id) {
           <li>
             <app-event-link [event]="s">
               {{s.format('%t : %d, %h')}}

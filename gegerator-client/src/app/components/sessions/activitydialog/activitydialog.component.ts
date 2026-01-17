@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { OtherActivity } from 'src/app/models/activity.model';
@@ -13,12 +13,13 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-activitydialog',
     templateUrl: './activitydialog.component.html',
     styleUrls: ['./activitydialog.component.scss'],
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatInput, MatLabel, MatError, NgStyle, MatDialogActions, MatButton]
 })
-export class Activitydialog implements OnInit {
+export class Activitydialog {
 
   // note: the ID is never modified by this form,
   // however we must remember it because enventually
@@ -57,9 +58,6 @@ export class Activitydialog implements OnInit {
     })
 
     this.formGroup.addValidators(this.validatePeriod.bind(this))
-  }
-
-  ngOnInit(): void {
   }
 
   confirm(): void{

@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 
 
 import { environment } from './environments/environment';
@@ -10,8 +10,6 @@ import { movieReducer } from './app/ngrx/reducers/movie.reducer';
 import { sessionReducer } from './app/ngrx/reducers/session.reducer';
 import { activityReducer } from './app/ngrx/reducers/activity.reducers';
 import { configurationReducer } from './app/ngrx/reducers/configuration.reducer';
-import { wizardroadmapReducer } from './app/ngrx/reducers/wizard-roadmap.reducer';
-import { modeReducer } from './app/ngrx/reducers/mode.reducers';
 import { EffectsModule } from '@ngrx/effects';
 import { MovieEffects } from './app/ngrx/effects/movie.effects';
 import { MovieSessionEffects } from './app/ngrx/effects/session.effects';
@@ -41,7 +39,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        provideZoneChangeDetection(),
+        provideZonelessChangeDetection(),
         importProvidersFrom(
             BrowserModule, 
             AppRoutingModule, 
@@ -50,8 +48,6 @@ bootstrapApplication(AppComponent, {
                 sessions: sessionReducer,
                 activities: activityReducer,
                 configuration: configurationReducer,
-                wizardroadmap: wizardroadmapReducer,
-                mode: modeReducer
             }, {}), 
             EffectsModule.forRoot([
                 MovieEffects, 

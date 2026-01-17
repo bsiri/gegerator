@@ -1,20 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MovieRating } from 'src/app/models/movie.model';
 import { NgClass } from '@angular/common';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-movie-ratings',
     templateUrl: './movie-ratings.component.html',
     styleUrls: ['./movie-ratings.component.scss'],
     imports: [NgClass]
 })
-export class MovieRatingsComponent implements OnInit {
+export class MovieRatingsComponent {
 
   @Input() rating!: MovieRating
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

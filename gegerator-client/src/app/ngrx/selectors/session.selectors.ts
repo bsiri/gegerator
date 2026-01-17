@@ -1,14 +1,14 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { Movie } from "src/app/models/movie.model";
 import { MovieSession, PlannedMovieSession } from "src/app/models/session.model";
-import { selectMovieslist } from "./movie.selectors";
+import { selectMovies } from "./movie.selectors";
 
 interface MoviesById{[id: number]: Movie}
 
-export const selectSessionList = createFeatureSelector<ReadonlyArray<MovieSession>>('sessions')
+const selectSessions = createFeatureSelector<ReadonlyArray<MovieSession>>('sessions')
 
-export const indexedMoviesSelector = createSelector(
-    selectMovieslist,
+const indexedMoviesSelector = createSelector(
+    selectMovies,
     (movies)  => {
         const result = {} as MoviesById
         movies.forEach(m => result[m.id] = m);
@@ -16,9 +16,9 @@ export const indexedMoviesSelector = createSelector(
 });
 
 
-export const selectPlannedMovieSession = createSelector(
+export const selectPlannedMovieSessions = createSelector(
     indexedMoviesSelector,
-    selectSessionList,
+    selectSessions,
     (indexedMovies, sessions) => {
         /*
             Note : there is a chance that a session exists but not the movie:

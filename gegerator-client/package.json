@@ -27,11 +27,11 @@
     "@angular/router": "^21.0.6",
     "@ngrx/effects": "^21.0.1",
     "@ngrx/operators": "^21.0.1",
+    "@ngrx/signals": "^21.0.1",
     "@ngrx/store": "^21.0.1",
     "iso8601-duration": "^2.0.0",
     "rxjs": "~7.5.0",
-    "tslib": "^2.3.0",
-    "zone.js": "^0.15.1"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular-devkit/core": "^21.0.4",

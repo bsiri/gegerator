@@ -37,6 +37,9 @@ export class FestivalRoadmap{
      * Says whether the given Movie | PlannedMovieSession | OtherActivity is 
      * part of that Roadmap.
      * 
+     * TODO : many of those overrides do not look necerrary actually, leaving 
+     * these at the moment because cleaning up the code is not a priority yet.
+     * 
      * @param movie 
      */
     isInRoadmap(movie: Movie): boolean
@@ -86,7 +89,8 @@ export class FestivalRoadmap{
 }
 
 /**
- * A much shorter representation of a FestivalRoadmap.
+ * An exchange object (DTO) for conveying the ids that will be used 
+ * for building instances of FestivalRoadmap later.
  * This interface is necessary because I need to store it 
  * in the Store after all.
  */
