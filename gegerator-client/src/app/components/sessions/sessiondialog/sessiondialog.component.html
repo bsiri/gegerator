@@ -25,7 +25,7 @@ This mode decides what will be:
         </mat-option>
       }
     </mat-autocomplete>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-sd-title">
       <input  (keyup.enter)="confirm()"  matInput formControlName="title"
         [matAutocomplete]="moviesauto">
       @if (invalid('title')) {
@@ -36,7 +36,7 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <label>Début : </label>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-sd-starttime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
       <input (keyup.enter)="confirm()" matInput formControlName="startTime">
     </mat-form-field>
@@ -44,10 +44,10 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <span>Jour : </span>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-sd-day">
       <mat-select formControlName="day">
         @for (sday of Days.enumerate(); track sday) {
-          <mat-option (keyup.enter)="confirm()" [value]="sday">
+          <mat-option (keyup.enter)="confirm()" [value]="sday" class="testid-sd-opt-{{sday.key}}">
             {{sday.name}}
           </mat-option>
         }
@@ -57,10 +57,10 @@ This mode decides what will be:
 
   <div class="dialog-field">
     <span>Cinéma : </span>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="testid-sd-theater">
       <mat-select formControlName="theater">
         @for (stheater of Theaters.enumerate(); track stheater) {
-          <mat-option (keyup.enter)="confirm()" [value]="stheater">
+          <mat-option (keyup.enter)="confirm()" [value]="stheater" class="testid-sd-opt-{{stheater.key}}">
             {{stheater.name}}
           </mat-option>
         }
@@ -71,16 +71,16 @@ This mode decides what will be:
 </div>
 <div mat-dialog-actions>
   @if (mode === 'create') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">Suivant</button>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-sd-submit">Suivant</button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
+    <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-sd-submit">OK</button>
   }
 
   @if (mode === 'create') {
-    <button mat-button (click)="cancel()">Fermer</button>
+    <button mat-button (click)="cancel()" class="testid-sd-cancel">Fermer</button>
   }
   @if (mode === 'update') {
-    <button mat-button (click)="cancel()">Annuler</button>
+    <button mat-button (click)="cancel()" class="testid-sd-cancel">Annuler</button>
   }
 </div>

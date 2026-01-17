@@ -1,9 +1,10 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessLoader } from "@angular/cdk/testing"
-import { MatOptionHarness, OptionHarnessFilters } from "@angular/material/core/testing"
-import { FormFieldHarnessFilters, MatErrorHarness, MatFormFieldControlHarness, MatFormFieldHarness } from "@angular/material/form-field/testing"
-import { MatSelectHarness, SelectHarnessFilters } from "@angular/material/select/testing"
+import { ComponentHarness, HarnessLoader } from "@angular/cdk/testing"
+import { MatOptionHarness } from "@angular/material/core/testing"
+import { MatErrorHarness, MatFormFieldHarness } from "@angular/material/form-field/testing"
+import { MatSelectHarness } from "@angular/material/select/testing"
 import { MatInputHarness } from "@angular/material/input/testing"
-import { ButtonHarnessFilters, MatButtonHarness } from "@angular/material/button/testing"
+import { MatButtonHarness } from "@angular/material/button/testing"
+import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing"
 import { By } from "@angular/platform-browser"
 import { DebugElement } from "@angular/core"
 
@@ -19,22 +20,46 @@ export function harnessHelper(loader: HarnessLoader){
         return {selector: ".testid-"+testid}
     }
     return {
-        select: async (testid: ClassTestId) => {
+        select: async (testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatSelectHarness)
+            }
             return loader.getHarness(MatSelectHarness.with(sel(testid)))
         },
-        option: async (testid: ClassTestId) => {
+        option: async (testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatOptionHarness)
+            }
             return loader.getHarness(MatOptionHarness.with(sel(testid)))
         },
-        text: async (testid: ClassTestId) => {
+        text: async (testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatInputHarness)
+            }
             return loader.getHarness(MatInputHarness.with(sel(testid)))
         },
-        button: async (testid: ClassTestId) => {
+        autocomplete: async(testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatAutocompleteHarness)
+            }
+            return loader.getHarness(MatAutocompleteHarness.with(sel(testid)))
+        },
+        button: async (testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatButtonHarness)
+            }       
             return loader.getHarness(MatButtonHarness.with(sel(testid)))
         },
-        formfield: async (testid: ClassTestId) => {
+        formfield: async (testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatFormFieldHarness)
+            }
             return loader.getHarness(MatFormFieldHarness.with(sel(testid)))
         },
-        error: async (testid: ClassTestId) => {
+        error: async (testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatErrorHarness)
+            }
             return loader.getHarness(MatErrorHarness.with(sel(testid)))
         },
         getDbgElement: async(arg: ClassTestId | ComponentHarness): Promise<DebugElement> => {
