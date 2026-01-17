@@ -37,6 +37,9 @@ export class FestivalRoadmap{
      * Says whether the given Movie | PlannedMovieSession | OtherActivity is 
      * part of that Roadmap.
      * 
+     * TODO : many of those overrides do not look necerrary actually, leaving 
+     * these at the moment because cleaning up the code is not a priority yet.
+     * 
      * @param movie 
      */
     isInRoadmap(movie: Movie): boolean

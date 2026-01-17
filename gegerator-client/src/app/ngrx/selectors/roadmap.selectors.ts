@@ -2,9 +2,9 @@ import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { EventRatings } from "src/app/models/plannable.model";
 import { FestivalRoadmap, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
 import { Mode } from "../appstate-models/mode.model";
-import { selectActivitieslist } from "./activity.selectors";
+import { selectActivities  } from "./activity.selectors";
 import { selectMode } from "./mode.selectors";
-import { selectPlannedMovieSession } from "./session.selectors";
+import { selectPlannedMovieSessions  } from "./session.selectors";
 
 
 export const selectWizardRoadmapData = createFeatureSelector<RoadmapData>('wizardroadmap')
@@ -15,8 +15,8 @@ export const selectWizardRoadmapData = createFeatureSelector<RoadmapData>('wizar
  * that were handpicked by the user as MANDATORY 
  */
 export const selectUserRoadmap = createSelector(
-    selectPlannedMovieSession, 
-    selectActivitieslist,
+    selectPlannedMovieSessions, 
+    selectActivities,
     (sessions, activities) => {
         return new FestivalRoadmap(
             RoadmapAuthor.HUMAN,
@@ -34,8 +34,8 @@ export const selectUserRoadmap = createSelector(
  */
 
 export const selectWizardRoadmap = createSelector(
-    selectPlannedMovieSession,
-    selectActivitieslist,
+    selectPlannedMovieSessions,
+    selectActivities,
     selectWizardRoadmapData,
     (sessions, activities, wizardroadmapdata) => {
         return new FestivalRoadmap(

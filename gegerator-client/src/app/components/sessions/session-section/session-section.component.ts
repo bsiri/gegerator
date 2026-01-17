@@ -8,9 +8,9 @@ import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
-import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
+import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectActiveRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
-import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
@@ -47,8 +47,8 @@ export class SessionSectionComponent {
   /*
     Data model
   */
-  $sessions = this.store.selectSignal(selectPlannedMovieSession)
-  $activities = this.store.selectSignal(selectActivitieslist)
+  $sessions = this.store.selectSignal(selectPlannedMovieSessions)
+  $activities = this.store.selectSignal(selectActivities)
 
   $roadmap: Signal<FestivalRoadmap>
 

@@ -4,7 +4,7 @@ import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material
 import { Store } from '@ngrx/store';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
 import { Movie, MovieRatings } from 'src/app/models/movie.model';
-import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
+import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors';
 import { ContextMenuDirective } from '../../../directives/context-menu.directive';
 import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
 import { OrderByComparablePipe } from '../../../pipes/order-by-comparable.pipe';
@@ -49,7 +49,7 @@ export class MovieCtxtMenu implements OnInit {
     this.movie = model.movie
     this._anchor = model.anchor
 
-    const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSession)
+    const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSessions)
     this.$sessions = computed(() => {
       const sessions = sessionStoreSignal()
       return sessions.filter(s => s.movie.id = this.movie.id)

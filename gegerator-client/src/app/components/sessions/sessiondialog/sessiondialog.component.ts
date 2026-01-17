@@ -8,7 +8,7 @@ import { EventRating } from 'src/app/models/plannable.model';
 import { Days, Theaters } from 'src/app/models/referential.data';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Times } from 'src/app/models/time.utils';
-import { selectMovieslist } from 'src/app/ngrx/selectors/movie.selectors';
+import { selectMovies } from 'src/app/ngrx/selectors/movie.selectors';
 import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
 import { AsyncPipe } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -54,7 +54,7 @@ export class SessionDialog {
     private store: Store
   ) {
 
-      this.$availableMovies = this.store.selectSignal(selectMovieslist)
+      this.$availableMovies = this.store.selectSignal(selectMovies)
 
       this.mode = (session.id === undefined) ? 'create' : 'update'
       this.id = session.id

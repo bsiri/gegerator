@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 
 import { MovieActions } from '../../../ngrx/actions/movie.actions';
-import { selectMovieslist } from '../../../ngrx/selectors/movie.selectors';
+import { selectMovies } from '../../../ngrx/selectors/movie.selectors';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 import { MatButton } from '@angular/material/button';
 import { MovieComponent } from '../movie/movie.component';
@@ -33,7 +33,7 @@ export class MovielistComponent {
 
   constructor(private store: Store, private dialog: MatDialog) {
 
-    const movieStore = this.store.selectSignal(selectMovieslist)
+    const movieStore = this.store.selectSignal(selectMovies)
     this.$movies = computed(() => {
       // filter unconditionally
       const _filter = this.$filterString().toLocaleLowerCase()
