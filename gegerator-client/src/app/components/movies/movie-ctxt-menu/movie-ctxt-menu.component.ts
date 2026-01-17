@@ -52,7 +52,7 @@ export class MovieCtxtMenu implements OnInit {
     const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSessions)
     this.$sessions = computed(() => {
       const sessions = sessionStoreSignal()
-      return sessions.filter(s => s.movie.id = this.movie.id)
+      return sessions.filter(s => s.movie.id == this.movie.id)
     })
   }
 

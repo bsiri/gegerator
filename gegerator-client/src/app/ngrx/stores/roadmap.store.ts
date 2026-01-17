@@ -70,7 +70,7 @@ export const RoadmapStore = signalStore(
             return new FestivalRoadmap(
                 RoadmapAuthor.HUMAN,
                 $sessions().filter(session => session.rating == EventRatings.MANDATORY),
-                $activities().filter(act => act.rating = EventRatings.MANDATORY)
+                $activities().filter(act => act.rating == EventRatings.MANDATORY)
             )
         })
         const $wizardRoadmap = computed(() => {

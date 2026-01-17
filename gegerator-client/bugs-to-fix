@@ -1,3 +1,2 @@
-1. There is effectively two distinct states for the Wizard mode, one in ModeService and one by NgRx. I need to unify these, see comments in 'app.component.ts#toggleMode()' to see how both are managed at the moment.
-2. Angular warnings in the console, to investigate
-3. The sort button in the Movies view ("trier") should be a toggle, because currently there is no feedback that let you know whether the sort is active or
+1. Angular warnings in the console, to investigate
+2. The sort button in the Movies view ("trier") should be a toggle, because currently there is no feedback that let you know whether the sort is active or
