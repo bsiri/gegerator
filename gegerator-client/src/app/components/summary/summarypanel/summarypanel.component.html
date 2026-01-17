@@ -10,7 +10,7 @@
           @for (day of Days.enumerate(); track day) {
             <div>
               <ul>
-                @for (event of $roadmap().dailyPlanning().get(day); track event) {
+                @for (event of $roadmap().dailyPlanning().get(day); track event.htmlId) {
                   <li>
                     <app-event-link [event]="event">
                       {{event.toString()}}
@@ -35,7 +35,7 @@
         <div class="pane-content">
           <table>
             <tbody>
-              @for (movie of $movies() | orderByComparable:'rating':'title'; track movie) {
+              @for (movie of $movies() | orderByComparable:'rating':'title'; track movie.id) {
                 <tr>
                   <td><app-movie-ratings [rating]="movie.rating"></app-movie-ratings></td>
                   <td>
@@ -58,7 +58,7 @@
         <div class="pane-content">
           <table>
             <tbody>
-              @for (event of $events() | orderByComparable:'rating':'day':'startTime'; track event) {
+              @for (event of $events() | orderByComparable:'rating':'day':'startTime'; track event.id) {
                 <tr>
                   <td><app-session-ratings [rating]="event.rating"></app-session-ratings></td>
                   <td>
