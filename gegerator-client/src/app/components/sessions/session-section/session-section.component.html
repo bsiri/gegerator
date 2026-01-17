@@ -41,27 +41,27 @@
           <tbody #sessionTableBody>
             <tr [ngStyle]="{'height': rowHeightInPixel}">
               <td>
-                @for (activity of activitiesByDay(day); track activity) {
+                @for (activity of activitiesByDay(day); track activity.id) {
                   <app-other-activity [activity]="activity" [roadmap]="$roadmap()"></app-other-activity>
                 }
               </td>
               <td>
-                @for (session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC); track session) {
+                @for (session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
               <td>
-                @for (session of sessionsByDayAndTheater(day, Theaters.CASINO); track session) {
+                @for (session of sessionsByDayAndTheater(day, Theaters.CASINO); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
               <td>
-                @for (session of sessionsByDayAndTheater(day, Theaters.PARADISO); track session) {
+                @for (session of sessionsByDayAndTheater(day, Theaters.PARADISO); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
               <td>
-                @for (session of sessionsByDayAndTheater(day, Theaters.MCL); track session) {
+                @for (session of sessionsByDayAndTheater(day, Theaters.MCL); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
