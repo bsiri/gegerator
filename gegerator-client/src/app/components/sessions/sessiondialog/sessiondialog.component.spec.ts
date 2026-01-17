@@ -53,7 +53,7 @@ describe('SessionDialog - Template', async () => {
     component = fixture.componentInstance;
   })
 
-  it.only('should submit edited session (happy path)', async () => {
+  it('should submit edited session (happy path)', async () => {
     const expectedSelectedMovie = movies[1]
     await fixture.whenStable();
     const helper = harnessHelper(loader)
@@ -80,7 +80,7 @@ describe('SessionDialog - Template', async () => {
     // update theater
     const theaterSelector = await helper.select('sd-theater mat-select')
     await theaterSelector.open()
-    const opt = (await theaterSelector.getOptions({text: Theaters.ESPACE_LAC.name}))[0]
+    const opt = (await theaterSelector.getOptions({text: Theaters.CASINO.name}))[0]
     await opt.click()
 
     // submit
@@ -97,7 +97,7 @@ describe('SessionDialog - Template', async () => {
     expect(closedArg.movie.title).toBe(expectedSelectedMovie.title)
     expect(closedArg).toHaveProperty('startTime', Times.fromString('12h00'))
     expect(closedArg).toHaveProperty('day', Days.FRIDAY)
-    expect(closedArg).toHaveProperty('theater', Theaters.ESPACE_LAC)
+    expect(closedArg).toHaveProperty('theater', Theaters.CASINO)
   })
 
   it('should close and do nothing on cancel', async () => {
@@ -131,19 +131,36 @@ describe('SessionDialog - Template', async () => {
     expect(viClose.mock.calls[0][0]).toBeTruthy()
   })
 
-  it('should refuse to submit when title unknown', async () => {
+  it('should refuse to submit and display the errors when there are any', async () => {
     await fixture.whenStable()
     const helper = harnessHelper(loader)
+    
+    // let input bogus data
     const titleInput = await helper.text('sd-title input')
     await titleInput.setValue('An Unknown Movie')
 
+    const starttimeInput = await helper.text('sd-starttime input')
+    await starttimeInput.setValue('invalid time')
+
+    // now attempt to submit
     const submitButton = await helper.button('sd-submit')
     await submitButton.click()
     await fixture.whenStable()
 
+    // expect the nope answer
     const viClose = (dialogRef.close) as Mock
     expect(viClose).not.toHaveBeenCalled()
     expect(await submitButton.isDisabled()).toBe(true)
+
+    // assert that the control fields for title and startime are invalid
+    const titleField = await helper.formfield('sd-title')
+    const titleError = (await titleField.getErrors())[0]
+    const starttimeField = await helper.formfield('sd-starttime')
+
+    expect(await titleField.isControlValid()).toBe(false)
+    expect(await titleError.getText()).toMatch(/Je le connais pas.*/i)
+    expect(await starttimeField.isControlValid()).toBe(false)
+
   })
 
 })
