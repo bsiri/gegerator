@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, inject, OnInit, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
@@ -34,21 +34,23 @@ export class AppComponent implements OnInit{
   // so that I can access them from the template
   Mode = Mode
 
+  // stores
+  roadmapStore = inject(RoadmapStore)
+
   // Signals
-  $wizardmode: Signal<Mode>
   $wizconf: Signal<WizardConfiguration>
+  $wizardmode: Signal<Mode>
   $roadmap: Signal<FestivalRoadmap>
 
   constructor(private store: Store,
     private dialog: MatDialog,
-    private roadmapStore: InstanceType<typeof RoadmapStore>,
-    // HACK : injecting the WizardService just to have them bootstrapped.
+    // HACK : injecting the RoadmapService just to have them bootstrapped.
     // There surely is a better way to do this but for now I can live with it.
     private roadmapService: RoadmapService
     ){
-      this.$wizardmode = roadmapStore.$mode
-      this.$roadmap = roadmapStore.$activeRoadmap
       this.$wizconf = this.store.selectSignal(selectConfiguration)
+      this.$wizardmode = this.roadmapStore.$mode
+      this.$roadmap = this.roadmapStore.$activeRoadmap
     }
 
   ngOnInit(): void {

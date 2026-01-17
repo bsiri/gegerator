@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Movie } from 'src/app/models/movie.model';
 import { Days } from 'src/app/models/referential.data';
-import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectMovies } from 'src/app/ngrx/selectors/movie.selectors';
-import { selectActiveRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { NgTemplateOutlet } from '@angular/common';
@@ -15,6 +13,7 @@ import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-rat
 import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
 import { OrderByComparablePipe } from '../../../pipes/order-by-comparable.pipe';
 import { OtherActivity } from 'src/app/models/activity.model';
+import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store';
 
 
 // ** main component **
@@ -36,11 +35,10 @@ export class SummarypanelComponent {
   $movies: Signal<readonly Movie[]>
   $events: Signal<(OtherActivity | PlannedMovieSession)[]>
 
-  $roadmap: Signal<FestivalRoadmap>
+  $roadmap = inject(RoadmapStore).$activeRoadmap
 
   constructor(private store: Store) {
     this.$movies = this.store.selectSignal(selectMovies)
-    this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
 
     const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSessions)
     const activitiesStoreSignal = this.store.selectSignal(selectActivities)

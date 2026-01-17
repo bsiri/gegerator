@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { RoadmapData } from '../models/roadmap.model';
 import { MovieSessionJSON } from '../models/session.model';
 import { RoadmapStore } from '../ngrx/stores/roadmap.store';
@@ -6,18 +6,15 @@ import { RoadmapStore } from '../ngrx/stores/roadmap.store';
 const wizardroadmapUrl = "./api/wizard/roadmap"
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoadmapService {
 
   private source: EventSource
-
+  private roadmapStore = inject(RoadmapStore)
 
   constructor(
-    private _zone: NgZone,
-    // TODO : I like constructor injection better after all, if does not work I will
-    // inject it instead.
-    private roadmapStore: InstanceType<typeof RoadmapStore>
+    private _zone: NgZone
   ){
     this.source = this.initEventSource()
   }

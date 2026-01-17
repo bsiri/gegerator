@@ -1,15 +1,13 @@
-import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { OtherActivity } from 'src/app/models/activity.model';
 import { EventRatings } from 'src/app/models/plannable.model';
 import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
-import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors';
-import { selectActiveRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
@@ -20,6 +18,7 @@ import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-m
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TimePipe } from '../../../pipes/time.pipe';
+import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,11 +49,10 @@ export class SessionSectionComponent {
   $sessions = this.store.selectSignal(selectPlannedMovieSessions)
   $activities = this.store.selectSignal(selectActivities)
 
-  $roadmap: Signal<FestivalRoadmap>
+  $roadmap = inject(RoadmapStore).$activeRoadmap
 
 
   constructor(private store: Store, private dialog: MatDialog) {
-    this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
   }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
