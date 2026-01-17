@@ -23,7 +23,7 @@ export class ModeService {
    * Switches the mode between manual or wizard, 
    * depending on the current state.
    */
-  switchMode(){
+  toggleMode(){
     if (this.$mode() == Mode.MANUAL){
       this._$mode.set(Mode.WIZARD)
     }

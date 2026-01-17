@@ -6,7 +6,7 @@ import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
-import { selectActiveRoadmap, selectUserRoadmap } from './ngrx/selectors/roadmap.selectors';
+import { selectActiveRoadmap } from './ngrx/selectors/roadmap.selectors';
 import { ModeService } from './services/mode.service';
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
@@ -110,8 +110,16 @@ export class AppComponent implements OnInit{
     return event.toString().replace(/^(.*?), /, '    ')
   }
 
-  switchMode(): void{
+  toggleMode(): void{
+    /*
+    FIXME : at the moment there is two distinct states for the wizard Mode:
+    - ModeService, at the moment effectively used only in this Component
+    - NgRx actions/reducers/selectors.
+    Until I unify the systems, I have to update the mode in both in this method.
+    TODO: think of how to refactor this and have one system.
+    */
     this.store.dispatch(ModeActions.toggle_mode())
+    this.modeService.toggleMode()
   }
 
 }

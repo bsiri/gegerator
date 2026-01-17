@@ -8,11 +8,9 @@ import { FestivalRoadmap } from 'src/app/models/roadmap.model';
 import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model';
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
-import { Mode } from 'src/app/ngrx/appstate-models/mode.model';
 import { selectActivitieslist } from 'src/app/ngrx/selectors/activity.selectors';
 import { selectActiveRoadmap } from 'src/app/ngrx/selectors/roadmap.selectors';
 import { selectPlannedMovieSession } from 'src/app/ngrx/selectors/session.selectors';
-import { ModeService } from 'src/app/services/mode.service';
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
@@ -52,12 +50,10 @@ export class SessionSectionComponent {
   $sessions = this.store.selectSignal(selectPlannedMovieSession)
   $activities = this.store.selectSignal(selectActivitieslist)
 
-  $mode: Signal<Mode>
   $roadmap: Signal<FestivalRoadmap>
 
 
-  constructor(private store: Store, private modeService: ModeService, private dialog: MatDialog) {
-    this.$mode = this.modeService.$mode
+  constructor(private store: Store, private dialog: MatDialog) {
     this.$roadmap = this.store.selectSignal(selectActiveRoadmap)
   }
 

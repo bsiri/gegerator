@@ -9,5 +9,5 @@ export const initialWizardRoadmap: RoadmapData = {
 
 export const wizardroadmapReducer = createReducer(
     initialWizardRoadmap,
-    on(WizardRoadmapActions.wizardroadmap_reloaded, (state, roadmpadata) => roadmpadata)
+    on(WizardRoadmapActions.wizardroadmap_reloaded, (state, roadmapadata) => roadmapadata)
 )

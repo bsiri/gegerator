@@ -12,7 +12,7 @@
         <!-- Mode -->
         <button matButton="filled" [matMenuTriggerFor]="mode" color="primary">Mode</button>
         <mat-menu #mode>
-          <button mat-menu-item (click)="switchMode()" >
+          <button mat-menu-item (click)="toggleMode()" >
             @if ($wizardmode() == Mode.MANUAL) {
               <mat-label>Activer l'assistant</mat-label>
             }
