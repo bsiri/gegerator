@@ -1,10 +1,10 @@
 
-import { FestivalRoadmap, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
+import { FestivalRoadmap as RoadmapData, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
 import { Mode } from "../appstate-models/mode.model";
 import { signalStore, withState, withHooks, withMethods, patchState, withComputed } from '@ngrx/signals';
 import { selectPlannedMovieSessions } from "../selectors/session.selectors";
 import { computed, inject } from "@angular/core";
-import { Store } from "@ngrx/store";
+import { State, Store } from "@ngrx/store";
 import { selectActivities } from "../selectors/activity.selectors";
 import { PlannedMovieSession } from "src/app/models/session.model";
 import { OtherActivity } from "src/app/models/activity.model";
@@ -51,9 +51,24 @@ const initialState: RoadmapState = {
  * 
  */
 
-export const WizardStore = signalStore(
+export const RoadmapStore = signalStore(
     {providedIn: "root"},
     withState(initialState),
+    withMethods((store) => {
+        return {
+            toggleMode() {
+                const newMode = (store._mode() == Mode.MANUAL) ? Mode.WIZARD : Mode.MANUAL
+                patchState(store, (state) => ({
+                    _mode: newMode
+                }))
+            }, 
+            updateWizardRoadmap(newRoadmap: RoadmapData){
+                patchState(store, {
+                    _wizardRoadmap: newRoadmap
+                })
+            } 
+        }
+    }),
     withComputed((state) => {
 
         // *** inject the ngrx selectors we need *** //
@@ -63,14 +78,14 @@ export const WizardStore = signalStore(
 
         // *** computed signals sections *** //
         const $userRoadmap = computed(()=>{
-            return new FestivalRoadmap(
+            return new RoadmapData(
                 RoadmapAuthor.HUMAN,
                 $sessions().filter(session => session.rating == EventRatings.MANDATORY),
                 $activities().filter(act => act.rating = EventRatings.MANDATORY)
             )
         })
         const $wizardRoadmap = computed(() => {
-            return new FestivalRoadmap(
+            return new RoadmapData(
                 RoadmapAuthor.MACHINE,
                 $sessions().filter(session => state._wizardRoadmap.sessionIds().includes(session.id)),
                 $activities().filter(act => state._wizardRoadmap.activityIds().includes(act.id))
