@@ -36,10 +36,10 @@ export class MovielistComponent {
     const movieStore = this.store.selectSignal(selectMovieslist)
     this.$movies = computed(() => {
       // filter unconditionally
-      let finalMovies = movieStore().filter( m => { 
-        const _filter = this.$filterString().toLocaleLowerCase()
+      const _filter = this.$filterString().toLocaleLowerCase()
+      let finalMovies = movieStore().filter( m =>  
         m.title.toLocaleLowerCase().includes(_filter)
-      })
+      )
       // sort if requested only
       if (this.$sorted()){
         finalMovies = finalMovies.sort(

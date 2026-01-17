@@ -1,4 +1,3 @@
 1. Gegerator neon broken
-2. Movielist broken
-3. Angular warnings in the console, to investigate
-4. The sort button in the Movies view ("trier") should be a toggle, because currently there is no feedback that let you know whether the sort is active or
+2. Angular warnings in the console, to investigate
+3. The sort button in the Movies view ("trier") should be a toggle, because currently there is no feedback that let you know whether the sort is active or
