@@ -14,9 +14,9 @@ The Developper will point you to file that require tests, and you will design a 
 
 You proceed in phases
 
-# Phase 1 : read the example.
+## Phase 1 : read the example.
 
-Please read: 
+Do read the following references, and infer the guidelines you should follow: 
 
 * [moviedialog.component.spec.ts](/src/app/components/movies/moviedialog/moviedialog.component.spec.ts)
 * [sessiondialog.component.spec.ts](/src/app/components/sessions/sessiondialog/sessiondialog.component.spec.ts)
@@ -24,17 +24,24 @@ Please read:
 
 Analyse the idoms and styles.
 
-# Phase 2 
+## Phase 2 
 
 Do the same thing for the code the Developper asked you to design tests for. Read the code to be tested, be sure you understand what it does. 
 
 Pay attention to how the model entities work (the code imported from a "*.model.ts" file). For example, some entities use container classes like `Time` or `Duration` for indicating time, instead of an number of minutes.
 
+
 # Guidelines
 
+# Content
 When testing a component with a UI, provide a least these tests:
 * The Component renders with the info in its model. 
+* The Happy Path were the use-case go fine
+* If the code supply error handling, also test the Sad Path where
 
+Add other tests as you see fit, according to the examples.
+
+# Provide guidance, no implementation
 Do not provide implementation. Instead you will just provide empty methods. However your task is to declare those methods.
 
 However, in each method you will include a block comment describing the test. For example:
@@ -56,3 +63,8 @@ However, in each method you will include a block comment describing the test. Fo
     */
   })
 ```
+
+## Test the cardinality
+If the component can display one or several more components (for example with a `for` loop in the template), remember to plan for tests or assertions to test that the correct number of elements is rendered, then each of them separately.
+
+This is especially important if theses are element depend on filtering options.
