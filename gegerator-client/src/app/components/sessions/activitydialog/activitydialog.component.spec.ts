@@ -42,6 +42,45 @@ describe('ActivityDialog-Template', async() => {
 
   })
 
+  it('should open in edit mode when supplied an existing activity', async () => {
+    /*
+      Goal of the test: check that the form dialog is prefilled with the
+      supplied activity model info.
+
+      Synopsis:
+      - given : an activity object
+      - when  : the dialog opens (implicitly done by TestBed.createComponent)
+      - then  : the form fields are filled with the activity data.
+
+      Desired checks in order:
+      1. displayed description matches activity.description
+      2. the day is the same
+      3. displayed start time matches activity.startTime
+      4. displayed end time matches activity.endTime
+    */
+
+    const expectedActivity = sampleActivity(1)
+
+    await fixture.whenStable();
+    const helper = harnessHelper(loader)
+
+    // 1) description displayed
+    const descriptionInput = await helper.text("oad-description input")
+    expect(await descriptionInput.getValue()).toBe(expectedActivity.description)
+
+    // 2) day selected
+    const daySelector = await helper.select("oad-day mat-select")
+    expect(await daySelector.getValueText()).toBe(expectedActivity.day.name)
+
+    // 3) start time displayed
+    const startInput = await helper.text("oad-starttime input")
+    expect(await startInput.getValue()).toBe(Times.toString(expectedActivity.startTime))
+
+    // 4) end time displayed
+    const endInput = await helper.text("oad-endtime input")
+    expect(await endInput.getValue()).toBe(Times.toString(expectedActivity.endTime))
+  })
+
   it('should update the activity configuration', async ()=>{
     await fixture.whenStable();
     const helper = harnessHelper(loader)

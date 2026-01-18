@@ -53,6 +53,47 @@ describe('SessionDialog - Template', async () => {
     component = fixture.componentInstance;
   })
 
+  it.only('should open in edit mode when supplied an existing session', async () => {
+    /*
+      Goal of the test : check that the form dialog is prefilled with the 
+      supplied session model info.
+
+      Synopsis:
+      - given : a session object
+      - when : the dialog opens (implicitly done by TestBed.createComponent)
+      - then: the form fields are filled with the session data.
+
+      Desired tests and assertions:
+      1. displayed movie title is same as the session->movie in the model,
+      2. the day is the same,
+      3. displayed start time is the same,
+      4. the theater is the same.
+      In that order.
+    */
+
+    const expectedSession = sampleSession(1)
+
+    // Wait for initial rendering
+    await fixture.whenStable();
+    const helper = harnessHelper(loader)
+
+    // 1) movie title displayed
+    const titleInput = await helper.text('sd-title input')
+    expect(await titleInput.getValue()).toBe(expectedSession.movie.title)
+
+    // 2) day selected
+    const daySelector = await helper.select('sd-day mat-select')
+    expect(await daySelector.getValueText()).toBe(expectedSession.day.name)
+
+    // 3) start time displayed
+    const startInput = await helper.text('sd-starttime input')
+    expect(await startInput.getValue()).toBe(Times.toString(expectedSession.startTime))
+
+    // 4) theater selected
+    const theaterSelector = await helper.select('sd-theater mat-select')
+    expect(await theaterSelector.getValueText()).toBe(expectedSession.theater.name)
+  })
+
   it('should submit edited session (happy path)', async () => {
     const expectedSelectedMovie = movies[1]
     await fixture.whenStable();
