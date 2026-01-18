@@ -5,13 +5,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { harnessHelper } from 'src/_testhelpers/harnesshelper';
 import { MovieComponent } from './movie.component';
-import { Movie } from 'src/app/models/movie.model';
+import { Movie, MovieRatings } from 'src/app/models/movie.model';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
 import { DurationPipe } from '../../../pipes/duration.pipe';
+import { By } from '@angular/platform-browser';
+import { MovieDialog } from '../moviedialog/moviedialog.component';
+import { MovieCtxtMenu } from '../movie-ctxt-menu/movie-ctxt-menu.component';
+import { GenericPurposeDialog, ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component';
+import { MovieActions } from 'src/app/ngrx/actions/movie.actions';
+import { Durations } from 'src/app/models/time.utils';
 
 
 describe('MovieComponent - Template', async () => {
@@ -22,8 +27,22 @@ describe('MovieComponent - Template', async () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MatCardModule, MatButtonModule, MatIconModule],
-      declarations: [MovieComponent, MovieRatingsComponent, DurationPipe],
-      providers: [{ provide: Store, useValue: {} }, { provide: MatDialog, useValue: {} }]
+      providers: [{ 
+        provide: Store, useValue: {} 
+      }, 
+        { 
+          provide: MatDialog, 
+          useValue: { 
+            open: vi.fn(() => ({ 
+              afterClosed: () => ({ 
+                // callbacks return nothing in particular
+                // for the Template test, we are just testing
+                // interactions with the user not the backend services
+                subscribe: (cb: any) => cb(undefined) 
+              }) 
+            })) 
+          }
+        }]
     })
 
     fixture = TestBed.createComponent(MovieComponent)
@@ -48,6 +67,10 @@ describe('MovieComponent - Template', async () => {
       1. the DOM contains the movie title string,
       2. the DOM contains the formatted duration string.
     */
+    await fixture.whenStable()
+    const text = fixture.nativeElement.textContent as string
+    expect(text).toContain(component.movie.title)
+    expect(text).toContain('1h30')
   })
 
   it('should include the ratings component with the correct rating input', async () => {
@@ -64,6 +87,10 @@ describe('MovieComponent - Template', async () => {
       1. an element corresponding to the ratings component exists,
       2. its `rating` input equals the `movie.rating` value.
     */
+    await fixture.whenStable()
+    const dbg = fixture.debugElement.query(By.directive(MovieRatingsComponent))
+    expect(dbg).toBeTruthy()
+    expect(dbg.componentInstance.rating).toBe(component.movie.rating)
   })
 
   it('should trigger updateMovie on double-click', async () => {
@@ -78,6 +105,12 @@ describe('MovieComponent - Template', async () => {
       Desired checks:
       1. spy on component.updateMovie and assert it was called after dblclick
     */
+    await fixture.whenStable()
+    const spy = vi.spyOn(component, 'updateMovie')
+    const host = fixture.nativeElement.querySelector('mat-card') as HTMLElement
+    host.dispatchEvent(new MouseEvent('dblclick'))
+    fixture.detectChanges()
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should open confirm dialog when delete button clicked', async () => {
@@ -95,6 +128,17 @@ describe('MovieComponent - Template', async () => {
       1. spy on component.confirmThenDelete and assert invocation,
       2. spy on MatDialog.open to ensure a dialog was requested.
     */
+    await fixture.whenStable()
+    const dialog = TestBed.inject(MatDialog) as any
+    const openSpy = dialog.open as any
+    const spy = vi.spyOn(component, 'confirmThenDelete')
+
+    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement
+    btn.click()
+    fixture.detectChanges()
+
+    expect(spy).toHaveBeenCalled()
+    expect(openSpy).toHaveBeenCalled()
   })
 
 })
@@ -122,6 +166,8 @@ describe('MovieComponent - Component', async () => {
       Desired assertions:
       1. component instance is defined and not null.
     */
+    const comp = new MovieComponent(storeStub as any, dialogStub as any)
+    expect(comp).toBeTruthy()
   })
 
   it('updateMovie() should dispatch update when dialog returns a movie', async () => {
@@ -139,6 +185,17 @@ describe('MovieComponent - Component', async () => {
       1. MatDialog.open was called with `MovieDialog` and correct config,
       2. store.dispatch was called with an action containing the updated movie.
     */
+    const updated = ({ ...sampleMovie(1), title: 'updated' } as unknown) as Movie
+    const dialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(updated) }) })) }
+    const store = { dispatch: vi.fn() }
+    const comp = new MovieComponent(store as any, dialog as any)
+    comp.movie = sampleMovie(1)
+
+    comp.updateMovie()
+
+    expect(dialog.open).toHaveBeenCalled()
+    expect((dialog.open as any).mock.calls[0][0]).toBe(MovieDialog)
+    expect(store.dispatch).toHaveBeenCalledWith(MovieActions.update_movie({ movie: updated }))
   })
 
   it('updateRating() should dispatch update when rating changed', async () => {
@@ -156,6 +213,16 @@ describe('MovieComponent - Component', async () => {
       1. MatDialog.open called with `MovieCtxtMenu`,
       2. store.dispatch called when the rating changed.
     */
+    const changed = ({ ...sampleMovie(1), rating: MovieRatings.HIGHEST } as unknown) as Movie
+    const dialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb() }), componentInstance: { movie: changed } })) }
+    const store = { dispatch: vi.fn() }
+    const comp = new MovieComponent(store as any, dialog as any)
+    comp.movie = sampleMovie(1)
+
+    comp.updateRating()
+
+    expect((dialog.open as any).mock.calls[0][0]).toBe(MovieCtxtMenu)
+    expect(store.dispatch).toHaveBeenCalledWith(MovieActions.update_movie({ movie: changed }))
   })
 
   it('confirmThenDelete() should dispatch delete when confirmed', async () => {
@@ -172,6 +239,17 @@ describe('MovieComponent - Component', async () => {
       1. MatDialog.open called with `GenericPurposeDialog` and type `confirm`,
       2. store.dispatch called with `MovieActions.delete_movie` when confirmed.
     */
+    const dialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(ConfirmOutput.CONFIRM) }) })) }
+    const store = { dispatch: vi.fn() }
+    const comp = new MovieComponent(store as any, dialog as any)
+    comp.movie = sampleMovie(1)
+
+    comp.confirmThenDelete()
+
+    expect((dialog.open as any).mock.calls[0][0]).toBe(GenericPurposeDialog)
+    const cfg = (dialog.open as any).mock.calls[0][1]
+    expect(cfg.data.type).toBe('confirm')
+    expect(store.dispatch).toHaveBeenCalledWith(MovieActions.delete_movie({ movie: comp.movie }))
   })
 
   it('location getter should return bounding rect of container', async () => {
@@ -187,6 +265,10 @@ describe('MovieComponent - Component', async () => {
       Desired assertions:
       1. calling the getter returns the object returned by the mocked method.
     */
+    const comp = new MovieComponent(storeStub as any, dialogStub as any)
+    const mockedRect = { x: 1, y: 2, width: 10, height: 20 } as unknown as DOMRect
+    ;(comp as any)._container = { nativeElement: { getBoundingClientRect: () => mockedRect } }
+    expect(comp.location).toBe(mockedRect)
   })
 
 })
@@ -194,11 +276,11 @@ describe('MovieComponent - Component', async () => {
 
 // ************ Helper factories *************** //
 
-function sampleMovie(id?: number): Movie {
-  return ({
+function sampleMovie(id: number=10): Movie {
+  return new Movie(
     id,
-    title: 'Sample Movie',
-    duration: { hours: 1, minutes: 30 },
-    rating: 3
-  } as unknown) as Movie
+    'Sample Movie',
+    Durations.fromString('1h30'),
+    MovieRatings.DEFAULT
+  )
 }

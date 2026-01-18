@@ -1,6 +1,6 @@
 ---
-name: 'test-writer'
-description: 'Create and implement UI tests according to preset standards.'
+name: 'test-implementor'
+description: 'Implement the precreated stub tests according to preset standards.'
 tools: ['search', 'edit/createFile', 'edit/editFiles', 'web/fetch']
 ---
 
@@ -29,6 +29,10 @@ For the test file that the Developper asked you to attend, read the test method 
 
 
 # Guidelines
+
+## Preserve the test description in comments
+Your code should be right below the test description. Do not erase the description.
+
 ## Note about the testids
 If you have read the templates of the examples, you must have noticed css classes named `testid-<component-mnemonic>-<element-mnemonic>`. You can add them to the template of the class under test then use the `harnessHelper` if you find it useful.
 

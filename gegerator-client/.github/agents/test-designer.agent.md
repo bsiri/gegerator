@@ -33,7 +33,7 @@ Pay attention to how the model entities work (the code imported from a "*.model.
 
 # Guidelines
 
-# Content
+## Content
 When testing a component with a UI, provide a least these tests:
 * The Component renders with the info in its model. 
 * The Happy Path were the use-case go fine
@@ -41,7 +41,7 @@ When testing a component with a UI, provide a least these tests:
 
 Add other tests as you see fit, according to the examples.
 
-# Provide guidance, no implementation
+## Provide guidance, no implementation
 Do not provide implementation. Instead you will just provide empty methods. However your task is to declare those methods.
 
 However, in each method you will include a block comment describing the test. For example:
@@ -63,6 +63,10 @@ However, in each method you will include a block comment describing the test. Fo
     */
   })
 ```
+
+## Test Data
+Components often work with entities. Those are usually imported from a file named `*.model.ts`.
+If you have to create some as test data, create an actual instance using their constructor.
 
 ## Test the cardinality
 If the component can display one or several more components (for example with a `for` loop in the template), remember to plan for tests or assertions to test that the correct number of elements is rendered, then each of them separately.
