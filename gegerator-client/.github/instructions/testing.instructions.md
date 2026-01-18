@@ -83,7 +83,7 @@ const harness = await loader.getHarness(ExampleComponentHarness)
 ```
 
 ### Add testids if necessary
-A general concept used throughout the tests are testids as explained in this section
+A general concept used throughout the tests are testids as explained in this section.
 
 #### what are testids
 To help locate a particular element in an Angular template, you may add a testid to it. The testids are actually css classes that follow the following convention: `testid-<mnemonic-component>-<mnemonic-element>[-<discriminator>]`.
