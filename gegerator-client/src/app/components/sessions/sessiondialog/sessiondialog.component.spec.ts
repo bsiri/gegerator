@@ -53,7 +53,7 @@ describe('SessionDialog - Template', async () => {
     component = fixture.componentInstance;
   })
 
-  it.only('should open in edit mode when supplied an existing session', async () => {
+  it('should open in edit mode when supplied an existing session', async () => {
     /*
       Goal of the test : check that the form dialog is prefilled with the 
       supplied session model info.

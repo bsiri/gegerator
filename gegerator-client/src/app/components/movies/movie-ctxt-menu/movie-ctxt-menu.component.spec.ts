@@ -1,24 +1,46 @@
-import { describe, it, beforeEach } from 'vitest'
-import { ComponentFixture } from '@angular/core/testing'
+import { describe, it, beforeEach, expect, vi } from 'vitest'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { signal } from '@angular/core'
 import { MovieCtxtMenu, MovieCtxtMenuModel } from './movie-ctxt-menu.component'
-import { Movie } from 'src/app/models/movie.model'
+import { Movie, MovieRatings } from 'src/app/models/movie.model'
 import { PlannedMovieSession } from 'src/app/models/session.model'
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { Store } from '@ngrx/store'
+import { Times } from 'src/app/models/time.utils'
+import { Days, Theaters } from 'src/app/models/referential.data'
+import { MatRadioModule } from '@angular/material/radio'
+import { HarnessLoader } from '@angular/cdk/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { harnessHelper } from 'src/_testhelpers/harnesshelper'
+import { By } from '@angular/platform-browser'
 
 describe('MovieCtxtMenu (component + unit)', () => {
   let fixture: ComponentFixture<MovieCtxtMenu>
   let component: MovieCtxtMenu
+  let loader: HarnessLoader
 
+  /*
+    Setup for each test:
+    - create TestBed and configure the component with minimal stubs/mocks
+    - provide a fake Store.selectSignal returning a signal of PlannedMovieSession[]
+    - provide MAT_DIALOG_DATA with a MovieCtxtMenuModel containing a Movie instance
+    - provide a fake MatDialogRef
+
+    Note: Implementation details (TestBed.configureTestingModule, creating fixture)
+    are intentionally omitted here – these tests are outlines only.
+  */
   beforeEach(() => {
-    /*
-      Setup for each test:
-      - create TestBed and configure the component with minimal stubs/mocks
-      - provide a fake Store.selectSignal returning a signal of PlannedMovieSession[]
-      - provide MAT_DIALOG_DATA with a MovieCtxtMenuModel containing a Movie instance
-      - provide a fake MatDialogRef
-
-      Note: Implementation details (TestBed.configureTestingModule, creating fixture)
-      are intentionally omitted here – these tests are outlines only.
-    */
+    TestBed.configureTestingModule({
+      imports: [MatDialogModule, MatRadioModule],
+      providers: [
+        { provide: MatDialogRef, useValue: { close: vi.fn(), updatePosition: vi.fn() } },
+        { provide: MAT_DIALOG_DATA, useValue: { movie: movieInstance(), anchor: anchorMock } },
+        { provide: Store, useValue: { selectSignal: (_: any) => signal(movieSessions) } }
+      ]
+    })
+    fixture = TestBed.createComponent(MovieCtxtMenu)
+    component = fixture.componentInstance
+    loader = TestbedHarnessEnvironment.loader(fixture)
   })
 
   // UI Tests
@@ -36,20 +58,19 @@ describe('MovieCtxtMenu (component + unit)', () => {
       1. component is truthy
       2. querySelectorAll('mat-radio-button').length === MovieRatings.enumerate().length
     */
-  })
+    const helper = harnessHelper(loader)
 
-  it('should pre-check the radio matching movie.rating on render', async () => {
-    /*
-      Goal: verify that the radio corresponding to the Movie.rating is checked.
+    fixture.detectChanges()
+    await fixture.whenStable()
 
-      Synopsis:
-      - given: a Movie whose rating is set to a known MovieRatings value
-      - when: component is initialized
-      - then: the radio button representing that rating is marked as checked
+    // Assert all the radio buttons are rendered
+    const radioHarnesses = await helper.radiogroup("mr-ratings")
+    const buttons = await radioHarnesses.getRadioButtons()
+    expect(buttons.length).toBe(MovieRatings.enumerate().length)
 
-      Desired assertions:
-      1. find the radio for that rating and assert it has the checked state
-    */
+    // Assert the correct radio button is checked based on movie.rating
+    const checked = await radioHarnesses.getCheckedRadioButton()
+    expect(await checked?.getValue()).toBe(movieInstance().rating)
   })
 
   it('should update movie.rating when a radio change event is triggered', async () => {
@@ -66,6 +87,19 @@ describe('MovieCtxtMenu (component + unit)', () => {
       1. initial movie.rating === A
       2. after calling updateMovieRating, movie.rating === B
     */
+    const helper = harnessHelper(loader)
+    await fixture.whenStable()
+
+    const radioHarnesses = await helper.radiogroup("mr-ratings")
+    const initialChecked = await radioHarnesses.getCheckedValue()
+    expect(initialChecked).toBe(movieInstance().rating.name)
+
+    const neverRadiobutton = (await radioHarnesses.getRadioButtons({label: MovieRatings.NEVER.description}))[0]
+    await neverRadiobutton.check()
+    await fixture.whenStable()
+
+    expect(component.movie.rating).toBe(MovieRatings.NEVER)
+
   })
 
   it('should render the correct number of session links filtered by movie.id', async () => {
@@ -81,6 +115,11 @@ describe('MovieCtxtMenu (component + unit)', () => {
       1. number of <li> in the planned sessions list equals filtered count
       2. each rendered session corresponds to a session with the expected movie.id
     */
+    const expectedNumberOfSessions = 3
+    await fixture.whenStable()
+
+    const lis = fixture.debugElement.queryAll(By.css('ul li'))
+    expect(lis.length).toBe(expectedNumberOfSessions)
   })
 
   it('should render sessions ordered by day then startTime (ascending)', async () => {
@@ -96,39 +135,21 @@ describe('MovieCtxtMenu (component + unit)', () => {
       Desired assertions:
       1. extract the sequence of session ids from rendered list and assert it matches expected sorted order
     */
+    await fixture.whenStable()
+
+    const lis = fixture.debugElement.queryAll(By.css('ul li'))
+    const texts = lis.map(li => li.nativeElement.textContent.trim())
+
+    // Expected order: wednesdaySession, fridaySession, sundaySession
+    // The session about the other movie should not be present (see dataset)
+    expect(texts[0]).toContain(wednesdaySession.day.name)
+    expect(texts[1]).toContain(fridaySession.day.name)
+    expect(texts[2]).toContain(sundaySession.day.name)
   })
 
-  // Component / unit tests
-  it('should compute $sessions from the store signal and filter by movie.id', async () => {
-    /*
-      Goal: validate that the computed signal $sessions reflects only sessions for component.movie.id
+});
 
-      Synopsis:
-      - given: a store.selectSignal that returns a signal containing several PlannedMovieSession items
-      - when: component is constructed
-      - then: component.$sessions() returns only items where s.movie.id === component.movie.id
-
-      Desired assertions:
-      1. $sessions() length equals expected filtered length
-      2. every element in $sessions() has movie.id === component.movie.id
-    */
-  })
-
-  it('should mutate movie.rating when updateMovieRating is called with a MatRadioChange', async () => {
-    /*
-      Goal: unit-test the updateMovieRating method directly.
-
-      Synopsis:
-      - given: component.movie.rating === initial
-      - when: call updateMovieRating with a fake MatRadioChange { value: newRating }
-      - then: component.movie.rating === newRating
-
-      Desired assertions:
-      1. movie.rating changes from initial to newRating
-    */
-  })
-
-})
+// ********************* datasets ************************* //
 
 /*
   Test fixtures and mocks to prepare (for implementors):
@@ -137,3 +158,29 @@ describe('MovieCtxtMenu (component + unit)', () => {
   - Fake Store object with selectSignal stub returning an Angular Signal of PlannedMovieSession[]
   - Fake MatDialogRef and MAT_DIALOG_DATA to inject the MovieCtxtMenuModel
 */
+
+// shared movie instance for tests
+function movieInstance(){
+    return new Movie(1, 'Alpha', Times.fromString('1h30'), MovieRatings.DEFAULT)
+} 
+
+function differentMovie(){
+    return new Movie(2, 'Beta', Times.fromString('2h00'), MovieRatings.HIGHEST)
+}
+
+// three planned sessions for the shared movie (different theaters/days/times)
+// plus another one for an unrelated movie
+const fridaySession = new PlannedMovieSession(102, movieInstance(), Theaters.CASINO, Days.FRIDAY, Times.fromString('14h30'))
+const wednesdaySession = new PlannedMovieSession(101, movieInstance(), Theaters.ESPACE_LAC, Days.WEDNESDAY, Times.fromString('09h00'))
+const sundaySession = new PlannedMovieSession(103, movieInstance(), Theaters.PARADISO, Days.SUNDAY, Times.fromString('20h00'))
+const otherMovieSession = new PlannedMovieSession(201, differentMovie(), Theaters.CASINO, Days.SATURDAY, Times.fromString('16h00'))
+const movieSessions = [fridaySession, otherMovieSession, wednesdaySession, sundaySession]
+
+const anchorMock = {
+  location: {
+    right: 200,
+    left: 10,
+    top: 20,
+    bottom: 400
+  }
+} as any

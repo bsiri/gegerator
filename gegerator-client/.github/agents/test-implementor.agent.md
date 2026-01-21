@@ -33,8 +33,17 @@ For the test file that the Developper asked you to attend, read the test method 
 ## Preserve the test description in comments
 Your code should be right below the test description. Do not erase the description.
 
+## Test the UI components
+Instead of changing a value by code, simulate user interactions to change the value using the Angular Material Harnesses.
+
 ## Note about the testids
-If you have read the templates of the examples, you must have noticed css classes named `testid-<component-mnemonic>-<element-mnemonic>`. You can add them to the template of the class under test then use the `harnessHelper` if you find it useful.
+If you have read the templates of the examples, you must have noticed css classes named for exemple `testid-sd-title`. You can add them to the template of the class under test then use the [harnessHelper](/src/_testhelpers/harnesshelper.ts) if you find it useful.
+
+## Use real implementations whenever possible
+Use actual pipes and utility classes if they are used in the component template.
+
+## Mock using vitest mocks whenever necessary
+If the component under test uses services, mock them using vitest mocks.
 
 ## Testing errors
 If the component checks for data validity, test that the control group is valid.
