@@ -62,6 +62,10 @@ export class MovieRating implements Comparable<MovieRating>{
     compare(this: MovieRating, other: MovieRating): number {
       return this.rank - other.rank
     }
+
+    toString(): string {
+      return this.key
+    }
 }
 
 export class MovieRatings{

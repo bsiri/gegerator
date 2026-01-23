@@ -69,8 +69,9 @@ describe('MovieCtxtMenu (component + unit)', () => {
     expect(buttons.length).toBe(MovieRatings.enumerate().length)
 
     // Assert the correct radio button is checked based on movie.rating
-    const checked = await radioHarnesses.getCheckedRadioButton()
-    expect(await checked?.getValue()).toBe(movieInstance().rating)
+    const initRadiobutton = await radioHarnesses.getCheckedRadioButton()
+    const initValue = await initRadiobutton?.getValue()
+    expect(initValue).toBe(movieInstance().rating.key)
   })
 
   it('should update movie.rating when a radio change event is triggered', async () => {
@@ -91,9 +92,6 @@ describe('MovieCtxtMenu (component + unit)', () => {
     await fixture.whenStable()
 
     const radioHarnesses = await helper.radiogroup("mr-ratings")
-    const initialChecked = await radioHarnesses.getCheckedValue()
-    expect(initialChecked).toBe(movieInstance().rating.name)
-
     const neverRadiobutton = (await radioHarnesses.getRadioButtons({label: MovieRatings.NEVER.description}))[0]
     await neverRadiobutton.check()
     await fixture.whenStable()
