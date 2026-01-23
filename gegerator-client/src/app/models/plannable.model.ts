@@ -49,6 +49,9 @@ export class EventRating implements Comparable<EventRating>{
     compare(this: EventRating, other: EventRating): number {
         return this.rank - other.rank
     }
+    toString(): string {
+      return this.key
+    }
   }
   
   export class EventRatings{
