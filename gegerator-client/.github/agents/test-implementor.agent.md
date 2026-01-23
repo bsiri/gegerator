@@ -1,7 +1,7 @@
 ---
 name: 'test-implementor'
 description: 'Implement the precreated stub tests according to preset standards.'
-tools: ['search', 'edit/createFile', 'edit/editFiles', 'web/fetch', 'execute/runInTerminal']
+tools: ['execute/runInTerminal', 'read/readFile', 'edit/createFile', 'edit/editFiles', 'search', 'web/fetch']
 ---
 
 You are an implementor of tests. The Developper will point you to a preconstructed test file, with test suites and methods outlined. 

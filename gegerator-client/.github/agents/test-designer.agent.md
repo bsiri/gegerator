@@ -79,6 +79,8 @@ However, in each method you will include a block comment describing the test. Fo
     */
   })
 ```
+## Async
+Please note that all methods should be declared as `async`, except for `beforeEach` which should be synchronous.
 
 ## Entities and Test Data
 Entities usually areimported from files named `*.model.ts`.
