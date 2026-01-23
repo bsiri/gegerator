@@ -1,0 +1,6 @@
+- facile: afficher le score d'une route calculée par le wizard (pour info)
+- facile: si une session card est grisée parce que le film est planifié ailleurs, indiquer sur sa card qu'il est planifié ailleurs
+- facile: supprimer de l'onglet résumé les onglets qu'on n'utilise jamais (faut-il d'ailleurs y mettre autre chose que la roadmap ?)
+- moyen: revoir et simplifier le code couleur associé au rating des movies et sessions
+- moyen: interface de saisie de session rapide : un champ texte, l'utilisateur blurb dedans, ensuite best effort pour construire un modèle
+- moyen: possibilité de travailler sur des routes alternatives
