@@ -21,6 +21,7 @@ export function harnessHelper(loader: HarnessLoader){
         return {selector: ".testid-"+testid}
     }
     return {
+        // ******** harness getters ********
         select: async (testid?: ClassTestId) => {
             if (testid === undefined){
                 return loader.getHarness(MatSelectHarness)
@@ -69,6 +70,8 @@ export function harnessHelper(loader: HarnessLoader){
             }
             return loader.getHarness(MatErrorHarness.with(selid(testid)))
         },
+
+        // ******** other utilities ********
         getDbgElement: async(arg: ClassTestId | ComponentHarness): Promise<DebugElement> => {
             if (typeof(arg) === 'string'){
                 // taping in the hidden api but hmm sometimes you have to
@@ -84,6 +87,46 @@ export function harnessHelper(loader: HarnessLoader){
                     By.css(eltclasses)
                 ) 
             }
-        }
+        },
+        /**
+         * Simulate selecting files on a native <input type="file"> element.
+         * - `inputOrTestId` may be a testid (string) matching the `.testid-...` class
+         *   or a native `HTMLInputElement`.
+         * - `files` is an array of `File` objects to set on the input.
+         */
+        simulateFileInput: async (inputOrTestId: ClassTestId | HTMLInputElement, files: File[]) => {
+            let inputEl: HTMLInputElement
+            if (typeof inputOrTestId === 'string'){
+                const dbg = (loader as any)._fixture.debugElement.query(By.css('.testid-'+inputOrTestId))
+                if (!dbg) throw new Error('element not found for testid: '+inputOrTestId)
+                inputEl = dbg.nativeElement as HTMLInputElement
+            } else {
+                inputEl = inputOrTestId
+            }
+
+            // Minimal FileList-like shape for test environments (built without object spread
+            // to avoid duplicate-property diagnostics in some editors/linters)
+            const fileListObj: any = {}
+            for (let i = 0; i < files.length; i++) {
+                fileListObj[i] = files[i]
+            }
+            fileListObj.length = files.length
+            fileListObj.item = (i: number) => fileListObj[i]
+            const fileList = fileListObj as unknown as FileList
+            Object.defineProperty(inputEl, 'files', { value: fileList })
+            inputEl.dispatchEvent(new Event('change', { bubbles: true }))
+            // allow the fixture to process the change if available
+            if ((loader as any)._fixture && (loader as any)._fixture.whenStable) {
+                await (loader as any)._fixture.whenStable()
+            }
+            return inputEl
+        },
+        /**
+         * Click a Material button identified by testid (convenience wrapper).
+         */
+        clickByTestId: async (testid: ClassTestId) => {
+            const btn = await loader.getHarness(MatButtonHarness.with(selid(testid)))
+            return btn.click()
+        },
     }
 }

@@ -147,23 +147,15 @@ describe('UploadDialog - Component', () => {
             const okBtn = await helper.button('uad-ok')
             expect(await okBtn.isDisabled()).toBe(true)
 
-            const inputDe = fixture.debugElement.query(By.css('input.testid-uad-file'))
-            const input = inputDe.nativeElement as HTMLInputElement
-
-            // create a File and set it on the input via DataTransfer
+            // simulate selecting a file via harness helper
             const f = mockFile
-            // create a FileList-like object (DataTransfer is not available in the test env)
-            const fileList = { 0: f, length: 1, item: (i: number) => f } as unknown as FileList
-            Object.defineProperty(input, 'files', { value: fileList })
-
-            // dispatch change event to trigger component.changeFile
-            input.dispatchEvent(new Event('change', { bubbles: true }))
+            await helper.simulateFileInput('uad-file', [f])
             fixture.detectChanges()
             await fixture.whenStable()
 
             expect(await okBtn.isDisabled()).toBe(false)
 
-            await okBtn.click()
+            await helper.clickByTestId('uad-ok')
             await fixture.whenStable()
 
             const viClose = dialogRef.close as any
