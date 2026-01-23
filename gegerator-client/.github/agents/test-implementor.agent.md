@@ -57,5 +57,7 @@ If a Component displays multiple sub components via a `for` loop in the template
 Particularly so if theses subcomponents are rendered consitionnaly according to filtering and ordering conditions.
 
 ## Note about the testids
-If you have read the templates of the examples, you must have noticed css classes named for exemple `testid-sd-title`. You can add them to the template of the class under test then use the [harnessHelper](/src/_testhelpers/harnesshelper.ts) if you find it useful.
-If the UI element to test is a Material component, apply the testid to the Material component.
+If you have read the templates of the examples, you must have noticed css classes named for exemple `testid-sd-title`. These are useful if you want to use the [harnessHelper](/src/_testhelpers/harnesshelper.ts), a helper for Material Harnesses.
+
+You are allowed to add testids to the templates you are testing if they are missing and you think they would help.
+Note: if the UI element is a Material component, put it on the Material component. Refer to the examples to see how they are used.
