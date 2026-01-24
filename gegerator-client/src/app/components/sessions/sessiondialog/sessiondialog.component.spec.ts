@@ -16,7 +16,7 @@ import { Days, Theaters } from 'src/app/models/referential.data';
 import { Times } from 'src/app/models/time.utils';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Movie } from 'src/app/models/movie.model';
-import { signal, Signal } from '@angular/core';
+import { signal } from '@angular/core';
 
 
 describe('SessionDialog - Template', async () => {

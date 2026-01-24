@@ -1,6 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { describe, it, beforeEach, vi } from 'vitest'
 
+import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { HarnessLoader } from '@angular/cdk/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { harnessHelper } from 'src/_testhelpers/harnesshelper'
+import { of, Subject } from 'rxjs'
+import { MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { Store } from '@ngrx/store'
 import { PlannedMovieSessionComponent } from './planned-movie-session.component'
 import { Movie, MovieRatings } from 'src/app/models/movie.model'
 import { EventRating, EventRatings } from 'src/app/models/plannable.model'
@@ -10,6 +17,8 @@ import { PlannedMovieSession } from 'src/app/models/session.model'
 import { Days, Theaters, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
 import * as factories from 'src/_testhelpers/testfactories'
+import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
+import { a } from 'node_modules/vitest/dist/chunks/suite.d.BJWk38HB'
 
 describe('PlannedMovieSessionComponent', () => {
   let fixture: ComponentFixture<PlannedMovieSessionComponent>
@@ -230,35 +239,102 @@ describe('PlannedMovieSessionComponent', () => {
     */
   })
 
+  // *************** Test configuration ***************
 
-  // ---------- Test factories (real model instances) ----------
-
-  let _nextId = 100
-
-  // ---- default instances
-
-  function defaultMovie(): Movie{
-    return  new Movie(1, 'Default Movie', Durations.fromString('1h30'), MovieRatings.HIGH)
+  // Setup TestBed helper function
+  type SetupResult = {
+    fixture: ComponentFixture<PlannedMovieSessionComponent>
+    component: PlannedMovieSessionComponent
+    mockStore: any
+    mockDialogRef: any
+    loader: HarnessLoader
+    helper: ReturnType<typeof harnessHelper>
   }
 
-  function defaultSession(): PlannedMovieSession{
-    const m = defaultMovie()
-    return new PlannedMovieSession(1, m, Theaters.ESPACE_LAC, Days.WEDNESDAY, Times.fromString('10h00'), EventRatings.MANDATORY)
+  /**
+   * Configures the test bed for creating the PlannedMovieSessionComponent. 
+   * Must provide the session and the roadmap inputs.
+   * If the test implies to interact with a dialog, a mock MatDialogRef can be provided
+   * (see dialog mock factories below).
+   * 
+   * @param session 
+   * @param roadmap 
+   * @param dialogRef 
+   * @returns 
+   */
+  function setupTestBed(session: PlannedMovieSession, roadmap: FestivalRoadmap, dialogRef?: any): SetupResult {
+    TestBed.resetTestingModule()
+
+    const mockDialogRef = dialogRef ? dialogRef : { afterClosed: () => of(null), componentInstance: {} } as MatDialogRef<any>
+    const mockStore = { dispatch: vi.fn() }
+
+    TestBed.configureTestingModule({
+      imports: [PlannedMovieSessionComponent],
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRef },
+        { provide: Store, useValue: mockStore }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+
+    const fixture = TestBed.createComponent(PlannedMovieSessionComponent)
+    const component = fixture.componentInstance
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(fixture)
+    const helper = harnessHelper(loader)
+
+    return { fixture, component, mockStore, mockDialogRef, loader, helper }
   }
 
-  function defaultRoadmap(): FestivalRoadmap{
-    const movie2 = movieFactory('Movie 2', MovieRatings.DEFAULT)
-    const movie3 = movieFactory('Movie 3', MovieRatings.DEFAULT)
-
-    const session = defaultSession()
-    const session2 = sessionFactory(movie2, EventRatings.DEFAULT)
-    const session3 = sessionFactory(movie3, EventRatings.MANDATORY)
-    const session4 = sessionFactory(movie3, EventRatings.NEVER)
-
-    return roadmapFactory([session, session2, session3, session4])
+  /**
+   * Mocks the dialog ref for the update session dialog. If a session is provided,
+   * the afterClosed observable can emit an updated session; otherwise it emits undefined.
+   * @param session 
+   * @returns 
+   */
+  function mockUpdateSessionDialogRef(session: PlannedMovieSession | undefined){
+    const closed$ = of(session)
+    // emit the provided session immediately (or undefined)
+    const dialogRef = {
+      afterClosed: () => closed$,
+    }
+    return { dialogRef, closed$ }
   }
 
-  // ---- factories
 
+  /**
+   * Mocks the dialog ref for the rating update dialog.
+   * The afterClosed observable emits the provided newRating.
+   * 
+   * @param newRating 
+   * @returns 
+   */
+  function makeRatingDialogRef(newRating: EventRating){
+    const closed$ = of(null)
+    const dialogRef = {
+      afterClosed: () => closed$,
+      componentInstance: { eventRating: newRating }
+    }
+    return { dialogRef, closed$ }
+  }
 
+  
+  /**
+   * Mocks the dialog ref for the confirm-then-delete dialog.
+   * The afterClosed observable emits the provided answer.
+   * 
+   * @param answer 
+   * @returns 
+   */
+  function makeConfirmDialogRef(answer: ConfirmOutput){
+    const closed$ = of(answer)
+    const dialogRef = {
+      afterClosed: () => closed$,
+    }
+    return { dialogRef, closed$ }
+  }
 })
+
