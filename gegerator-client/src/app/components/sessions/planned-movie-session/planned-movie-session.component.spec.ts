@@ -119,15 +119,15 @@ describe('PlannedMovieSessionComponent', () => {
 
   it('borderRendering returns "outstanding" when session is in roadmap and author is MACHINE', async () => {
     /*
-      Goal: verify outstanding precedence in content rendering.
+      Goal: verify outstanding precedence in border rendering.
 
       Synopsis:
       - given: roadmap.isInRoadmap(session) -> true and roadmap.author == RoadmapAuthor.MACHINE
-      - when: reading `contentRendering`
+      - when: reading `borderRendering`
       - then: value is "outstanding"
 
       Desired assertions:
-      1. `contentRendering === 'outstanding'`
+      1. `borderRendering === 'outstanding'`
     */
   })
 
@@ -289,6 +289,7 @@ describe('PlannedMovieSessionComponent', () => {
     fixture: ComponentFixture<PlannedMovieSessionComponent>
     component: PlannedMovieSessionComponent
     mockStore: any
+    mockMatDialog: any
     mockDialogRef: any
     loader: HarnessLoader
     helper: ReturnType<typeof harnessHelper>
@@ -297,24 +298,25 @@ describe('PlannedMovieSessionComponent', () => {
   /**
    * Configures the test bed for creating the PlannedMovieSessionComponent. 
    * Must provide the session and the roadmap inputs.
-   * If the test implies to interact with a dialog, a mock MatDialogRef can be provided
+   * If the test implies to interact with a dialog, a mock MatDialog can be provided
    * (see dialog mock factories below).
    * 
    * @param session 
    * @param roadmap 
-   * @param dialogRef 
+   * @param dialogMock 
    * @returns 
    */
-  function setupTestBed(session: PlannedMovieSession, roadmap: FestivalRoadmap, dialogRef?: any): Setup {
+  function setupTestBed(session: PlannedMovieSession, roadmap: FestivalRoadmap, dialogMock?: any): Setup {
     TestBed.resetTestingModule()
 
-    const mockDialogRef = dialogRef ? dialogRef : { afterClosed: () => of(null), componentInstance: {} } as MatDialogRef<any>
+    const mockDialogRef = dialogMock ? dialogMock : { afterClosed: () => of(null), componentInstance: {} } as MatDialogRef<any>
     const mockStore = { dispatch: vi.fn() }
+    const mockMatDialog = { open: vi.fn(() => mockDialogRef) }
 
     TestBed.configureTestingModule({
       imports: [PlannedMovieSessionComponent],
       providers: [
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MatDialog, useValue: mockMatDialog },
         { provide: Store, useValue: mockStore }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -329,55 +331,58 @@ describe('PlannedMovieSessionComponent', () => {
     const loader: HarnessLoader = TestbedHarnessEnvironment.loader(fixture)
     const helper = harnessHelper(loader)
 
-    return { fixture, component, mockStore, mockDialogRef, loader, helper }
+    return { fixture, component, mockStore, mockMatDialog, mockDialogRef, loader, helper }
   }
 
   /**
-   * Mocks the dialog ref for the update session dialog. If a session is provided,
-   * the afterClosed observable can emit an updated session; otherwise it emits undefined.
-   * @param session 
-   * @returns 
+   * Creates a mock dialog ref for the session update dialog.
+   * If `session` is provided the `afterClosed()` observable emits it immediately,
+   * otherwise it emits `undefined`.
    */
-  function mockUpdateSessionDialogRef(session: PlannedMovieSession | undefined){
+  function mockUpdateSessionDialog(session: PlannedMovieSession | undefined){
     const closed$ = of(session)
-    // emit the provided session immediately (or undefined)
     const dialogRef = {
       afterClosed: () => closed$,
+      componentInstance: {}
     }
-    return { dialogRef, closed$ }
+      const dialogMock = { open: vi.fn(() => dialogRef) }
+      return dialogMock
   }
 
 
   /**
-   * Mocks the dialog ref for the rating update dialog.
+   * Mocks the dialog for the rating update dialog.
    * The afterClosed observable emits the provided newRating.
    * 
    * @param newRating 
    * @returns 
    */
-  function makeRatingDialogRef(newRating: EventRating){
+  function mockRatingDialog(newRating: EventRating){
     const closed$ = of(null)
     const dialogRef = {
       afterClosed: () => closed$,
       componentInstance: { eventRating: newRating }
     }
-    return { dialogRef, closed$ }
+      const dialogMock = { open: vi.fn(() => dialogRef) }
+      return dialogMock
   }
 
   
   /**
-   * Mocks the dialog ref for the confirm-then-delete dialog.
+   * Mocks the dialog for the confirm-then-delete dialog.
    * The afterClosed observable emits the provided answer.
    * 
    * @param answer 
    * @returns 
    */
-  function makeConfirmDialogRef(answer: ConfirmOutput){
+  function mockConfirmDialog(answer: ConfirmOutput){
     const closed$ = of(answer)
     const dialogRef = {
       afterClosed: () => closed$,
+      componentInstance: {}
     }
-    return { dialogRef, closed$ }
+      const dialogMock = { open: vi.fn(() => dialogRef) }
+      return dialogMock
   }
 
   // ********* other test data ***************
