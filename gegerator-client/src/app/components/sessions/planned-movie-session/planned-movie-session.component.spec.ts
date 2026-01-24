@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { describe, it, beforeEach, vi } from 'vitest'
+import { describe, it, beforeEach, vi, expect } from 'vitest'
 
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { HarnessLoader } from '@angular/cdk/testing'
@@ -49,6 +49,47 @@ describe('PlannedMovieSessionComponent', () => {
       3. the time element contains the session start and end times
       4. no icons are shown
     */
+
+    // Arrange: build a session using test factories, overriding only the values that matter
+    const movie = factories.defaultMovie({ rating: MovieRatings.DEFAULT }) 
+    const start = Times.fromString("10h00")
+    const end = Times.add(start, movie.duration)
+    const session = factories.defaultPlannedMovieSession({
+      movie: movie,
+      startTime: start,
+      rating: EventRatings.DEFAULT
+    })
+    const roadmap = emptyRoadmap()
+
+    // Act: create component
+    const { fixture, component } = setupTestBed(session, roadmap)
+
+    // Assert: component exists
+    expect(component).toBeTruthy()
+
+    // Title element contains movie title
+    const titleEl: HTMLElement | null = fixture.nativeElement.querySelector('.swimlane-item-title')
+    expect(titleEl).not.toBeNull()
+    expect(titleEl!.textContent!.trim()).toBe(movie.title)
+
+    // Time element contains start - end interval
+    const expectedInterval = Times.toStrInterval(start, end)
+
+    const timeEl: HTMLElement | null = fixture.nativeElement.querySelector('.swimlane-item-time')
+    expect(timeEl).not.toBeNull()
+    expect(timeEl!.textContent).toContain(expectedInterval)
+
+    // Default ratings -> normal renderings
+    expect(component.contentRendering).toBe('normal')
+    expect(component.borderRendering).toBe('normal')
+
+    // No icons should be displayed for default ratings
+    const icons: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('.swimlane-item-icon')
+    expect(icons.length).toBe(0)
+
+    // "planned elsewhere" indicator must not be present
+    const eventLink: HTMLElement | null = fixture.nativeElement.querySelector('app-event-link')
+    expect(eventLink).toBeNull()
   })
 
   it('should display the rating icons', async () => {
@@ -64,6 +105,20 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. the icons for movie rating and session rating are present
     */
+
+    // Arrange: build a session using test factories, overriding only the values that matter
+    const movie = factories.defaultMovie({ rating: MovieRatings.HIGH })
+    const session = factories.defaultPlannedMovieSession({ movie: movie, rating: EventRatings.MANDATORY })
+    const roadmap = emptyRoadmap()
+
+    // Act: create component
+    const { fixture } = setupTestBed(session, roadmap)
+
+    // Assert: both rating components are present
+    const movieRatingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-movie-ratings')
+    const sessionRatingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-session-ratings')
+    expect(movieRatingsEl).not.toBeNull()
+    expect(sessionRatingsEl).not.toBeNull()
   })
 
   it('should display the "planned elsewhere" indicator if the movie is planned elsewhere', async () => {
@@ -79,6 +134,22 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. the <app-event-link> indicator is present
     */
+
+    // Arrange: build a session using test factories, overriding only the values that matter
+    const sameMovie = factories.randomMovie()
+    const session = factories.randomPlannedMovieSession({ movie: sameMovie})
+    const otherSession = factories.randomPlannedMovieSession({ movie: sameMovie})
+
+    const roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [otherSession], [])
+
+    // Act: create component and force change detection
+    const { fixture, component } = setupTestBed(session, roadmap)
+    fixture.detectChanges()
+
+    // Assert internal state and DOM presence
+    expect(component._isPlannedElsewhere()).toBe(true)
+    const eventLink: HTMLElement | null = fixture.nativeElement.querySelector('app-event-link')
+    expect(eventLink).not.toBeNull()
   })
 
   // -------- computed css classes --------
