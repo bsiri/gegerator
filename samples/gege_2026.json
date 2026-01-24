@@ -1,0 +1,948 @@
+{
+  "wizardConfiguration" : {
+    "espaceLacRating" : "HIGHEST",
+    "casinoRating" : "HIGH",
+    "paradisoRating" : "DEFAULT",
+    "mclRating" : "DEFAULT",
+    "movieVsTheaterBias" : 0.5
+  },
+  "movies" : [ {
+    "id" : 101,
+    "title" : "WELCOME HOME BABY",
+    "duration" : "PT1H55M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 102,
+    "title" : "RED STORM",
+    "duration" : "PT2H3M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 103,
+    "title" : "HALLOWEEN",
+    "duration" : "PT1H49M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 104,
+    "title" : "L'HOMME INVISIBLE",
+    "duration" : "PT1H11M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 105,
+    "title" : "SATAN'S SLAVES",
+    "duration" : "PT1H47M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 106,
+    "title" : "PLANÈTES",
+    "duration" : "PT1H15M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 107,
+    "title" : "DANS LA BRUME",
+    "duration" : "PT1H29M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 108,
+    "title" : "NOSFERATU, FANTÔME DE LA NUIT",
+    "duration" : "PT1H47M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 109,
+    "title" : "LE VOYAGE DE CHIHIRO",
+    "duration" : "PT2H5M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 110,
+    "title" : "WATCHMEN : LES GARDIENS",
+    "duration" : "PT2H42M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 111,
+    "title" : "NERVURES",
+    "duration" : "PT1H36M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 112,
+    "title" : "THE INVITATION",
+    "duration" : "PT1H40M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 113,
+    "title" : "GRAVE TORTURE",
+    "duration" : "PT1H57M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 114,
+    "title" : "DON'T LEAVE THE KIDS ALONE",
+    "duration" : "PT1H36M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 115,
+    "title" : "DONNIE DARKO - DIRECTOR'S CUT",
+    "duration" : "PT2H14M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 116,
+    "title" : "MODUS ANOMALI : LE RÉVEIL DE LA PROIE",
+    "duration" : "PT1H28M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 117,
+    "title" : "I LIVE HERE NOW",
+    "duration" : "PT1H31M",
+    "rating" : "HIGH"
+  }, {
+    "id" : 118,
+    "title" : "MOTHER'S BABY",
+    "duration" : "PT1H48M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 119,
+    "title" : "OUVRE LES YEUX",
+    "duration" : "PT1H59M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 120,
+    "title" : "LA FAMILLE ADDAMS",
+    "duration" : "PT1H39M",
+    "rating" : "NEVER"
+  }, {
+    "id" : 121,
+    "title" : "THE ROOM",
+    "duration" : "PT1H38M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 122,
+    "title" : "PHANTOM OF THE PARADISE",
+    "duration" : "PT1H31M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 123,
+    "title" : "THE WEED EATERS",
+    "duration" : "PT1H20M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 124,
+    "title" : "IMPETIGORE",
+    "duration" : "PT1H47M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 125,
+    "title" : "LE MASQUE DU DÉMON",
+    "duration" : "PT1H25M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 126,
+    "title" : "THE DESCENT",
+    "duration" : "PT1H39M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 127,
+    "title" : "VIEJA LOCA",
+    "duration" : "PT1H34M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 128,
+    "title" : "THE THING WITH FEATHERS",
+    "duration" : "PT1H38M",
+    "rating" : "HIGH"
+  }, {
+    "id" : 129,
+    "title" : "SILENCE",
+    "duration" : "PT56M",
+    "rating" : "HIGH"
+  }, {
+    "id" : 130,
+    "title" : "JUNK WORLD",
+    "duration" : "PT1H45M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 131,
+    "title" : "CENTURION",
+    "duration" : "PT1H37M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 132,
+    "title" : "COMPÉTITION COURTS MÉTRAGES",
+    "duration" : "PT1H47M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 133,
+    "title" : "L'ODYSSÉE DE CÉLESTE",
+    "duration" : "PT1H26M",
+    "rating" : "NEVER"
+  }, {
+    "id" : 134,
+    "title" : "REDUX REDUX",
+    "duration" : "PT1H47M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 135,
+    "title" : "ALTER EGO",
+    "duration" : "PT1H44M",
+    "rating" : "NEVER"
+  }, {
+    "id" : 136,
+    "title" : "NIGHT OF THE REAPER",
+    "duration" : "PT1H33M",
+    "rating" : "HIGH"
+  }, {
+    "id" : 137,
+    "title" : "DEAD BY DAWN",
+    "duration" : "PT1H27M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 138,
+    "title" : "CADET",
+    "duration" : "PT2H7M",
+    "rating" : "HIGH"
+  }, {
+    "id" : 139,
+    "title" : "COLD STORAGE",
+    "duration" : "PT1H38M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 140,
+    "title" : "RETOUR À SILENT HILL",
+    "duration" : "PT1H45M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 141,
+    "title" : "DOLLY",
+    "duration" : "PT1H22M",
+    "rating" : "HIGHEST"
+  }, {
+    "id" : 142,
+    "title" : "FLUSH",
+    "duration" : "PT1H10M",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 143,
+    "title" : "HOLD THE FORT",
+    "duration" : "PT1H14M",
+    "rating" : "HIGH"
+  } ],
+  "sessions" : [ {
+    "id" : 101,
+    "movieId" : 101,
+    "theater" : "ESPACE_LAC",
+    "day" : "WEDNESDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 102,
+    "movieId" : 102,
+    "theater" : "CASINO",
+    "day" : "WEDNESDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 103,
+    "movieId" : 103,
+    "theater" : "PARADISO",
+    "day" : "WEDNESDAY",
+    "startTime" : "11:00:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 104,
+    "movieId" : 104,
+    "theater" : "MCL",
+    "day" : "WEDNESDAY",
+    "startTime" : "11:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 105,
+    "movieId" : 105,
+    "theater" : "MCL",
+    "day" : "WEDNESDAY",
+    "startTime" : "14:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 106,
+    "movieId" : 106,
+    "theater" : "ESPACE_LAC",
+    "day" : "WEDNESDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 107,
+    "movieId" : 107,
+    "theater" : "PARADISO",
+    "day" : "WEDNESDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 108,
+    "movieId" : 108,
+    "theater" : "CASINO",
+    "day" : "WEDNESDAY",
+    "startTime" : "15:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 109,
+    "movieId" : 109,
+    "theater" : "MCL",
+    "day" : "WEDNESDAY",
+    "startTime" : "16:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 110,
+    "movieId" : 110,
+    "theater" : "PARADISO",
+    "day" : "WEDNESDAY",
+    "startTime" : "16:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 111,
+    "movieId" : 111,
+    "theater" : "ESPACE_LAC",
+    "day" : "WEDNESDAY",
+    "startTime" : "17:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 112,
+    "movieId" : 112,
+    "theater" : "CASINO",
+    "day" : "WEDNESDAY",
+    "startTime" : "17:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 113,
+    "movieId" : 113,
+    "theater" : "MCL",
+    "day" : "WEDNESDAY",
+    "startTime" : "18:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 114,
+    "movieId" : 114,
+    "theater" : "ESPACE_LAC",
+    "day" : "WEDNESDAY",
+    "startTime" : "19:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 115,
+    "movieId" : 101,
+    "theater" : "CASINO",
+    "day" : "WEDNESDAY",
+    "startTime" : "19:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 116,
+    "movieId" : 115,
+    "theater" : "PARADISO",
+    "day" : "WEDNESDAY",
+    "startTime" : "19:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 117,
+    "movieId" : 116,
+    "theater" : "MCL",
+    "day" : "WEDNESDAY",
+    "startTime" : "21:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 118,
+    "movieId" : 117,
+    "theater" : "ESPACE_LAC",
+    "day" : "WEDNESDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 119,
+    "movieId" : 111,
+    "theater" : "CASINO",
+    "day" : "WEDNESDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 120,
+    "movieId" : 114,
+    "theater" : "PARADISO",
+    "day" : "WEDNESDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 121,
+    "movieId" : 118,
+    "theater" : "ESPACE_LAC",
+    "day" : "THURSDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 122,
+    "movieId" : 119,
+    "theater" : "PARADISO",
+    "day" : "THURSDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 123,
+    "movieId" : 120,
+    "theater" : "CASINO",
+    "day" : "THURSDAY",
+    "startTime" : "11:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 124,
+    "movieId" : 121,
+    "theater" : "MCL",
+    "day" : "THURSDAY",
+    "startTime" : "11:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 125,
+    "movieId" : 122,
+    "theater" : "PARADISO",
+    "day" : "THURSDAY",
+    "startTime" : "14:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 126,
+    "movieId" : 123,
+    "theater" : "ESPACE_LAC",
+    "day" : "THURSDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 127,
+    "movieId" : 118,
+    "theater" : "CASINO",
+    "day" : "THURSDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 128,
+    "movieId" : 124,
+    "theater" : "MCL",
+    "day" : "THURSDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 129,
+    "movieId" : 125,
+    "theater" : "PARADISO",
+    "day" : "THURSDAY",
+    "startTime" : "16:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 130,
+    "movieId" : 126,
+    "theater" : "ESPACE_LAC",
+    "day" : "THURSDAY",
+    "startTime" : "17:00:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 131,
+    "movieId" : 127,
+    "theater" : "CASINO",
+    "day" : "THURSDAY",
+    "startTime" : "17:00:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 132,
+    "movieId" : 117,
+    "theater" : "MCL",
+    "day" : "THURSDAY",
+    "startTime" : "17:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 133,
+    "movieId" : 106,
+    "theater" : "PARADISO",
+    "day" : "THURSDAY",
+    "startTime" : "18:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 134,
+    "movieId" : 128,
+    "theater" : "ESPACE_LAC",
+    "day" : "THURSDAY",
+    "startTime" : "19:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 135,
+    "movieId" : 111,
+    "theater" : "MCL",
+    "day" : "THURSDAY",
+    "startTime" : "19:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 136,
+    "movieId" : 101,
+    "theater" : "PARADISO",
+    "day" : "THURSDAY",
+    "startTime" : "19:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 137,
+    "movieId" : 114,
+    "theater" : "CASINO",
+    "day" : "THURSDAY",
+    "startTime" : "20:00:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 138,
+    "movieId" : 129,
+    "theater" : "ESPACE_LAC",
+    "day" : "THURSDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 139,
+    "movieId" : 123,
+    "theater" : "CASINO",
+    "day" : "THURSDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 140,
+    "movieId" : 128,
+    "theater" : "MCL",
+    "day" : "THURSDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 141,
+    "movieId" : 127,
+    "theater" : "PARADISO",
+    "day" : "THURSDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 142,
+    "movieId" : 128,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "09:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 143,
+    "movieId" : 127,
+    "theater" : "MCL",
+    "day" : "FRIDAY",
+    "startTime" : "09:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 144,
+    "movieId" : 129,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "09:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 145,
+    "movieId" : 130,
+    "theater" : "ESPACE_LAC",
+    "day" : "FRIDAY",
+    "startTime" : "11:00:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 146,
+    "movieId" : 131,
+    "theater" : "MCL",
+    "day" : "FRIDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 147,
+    "movieId" : 106,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 148,
+    "movieId" : 111,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "11:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 149,
+    "movieId" : 117,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "14:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 150,
+    "movieId" : 132,
+    "theater" : "ESPACE_LAC",
+    "day" : "FRIDAY",
+    "startTime" : "14:30:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 151,
+    "movieId" : 133,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 152,
+    "movieId" : 123,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "16:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 153,
+    "movieId" : 127,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "16:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 154,
+    "movieId" : 134,
+    "theater" : "ESPACE_LAC",
+    "day" : "FRIDAY",
+    "startTime" : "17:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 155,
+    "movieId" : 118,
+    "theater" : "MCL",
+    "day" : "FRIDAY",
+    "startTime" : "17:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 156,
+    "movieId" : 132,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "18:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 157,
+    "movieId" : 129,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "18:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 158,
+    "movieId" : 135,
+    "theater" : "ESPACE_LAC",
+    "day" : "FRIDAY",
+    "startTime" : "20:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 159,
+    "movieId" : 130,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "20:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 160,
+    "movieId" : 123,
+    "theater" : "MCL",
+    "day" : "FRIDAY",
+    "startTime" : "20:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 161,
+    "movieId" : 114,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "20:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 162,
+    "movieId" : 134,
+    "theater" : "CASINO",
+    "day" : "FRIDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 163,
+    "movieId" : 101,
+    "theater" : "MCL",
+    "day" : "FRIDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 164,
+    "movieId" : 135,
+    "theater" : "PARADISO",
+    "day" : "FRIDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 165,
+    "movieId" : 136,
+    "theater" : "ESPACE_LAC",
+    "day" : "FRIDAY",
+    "startTime" : "22:30:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 166,
+    "movieId" : 137,
+    "theater" : "ESPACE_LAC",
+    "day" : "FRIDAY",
+    "startTime" : "23:59:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 167,
+    "movieId" : 134,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "09:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 168,
+    "movieId" : 130,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "09:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 169,
+    "movieId" : 138,
+    "theater" : "ESPACE_LAC",
+    "day" : "SATURDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 170,
+    "movieId" : 118,
+    "theater" : "MCL",
+    "day" : "SATURDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 171,
+    "movieId" : 132,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 172,
+    "movieId" : 130,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "11:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 173,
+    "movieId" : 138,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "14:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 174,
+    "movieId" : 128,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "14:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 175,
+    "movieId" : 139,
+    "theater" : "ESPACE_LAC",
+    "day" : "SATURDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 176,
+    "movieId" : 138,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "16:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 177,
+    "movieId" : 135,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "16:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 178,
+    "movieId" : 134,
+    "theater" : "MCL",
+    "day" : "SATURDAY",
+    "startTime" : "17:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 179,
+    "movieId" : 129,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "18:30:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 180,
+    "movieId" : 117,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "18:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 181,
+    "movieId" : 140,
+    "theater" : "ESPACE_LAC",
+    "day" : "SATURDAY",
+    "startTime" : "19:00:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 182,
+    "movieId" : 139,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "20:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 183,
+    "movieId" : 136,
+    "theater" : "MCL",
+    "day" : "SATURDAY",
+    "startTime" : "20:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 184,
+    "movieId" : 137,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "20:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 185,
+    "movieId" : 126,
+    "theater" : "MCL",
+    "day" : "SATURDAY",
+    "startTime" : "22:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 186,
+    "movieId" : 141,
+    "theater" : "ESPACE_LAC",
+    "day" : "SATURDAY",
+    "startTime" : "22:30:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 187,
+    "movieId" : 137,
+    "theater" : "CASINO",
+    "day" : "SATURDAY",
+    "startTime" : "22:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 188,
+    "movieId" : 136,
+    "theater" : "PARADISO",
+    "day" : "SATURDAY",
+    "startTime" : "22:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 189,
+    "movieId" : 123,
+    "theater" : "MCL",
+    "day" : "SUNDAY",
+    "startTime" : "09:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 190,
+    "movieId" : 128,
+    "theater" : "PARADISO",
+    "day" : "SUNDAY",
+    "startTime" : "09:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 191,
+    "movieId" : 143,
+    "theater" : "CASINO",
+    "day" : "SUNDAY",
+    "startTime" : "09:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 192,
+    "movieId" : 101,
+    "theater" : "ESPACE_LAC",
+    "day" : "SUNDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 193,
+    "movieId" : 138,
+    "theater" : "CASINO",
+    "day" : "SUNDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 194,
+    "movieId" : 134,
+    "theater" : "MCL",
+    "day" : "SUNDAY",
+    "startTime" : "11:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 195,
+    "movieId" : 129,
+    "theater" : "PARADISO",
+    "day" : "SUNDAY",
+    "startTime" : "11:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 196,
+    "movieId" : 118,
+    "theater" : "MCL",
+    "day" : "SUNDAY",
+    "startTime" : "14:00:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 197,
+    "movieId" : 130,
+    "theater" : "PARADISO",
+    "day" : "SUNDAY",
+    "startTime" : "14:00:00",
+    "rating" : "MANDATORY"
+  }, {
+    "id" : 198,
+    "movieId" : 141,
+    "theater" : "ESPACE_LAC",
+    "day" : "SUNDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 199,
+    "movieId" : 139,
+    "theater" : "CASINO",
+    "day" : "SUNDAY",
+    "startTime" : "14:30:00",
+    "rating" : "DEFAULT"
+  }, {
+    "id" : 200,
+    "movieId" : 114,
+    "theater" : "ESPACE_LAC",
+    "day" : "SUNDAY",
+    "startTime" : "16:30:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 201,
+    "movieId" : 111,
+    "theater" : "CASINO",
+    "day" : "SUNDAY",
+    "startTime" : "16:30:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 202,
+    "movieId" : 142,
+    "theater" : "MCL",
+    "day" : "SUNDAY",
+    "startTime" : "16:30:00",
+    "rating" : "NEVER"
+  }, {
+    "id" : 203,
+    "movieId" : 132,
+    "theater" : "PARADISO",
+    "day" : "SUNDAY",
+    "startTime" : "16:30:00",
+    "rating" : "NEVER"
+  } ],
+  "activities" : [ ]
+}
