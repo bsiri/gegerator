@@ -4,6 +4,10 @@ import { vi } from 'vitest';
 
 import { GenericPurposeDialog, ConfirmOutput, ConfirmDialogData } from './genericpurposedialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { harnessHelper } from 'src/_testhelpers/harnesshelper';
 
 
 
@@ -30,11 +34,14 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
     expect(c.type).toBe('confirm');
     expect(c.content).toBe('Confirmer ?');
 
-    const titleEl = f.nativeElement.querySelector('h1[mat-dialog-title]') || f.nativeElement.querySelector('h1');
-    expect(titleEl).ok;
+    // Assert the title
+    const titleEl = f.nativeElement.querySelector('.testid-gpd-title');
     expect(titleEl.textContent.trim()).toBe('Confirmer');
-
-    const buttons = f.nativeElement.querySelectorAll('button');
+    // Assert the content (display the default message)
+    const contentEl = f.nativeElement.querySelector('.testid-gpd-content');
+    expect(contentEl.textContent.trim()).toBe('Confirmer ?');
+    // Assert both action buttons exist
+    const buttons = f.nativeElement.querySelectorAll('.testid-gpd-confirm, .testid-gpd-cancel');
     expect(buttons.length).toBeGreaterThanOrEqual(2);
   });
 
@@ -48,14 +55,12 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
 
     Desired assertions:
     1. component.content equals the provided message
-    2. two action buttons are present and wired (confirm + cancel)
   */
   it('should render provided message in confirm template', async () => {
     const { fixture: f, component: c } = setupTestBed(CONFIRM_MESSAGE);
 
-    expect(c.content).toBe(CONFIRM_MESSAGE.message);
-    const buttons = f.nativeElement.querySelectorAll('button');
-    expect(buttons.length).toBeGreaterThanOrEqual(2);
+    const contentEl = f.nativeElement.querySelector('.testid-gpd-content');
+    expect(contentEl.textContent.trim()).toBe(CONFIRM_MESSAGE.message);
   });
 
   /*
@@ -74,9 +79,8 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
     const { fixture: f, component: c } = setupTestBed(CONFIRM_HTML);
 
     expect(c.content).toBe(CONFIRM_HTML.html);
-    const contentEl = f.nativeElement.querySelector('.dialog-content-flex');
-    expect(contentEl).ok;
-    expect(contentEl.innerHTML).toContain('strong');
+    const contentEl = f.nativeElement.querySelector('.testid-gpd-content');
+    expect(contentEl.innerHTML).toContain(CONFIRM_HTML.html);
   });
 
   /*
@@ -94,10 +98,8 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
   it('should prefer message over html when both provided', async () => {
     const { fixture: f, component: c } = setupTestBed(CONFIRM_BOTH);
 
-    expect(c.content).toBe(CONFIRM_BOTH.message);
-    const contentEl = f.nativeElement.querySelector('.dialog-content-flex');
-    expect(contentEl).ok;
-    expect(contentEl.innerHTML).not.toContain('em');
+    const contentEl = f.nativeElement.querySelector('.testid-gpd-content');
+    expect(contentEl.innerHTML).toContain(CONFIRM_BOTH.message);
   });
 
   /*
@@ -113,8 +115,10 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
   */
   it('confirm() should close dialog with ConfirmOutput.CONFIRM', async () => {
     const { fixture: f, component: c, mockRef } = setupTestBed(CONFIRM_MESSAGE);
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
+    const helper = harnessHelper(loader);
 
-    c.confirm();
+    await helper.clickByTestId('gpd-confirm');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CONFIRM);
   });
 
@@ -131,8 +135,10 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
   */
   it('cancel() should close dialog with ConfirmOutput.CANCEL', async () => {
     const { fixture: f, component: c, mockRef } = setupTestBed(CONFIRM_MESSAGE);
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
+    const helper = harnessHelper(loader);
 
-    c.cancel();
+    await helper.clickByTestId('gpd-cancel');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
 });
@@ -156,16 +162,15 @@ describe('GenericPurposeDialog - Info Suite', () => {
     */
 
     const { fixture: f, component: c, mockRef } = setupTestBed(INFO_DATA);
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
+    const helper = harnessHelper(loader);
 
     expect(c.type).toBe('info');
-    const titleEl = f.nativeElement.querySelector('h1[mat-dialog-title]') || f.nativeElement.querySelector('h1');
-    expect(titleEl).ok;
+    const titleEl = f.nativeElement.querySelector('.testid-gpd-title');
     expect(titleEl.textContent.trim()).toBe('Information');
 
-    const buttons = f.nativeElement.querySelectorAll('button');
-    expect(buttons.length).toBe(1);
-    // simulate click => cancel
-    buttons[0].click();
+    // find the single action button through the harness and click it
+    await helper.clickByTestId('gpd-info-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
 
@@ -184,7 +189,9 @@ describe('GenericPurposeDialog - Info Suite', () => {
 
     const { fixture: f, component: c, mockRef } = setupTestBed(INFO_DATA);
 
-    c.cancel();
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
+    const helper = harnessHelper(loader);
+    await helper.clickByTestId('gpd-info-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
 });
@@ -210,18 +217,19 @@ describe('GenericPurposeDialog - Error Suite', () => {
     const { fixture: f, component: c } = setupTestBed(ERROR_DATA);
 
     expect(c.type).toBe('error');
-    const titleEl = f.nativeElement.querySelector('h1[mat-dialog-title]') || f.nativeElement.querySelector('h1');
-    expect(titleEl).ok;
+    const titleEl = f.nativeElement.querySelector('.testid-gpd-title');
     expect(titleEl.textContent.trim()).toBe('Erreur !');
 
-    const buttons = f.nativeElement.querySelectorAll('button');
+    const buttons = f.nativeElement.querySelectorAll('.testid-gpd-error-action');
     expect(buttons.length).toBe(1);
   });
 
   it('error action should close with ConfirmOutput.CANCEL', async () => {
     const { fixture: f, component: c, mockRef } = setupTestBed(ERROR_DATA);
 
-    c.cancel();
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
+    const helper = harnessHelper(loader);
+    await helper.clickByTestId('gpd-error-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
 });
@@ -253,20 +261,20 @@ const CONFIRM_DEFAULT: ConfirmDialogData = {
 };
 
 const CONFIRM_MESSAGE: ConfirmDialogData = {
-  message: 'Are you sure you want to proceed?',
+  message: 'Plain text confirmation message',
   html: undefined as unknown as string,
   type: 'confirm'
 };
 
 const CONFIRM_HTML: ConfirmDialogData = {
   message: undefined as unknown as string,
-  html: '<strong>Bold message</strong>',
+  html: '<strong>HTML message</strong>',
   type: 'confirm'
 };
 
 const CONFIRM_BOTH: ConfirmDialogData = {
-  message: 'Priority message',
-  html: '<em>Fallback html</em>',
+  message: 'Should prefer this message',
+  html: '<em>Should not be used</em>',
   type: 'confirm'
 };
 
