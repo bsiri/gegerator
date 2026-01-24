@@ -5,11 +5,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { harnessHelper  } from 'src/_testhelpers/harnesshelper';
-import { By } from '@angular/platform-browser';
 import { MovieDialog } from './moviedialog.component';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { Durations } from 'src/app/models/time.utils';
-import { Mode } from 'src/app/ngrx/appstate-models/mode.model';
 
 
 // ********* Renreder template behavior test ************ //
@@ -40,6 +38,35 @@ describe('MovieDialog-Template', async() => {
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
     component = fixture.componentInstance;
+  })
+
+  it('should open in edit mode when supplied an existing movie', async () => {
+    /*
+      Goal of the test: check that the form dialog is prefilled with the
+      supplied movie model info.
+
+      Synopsis:
+      - given : a movie object
+      - when  : the dialog opens (implicitly done by TestBed.createComponent)
+      - then  : the form fields are filled with the movie data.
+
+      Desired checks in order:
+      1. displayed title matches movie.title
+      2. displayed duration matches movie.duration
+    */
+
+    const expectedMovie = sampleMovie(1)
+
+    await fixture.whenStable()
+    const helper = harnessHelper(loader)
+
+    // 1) title displayed
+    const titleInput = await helper.text('md-title input')
+    expect(await titleInput.getValue()).toBe(expectedMovie.title)
+
+    // 2) duration displayed
+    const durationInput = await helper.text('md-duration input')
+    expect(await durationInput.getValue()).toBe(Durations.toString(expectedMovie.duration))
   })
 
   it('should replace the movie data', async () => {

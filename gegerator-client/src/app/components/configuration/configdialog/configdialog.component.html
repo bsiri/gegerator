@@ -5,7 +5,7 @@
   <div class="dialog-field">
     <span>Priorité {{Theaters.ESPACE_LAC.name}} : </span>
     <mat-form-field appearance="fill">
-      <mat-select formControlName="espaceLacRating">
+      <mat-select formControlName="espaceLacRating" class="testid-cd-espace">
         @for (prio of TheaterRatings.enumerate(); track prio) {
           <mat-option [value]="prio">
             {{prio.name}}
@@ -17,7 +17,7 @@
   <div class="dialog-field">
     <span>Priorité {{Theaters.CASINO.name}} : </span>
     <mat-form-field appearance="fill">
-      <mat-select formControlName="casinoRating">
+      <mat-select formControlName="casinoRating" class="testid-cd-casino">
         @for (prio of TheaterRatings.enumerate(); track prio) {
           <mat-option [value]="prio">
             {{prio.name}}
@@ -29,7 +29,7 @@
   <div class="dialog-field">
     <span>Priorité {{Theaters.PARADISO.name}} : </span>
     <mat-form-field appearance="fill">
-      <mat-select formControlName="paradisoRating">
+      <mat-select formControlName="paradisoRating" class="testid-cd-paradiso">
         @for (prio of TheaterRatings.enumerate(); track prio) {
           <mat-option [value]="prio">
             {{prio.name}}
@@ -41,7 +41,7 @@
   <div class="dialog-field">
     <span>Priorité {{Theaters.MCL.name}} : </span>
     <mat-form-field appearance="fill">
-      <mat-select formControlName="mclRating">
+      <mat-select formControlName="mclRating" class="testid-cd-mcl">
         @for (prio of TheaterRatings.enumerate(); track prio) {
           <mat-option [value]="prio">
             {{prio.name}}
@@ -57,13 +57,13 @@
       <mat-slider
         color="primary"
         min="0.0" max="1.0" step="0.1" #ngSlider>
-          <input matSliderThumb [(value)]="movieVsTheaterBias" />
+          <input matSliderThumb class="testid-cd-bias" [(value)]="movieVsTheaterBias" />
       </mat-slider>
       cinéma
     </div>
   </div>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="confirm()" [disabled]="formGroup.invalid">OK</button>
-  <button mat-button (click)="cancel()">Annuler</button>
+  <button mat-button (click)="confirm()" [disabled]="formGroup.invalid" class="testid-cd-submit">OK</button>
+  <button mat-button (click)="cancel()" class="testid-cd-cancel">Annuler</button>
 </div>

@@ -3,7 +3,8 @@
     <legend>Avis Film :</legend>
     <mat-radio-group
       aria-label="Select an option"
-      (change)="updateMovieRating($event)">
+      (change)="updateMovieRating($event)"
+      class="testid-mr-ratings">
 
       @for (mr of MovieRatings.enumerate(); track mr) {
         <mat-radio-button

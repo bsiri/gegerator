@@ -12,11 +12,6 @@ export default defineConfig({
     exclude: [
       'test-waiting-migration/**', 
       'node_modules/**'
-    ],
-    reporters: ['default','junit', 'json'],
-    outputFile: {
-      junit: './test-results/junit-report.xml',
-      json: './test-results/json-report.json'
-    }
+    ]
   }
 })
