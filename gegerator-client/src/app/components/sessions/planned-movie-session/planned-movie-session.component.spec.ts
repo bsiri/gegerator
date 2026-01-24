@@ -5,7 +5,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { harnessHelper } from 'src/_testhelpers/harnesshelper'
-import { of, Subject } from 'rxjs'
+import { of } from 'rxjs'
 import { MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { Store } from '@ngrx/store'
 import { PlannedMovieSessionComponent } from './planned-movie-session.component'
@@ -18,32 +18,70 @@ import { Days, Theaters, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
 import * as factories from 'src/_testhelpers/testfactories'
 import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
-import { a } from 'node_modules/vitest/dist/chunks/suite.d.BJWk38HB'
 
 describe('PlannedMovieSessionComponent', () => {
-  let fixture: ComponentFixture<PlannedMovieSessionComponent>
-  let component: PlannedMovieSessionComponent
+
+  /**
+   * Forewords:
+   * - not all tests require a full roadmap. An empty roadmap can be used when the roadmap content is irrelevant.
+   * 
+   */
 
   beforeEach(() => {
-    // Configure a minimal testing module if needed in implementation phase
+    // Use if necessary, more probably use setupTestBed in each test
   })
 
-  // -------- UI / getters tests --------
+  // -------- Session information elements --------
 
   it('should create the component and render without errors', async () => {
     /*
       Goal: ensure component instantiates with valid inputs.
 
       Synopsis:
-      - given: a valid PlannedMovieSession and FestivalRoadmap
+      - given: a valid PlannedMovieSession, both the movie and the session having DEFAULT ratings
+      - and: a FestivalRoadmap (possibly empty, the roadmap is irrelevant here)
       - when: TestBed creates the component
-      - then: component exists and initial getters can be accessed without throwing
+      - then: the session data are set and visible in the component.
 
       Desired assertions:
       1. component is truthy
-      2. accessing `contentRendering` and `borderRendering` does not throw
+      2. the title element contains the movie title
+      3. the time element contains the session start and end times
+      4. no icons are shown
     */
   })
+
+  it('should display the rating icons', async () => {
+    /*
+      Goal: ensure icons are displayed if they should be.
+
+      Synopsis:
+      - given: a valid PlannedMovieSession, with both the movie and session having non-DEFAULT ratings
+      - and: a FestivalRoadmap (possibly empty, the roadmap is irrelevant here)
+      - when: TestBed creates the component
+      - then: both icons are visible.
+
+      Desired assertions:
+      1. the icons for movie rating and session rating are present
+    */
+  })
+
+  it('should display the "planned elsewhere" indicator if the movie is planned elsewhere', async () => {
+    /*
+      Goal: ensure the "planned elsewhere" indicator is shown when appropriate.
+
+      Synopsis:
+      - given: a session
+      - and: a FestivalRoadmap that includes a different session for the same movie
+      - when: TestBed creates the component
+      - then: the "planned elsewhere" indicator is visible.
+
+      Desired assertions:
+      1. the <app-event-link> indicator is present
+    */
+  })
+
+  // -------- computed css classes --------
 
   it('contentRendering returns "outstanding" when session is in roadmap and author is MACHINE', async () => {
     /*
@@ -58,61 +96,72 @@ describe('PlannedMovieSessionComponent', () => {
       1. `contentRendering === 'outstanding'`
     */
   })
-
-  it('borderRendering returns "disabled" when session rating is NEVER', async () => {
+  
+  const contentRenderingCases = [
+    ['contentRendering returns "very-green" for MovieRatings.HIGHEST', MovieRatings.HIGHEST, "very-green"],
+    ['contentRendering returns "green" for MovieRatings.HIGH', MovieRatings.HIGH, "green"],
+    ['contentRendering returns "normal" for MovieRatings.DEFAULT', MovieRatings.DEFAULT, "normal"],
+    ['contentRendering returns "disabled" for MovieRatings.NEVER', MovieRatings.NEVER, "disabled"]
+  ]
+  it.each(contentRenderingCases)('%s', async (testname, rating, expectedClassname) => {
     /*
-      Goal: ensure session rating NEVER leads to disabled border.
+      Goal: verify contentRendering for various movie ratings.
 
       Synopsis:
-      - given: session.rating == EventRatings.NEVER
+      - given: a session with movie.rating == rating and any roadmap
+      - when: reading `contentRendering`
+      - then: value is "expectedClassname"
+
+      Desired assertions:
+      1. `contentRendering === expectedClassname`
+    */
+  })
+
+  it('borderRendering returns "outstanding" when session is in roadmap and author is MACHINE', async () => {
+    /*
+      Goal: verify outstanding precedence in content rendering.
+
+      Synopsis:
+      - given: roadmap.isInRoadmap(session) -> true and roadmap.author == RoadmapAuthor.MACHINE
+      - when: reading `contentRendering`
+      - then: value is "outstanding"
+
+      Desired assertions:
+      1. `contentRendering === 'outstanding'`
+    */
+  })
+
+
+  const borderRenderingCases = [
+    ['borderRendering returns "salient" for EventRatings.MANDATORY', EventRatings.MANDATORY, 'salient'],
+    ['borderRendering returns "normal" for EventRatings.DEFAULT', EventRatings.DEFAULT, 'normal'],
+    ['borderRendering returns "disabled" for EventRatings.NEVER', EventRatings.NEVER, 'disabled']
+  ]
+  it.each(borderRenderingCases)('%s', async (testname, rating, expectedClassname) => {
+    /*
+      Goal: verify borderRendering for various session ratings.
+
+      Synopsis:
+      - given: a session with session.rating == rating and any roadmap
       - when: reading `borderRendering`
-      - then: value is "disabled"
+      - then: value is `expectedClassname`
 
       Desired assertions:
-      1. `borderRendering === 'disabled'`
+      1. `borderRendering === expectedClassname`
     */
   })
 
-  it('rendering fallbacks to mapped and then to "normal" for unmapped ratings', async () => {
-    /*
-      Goal: check mapping for known ratings and fallback to "normal".
-
-      Synopsis:
-      - given: known movie/session ratings and an unknown value
-      - when: reading `contentRendering`/`borderRendering`
-      - then: mapped classes returned for known keys; unknown -> "normal"
-
-      Desired assertions:
-      1. mapped class for MovieRatings.HIGH
-      2. mapped class for EventRatings.MANDATORY
-      3. unknown rating -> "normal"
-    */
-  })
-
-  it('shows <app-event-link> when session is planned elsewhere and otherPlannedEvent returns roadmap value', async () => {
-    /*
-      Goal: verify template conditional for planned-elsewhere case.
-
-      Synopsis:
-      - given: roadmap.isInRoadmap(movie) true, roadmap.isInRoadmap(session) false, and maybeGetSessionForMovie returns an event
-      - when: component rendered
-      - then: one <app-event-link> is present and `otherPlannedEvent` equals roadmap.maybeGetSessionForMovie(movie)
-
-      Desired assertions:
-      1. link is rendered exactly once
-      2. `otherPlannedEvent` returns the roadmap-provided event
-    */
-  })
 
   // -------- Interaction / dialog / store tests --------
 
   it('update() opens SessionDialog and dispatches update_session when closed with data', async () => {
     /*
-      Goal: ensure update flow opens dialog and dispatches update action on confirm.
+      Goal: test that updating a session works end to end.
 
       Synopsis:
-      - given: MatDialog.open returns a ref whose afterClosed yields updatedSessionData
-      - when: calling `update()`
+      - given: a PlannedMovieSession and any roadmap
+      - and: the dialog afterClosed yields an updated PlannedMovieSession (different from the original)
+      - when: the user double-clicks to update the session
       - then: checkChangesRequireReload called and Store.dispatch called with update_session containing toMovieSession() and thenReload
 
       Desired assertions:
@@ -126,8 +175,9 @@ describe('PlannedMovieSessionComponent', () => {
       Goal: ensure no dispatch when user cancels.
 
       Synopsis:
-      - given: MatDialog.afterClosed yields falsy
-      - when: calling `update()`
+      - given:  a planned session and any roadmap
+      - and: the dialog afterClosed yields undefined
+      - when: the user double-clicks to update the session
       - then: no Store.dispatch calls
 
       Desired assertions:
@@ -135,13 +185,14 @@ describe('PlannedMovieSessionComponent', () => {
     */
   })
 
-  it('updateRating() opens EventRatingMenu anchored to swimlane item and updates when rating changed', async () => {
+  it('updateRating() opens EventRatingMenu and updates when rating changed', async () => {
     /*
       Goal: verify rating menu anchor and update path when rating changes.
 
       Synopsis:
-      - given: MatDialog.open returns a ref with componentInstance.eventRating different from session.rating
-      - when: calling `updateRating()`
+      - given: a session and any roadmap
+      - and : the dialog afterClosed yields a different rating than the session.rating
+      - when: the user right-clicks to update the rating
       - then: modified session created and Store.dispatch called with update_session(payload)
 
       Desired assertions:
@@ -155,8 +206,9 @@ describe('PlannedMovieSessionComponent', () => {
       Goal: ensure no dispatch when rating not changed.
 
       Synopsis:
-      - given: dialogRef.componentInstance.eventRating equals session.rating
-      - when: calling `updateRating()`
+      - given: a session and any roadmap
+      - and : the dialog componentInstance.eventRating equals original session.rating
+      - when: the user right-clicks to update the rating
       - then: no Store.dispatch
 
       Desired assertions:
@@ -169,8 +221,9 @@ describe('PlannedMovieSessionComponent', () => {
       Goal: verify delete confirmation flow.
 
       Synopsis:
-      - given: GenericPurposeDialog.afterClosed yields ConfirmOutput.CONFIRM
-      - when: calling `confirmThenDelete()`
+      - given: a session and any roadmap
+      - the confirm dialog afterClosed yields ConfirmOutput.CONFIRM
+      - when: the user clicks on the delete button
       - then: Store.dispatch called with delete_session and session.toMovieSession()
 
       Desired assertions:
@@ -184,8 +237,9 @@ describe('PlannedMovieSessionComponent', () => {
       Goal: ensure cancel avoids deletion.
 
       Synopsis:
-      - given: afterClosed yields not ConfirmOutput.CONFIRM
-      - when: calling `confirmThenDelete()`
+      - given: a session and any roadmap
+      - and: the confirm dialog afterClosed yields ConfirmOutput.CANCEL
+      - when: the user clicks on the delete button
       - then: no Store.dispatch
 
       Desired assertions:
@@ -197,10 +251,10 @@ describe('PlannedMovieSessionComponent', () => {
 
   it('_isNeverRated() returns true when movie.rating or session.rating is NEVER', async () => {
     /*
-      Goal: confirm never-rated detection.
+      Goal: confirm never-rated detection when movie.rating or session.rating is NEVER
 
       Synopsis:
-      - given: movie.rating == MovieRatings.NEVER OR session.rating == EventRatings.NEVER
+      - given: movie.rating == MovieRatings.NEVER or session.rating == EventRatings.NEVER
       - when: calling `_isNeverRated()`
       - then: returns true
 
@@ -210,39 +264,28 @@ describe('PlannedMovieSessionComponent', () => {
     */
   })
 
-  it('_isPlannedElsewhere logic respects roadmap membership of movie vs session', async () => {
+  it('_isPlannedElsewhere is true if the movie is planned elsewhere', async () => {
     /*
       Goal: validate planned-elsewhere boolean logic.
 
       Synopsis:
-      - given: roadmap.isInRoadmap(movie) true and roadmap.isInRoadmap(session) false
+      - given: a session, and a roadmap where the movie is planned but the session is not
       - when: calling `_isPlannedElsewhere()`
       - then: returns true; and false when session also in roadmap
 
       Desired assertions:
       1. true when movie in roadmap and session not
-      2. false when both in roadmap
+      2. false when this very session is also in roadmap
+
+      Note: 
     */
   })
 
-  it('mapping maps MovieRatings.NEVER to content "disabled"', async () => {
-    /*
-      Goal: explicit mapping check for MovieRatings.NEVER.
-
-      Synopsis:
-      - given: movie.rating == MovieRatings.NEVER
-      - when: reading `contentRendering`
-      - then: equals "disabled"
-
-      Desired assertions:
-      1. `contentRendering === 'disabled'`
-    */
-  })
 
   // *************** Test configuration ***************
 
   // Setup TestBed helper function
-  type SetupResult = {
+  type Setup = {
     fixture: ComponentFixture<PlannedMovieSessionComponent>
     component: PlannedMovieSessionComponent
     mockStore: any
@@ -262,7 +305,7 @@ describe('PlannedMovieSessionComponent', () => {
    * @param dialogRef 
    * @returns 
    */
-  function setupTestBed(session: PlannedMovieSession, roadmap: FestivalRoadmap, dialogRef?: any): SetupResult {
+  function setupTestBed(session: PlannedMovieSession, roadmap: FestivalRoadmap, dialogRef?: any): Setup {
     TestBed.resetTestingModule()
 
     const mockDialogRef = dialogRef ? dialogRef : { afterClosed: () => of(null), componentInstance: {} } as MatDialogRef<any>
@@ -271,7 +314,7 @@ describe('PlannedMovieSessionComponent', () => {
     TestBed.configureTestingModule({
       imports: [PlannedMovieSessionComponent],
       providers: [
-        { provide: MatDialogRef, useValue: dialogRef },
+        { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: Store, useValue: mockStore }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -335,6 +378,11 @@ describe('PlannedMovieSessionComponent', () => {
       afterClosed: () => closed$,
     }
     return { dialogRef, closed$ }
+  }
+
+  // ********* other test data ***************
+  function emptyRoadmap(): FestivalRoadmap {
+    return new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
   }
 })
 
