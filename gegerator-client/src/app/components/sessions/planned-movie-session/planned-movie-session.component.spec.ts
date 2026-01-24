@@ -9,6 +9,7 @@ import { Durations, Times } from 'src/app/models/time.utils'
 import { PlannedMovieSession } from 'src/app/models/session.model'
 import { Days, Theaters, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
+import * as factories from 'src/_testhelpers/testfactories'
 
 describe('PlannedMovieSessionComponent', () => {
   let fixture: ComponentFixture<PlannedMovieSessionComponent>
@@ -259,35 +260,5 @@ describe('PlannedMovieSessionComponent', () => {
 
   // ---- factories
 
-  function randomDay(): Day{
-    const allDays = Days.enumerate()
-    const index = Math.floor(Math.random() * allDays.length)
-    return allDays[index]
-  }
-
-  function randomTheater(): Theater{
-    const allTheaters = Theaters.enumerate()
-    const index = Math.floor(Math.random() * allTheaters.length)
-    return allTheaters[index]
-  }
-
-  function movieFactory(title: string, rating = MovieRatings.DEFAULT): Movie{
-    const id = _nextId++
-    return new Movie(id, title, Durations.fromString('1h30'), rating)
-  }
-
-  function sessionFactory(movie: Movie, 
-            rating: EventRating = EventRatings.DEFAULT, 
-            theater: Theater = Theaters.ESPACE_LAC, 
-            day: Day = Days.WEDNESDAY, 
-            startTime: Time = Times.fromString('10h00')
-        ): PlannedMovieSession{
-    const id = _nextId++
-    return new PlannedMovieSession(id, movie, theater, day, startTime, rating)
-  }
-
-  function roadmapFactory(sessions: PlannedMovieSession[], author = RoadmapAuthor.HUMAN): FestivalRoadmap{
-    return new FestivalRoadmap(author, sessions, [])
-  }
 
 })

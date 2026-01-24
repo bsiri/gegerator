@@ -10,7 +10,6 @@ import { Movie, MovieRatings } from 'src/app/models/movie.model';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
-import { DurationPipe } from '../../../pipes/duration.pipe';
 import { By } from '@angular/platform-browser';
 import { MovieDialog } from '../moviedialog/moviedialog.component';
 import { MovieCtxtMenu } from '../movie-ctxt-menu/movie-ctxt-menu.component';

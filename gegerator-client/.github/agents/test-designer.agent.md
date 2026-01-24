@@ -85,6 +85,7 @@ Please note that all methods should be declared as `async`, except for `beforeEa
 ## Entities and Test Data
 Entities usually areimported from files named `*.model.ts`.
 If you have to create entities as test data, create an actual instance using their constructor.
+You can refer to the [test factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
 
 ## Test the cardinality
 If the component can display one or several more components (for example with a `for` loop in the template), remember to plan for tests or assertions to test that the correct number of elements is rendered, then each of them separately.

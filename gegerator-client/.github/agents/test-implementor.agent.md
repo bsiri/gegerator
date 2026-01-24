@@ -12,10 +12,10 @@ Your task is as follow:
 Do read the following references, and infer the guidelines you should follow: 
 
 * [moviedialog.component.spec.ts](/src/app/components/movies/moviedialog/moviedialog.component.spec.ts)
-* [sessiondialog.component.spec.ts](/src/app/components/sessions/sessiondialog/sessiondialog.component.spec.ts)
-* [activitydialog.component.spec.ts](/src/app/components/sessions/activitydialog/activitydialog.component.spec.ts)
+* [configdialog.component.spec.ts](/src/app/components/config/configdialog/configdialog.component.spec.ts)
 
-Analyse the idoms and styles. 
+
+Analyse the idoms and styles. Note the usage of the [harnessHelper](/src/_testhelpers/harnesshelper.ts) to interact with Angular Material components in tests.
 
 
 # Phase 2: study the code under test.
@@ -37,7 +37,7 @@ Your code should be right below the test description. Do not erase the descripti
 Instead of changing a value by code, simulate user interactions to change the value using the Angular Material Harnesses.
 
 ## Use real implementations whenever possible
-Use actual pipes and utility classes if they are used in the component template.
+Use actual pipes and utility classes if they are used in the component template. See the [factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
 
 ## Mock using vitest mocks whenever necessary
 If the component under test uses services, mock them using vitest mocks.
