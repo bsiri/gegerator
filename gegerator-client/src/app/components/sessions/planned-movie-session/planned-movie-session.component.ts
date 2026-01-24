@@ -59,14 +59,25 @@ export class PlannedMovieSessionComponent{
     const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]
 
     // R1. If one of the ratings is 'NEVER', the session is disabled
-    if (movie.rating == MovieRatings.NEVER || session.rating == EventRatings.NEVER){
+    if (this._isNeverRated()){
       return true
     }
     // R2. If the movie is already planned in a different session, this session is disabled.
-    if (roadmap.isInRoadmap(movie) && ! this.roadmap.isInRoadmap(session)){
+    if (this._isPlannedElsewhere()){
       return true
     }
+
     return false
+  }
+
+  _isNeverRated(): boolean{
+    const [movie, session] = [this.session.movie, this.session]
+    return (movie.rating == MovieRatings.NEVER || session.rating == EventRatings.NEVER)
+  }
+
+  _isPlannedElsewhere(): boolean{
+    const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap];
+    return roadmap.isInRoadmap(movie) && !roadmap.isInRoadmap(session)
   }
 
   _isOutstanding(): boolean{
