@@ -54,10 +54,10 @@
     <span>Biais : </span>
     <div>
       film
-      <mat-slider class="testid-cd-bias"
+      <mat-slider
         color="primary"
         min="0.0" max="1.0" step="0.1" #ngSlider>
-          <input matSliderThumb [(value)]="movieVsTheaterBias" />
+          <input matSliderThumb class="testid-cd-bias" [(value)]="movieVsTheaterBias" />
       </mat-slider>
       cinéma
     </div>

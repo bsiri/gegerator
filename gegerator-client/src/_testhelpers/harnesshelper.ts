@@ -5,7 +5,7 @@ import { MatSelectHarness } from "@angular/material/select/testing"
 import { MatInputHarness } from "@angular/material/input/testing"
 import { MatButtonHarness } from "@angular/material/button/testing"
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing"
-import { MatSliderHarness } from "@angular/material/slider/testing"
+import { MatSliderHarness, MatSliderThumbHarness } from "@angular/material/slider/testing"
 import { By } from "@angular/platform-browser"
 import { DebugElement } from "@angular/core"
 import { MatRadioGroupHarness } from "@angular/material/radio/testing"
@@ -70,6 +70,12 @@ export function harnessHelper(loader: HarnessLoader){
                 return loader.getHarness(MatSliderHarness)
             }
             return loader.getHarness(MatSliderHarness.with(selid(testid)))
+        },
+        sliderThumb: async (testid?: ClassTestId) => {
+            if (testid === undefined) {
+                return loader.getHarness(MatSliderThumbHarness)
+            }
+            return loader.getHarness(MatSliderThumbHarness.with(selid(testid)))
         },
         error: async (testid?: ClassTestId) => {
             if (testid === undefined){

@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { harnessHelper } from 'src/_testhelpers/harnesshelper';
+import { MatSelectHarness } from '@angular/material/select/testing';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSliderModule } from '@angular/material/slider';
@@ -73,11 +74,10 @@ describe('ConfigDialog', () => {
     const mcl = await helper.select('cd-mcl');
     expect(await mcl.getValueText()).toBe(TEST_WIZARD_CONFIGURATION.mclRating.name);
 
-    // mat-slider does not expose a simple getValue via harness; read the native
-    // input[type=range] inside the slider host instead.
-    const sliderHost = await helper.getDbgElement('cd-bias');
-    const inputEl: HTMLInputElement = sliderHost.nativeElement.querySelector('input[type="range"]');
-    expect(Number(inputEl.value)).toBeCloseTo(TEST_WIZARD_CONFIGURATION.movieVsTheaterBias as number, 5);
+    // Prefer the slider thumb harness when available: assert its percentage.
+    const thumb = await helper.sliderThumb('cd-bias');
+    const pct = await thumb.getPercentage();
+    expect(pct).toBeCloseTo(TEST_WIZARD_CONFIGURATION.movieVsTheaterBias, 5);
   });
 
   it('should render four mat-select controls (one per theater)', async () => {
@@ -87,11 +87,14 @@ describe('ConfigDialog', () => {
       Synopsis:
       - given: the component template
       - when: view is initialized
-      - then: query for mat-select elements and assert length === TheaterRatings.enumerate().length
+      - then: query for mat-select elements and assert length === 4 (the number of theaters)
 
       Desired assertions:
       1. number of rendered `mat-select` in the template equals the expected count
     */
+    const selects = await loader.getAllHarnesses(MatSelectHarness);
+    // There are four theater selectors in the template (espaceLac, casino, paradiso, mcl)
+    expect(selects.length).toBe(4);
   });
 
   it('should populate each mat-select with options from TheaterRatings.enumerate()', async () => {
@@ -108,6 +111,16 @@ describe('ConfigDialog', () => {
       1. options count equals `TheaterRatings.enumerate().length` for each select
       2. optionally: the first option's key/name matches `TheaterRatings.enumerate()[0]`
     */
+    const selects = await loader.getAllHarnesses(MatSelectHarness);
+    const expected = TheaterRatings.enumerate();
+    for (const s of selects) {
+      await s.open();
+      const options = await s.getOptions();
+      expect(options.length).toBe(expected.length);
+      const firstText = await options[0].getText();
+      expect(firstText).toBe(expected[0].name);
+      await s.close();
+    }
   });
 
   it('should change at least two ratings and the bias, submit and receive updated WizardConfiguration', async () => {
@@ -127,6 +140,42 @@ describe('ConfigDialog', () => {
       3. the deux modified ratings equal the new chosen values
       4. `movieVsTheaterBias` equals the modified bias value
     */
+    await fixture.whenStable();
+    const helper = harnessHelper(loader);
+
+    // change espaceLac to NEVER
+    const espace = await helper.select('cd-espace');
+    await espace.open();
+    const espaceOpts = await espace.getOptions({ text: TheaterRatings.NEVER.name });
+    await (espaceOpts[0]).click();
+    await espace.close();
+
+    // change paradiso to HIGHEST
+    const paradiso = await helper.select('cd-paradiso');
+    await paradiso.open();
+    const paradisoOpts = await paradiso.getOptions({ text: TheaterRatings.HIGHEST.name });
+    await (paradisoOpts[0]).click();
+    await paradiso.close();
+
+    // set slider bias to 0.9 using the slider harness (no testid needed)
+    const slider = await helper.sliderThumb();
+    await slider.setValue(0.9);
+
+    // submit via button
+    const submit = await helper.button('cd-submit');
+    await submit.click();
+
+    await fixture.whenStable();
+
+    // Assert that the modifications are reflected in the closed dialog argument
+    const viClose = (dialogRef.close) as Mock
+    expect(viClose).toHaveBeenCalled()
+    const closedArg = viClose.mock.calls[0][0]
+
+    expect(closedArg).toBeInstanceOf(WizardConfiguration)
+    expect(closedArg.espaceLacRating).toBe(TheaterRatings.NEVER)
+    expect(closedArg.paradisoRating).toBe(TheaterRatings.HIGHEST)
+    expect(closedArg.movieVsTheaterBias).toBeCloseTo(0.9, 5)
   });
 
   it('toWizardConfiguration() returns a WizardConfiguration built from form values and bias', async () => {
