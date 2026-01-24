@@ -100,12 +100,24 @@
             "tsConfig": "tsconfig.spec.json",
             "runnerConfig": "vitest.config.ts"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "73989ef3-175b-4d4d-adcb-9b9740bbe7ae"
+    "analytics": "73989ef3-175b-4d4d-adcb-9b9740bbe7ae",
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   },
   "schematics": {
     "@schematics/angular:component": {

@@ -12,6 +12,8 @@ import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model'
 import { EventRating, EventRatings } from 'src/app/models/plannable.model';
 import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
 import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
+import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
+import { PlannableEvent } from 'src/app/models/plannable.model';
 
 
 @Component({
@@ -19,7 +21,7 @@ import { SessionRatingsComponent } from '../../small-comps/session-ratings/sessi
     selector: 'app-planned-movie-session',
     templateUrl: './planned-movie-session.component.html',
     styleUrls: ['./planned-movie-session.component.scss'],
-    imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent]
+    imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent, EventLinkComponent]
 })
 export class PlannedMovieSessionComponent{
 
@@ -54,6 +56,17 @@ export class PlannedMovieSessionComponent{
     }
     return sessionRatingClasses.get(this.session.rating) ?? "normal"
   }
+
+  // ******** conditional content **************
+
+  // If this movie is planned in the roadmap, expose that planned event
+  get otherPlannedEvent(): PlannableEvent{
+    // Template checks `_isPlannedElsewhere()` before using this getter,
+    // so assert non-null here to satisfy strict template type checking.
+    return this.roadmap!.maybeGetSessionForMovie(this.session.movie)!
+  }
+
+  // *********** state checks ******************
 
   _isDisabled(): boolean{
     const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]

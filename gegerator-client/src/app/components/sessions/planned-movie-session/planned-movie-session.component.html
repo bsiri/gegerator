@@ -14,4 +14,9 @@
         <app-session-ratings [rating]="session.rating"></app-session-ratings>
     </div>
     <!-- /icons -->
+    @if(_isPlannedElsewhere()) {
+    <app-event-link [event]="otherPlannedEvent">
+        planifié ailleurs
+    </app-event-link>
+    }
 </app-swimlane-item>
