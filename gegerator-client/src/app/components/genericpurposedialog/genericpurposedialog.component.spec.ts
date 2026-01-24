@@ -1,15 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, expect, it, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { vi } from 'vitest';
-
 import { GenericPurposeDialog, ConfirmOutput, ConfirmDialogData } from './genericpurposedialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { harnessHelper } from 'src/_testhelpers/harnesshelper';
-
-
 
 
 describe('GenericPurposeDialog - Confirm Suite', () => {
@@ -46,7 +42,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
   });
 
   /*
-    Goal: ensure a plain text `message` is displayed and action buttons present.
+    Goal: ensure a plain text `message` is displayed. 
 
     Synopsis:
     - given: MAT_DIALOG_DATA has a `message` string
@@ -59,6 +55,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
   it('should render provided message in confirm template', async () => {
     const { fixture: f, component: c } = setupTestBed(CONFIRM_MESSAGE);
 
+    expect(c.content).toBe(CONFIRM_MESSAGE.message);
     const contentEl = f.nativeElement.querySelector('.testid-gpd-content');
     expect(contentEl.textContent.trim()).toBe(CONFIRM_MESSAGE.message);
   });
@@ -98,6 +95,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
   it('should prefer message over html when both provided', async () => {
     const { fixture: f, component: c } = setupTestBed(CONFIRM_BOTH);
 
+    expect(c.content).toBe(CONFIRM_BOTH.message);
     const contentEl = f.nativeElement.querySelector('.testid-gpd-content');
     expect(contentEl.innerHTML).toContain(CONFIRM_BOTH.message);
   });
@@ -114,9 +112,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
     1. mockDialogRef.close called once with ConfirmOutput.CONFIRM
   */
   it('confirm() should close dialog with ConfirmOutput.CONFIRM', async () => {
-    const { fixture: f, component: c, mockRef } = setupTestBed(CONFIRM_MESSAGE);
-    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
-    const helper = harnessHelper(loader);
+    const { fixture: f, component: c, mockRef, helper } = setupTestBed(CONFIRM_MESSAGE);
 
     await helper.clickByTestId('gpd-confirm');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CONFIRM);
@@ -134,9 +130,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
     1. mockDialogRef.close called once with ConfirmOutput.CANCEL
   */
   it('cancel() should close dialog with ConfirmOutput.CANCEL', async () => {
-    const { fixture: f, component: c, mockRef } = setupTestBed(CONFIRM_MESSAGE);
-    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
-    const helper = harnessHelper(loader);
+    const { fixture: f, component: c, mockRef, helper } = setupTestBed(CONFIRM_MESSAGE);
 
     await helper.clickByTestId('gpd-cancel');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
@@ -161,11 +155,11 @@ describe('GenericPurposeDialog - Info Suite', () => {
       4. clicking the button invokes cancel() behaviour
     */
 
-    const { fixture: f, component: c, mockRef } = setupTestBed(INFO_DATA);
-    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
-    const helper = harnessHelper(loader);
+    const { fixture: f, component: c, mockRef, helper } = setupTestBed(INFO_DATA);
 
     expect(c.type).toBe('info');
+
+    // Assert the title
     const titleEl = f.nativeElement.querySelector('.testid-gpd-title');
     expect(titleEl.textContent.trim()).toBe('Information');
 
@@ -186,11 +180,7 @@ describe('GenericPurposeDialog - Info Suite', () => {
       Desired assertions:
       1. mockDialogRef.close called with ConfirmOutput.CANCEL
     */
-
-    const { fixture: f, component: c, mockRef } = setupTestBed(INFO_DATA);
-
-    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
-    const helper = harnessHelper(loader);
+    const { fixture: f, component: c, mockRef, helper } = setupTestBed(INFO_DATA);
     await helper.clickByTestId('gpd-info-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
@@ -225,10 +215,7 @@ describe('GenericPurposeDialog - Error Suite', () => {
   });
 
   it('error action should close with ConfirmOutput.CANCEL', async () => {
-    const { fixture: f, component: c, mockRef } = setupTestBed(ERROR_DATA);
-
-    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(f);
-    const helper = harnessHelper(loader);
+    const { fixture: f, component: c, mockRef, helper } = setupTestBed(ERROR_DATA);
     await helper.clickByTestId('gpd-error-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
@@ -240,7 +227,7 @@ function setupTestBed(data: ConfirmDialogData) {
   TestBed.resetTestingModule();
   const mockRef = { close: vi.fn() };
   TestBed.configureTestingModule({
-    declarations: [GenericPurposeDialog],
+    imports: [GenericPurposeDialog],
     providers: [
       { provide: MatDialogRef, useValue: mockRef },
       { provide: MAT_DIALOG_DATA, useValue: data }
@@ -251,7 +238,9 @@ function setupTestBed(data: ConfirmDialogData) {
   const fixture = TestBed.createComponent(GenericPurposeDialog);
   const component = fixture.componentInstance;
   fixture.detectChanges();
-  return { fixture, component, mockRef } as const;
+  const loader: HarnessLoader = TestbedHarnessEnvironment.loader(fixture);
+  const helper = harnessHelper(loader);
+  return { fixture, component, mockRef, loader, helper } as const;
 }
 
 const CONFIRM_DEFAULT: ConfirmDialogData = {
