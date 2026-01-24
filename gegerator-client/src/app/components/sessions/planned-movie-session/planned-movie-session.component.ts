@@ -69,8 +69,6 @@ export class PlannedMovieSessionComponent{
   // *********** state checks ******************
 
   _isDisabled(): boolean{
-    const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]
-
     // R1. If one of the ratings is 'NEVER', the session is disabled
     if (this._isNeverRated()){
       return true
