@@ -192,6 +192,21 @@ describe('ConfigDialog', () => {
       2. each rating property equals the value from the form
       3. movieVsTheaterBias equals `component.movieVsTheaterBias`
     */
+    await fixture.whenStable();
+
+    // change a couple of form values and bias
+    component.formGroup.get('espaceLacRating')?.setValue(TheaterRatings.NEVER);
+    component.formGroup.get('casinoRating')?.setValue(TheaterRatings.HIGHEST);
+    component.movieVsTheaterBias = 0.42;
+
+    const result = component.toWizardConfiguration();
+
+    expect(result).toBeInstanceOf(WizardConfiguration);
+    expect(result.espaceLacRating).toBe(TheaterRatings.NEVER);
+    expect(result.casinoRating).toBe(TheaterRatings.HIGHEST);
+    expect(result.paradisoRating).toBe(component.formGroup.get('paradisoRating')?.value);
+    expect(result.mclRating).toBe(component.formGroup.get('mclRating')?.value);
+    expect(result.movieVsTheaterBias).toBeCloseTo(0.42, 5);
   });
 
   it('_getFGValue() returns the proper value for each control', async () => {
@@ -206,6 +221,13 @@ describe('ConfigDialog', () => {
       Desired assertions:
       1. return equals the corresponding control value for each control name
     */
+    await fixture.whenStable();
+
+    const names = ['espaceLacRating', 'casinoRating', 'paradisoRating', 'mclRating'];
+    for (const n of names) {
+      const expected = component.formGroup.get(n)?.value;
+      expect(component._getFGValue(n)).toBe(expected);
+    }
   });
 
   it('confirm() calls dialogRef.close() with the WizardConfiguration', async () => {
@@ -221,6 +243,23 @@ describe('ConfigDialog', () => {
       1. `dialogRef.close` called once
       2. argument is a `WizardConfiguration` whose fields match `component.toWizardConfiguration()`
     */
+    await fixture.whenStable();
+
+    const viClose = (dialogRef.close) as Mock;
+    viClose.mockClear();
+
+    // mutate state
+    component.formGroup.get('espaceLacRating')?.setValue(TheaterRatings.NEVER);
+    component.movieVsTheaterBias = 0.77;
+
+    component.confirm();
+    await fixture.whenStable();
+
+    expect(viClose).toHaveBeenCalledTimes(1);
+    const arg = viClose.mock.calls[0][0];
+    expect(arg).toBeInstanceOf(WizardConfiguration);
+    expect(arg.espaceLacRating).toBe(TheaterRatings.NEVER);
+    expect(arg.movieVsTheaterBias).toBeCloseTo(0.77, 5);
   });
 
   it('cancel() calls dialogRef.close() with no argument', async () => {
@@ -236,6 +275,14 @@ describe('ConfigDialog', () => {
       1. `dialogRef.close` called once
       2. the call argument list is empty / undefined
     */
+    const viClose = (dialogRef.close) as Mock;
+    viClose.mockClear();
+
+    component.cancel();
+
+    expect(viClose).toHaveBeenCalledTimes(1);
+    // ensure it was called without an argument
+    expect(viClose.mock.calls[0][0]).toBeUndefined();
   });
 
   it('constructor initializes fields correctly from injected WizardConfiguration', async () => {
@@ -252,6 +299,13 @@ describe('ConfigDialog', () => {
       1. form controls values equal fixture values
       2. `movieVsTheaterBias` equals fixture bias
     */
+    await fixture.whenStable();
+
+    expect(component.formGroup.get('espaceLacRating')?.value).toBe(TEST_WIZARD_CONFIGURATION.espaceLacRating);
+    expect(component.formGroup.get('casinoRating')?.value).toBe(TEST_WIZARD_CONFIGURATION.casinoRating);
+    expect(component.formGroup.get('paradisoRating')?.value).toBe(TEST_WIZARD_CONFIGURATION.paradisoRating);
+    expect(component.formGroup.get('mclRating')?.value).toBe(TEST_WIZARD_CONFIGURATION.mclRating);
+    expect(component.movieVsTheaterBias).toBeCloseTo(TEST_WIZARD_CONFIGURATION.movieVsTheaterBias, 5);
   });
 
   // Datasets and mocks
