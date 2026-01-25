@@ -61,9 +61,11 @@ export class PlannedMovieSessionComponent{
 
   // If this movie is planned in the roadmap, expose that planned event
   get otherPlannedEvent(): PlannableEvent{
-    // Template checks `_isPlannedElsewhere()` before using this getter,
-    // so assert non-null here to satisfy strict template type checking.
-    return this.roadmap!.maybeGetSessionForMovie(this.session.movie)!
+    const otherSession = this.roadmap.maybeGetSessionForMovie(this.session.movie)
+    if (! otherSession || otherSession.htmlId == this.session.htmlId){
+      throw new Error(`Bug in ${this.session}#otherPlannedEvent(): either no other session or same session returned`)
+    }
+    return otherSession
   }
 
   // *********** state checks ******************
