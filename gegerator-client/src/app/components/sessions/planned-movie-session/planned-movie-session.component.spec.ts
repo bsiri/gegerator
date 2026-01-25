@@ -9,7 +9,7 @@ import { of } from 'rxjs'
 import { MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { Store } from '@ngrx/store'
 import { PlannedMovieSessionComponent } from './planned-movie-session.component'
-import { Movie, MovieRatings } from 'src/app/models/movie.model'
+import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model'
 import { EventRating, EventRatings } from 'src/app/models/plannable.model'
 import { RoadmapAuthor, FestivalRoadmap } from 'src/app/models/roadmap.model'
 import { Durations, Times } from 'src/app/models/time.utils'
@@ -124,7 +124,7 @@ describe('PlannedMovieSessionComponent', () => {
     expect(eventLink).toBeNull()
   })
 
-  it('should display the rating icons', async () => {
+  it('should display the rating icons if non-DEFAULT ratings are set', async () => {
     /*
       Goal: ensure icons are displayed if they should be.
 
@@ -221,7 +221,7 @@ describe('PlannedMovieSessionComponent', () => {
     ['contentRendering returns "normal" for MovieRatings.DEFAULT', MovieRatings.DEFAULT, "normal"],
     ['contentRendering returns "disabled" for MovieRatings.NEVER', MovieRatings.NEVER, "disabled"]
   ]
-  it.each(contentRenderingCases)('%s', async (testname, rating, expectedClassname) => {
+  it.for(contentRenderingCases)('%s', async ([testname, rating, expectedClassname]) => {
     /*
       Goal: verify contentRendering for various movie ratings.
 
@@ -233,6 +233,19 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. `contentRendering === expectedClassname`
     */
+
+    // Arrange: session with movie rating set according to the case
+    const movie = factories.defaultMovie({ rating: rating as MovieRating })
+    const session = factories.defaultSession({ movie: movie })
+    const roadmap = emptyRoadmap()
+
+    // Act: assign inputs and render
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    // Assert
+    expect(component.contentRendering).toBe(expectedClassname)
   })
 
   it('borderRendering returns "outstanding" when session is in roadmap and author is MACHINE', async () => {
