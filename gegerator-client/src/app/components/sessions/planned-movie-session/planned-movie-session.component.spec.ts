@@ -20,15 +20,45 @@ import * as factories from 'src/_testhelpers/factories'
 import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
 
 describe('PlannedMovieSessionComponent', () => {
-
   /**
    * Forewords:
    * - not all tests require a full roadmap. An empty roadmap can be used when the roadmap content is irrelevant.
    * 
    */
 
-  beforeEach(() => {
-    // Use if necessary, more probably use setupTestBed in each test
+  // Shared fixtures / mocks
+  let fixture: ComponentFixture<PlannedMovieSessionComponent>
+  let component: PlannedMovieSessionComponent
+  let mockMatDialog: any
+  let mockDialogRef: any
+  let mockStore: any
+  let loader: HarnessLoader
+  let helper: ReturnType<typeof harnessHelper>
+
+  beforeEach(async () => {
+    // baseline mocks (will be fine-tuned per-test)
+    mockDialogRef = { afterClosed: () => of(null), componentInstance: {} }
+    mockMatDialog = { open: vi.fn(() => mockDialogRef) }
+    mockStore = { dispatch: vi.fn() }
+
+    await TestBed.configureTestingModule({
+      imports: [PlannedMovieSessionComponent],
+      providers: [
+        { provide: MatDialog, useValue: mockMatDialog },
+        { provide: Store, useValue: mockStore }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents()
+
+    // create fresh component instance for each test and reset spies
+    fixture = TestBed.createComponent(PlannedMovieSessionComponent)
+    component = fixture.componentInstance
+    loader = TestbedHarnessEnvironment.loader(fixture)
+    helper = harnessHelper(loader)
+
+    mockMatDialog.open.mockReset()
+    mockMatDialog.open.mockReturnValue(mockDialogRef)
+    mockStore.dispatch = vi.fn()
   })
 
   // -------- Session information elements --------
@@ -61,8 +91,10 @@ describe('PlannedMovieSessionComponent', () => {
     })
     const roadmap = emptyRoadmap()
 
-    // Act: create component
-    const { fixture, component } = setupTestBed(session, roadmap)
+    // Act: assign inputs on the shared component and render
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
 
     // Assert: component exists
     expect(component).toBeTruthy()
@@ -111,8 +143,10 @@ describe('PlannedMovieSessionComponent', () => {
     const session = factories.defaultSession({ movie: movie, rating: EventRatings.MANDATORY })
     const roadmap = emptyRoadmap()
 
-    // Act: create component
-    const { fixture } = setupTestBed(session, roadmap)
+    // Act: assign inputs on the shared component and render
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
 
     // Assert: both rating components are present
     const movieRatingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-movie-ratings')
@@ -142,8 +176,9 @@ describe('PlannedMovieSessionComponent', () => {
 
     const roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [otherSession], [])
 
-    // Act: create component and force change detection
-    const { fixture, component } = setupTestBed(session, roadmap)
+    // Act: assign inputs on the shared component and render
+    component.session = session
+    component.roadmap = roadmap
     fixture.detectChanges()
 
     // Assert internal state and DOM presence
@@ -166,6 +201,18 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. `contentRendering === 'outstanding'`
     */
+
+    // Arrange: a session that is part of a roadmap authored by MACHINE
+    const session = factories.defaultSession()
+    const roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [session], [])
+
+    // Act: assign inputs on the shared component and render
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    // Assert: outstanding takes precedence
+    expect(component.contentRendering).toBe('outstanding')
   })
   
   const contentRenderingCases = [
@@ -355,55 +402,6 @@ describe('PlannedMovieSessionComponent', () => {
 
   // *************** Test configuration ***************
 
-  // Setup TestBed helper function
-  type Setup = {
-    fixture: ComponentFixture<PlannedMovieSessionComponent>
-    component: PlannedMovieSessionComponent
-    mockStore: any
-    mockMatDialog: any
-    mockDialogRef: any
-    loader: HarnessLoader
-    helper: ReturnType<typeof harnessHelper>
-  }
-
-  /**
-   * Configures the test bed for creating the PlannedMovieSessionComponent. 
-   * Must provide the session and the roadmap inputs.
-   * If the test implies to interact with a dialog, a mock MatDialog can be provided
-   * (see dialog mock factories below).
-   * 
-   * @param session 
-   * @param roadmap 
-   * @param dialogMock 
-   * @returns 
-   */
-  function setupTestBed(session: PlannedMovieSession, roadmap: FestivalRoadmap, dialogMock?: any): Setup {
-    TestBed.resetTestingModule()
-
-    const mockDialogRef = dialogMock ? dialogMock : { afterClosed: () => of(null), componentInstance: {} } as MatDialogRef<any>
-    const mockStore = { dispatch: vi.fn() }
-    const mockMatDialog = { open: vi.fn(() => mockDialogRef) }
-
-    TestBed.configureTestingModule({
-      imports: [PlannedMovieSessionComponent],
-      providers: [
-        { provide: MatDialog, useValue: mockMatDialog },
-        { provide: Store, useValue: mockStore }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    })
-
-    const fixture = TestBed.createComponent(PlannedMovieSessionComponent)
-    const component = fixture.componentInstance
-    component.session = session
-    component.roadmap = roadmap
-    fixture.detectChanges()
-
-    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(fixture)
-    const helper = harnessHelper(loader)
-
-    return { fixture, component, mockStore, mockMatDialog, mockDialogRef, loader, helper }
-  }
 
   /**
    * Creates a mock dialog ref for the session update dialog.
