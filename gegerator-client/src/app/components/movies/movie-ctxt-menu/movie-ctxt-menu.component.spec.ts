@@ -141,6 +141,7 @@ describe('MovieCtxtMenu (component + unit)', () => {
 
     // Expected order: wednesdaySession, fridaySession, sundaySession
     // The session about the other movie should not be present (see dataset)
+    expect(texts.length).toBe(4)
     expect(texts[0]).toContain(wednesdayMorningSession.day.name)
     expect(texts[1]).toContain(wednesdayAfternoonSession.day.name)
     expect(texts[2]).toContain(fridaySession.day.name)
