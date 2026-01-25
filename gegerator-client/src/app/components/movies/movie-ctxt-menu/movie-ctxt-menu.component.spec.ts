@@ -1,18 +1,19 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { signal } from '@angular/core'
-import { MovieCtxtMenu, MovieCtxtMenuModel } from './movie-ctxt-menu.component'
-import { Movie, MovieRatings } from 'src/app/models/movie.model'
+import { MovieCtxtMenu } from './movie-ctxt-menu.component'
+import { MovieRatings } from 'src/app/models/movie.model'
 import { PlannedMovieSession } from 'src/app/models/session.model'
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { Store } from '@ngrx/store'
 import { Times } from 'src/app/models/time.utils'
-import { Days, Theaters } from 'src/app/models/referential.data'
+import { Days } from 'src/app/models/referential.data'
 import { MatRadioModule } from '@angular/material/radio'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { harnessHelper } from 'src/_testhelpers/harnesshelper'
 import { By } from '@angular/platform-browser'
+import * as factories from 'src/_testhelpers/factories'
 
 describe('MovieCtxtMenu (component + unit)', () => {
   let fixture: ComponentFixture<MovieCtxtMenu>
@@ -35,7 +36,7 @@ describe('MovieCtxtMenu (component + unit)', () => {
       providers: [
         { provide: MatDialogRef, useValue: { close: vi.fn(), updatePosition: vi.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { movie: movieInstance(), anchor: anchorMock } },
-        { provide: Store, useValue: { selectSignal: (_: any) => signal(movieSessions) } }
+        { provide: Store, useValue: { selectSignal: (_: any) => signal(sessions) } }
       ]
     })
     fixture = TestBed.createComponent(MovieCtxtMenu)
@@ -113,11 +114,28 @@ describe('MovieCtxtMenu (component + unit)', () => {
       1. number of <li> in the planned sessions list equals filtered count
       2. each rendered session corresponds to a session with the expected movie.id
     */
-    const expectedNumberOfSessions = 3
+    const expectedNumberOfSessions = 4
     await fixture.whenStable()
 
     const lis = fixture.debugElement.queryAll(By.css('ul li'))
     expect(lis.length).toBe(expectedNumberOfSessions)
+  })
+
+  it('should only retain sessions for the current movie', async () => {
+    /*
+      Goal: ensure that sessions for other movies are not included in the rendered list.
+
+      Synopsis:
+      - given: a set of PlannedMovieSession entries including some for other movies
+      - when: component is created and change detection run
+      - then: no rendered session corresponds to a session with a different movie.id
+
+      Desired assertions:
+      1. explicitly assert that "otherSession" (for a different movie) is not in component.$sessions()
+        so that the Copilot code-reviewer won't complain that this variable is not used.
+    */
+    await fixture.whenStable()
+    expect(component.$sessions()).not.toContain(otherSession)
   })
 
   it('should render sessions ordered by day then startTime (ascending)', async () => {
@@ -140,9 +158,12 @@ describe('MovieCtxtMenu (component + unit)', () => {
 
     // Expected order: wednesdaySession, fridaySession, sundaySession
     // The session about the other movie should not be present (see dataset)
-    expect(texts[0]).toContain(wednesdaySession.day.name)
-    expect(texts[1]).toContain(fridaySession.day.name)
-    expect(texts[2]).toContain(sundaySession.day.name)
+    const format = (s: PlannedMovieSession) => `${s.format('%t : %d, %h')}`
+    expect(texts.length).toBe(4)
+    expect(texts[0]).toEqual(format(wednesdayMorningSession))
+    expect(texts[1]).toEqual(format(wednesdayAfternoonSession))
+    expect(texts[2]).toEqual(format(fridaySession))
+    expect(texts[3]).toEqual(format(sundaySession))
   })
 
 });
@@ -159,20 +180,29 @@ describe('MovieCtxtMenu (component + unit)', () => {
 
 // shared movie instance for tests
 function movieInstance(){
-    return new Movie(1, 'Alpha', Times.fromString('1h30'), MovieRatings.DEFAULT)
+  return factories.defaultMovie()
 } 
 
 function differentMovie(){
-    return new Movie(2, 'Beta', Times.fromString('2h00'), MovieRatings.HIGHEST)
+  return factories.someMovie() 
 }
 
-// three planned sessions for the shared movie (different theaters/days/times)
-// plus another one for an unrelated movie
-const fridaySession = new PlannedMovieSession(102, movieInstance(), Theaters.CASINO, Days.FRIDAY, Times.fromString('14h30'))
-const wednesdaySession = new PlannedMovieSession(101, movieInstance(), Theaters.ESPACE_LAC, Days.WEDNESDAY, Times.fromString('09h00'))
-const sundaySession = new PlannedMovieSession(103, movieInstance(), Theaters.PARADISO, Days.SUNDAY, Times.fromString('20h00'))
-const otherMovieSession = new PlannedMovieSession(201, differentMovie(), Theaters.CASINO, Days.SATURDAY, Times.fromString('16h00'))
-const movieSessions = [fridaySession, otherMovieSession, wednesdaySession, sundaySession]
+//// Sessions
+// four planned sessions for the shared movie (different theaters/days/times)
+//  -> two of them at the same day, different times.
+// plus another one for an unrelated movie in the middle
+const builder = factories.sessionBuilder().for({movie: movieInstance()})
+builder.add({day: Days.FRIDAY})
+      .add({day: Days.WEDNESDAY, startTime: Times.fromString('09h00')})
+      .add({movie: differentMovie()}) // unrelated movie session
+      .add({day: Days.WEDNESDAY, startTime: Times.fromString('14h00')})
+      .add({day: Days.SUNDAY})
+
+const sessions = builder.done() as PlannedMovieSession[]
+
+// note: otherSession is added, but for a different movie: it is not expected to appear in the rendered list.
+// There is a test for that somewhere.
+const [fridaySession, wednesdayMorningSession, otherSession, wednesdayAfternoonSession, sundaySession] = sessions
 
 const anchorMock = {
   location: {

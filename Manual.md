@@ -1,3 +1,0 @@
-# Gegerator User Manual
-
-TODO !

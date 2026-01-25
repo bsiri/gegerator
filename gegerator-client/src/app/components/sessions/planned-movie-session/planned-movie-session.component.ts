@@ -12,6 +12,8 @@ import { MovieSession, PlannedMovieSession } from 'src/app/models/session.model'
 import { EventRating, EventRatings } from 'src/app/models/plannable.model';
 import { MovieRatingsComponent } from '../../small-comps/movie-ratings/movie-ratings.component';
 import { SessionRatingsComponent } from '../../small-comps/session-ratings/session-ratings.component';
+import { EventLinkComponent } from '../../small-comps/event-link/event-link.component';
+import { PlannableEvent } from 'src/app/models/plannable.model';
 
 
 @Component({
@@ -19,7 +21,7 @@ import { SessionRatingsComponent } from '../../small-comps/session-ratings/sessi
     selector: 'app-planned-movie-session',
     templateUrl: './planned-movie-session.component.html',
     styleUrls: ['./planned-movie-session.component.scss'],
-    imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent]
+    imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent, EventLinkComponent]
 })
 export class PlannedMovieSessionComponent{
 
@@ -55,18 +57,44 @@ export class PlannedMovieSessionComponent{
     return sessionRatingClasses.get(this.session.rating) ?? "normal"
   }
 
-  _isDisabled(): boolean{
-    const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap]
+  // ******** conditional content **************
 
+  // If this movie is planned in the roadmap, expose that planned event
+  get otherPlannedEvent(): PlannableEvent{
+    const otherSession = this.roadmap.maybeGetSessionForMovie(this.session.movie)
+    if (! otherSession || otherSession.htmlId == this.session.htmlId){
+      throw new Error(`Bug in ${this.session}#otherPlannedEvent(): either no other session or same session returned. `+
+        `It is a programming error because this method is supposed to be called only after _isPlannedElsewhere() returns true,` +
+        `at which point we are sure there is another distinct session for this movie in the roadmap.` +
+        `This method was probably misused, check for code call sites that don't guard its use with _isPlannedElsewhere().`
+      )
+    }
+    return otherSession
+  }
+
+  // *********** state checks ******************
+
+  _isDisabled(): boolean{
     // R1. If one of the ratings is 'NEVER', the session is disabled
-    if (movie.rating == MovieRatings.NEVER || session.rating == EventRatings.NEVER){
+    if (this._isNeverRated()){
       return true
     }
     // R2. If the movie is already planned in a different session, this session is disabled.
-    if (roadmap.isInRoadmap(movie) && ! this.roadmap.isInRoadmap(session)){
+    if (this._isPlannedElsewhere()){
       return true
     }
+
     return false
+  }
+
+  _isNeverRated(): boolean{
+    const [movie, session] = [this.session.movie, this.session]
+    return (movie.rating == MovieRatings.NEVER || session.rating == EventRatings.NEVER)
+  }
+
+  _isPlannedElsewhere(): boolean{
+    const [movie, session, roadmap] = [this.session.movie, this.session, this.roadmap];
+    return roadmap.isInRoadmap(movie) && !roadmap.isInRoadmap(session)
   }
 
   _isOutstanding(): boolean{

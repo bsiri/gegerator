@@ -11,7 +11,8 @@
     "test:debug": "ng test --debug",
     "test:once": "ng test --watch=false",
     "test:ci": "npx vitest --run",
-    "clean:dist": "rm -rf dist"
+    "clean:dist": "rm -rf dist",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -40,9 +41,12 @@
     "@angular/compiler-cli": "^21.0.6",
     "@types/jasmine": "^5.1.13",
     "@types/node": "^25.0.3",
+    "angular-eslint": "21.1.0",
+    "eslint": "^9.39.1",
     "jasmine-core": "^5.13.0",
     "jsdom": "^27.4.0",
     "typescript": "~5.9.3",
+    "typescript-eslint": "8.47.0",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"
   }

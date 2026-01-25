@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { By } from '@angular/platform-browser'
 
 import { SessionDialog } from './sessiondialog.component';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -17,8 +16,7 @@ import { Days, Theaters } from 'src/app/models/referential.data';
 import { Times } from 'src/app/models/time.utils';
 import { PlannedMovieSession } from 'src/app/models/session.model';
 import { Movie } from 'src/app/models/movie.model';
-import { signal, Signal } from '@angular/core';
-import { MatOptionHarness } from '@angular/material/core/testing';
+import { signal } from '@angular/core';
 
 
 describe('SessionDialog - Template', async () => {

@@ -8,10 +8,16 @@
     (requestDelete)="confirmThenDelete()"
     (requestContextMenu)="updateRating()"
 >
-    <!-- icons -->
+    <!-- icons & notification for planned elsewhere -->
     <div class="icon-container">
         <app-movie-ratings [rating]="session.movie.rating"></app-movie-ratings>
         <app-session-ratings [rating]="session.rating"></app-session-ratings>
+
+        @if(_isPlannedElsewhere()) {
+        <app-event-link [event]="otherPlannedEvent">
+            planifié ailleurs
+        </app-event-link>
+        }
     </div>
-    <!-- /icons -->
+    <!-- /icons & notification for planned elsewhere -->
 </app-swimlane-item>

@@ -8,6 +8,7 @@ import { harnessHelper  } from 'src/_testhelpers/harnesshelper';
 import { MovieDialog } from './moviedialog.component';
 import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
 import { Durations } from 'src/app/models/time.utils';
+import * as factories from 'src/_testhelpers/factories';
 
 
 // ********* Renreder template behavior test ************ //
@@ -219,15 +220,17 @@ describe('MovieDalog-Component', async () => {
 
 })
 
+// ********* Helper functions *********** //
 
-// ************ Helper functions *************** //
-
-function sampleMovie(id?: number): Movie {
-  return ({
-    id,
-    title: "Worst movie ever :-(",
-    duration: Durations.fromString("3h02")
-    // note: the Rating is configured elsewhere, wont be 
-    // tested in this test suite.
-  } as unknown) as Movie
+function sampleMovie(id: number | undefined): Movie {
+  if (id === undefined) {
+    return ({
+      id: undefined,
+      title: 'New Movie',
+      duration: Durations.fromString("1h30"),
+      rating: MovieRatings.HIGH
+    } as unknown) as Movie
+  } else {
+    return factories.defaultMovie({id})
+  }
 }

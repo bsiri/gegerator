@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConfigDialog } from './configdialog.component';
-import { WizardConfiguration, TheaterRatings, TheaterRating } from 'src/app/ngrx/appstate-models/wizardconfiguration.model';
+import { WizardConfiguration, TheaterRatings } from 'src/app/ngrx/appstate-models/wizardconfiguration.model';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HarnessLoader } from '@angular/cdk/testing';
