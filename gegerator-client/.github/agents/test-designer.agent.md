@@ -81,11 +81,15 @@ However, in each method you will include a block comment describing the test. Fo
     */
   })
 ```
+## Test UI element at least once
+If the Component has UI elements the User can interact with, it should be tested at least once in the test suite. It could be a text input, a menu select, a button etc.
+If you intend to test such UI element, explicitely says in the comment block that the test should actually type text in the input, click the button etc as opposed to bypassing the UI and directly calling the backing component code.
+
 ## Async
 Please note that all methods should be declared as `async`, except for `beforeEach` which should be synchronous.
 
 ## Entities and Test Data
-Entities usually areimported from files named `*.model.ts`.
+Entities usually are imported from files named `*.model.ts`.
 If you have to create entities as test data, create an actual instance using their constructor.
 You can refer to the [factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
 
