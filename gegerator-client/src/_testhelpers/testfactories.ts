@@ -81,7 +81,6 @@ export function someMovie(overrides: MovieSpec = {}): Movie {
  * - day: Days.WEDNESDAY
  * - time: 10h00
  * 
- * 
  * @param overrides 
  * @returns 
  */
@@ -97,7 +96,27 @@ export function defaultSession(overrides: PlannedMovieSessionSpec = {}): Planned
     return Object.assign(defaultSession, overrides)
 }
 
-export function randomPlannedMovieSession(overrides: PlannedMovieSessionSpec = {}): PlannedMovieSession {
+/**
+ *  Returns a random PlannedMovieSession instance, with optional overrides. Use it when you
+ * don't really care about the specific properties of the session aside from
+ * what you explicitly override.
+ * 
+ * Using someSession() in your test (as opposed to defaultSession()) emphasize that
+ * non-overriden properties are not relevant for the test, and one should pay
+ * more attention to what is overriden and how it affects the test setup and
+ * outcome.
+ * 
+ * The random session has:
+ * - id: random > 0
+ * - movie: someMovie()
+ * - theater: random Theater
+ * - day: random Day
+ * - time: random Time
+ *  
+ * @param overrides {PlannedMovieSessionSpec}
+ * @returns {PlannedMovieSession}
+ */
+export function someSession(overrides: PlannedMovieSessionSpec = {}): PlannedMovieSession {
     const session = new PlannedMovieSession(
         randomId(),
         someMovie(),
@@ -109,7 +128,24 @@ export function randomPlannedMovieSession(overrides: PlannedMovieSessionSpec = {
     return Object.assign(session, overrides)
 }
 
-export function defaultOtherActivity(overrides: OtherActivitySpec = {}): OtherActivity {
+
+/**
+ * Returns a default OtherActivity instance, with optional overrides. Use it when you
+ * need a reference instance with known properties, with slight variations if
+ * you provide overrides.
+ * 
+ * The default activity has:
+ * - id: 1
+ * - day: Days.WEDNESDAY
+ * - startTime: 12h00
+ * - endTime: 13h00
+ * - title: "Default Activity"
+ * - rating: EventRatings.DEFAULT
+ * 
+ * @param overrides {OtherActivitySpec}
+ * @returns {OtherActivity}
+ */
+export function defaultActivity(overrides: OtherActivitySpec = {}): OtherActivity {
     const defaultActivity = new OtherActivity(
         1,
         Days.WEDNESDAY,
@@ -121,7 +157,28 @@ export function defaultOtherActivity(overrides: OtherActivitySpec = {}): OtherAc
     return Object.assign(defaultActivity, overrides)
 }
 
-export function randomOtherActivity(overrides: OtherActivitySpec = {}): OtherActivity {
+/**
+ * Returns a random OtherActivity instance, with optional overrides. Use it when you
+ * don't really care about the specific properties of the activity aside from
+ * what you explicitly override.
+ * 
+ * Using someActivity() in your test (as opposed to defaultActivity()) emphasize that
+ * non-overriden properties are not relevant for the test, and one should pay
+ * more attention to what is overriden and how it affects the test setup and
+ * outcome.
+ * 
+ * The random activity has:
+ * - id: random > 0
+ * - day: random Day
+ * - startTime: random Time
+ * - endTime: random Time after startTime
+ * - description: random title
+ * - rating: random EventRating
+ * 
+ * @param overrides {OtherActivitySpec}
+ * @returns {OtherActivity}
+ */
+export function someActivity(overrides: OtherActivitySpec = {}): OtherActivity {
     const startTime = randomTime()
     const endTime = randomTime(startTime)
     const activity = new OtherActivity(

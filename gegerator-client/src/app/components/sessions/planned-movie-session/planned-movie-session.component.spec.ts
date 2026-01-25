@@ -137,8 +137,8 @@ describe('PlannedMovieSessionComponent', () => {
 
     // Arrange: build a session using test factories, overriding only the values that matter
     const sameMovie = factories.someMovie()
-    const session = factories.randomPlannedMovieSession({ movie: sameMovie})
-    const otherSession = factories.randomPlannedMovieSession({ movie: sameMovie})
+    const session = factories.someSession({ movie: sameMovie})
+    const otherSession = factories.someSession({ movie: sameMovie})
 
     const roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [otherSession], [])
 
