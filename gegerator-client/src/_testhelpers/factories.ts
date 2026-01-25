@@ -134,6 +134,10 @@ export function someSession(overrides: PlannedMovieSessionSpec = {}): PlannedMov
  * The non-specified attributes will be random (using the "someX" factory). The 
  * builder accumulate the sessions in a buffer until you invoke "done()".
  * 
+ * This fluent builder is verbose, but allows to clearly express the intent of the 
+ * test data. Use it if you think the tradeoff is worth it, for simpler usage
+ * using someSession() or even direct constructor calls might be preferable.
+ * 
  * # Basic usage
  * The entry point to the builder is the "for" method, in which you pass the 
  * initial session specs.
@@ -141,6 +145,7 @@ export function someSession(overrides: PlannedMovieSessionSpec = {}): PlannedMov
  * Then, use the following methods
  * - add(specs): creates a random session with the given specs and add it 
  *   to the buffer.
+ * - add(session): adds the given session directly to the buffer.
  * - done(): returns the buffer then reinitialize it
  * 
  * # Sub builders
@@ -189,9 +194,16 @@ class SessionBuilder{
     with(subSpecs: PlannedMovieSessionSpec){
         return new SessionBuilder({...this.specs, ...subSpecs}, this)
     }
-    add(specs: PlannedMovieSessionSpec){
-        const effectiveSpecs = {...this.specs, ...specs}
-        this.sessions.push(someSession(effectiveSpecs))
+    add(specs: PlannedMovieSessionSpec | PlannedMovieSession = {}){
+        if (specs instanceof PlannedMovieSession){
+            this.sessions.push(specs)
+            return this
+        }
+        else{
+            const effectiveSpecs = {...this.specs, ...specs}
+            this.sessions.push(someSession(effectiveSpecs))
+            return this
+        }
     }
     done(){
         if (this.parent != undefined){

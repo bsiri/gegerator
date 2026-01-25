@@ -36,7 +36,7 @@ describe('MovieCtxtMenu (component + unit)', () => {
       providers: [
         { provide: MatDialogRef, useValue: { close: vi.fn(), updatePosition: vi.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { movie: movieInstance(), anchor: anchorMock } },
-        { provide: Store, useValue: { selectSignal: (_: any) => signal(movieSessions) } }
+        { provide: Store, useValue: { selectSignal: (_: any) => signal(sessions) } }
       ]
     })
     fixture = TestBed.createComponent(MovieCtxtMenu)
@@ -114,7 +114,7 @@ describe('MovieCtxtMenu (component + unit)', () => {
       1. number of <li> in the planned sessions list equals filtered count
       2. each rendered session corresponds to a session with the expected movie.id
     */
-    const expectedNumberOfSessions = 3
+    const expectedNumberOfSessions = 4
     await fixture.whenStable()
 
     const lis = fixture.debugElement.queryAll(By.css('ul li'))
@@ -141,9 +141,10 @@ describe('MovieCtxtMenu (component + unit)', () => {
 
     // Expected order: wednesdaySession, fridaySession, sundaySession
     // The session about the other movie should not be present (see dataset)
-    expect(texts[0]).toContain(wednesdaySession.day.name)
-    expect(texts[1]).toContain(fridaySession.day.name)
-    expect(texts[2]).toContain(sundaySession.day.name)
+    expect(texts[0]).toContain(wednesdayMorningSession.day.name)
+    expect(texts[1]).toContain(wednesdayAfternoonSession.day.name)
+    expect(texts[2]).toContain(fridaySession.day.name)
+    expect(texts[3]).toContain(sundaySession.day.name)
   })
 
 });
@@ -161,30 +162,25 @@ describe('MovieCtxtMenu (component + unit)', () => {
 // shared movie instance for tests
 function movieInstance(){
   return factories.defaultMovie()
-  // return new Movie(1, 'Alpha', Times.fromString('1h30'), MovieRatings.DEFAULT)
 } 
 
 function differentMovie(){
   return factories.someMovie() 
-  // return new Movie(2, 'Beta', Times.fromString('2h00'), MovieRatings.HIGHEST)
 }
 
+//// Sessions
 // four planned sessions for the shared movie (different theaters/days/times)
 //  -> two of them at the same day, different times.
-// plus another one for an unrelated movie
+// plus another one for an unrelated movie in the middle
+const builder = factories.sessionBuilder().for({movie: movieInstance()})
+builder.add({day: Days.FRIDAY})
+      .add({day: Days.WEDNESDAY, startTime: Times.fromString('09h00')})
+      .add({movie: differentMovie()}) // unrelated movie session
+      .add({day: Days.WEDNESDAY, startTime: Times.fromString('14h00')})
+      .add({day: Days.SUNDAY})
 
-const fridaySession = factories.someSession({movie: movieInstance(), day: Days.FRIDAY})
-const wednesdayMorningSession = factories.someSession({movie: movieInstance(), day: Days.WEDNESDAY, startTime: Times.fromString('09h00')})
-const wednesdayAfternoonSession = factories.someSession({movie: movieInstance(), day: Days.WEDNESDAY, startTime: Times.fromString('14h00')})
-const sundaySession = factories.someSession({movie: movieInstance(), day: Days.SUNDAY})
-const otherMovieSession = factories.someSession({movie: differentMovie(), day: Days.SATURDAY})
-const movieSessions = [fridaySession, otherMovieSession, wednesdayAfternoonSession, wednesdayMorningSession, sundaySession]
-
-// const fridaySession = new PlannedMovieSession(102, movieInstance(), Theaters.CASINO, Days.FRIDAY, Times.fromString('14h30'))
-// const wednesdaySession = new PlannedMovieSession(101, movieInstance(), Theaters.ESPACE_LAC, Days.WEDNESDAY, Times.fromString('09h00'))
-// const sundaySession = new PlannedMovieSession(103, movieInstance(), Theaters.PARADISO, Days.SUNDAY, Times.fromString('20h00'))
-// const otherMovieSession = new PlannedMovieSession(201, differentMovie(), Theaters.CASINO, Days.SATURDAY, Times.fromString('16h00'))
-// const movieSessions = [fridaySession, otherMovieSession, wednesdaySession, sundaySession]
+const sessions = builder.done() as PlannedMovieSession[]
+const [fridaySession, wednesdayMorningSession, otherSession, wednesdayAfternoonSession, sundaySession] = sessions
 
 const anchorMock = {
   location: {
