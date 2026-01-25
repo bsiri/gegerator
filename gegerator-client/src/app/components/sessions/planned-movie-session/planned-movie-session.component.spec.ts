@@ -54,7 +54,7 @@ describe('PlannedMovieSessionComponent', () => {
     const movie = factories.defaultMovie({ rating: MovieRatings.DEFAULT }) 
     const start = Times.fromString("10h00")
     const end = Times.add(start, movie.duration)
-    const session = factories.defaultPlannedMovieSession({
+    const session = factories.defaultSession({
       movie: movie,
       startTime: start,
       rating: EventRatings.DEFAULT
@@ -108,7 +108,7 @@ describe('PlannedMovieSessionComponent', () => {
 
     // Arrange: build a session using test factories, overriding only the values that matter
     const movie = factories.defaultMovie({ rating: MovieRatings.HIGH })
-    const session = factories.defaultPlannedMovieSession({ movie: movie, rating: EventRatings.MANDATORY })
+    const session = factories.defaultSession({ movie: movie, rating: EventRatings.MANDATORY })
     const roadmap = emptyRoadmap()
 
     // Act: create component
@@ -136,7 +136,7 @@ describe('PlannedMovieSessionComponent', () => {
     */
 
     // Arrange: build a session using test factories, overriding only the values that matter
-    const sameMovie = factories.randomMovie()
+    const sameMovie = factories.someMovie()
     const session = factories.randomPlannedMovieSession({ movie: sameMovie})
     const otherSession = factories.randomPlannedMovieSession({ movie: sameMovie})
 

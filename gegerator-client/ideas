@@ -1,5 +1,6 @@
 - facile: remplacer iso8601-durations par Temporal.Duration natif une fois que suffisemment de browsers l'implémentent
 - facile: afficher le score d'une route calculée par le wizard (pour info)
+- facile: styler le lien "planifé ailleurs" parce que là il tranche trop avec le reste
 - facile: supprimer de l'onglet résumé les onglets qu'on n'utilise jamais (faut-il d'ailleurs y mettre autre chose que la roadmap ?)
 - moyen: revoir et simplifier le code couleur associé au rating des movies et sessions
 - moyen: interface de saisie de session rapide : un champ texte, l'utilisateur blurb dedans, ensuite best effort pour construire un modèle

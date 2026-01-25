@@ -16,8 +16,18 @@ export type OtherActivitySpec = Partial<OtherActivity>
 
 
 /**
- * Returns a default Movie instance, with optional overrides.
+ * Returns a default Movie instance, with optional overrides. Use it when you 
+ * need a reference instance with known properties, with slight variations if 
+ * you provide overrides.
  * 
+ * The default movie has:
+ * - id: 1
+ * - title: "Default Movie Title"
+ * - duration: 1 hour 30 minutes
+ * - rating: MovieRatings.DEFAULT
+ * 
+ * @param overrides {MovieSpec}
+ * @returns {Movie}
  */
 export function defaultMovie(overrides: MovieSpec = {}): Movie {
     const defaultMovie = new Movie(
@@ -30,11 +40,25 @@ export function defaultMovie(overrides: MovieSpec = {}): Movie {
 }
 
 /**
- * Returns a random Movie instance, with optional overrides.
- * @param overrides 
- * @returns 
+ * Returns a random Movie instance, with optional overrides. Use it when you
+ * don't really care about the specific properties of the movie aside from 
+ * what you explicitly override.
+ * 
+ * Using someMovie() in your test (as opposed to defaultMovie()) emphasize that
+ * non-overriden properties are not relevant for the test, and one should pay 
+ * more attention to what is overriden and how it affects the test setup and 
+ * outcome.
+ * 
+ * The random movie has:
+ * - id: random > 0
+ * - title: random title
+ * - duration: random between 1 and 3 hours, minutes by steps of 15
+ * - rating: random MovieRating
+ * 
+ * @param overrides {MovieSpec}
+ * @returns {Movie}
  */
-export function randomMovie(overrides: MovieSpec = {}): Movie {
+export function someMovie(overrides: MovieSpec = {}): Movie {
     const movie = new Movie(
         randomId(),
         randomTitle(),
@@ -44,12 +68,29 @@ export function randomMovie(overrides: MovieSpec = {}): Movie {
     return Object.assign(movie, overrides)
 }
 
-export function defaultPlannedMovieSession(overrides: PlannedMovieSessionSpec = {}): PlannedMovieSession {
+
+/**
+ * Returns a default PlannedMovieSession instance, with optional overrides. Use it when you
+ * need a reference instance with known properties, with slight variations if
+ * you provide overrides.
+ * 
+ * The default session has:
+ * - id: 1
+ * - movie: defaultMovie()
+ * - theater: Theaters.ESPACE_LAC
+ * - day: Days.WEDNESDAY
+ * - time: 10h00
+ * 
+ * 
+ * @param overrides 
+ * @returns 
+ */
+export function defaultSession(overrides: PlannedMovieSessionSpec = {}): PlannedMovieSession {
     const defaultSession = new PlannedMovieSession(
         1,
         defaultMovie(),
         Theaters.ESPACE_LAC,
-        randomDay(),
+        Days.WEDNESDAY,
         new Time(10, 0),
         EventRatings.DEFAULT
     )
@@ -59,7 +100,7 @@ export function defaultPlannedMovieSession(overrides: PlannedMovieSessionSpec = 
 export function randomPlannedMovieSession(overrides: PlannedMovieSessionSpec = {}): PlannedMovieSession {
     const session = new PlannedMovieSession(
         randomId(),
-        randomMovie(),
+        someMovie(),
         randomTheater(),
         randomDay(),
         randomTime(),

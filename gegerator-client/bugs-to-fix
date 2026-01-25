@@ -4,3 +4,6 @@
 
 # Minor bugs
 1. Issue when resizing the window : the events and timelines can become misaligned. Fixed if the window is refreshed. This is a minor bug, handle when I feel bored.
+
+# Code cleaning
+1. OtherActivityComponent and SessionComponent have much code in common related to their rendering, maybe I could create some helper object for that ?
