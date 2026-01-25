@@ -56,6 +56,8 @@ Test suites are declared with vitest `describe`. Tests are declared with vitest 
 The first method of a test suite is `beforeEach`.
 Datasets and mocks should be created at the end of the file.
 
+Here is an example of test with various desirable features: [planned-movie-session.component.spec.ts](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts)
+
 
 ## Provide guidance, no implementation
 Do not provide implementation. Instead you will just provide empty methods. However your task is to declare those methods.
@@ -85,7 +87,7 @@ Please note that all methods should be declared as `async`, except for `beforeEa
 ## Entities and Test Data
 Entities usually areimported from files named `*.model.ts`.
 If you have to create entities as test data, create an actual instance using their constructor.
-You can refer to the [test factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
+You can refer to the [factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
 
 ## Test the cardinality
 If the component can display one or several more components (for example with a `for` loop in the template), remember to plan for tests or assertions to test that the correct number of elements is rendered, then each of them separately.
