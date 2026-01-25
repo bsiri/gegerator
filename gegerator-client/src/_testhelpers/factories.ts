@@ -194,13 +194,16 @@ class SessionBuilder{
     with(subSpecs: PlannedMovieSessionSpec){
         return new SessionBuilder({...this.specs, ...subSpecs}, this)
     }
-    add(specs: PlannedMovieSessionSpec | PlannedMovieSession = {}){
-        if (specs instanceof PlannedMovieSession){
-            this.sessions.push(specs)
+
+    add(session: PlannedMovieSession): SessionBuilder
+    add(specs?: PlannedMovieSessionSpec): SessionBuilder
+    add(sessionOrSpecs: PlannedMovieSession | PlannedMovieSessionSpec={}): SessionBuilder{
+        if (sessionOrSpecs instanceof PlannedMovieSession){
+            this.sessions.push(sessionOrSpecs)
             return this
         }
         else{
-            const effectiveSpecs = {...this.specs, ...specs}
+            const effectiveSpecs = {...this.specs, ...sessionOrSpecs}
             this.sessions.push(someSession(effectiveSpecs))
             return this
         }
