@@ -8,8 +8,9 @@
 # Code cleaning
 1. OtherActivityComponent and SessionComponent have much code in common related to their rendering, maybe I could create some helper object for that ?
 
-2. movie rating and event rating are not explicitly calling close with a "result"; rather the components closes by bluring. This means the caller cannot retrieve the "result" in the afterClose() observable.
+2. Movie rating and event rating are not explicitly calling close with a "result"; rather the components closes by bluring. This means the caller cannot retrieve the "result" in the afterClose() observable.
  Instead of that, the caller have to extract the data directly from the dialog component (see [example here](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.ts), method "updateRating()").
 
 StackOverflows favors hooking into MatDialogRef.beforeClosed(), and use that to explicitly invoke "close(result)" (https://stackoverflow.com/questions/46849753/angular-material-dialog-return-value#answer-57462271). But this feels wrong, also coud it trigger an infinite loop ?
 
+3. Properly configure ESLint ... and attend to the 300 violations or so
