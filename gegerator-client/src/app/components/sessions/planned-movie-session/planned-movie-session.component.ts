@@ -63,7 +63,11 @@ export class PlannedMovieSessionComponent{
   get otherPlannedEvent(): PlannableEvent{
     const otherSession = this.roadmap.maybeGetSessionForMovie(this.session.movie)
     if (! otherSession || otherSession.htmlId == this.session.htmlId){
-      throw new Error(`Bug in ${this.session}#otherPlannedEvent(): either no other session or same session returned`)
+      throw new Error(`Bug in ${this.session}#otherPlannedEvent(): either no other session or same session returned. `+
+        `It is a programming error because this method is supposed to be called only after _isPlannedElsewhere() returns true,` +
+        `at which point we are sure there is another distinct session for this movie in the roadmap.` +
+        `This method was probably misused, check for code call sites that don't guard its use with _isPlannedElsewhere().`
+      )
     }
     return otherSession
   }

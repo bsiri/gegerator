@@ -121,6 +121,23 @@ describe('MovieCtxtMenu (component + unit)', () => {
     expect(lis.length).toBe(expectedNumberOfSessions)
   })
 
+  it('should only retain sessions for the current movie', async () => {
+    /*
+      Goal: ensure that sessions for other movies are not included in the rendered list.
+
+      Synopsis:
+      - given: a set of PlannedMovieSession entries including some for other movies
+      - when: component is created and change detection run
+      - then: no rendered session corresponds to a session with a different movie.id
+
+      Desired assertions:
+      1. explicitly assert that "otherSession" (for a different movie) is not in component.$sessions()
+        so that the Copilot code-reviewer won't complain that this variable is not used.
+    */
+    await fixture.whenStable()
+    expect(component.$sessions()).not.toContain(otherSession)
+  })
+
   it('should render sessions ordered by day then startTime (ascending)', async () => {
     /*
       Goal: verify that the visible session list is ordered by the 'day' then 'startTime'
@@ -141,11 +158,12 @@ describe('MovieCtxtMenu (component + unit)', () => {
 
     // Expected order: wednesdaySession, fridaySession, sundaySession
     // The session about the other movie should not be present (see dataset)
+    const format = (s: PlannedMovieSession) => `${s.format('%t : %d, %h')}`
     expect(texts.length).toBe(4)
-    expect(texts[0]).toContain(wednesdayMorningSession.day.name)
-    expect(texts[1]).toContain(wednesdayAfternoonSession.day.name)
-    expect(texts[2]).toContain(fridaySession.day.name)
-    expect(texts[3]).toContain(sundaySession.day.name)
+    expect(texts[0]).toEqual(format(wednesdayMorningSession))
+    expect(texts[1]).toEqual(format(wednesdayAfternoonSession))
+    expect(texts[2]).toEqual(format(fridaySession))
+    expect(texts[3]).toEqual(format(sundaySession))
   })
 
 });
@@ -181,6 +199,9 @@ builder.add({day: Days.FRIDAY})
       .add({day: Days.SUNDAY})
 
 const sessions = builder.done() as PlannedMovieSession[]
+
+// note: otherSession is added, but for a different movie: it is not expected to appear in the rendered list.
+// There is a test for that somewhere.
 const [fridaySession, wednesdayMorningSession, otherSession, wednesdayAfternoonSession, sundaySession] = sessions
 
 const anchorMock = {
