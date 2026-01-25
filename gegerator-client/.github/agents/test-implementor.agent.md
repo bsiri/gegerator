@@ -20,9 +20,10 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 - Read the test suite to implement and the comments that describe each test;
 - Read the code under test and analyze its inputs, outputs and interactions;
 - Read the html template of the code under test. Find where you could apply testids;
+- Read the examples listed at the end of your instructions;
 
 # Test design principles
-- Test the UI by physically interacting with it instead of calling the backing component method directly;
+- Each UI component that can be interacted with should be physically tested in at least once test;
 - Interact with UI Material components using the test harnesses;
 - Test validation errors by checking both the control group and whether the error message is actually displayed;
 
@@ -45,5 +46,6 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 
 # Examples
 For reference:
-- usage of harnessHelper and UI testing: [configdialog.component.spec.ts](/src/app/components/configuration/configdialog/configdialog.component.spec.ts);
-- usage of object factory: [movie-ctxt-menu.component.spec.ts](/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
+- example usage of harnessHelper: [configdialog.component.spec.ts](/src/app/components/configuration/configdialog/configdialog.component.spec.ts);
+- exemple usage of object factory: [movie ctxt menu.component.spec.ts](/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
+- exemple of testing interactions: [planned movie session.component.spec.ts](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
