@@ -6,20 +6,16 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { harnessHelper } from 'src/_testhelpers/harnesshelper'
 import { of } from 'rxjs'
-import { MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { MatDialog} from '@angular/material/dialog'
 import { Store } from '@ngrx/store'
 import { PlannedMovieSessionComponent } from './planned-movie-session.component'
-import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model'
+import { MovieRating, MovieRatings } from 'src/app/models/movie.model'
 import { EventRating, EventRatings } from 'src/app/models/plannable.model'
 import { RoadmapAuthor, FestivalRoadmap } from 'src/app/models/roadmap.model'
-import { Durations, Times } from 'src/app/models/time.utils'
-import { PlannedMovieSession } from 'src/app/models/session.model'
-import { Days, Theaters, Day, Theater } from 'src/app/models/referential.data'
-import { Time } from 'src/app/models/time.model'
+import { Times } from 'src/app/models/time.utils'
+import { Days,} from 'src/app/models/referential.data'
 import * as factories from 'src/_testhelpers/factories'
 import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
-import { after } from 'node:test'
-import { toNamespacedPath } from 'node:path'
 
 describe('PlannedMovieSessionComponent', () => {
   /**
@@ -96,7 +92,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs on the shared component and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert: component exists
     expect(component).toBeTruthy()
@@ -148,7 +144,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs on the shared component and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert: both rating components are present
     const movieRatingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-movie-ratings')
@@ -181,7 +177,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs on the shared component and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert internal state and DOM presence
     expect(component._isPlannedElsewhere()).toBe(true)
@@ -211,7 +207,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs on the shared component and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert: outstanding takes precedence
     expect(component.contentRendering).toBe('outstanding')
@@ -245,7 +241,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert
     expect(component.contentRendering).toBe(expectedClassname)
@@ -270,7 +266,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs on the shared component and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert: outstanding takes precedence
     expect(component.borderRendering).toBe('outstanding')
@@ -303,7 +299,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Act: assign inputs and render
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // Assert
     expect(component.borderRendering).toBe(expectedClassname)
@@ -333,7 +329,7 @@ describe('PlannedMovieSessionComponent', () => {
 
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // prepare dialog to return updated session
     const dialogRef = { afterClosed: () => of(updated) }
@@ -374,7 +370,7 @@ describe('PlannedMovieSessionComponent', () => {
 
     component.session = session
     component.roadmap = roadmap
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // dialog will close with undefined
     const dialogRef = { afterClosed: () => of(undefined) }
@@ -408,7 +404,7 @@ describe('PlannedMovieSessionComponent', () => {
     component.roadmap = roadmap
     // ensure anchor exists
     component['_swlitem'] = { id: 'anchor' } as any
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // dialog returns void (that's how this one works) but componentInstance.eventRating is modified
     const newRating = EventRatings.MANDATORY
@@ -449,7 +445,7 @@ describe('PlannedMovieSessionComponent', () => {
     component.session = session
     component.roadmap = roadmap
     component['_swlitem'] = {} as any
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     // dialog componentInstance.eventRating equals original session.rating
     const dialogRef = { afterClosed: () => of(null), componentInstance: { eventRating: session.rating } }
@@ -479,7 +475,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Arrange
     component.session = factories.defaultSession()
     component.roadmap = emptyRoadmap()
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     const dialogRef = { afterClosed: () => of(ConfirmOutput.CONFIRM) }
     mockMatDialog.open = vi.fn(() => dialogRef)
@@ -509,7 +505,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Arrange
     component.session = factories.defaultSession()
     component.roadmap = emptyRoadmap()
-    fixture.detectChanges()
+    await fixture.whenStable()
 
     const dialogRef = { afterClosed: () => of(ConfirmOutput.CANCEL) }
     mockMatDialog.open = vi.fn(() => dialogRef)
@@ -536,6 +532,27 @@ describe('PlannedMovieSessionComponent', () => {
       1. `_isNeverRated()` true for movie NEVER
       2. `_isNeverRated()` true for session NEVER
     */
+    ////// Test 1 : movie rating NEVER
+    // Arrange: movie rating NEVER
+    const movieNever = factories.defaultMovie({ rating: MovieRatings.NEVER })
+    const sessionMovieNever = factories.defaultSession({ movie: movieNever })
+    component.session = sessionMovieNever
+    component.roadmap = emptyRoadmap()
+    await fixture.whenStable()
+
+    // Assert: movie NEVER -> never rated
+    expect(component._isNeverRated()).toBe(true)
+
+    ////// Test 2 : session rating NEVER
+    // Arrange: session rating NEVER
+    const movie = factories.defaultMovie({ rating: MovieRatings.DEFAULT })
+    const sessionNever = factories.defaultSession({ movie: movie, rating: EventRatings.NEVER })
+    component.session = sessionNever
+    component.roadmap = emptyRoadmap()
+    await fixture.whenStable()
+
+    // Assert: session NEVER -> never rated
+    expect(component._isNeverRated()).toBe(true)
   })
 
   it('_isPlannedElsewhere is true if the movie is planned elsewhere', async () => {
@@ -553,29 +570,34 @@ describe('PlannedMovieSessionComponent', () => {
 
       Note: 
     */
+    //// Test 1 : movie planned elsewhere
+    // Arrange: create a movie and two different sessions for it
+    const sameMovie = factories.someMovie()
+    const session = factories.someSession({ movie: sameMovie })
+    const otherSession = factories.someSession({ movie: sameMovie })
+
+    // Roadmap contains otherSession but not this session
+    let roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [otherSession], [])
+    component.session = session
+    component.roadmap = roadmap
+    await fixture.whenStable()
+
+    // Assert: planned elsewhere when movie is in roadmap but session is not
+    expect(component._isPlannedElsewhere()).toBe(true)
+
+    //// Test 2 : this session is the planned session in the roadmap, not the other one
+    // Now include this session in the roadmap too
+    roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [session], [])
+    component.roadmap = roadmap
+    await fixture.whenStable()
+
+    // Assert: not planned elsewhere when this session is also in roadmap
+    expect(component._isPlannedElsewhere()).toBe(false)
   })
 
 
   // *************** Test configuration ***************
-  
-  /**
-   * Mocks the dialog for the confirm-then-delete dialog.
-   * The afterClosed observable emits the provided answer.
-   * 
-   * @param answer 
-   * @returns 
-   */
-  function mockConfirmDialog(answer: ConfirmOutput){
-    const closed$ = of(answer)
-    const dialogRef = {
-      afterClosed: () => closed$,
-      componentInstance: {}
-    }
-      const dialogMock = { open: vi.fn(() => dialogRef) }
-      return dialogMock
-  }
 
-  // ********* other test data ***************
   function emptyRoadmap(): FestivalRoadmap {
     return new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
   }
