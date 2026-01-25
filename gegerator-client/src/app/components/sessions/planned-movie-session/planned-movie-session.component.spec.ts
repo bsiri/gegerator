@@ -215,13 +215,14 @@ describe('PlannedMovieSessionComponent', () => {
     expect(component.contentRendering).toBe('outstanding')
   })
   
-  const contentRenderingCases = [
-    ['contentRendering returns "very-green" for MovieRatings.HIGHEST', MovieRatings.HIGHEST, "very-green"],
-    ['contentRendering returns "green" for MovieRatings.HIGH', MovieRatings.HIGH, "green"],
-    ['contentRendering returns "normal" for MovieRatings.DEFAULT', MovieRatings.DEFAULT, "normal"],
-    ['contentRendering returns "disabled" for MovieRatings.NEVER', MovieRatings.NEVER, "disabled"]
-  ]
-  it.for(contentRenderingCases)('%s', async ([testname, rating, expectedClassname]) => {
+  const contentRenderingCases: [string, MovieRating][] = [
+    ['very-green', MovieRatings.HIGHEST],
+    ['green', MovieRatings.HIGH],
+    ['normal', MovieRatings.DEFAULT],
+    ['disabled', MovieRatings.NEVER]
+  ] 
+  it.each<[string, MovieRating]>(contentRenderingCases)('contentRendering returns "%s" for rating MovieRating %s', 
+    async (expectedClassname: string, rating: MovieRating) => {
     /*
       Goal: verify contentRendering for various movie ratings.
 
@@ -235,7 +236,7 @@ describe('PlannedMovieSessionComponent', () => {
     */
 
     // Arrange: session with movie rating set according to the case
-    const movie = factories.defaultMovie({ rating: rating as MovieRating })
+    const movie = factories.defaultMovie({ rating: rating })
     const session = factories.defaultSession({ movie: movie })
     const roadmap = emptyRoadmap()
 
@@ -260,15 +261,27 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. `borderRendering === 'outstanding'`
     */
+    // Arrange: a session that is part of a roadmap authored by MACHINE
+    const session = factories.defaultSession()
+    const roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [session], [])
+
+    // Act: assign inputs on the shared component and render
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    // Assert: outstanding takes precedence
+    expect(component.borderRendering).toBe('outstanding')
   })
 
 
-  const borderRenderingCases = [
-    ['borderRendering returns "salient" for EventRatings.MANDATORY', EventRatings.MANDATORY, 'salient'],
-    ['borderRendering returns "normal" for EventRatings.DEFAULT', EventRatings.DEFAULT, 'normal'],
-    ['borderRendering returns "disabled" for EventRatings.NEVER', EventRatings.NEVER, 'disabled']
+  const borderRenderingCases: [string, EventRating][] = [
+    ['salient', EventRatings.MANDATORY],
+    ['normal', EventRatings.DEFAULT],
+    ['disabled', EventRatings.NEVER]
   ]
-  it.each(borderRenderingCases)('%s', async (testname, rating, expectedClassname) => {
+  it.each<[string, EventRating]>(borderRenderingCases)('borderRendering returns "%s" for EventRating %s', 
+    async (expectedClassname, rating) => {
     /*
       Goal: verify borderRendering for various session ratings.
 
@@ -280,6 +293,18 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. `borderRendering === expectedClassname`
     */
+
+    // Arrange: session with session.rating set according to the case
+    const session = factories.defaultSession({ rating: rating })
+    const roadmap = emptyRoadmap()
+
+    // Act: assign inputs and render
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    // Assert
+    expect(component.borderRendering).toBe(expectedClassname)
   })
 
 
@@ -299,6 +324,36 @@ describe('PlannedMovieSessionComponent', () => {
       1. MatDialog.open called with SessionDialog and session.copy()
       2. Store.dispatch called with SessionActions.update_session and correct payload
     */
+    // Arrange
+    const session = factories.defaultSession()
+    const updated = session.copy({ rating: EventRatings.MANDATORY })
+    const roadmap = emptyRoadmap()
+
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    // prepare dialog to return updated session
+    const dialogMock = mockUpdateSessionDialog(updated)
+    mockMatDialog.open = vi.fn(dialogMock.open)
+
+    // Act
+    component.update()
+
+    // Assert: dialog opened with SessionDialog and data matching a copy of session
+    expect(mockMatDialog.open).toHaveBeenCalled()
+    const openArgs = mockMatDialog.open.mock.calls[0]
+    expect(openArgs[0].name || openArgs[0]).toBeDefined()
+    expect(openArgs[1]).toBeDefined()
+    expect(openArgs[1].data).toBeDefined()
+    expect(openArgs[1].data.movie.title).toBe(session.movie.title)
+
+    // Store.dispatch must have been called with update_session and correct payload
+    expect(mockStore.dispatch).toHaveBeenCalled()
+    const dispatched = mockStore.dispatch.mock.calls[0][0]
+    expect(dispatched.session).toEqual(updated.toMovieSession())
+    const expectedThenReload = session.checkChangesRequireReload(updated)
+    expect(dispatched.thenReload).toBe(expectedThenReload)
   })
 
   it('update() does not dispatch when dialog afterClosed yields falsy', async () => {
@@ -314,6 +369,23 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. Store.dispatch not called
     */
+    // Arrange
+    const session = factories.defaultSession()
+    const roadmap = emptyRoadmap()
+
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    // dialog will close with undefined
+    const dialogRef = { afterClosed: () => of(undefined), componentInstance: {} }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act
+    component.update()
+
+    // Assert
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
   })
 
   it('updateRating() opens EventRatingMenu and updates when rating changed', async () => {
@@ -330,6 +402,34 @@ describe('PlannedMovieSessionComponent', () => {
       1. MatDialog.open called with anchor equal to component._swlitem and correct eventRating
       2. Store.dispatch called with update_session and toMovieSession() payload
     */
+    // Arrange
+    const session = factories.defaultSession()
+    const roadmap = emptyRoadmap()
+    component.session = session
+    component.roadmap = roadmap
+    // ensure anchor exists
+    component['_swlitem'] = { id: 'anchor' } as any
+    fixture.detectChanges()
+
+    // dialog returns with a different rating
+    const newRating = EventRatings.MANDATORY
+    const dialogMock = mockRatingDialog(newRating)
+    mockMatDialog.open = vi.fn(dialogMock.open)
+
+    // Act
+    component.updateRating()
+
+    // Assert: dialog opened with EventRatingMenu and correct data anchor + eventRating
+    expect(mockMatDialog.open).toHaveBeenCalled()
+    const openArgs = mockMatDialog.open.mock.calls[0]
+    const opts = openArgs[1]
+    expect(opts.data.anchor).toBe(component['_swlitem'])
+    expect(opts.data.eventRating).toBe(session.rating)
+
+    // Store.dispatch called with update_session and modified session
+    expect(mockStore.dispatch).toHaveBeenCalled()
+    const dispatched = mockStore.dispatch.mock.calls[0][0]
+    expect(dispatched.session).toEqual(session.copy({ rating: newRating }).toMovieSession())
   })
 
   it('updateRating() does not dispatch when rating remains unchanged', async () => {
@@ -345,6 +445,23 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. Store.dispatch not called
     */
+    // Arrange
+    const session = factories.defaultSession()
+    const roadmap = emptyRoadmap()
+    component.session = session
+    component.roadmap = roadmap
+    component['_swlitem'] = {} as any
+    fixture.detectChanges()
+
+    // dialog componentInstance.eventRating equals original session.rating
+    const dialogMock = mockRatingDialog(session.rating)
+    mockMatDialog.open = vi.fn(dialogMock.open)
+
+    // Act
+    component.updateRating()
+
+    // Assert
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
   })
 
   it('confirmThenDelete() opens confirm dialog and dispatches delete_session on confirm', async () => {
@@ -361,6 +478,23 @@ describe('PlannedMovieSessionComponent', () => {
       1. MatDialog.open called with GenericPurposeDialog and confirm type
       2. Store.dispatch called with delete_session payload
     */
+    // Arrange
+    const session = factories.defaultSession()
+    const roadmap = emptyRoadmap()
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    const dialogMock = mockConfirmDialog(ConfirmOutput.CONFIRM)
+    mockMatDialog.open = vi.fn(dialogMock.open)
+
+    // Act
+    component.confirmThenDelete()
+
+    // Assert
+    expect(mockMatDialog.open).toHaveBeenCalled()
+    const dispatched = mockStore.dispatch.mock.calls[0][0]
+    expect(dispatched.session).toEqual(session.toMovieSession())
   })
 
   it('confirmThenDelete() does not dispatch when user cancels', async () => {
@@ -376,6 +510,21 @@ describe('PlannedMovieSessionComponent', () => {
       Desired assertions:
       1. Store.dispatch not called
     */
+    // Arrange
+    const session = factories.defaultSession()
+    const roadmap = emptyRoadmap()
+    component.session = session
+    component.roadmap = roadmap
+    fixture.detectChanges()
+
+    const dialogMock = mockConfirmDialog(ConfirmOutput.CANCEL)
+    mockMatDialog.open = vi.fn(dialogMock.open)
+
+    // Act
+    component.confirmThenDelete()
+
+    // Assert
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
   })
 
   // -------- Edge / negative tests --------
