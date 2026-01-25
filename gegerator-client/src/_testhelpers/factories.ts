@@ -130,6 +130,86 @@ export function someSession(overrides: PlannedMovieSessionSpec = {}): PlannedMov
 
 
 /**
+ * Utility for mass-producing PlannedMovieSession instances sharing common specs.
+ * The non-specified attributes will be random (using the "someX" factory). The 
+ * builder accumulate the sessions in a buffer until you invoke "done()".
+ * 
+ * # Basic usage
+ * The entry point to the builder is the "for" method, in which you pass the 
+ * initial session specs.
+ * 
+ * Then, use the following methods
+ * - add(specs): creates a random session with the given specs and add it 
+ *   to the buffer.
+ * - done(): returns the buffer then reinitialize it
+ * 
+ * # Sub builders
+ * One can create sub scopes (sub builders) that inherit the specs of its
+ * parent builder:
+ * - with(additionalSpecs): returns a scoped sub builder
+ * - done(): aggregates its sessions to the parent builder, then returns 
+ *   the parent builder.
+ * 
+ * # Examples:
+ * Make a bunch of session for the same movie
+ * ```typescript
+ * // make random sessions for the same movie
+ * const builder = sessionBuilder().for({movie: someMovie()})
+ * const [session1, session2] = builder.add().add().done()
+ * ```
+ * 
+ * Use of sub builders
+ * ```typescript
+ * const [session1, session2, session3] = sessionBuilder()
+ *                      .for({ movie: someMovie()})
+ *                          .with({day: Days.FRIDAY})
+ *                              .add({startTime: Times.fromString("10h30")})
+ *                              .add({startTime: Times.fromString("14h30")})
+ *                          .done()
+ *                          .with({theater: Theaters.CASINO})
+ *                              .add()
+ *                          .done()
+ *                      .done()
+ * ```
+ * 
+ * @returns 
+ */
+export function sessionBuilder() {
+    return {
+        for: (specs: PlannedMovieSessionSpec) =>{
+            return new SessionBuilder(specs)
+        }
+    }
+}
+
+class SessionBuilder{
+    sessions: PlannedMovieSession[] = []
+    constructor (private specs: PlannedMovieSessionSpec = {}, private parent?: SessionBuilder){}
+    
+    with(subSpecs: PlannedMovieSessionSpec){
+        return new SessionBuilder({...this.specs, ...subSpecs}, this)
+    }
+    add(specs: PlannedMovieSessionSpec){
+        const effectiveSpecs = {...this.specs, ...specs}
+        this.sessions.push(someSession(effectiveSpecs))
+    }
+    done(){
+        if (this.parent != undefined){
+            this.parent.sessions = this.parent.sessions.concat(this.sessions)
+            return this.parent
+        }
+        else{
+            const res = this.sessions.slice()
+            this.sessions = []
+            return res
+        }
+    }
+}
+
+
+
+
+/**
  * Returns a default OtherActivity instance, with optional overrides. Use it when you
  * need a reference instance with known properties, with slight variations if
  * you provide overrides.

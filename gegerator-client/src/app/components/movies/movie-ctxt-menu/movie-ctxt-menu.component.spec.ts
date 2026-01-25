@@ -13,6 +13,7 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { harnessHelper } from 'src/_testhelpers/harnesshelper'
 import { By } from '@angular/platform-browser'
+import * as factories from 'src/_testhelpers/factories'
 
 describe('MovieCtxtMenu (component + unit)', () => {
   let fixture: ComponentFixture<MovieCtxtMenu>
@@ -159,20 +160,31 @@ describe('MovieCtxtMenu (component + unit)', () => {
 
 // shared movie instance for tests
 function movieInstance(){
-    return new Movie(1, 'Alpha', Times.fromString('1h30'), MovieRatings.DEFAULT)
+  return factories.defaultMovie()
+  // return new Movie(1, 'Alpha', Times.fromString('1h30'), MovieRatings.DEFAULT)
 } 
 
 function differentMovie(){
-    return new Movie(2, 'Beta', Times.fromString('2h00'), MovieRatings.HIGHEST)
+  return factories.someMovie() 
+  // return new Movie(2, 'Beta', Times.fromString('2h00'), MovieRatings.HIGHEST)
 }
 
-// three planned sessions for the shared movie (different theaters/days/times)
+// four planned sessions for the shared movie (different theaters/days/times)
+//  -> two of them at the same day, different times.
 // plus another one for an unrelated movie
-const fridaySession = new PlannedMovieSession(102, movieInstance(), Theaters.CASINO, Days.FRIDAY, Times.fromString('14h30'))
-const wednesdaySession = new PlannedMovieSession(101, movieInstance(), Theaters.ESPACE_LAC, Days.WEDNESDAY, Times.fromString('09h00'))
-const sundaySession = new PlannedMovieSession(103, movieInstance(), Theaters.PARADISO, Days.SUNDAY, Times.fromString('20h00'))
-const otherMovieSession = new PlannedMovieSession(201, differentMovie(), Theaters.CASINO, Days.SATURDAY, Times.fromString('16h00'))
-const movieSessions = [fridaySession, otherMovieSession, wednesdaySession, sundaySession]
+
+const fridaySession = factories.someSession({movie: movieInstance(), day: Days.FRIDAY})
+const wednesdayMorningSession = factories.someSession({movie: movieInstance(), day: Days.WEDNESDAY, startTime: Times.fromString('09h00')})
+const wednesdayAfternoonSession = factories.someSession({movie: movieInstance(), day: Days.WEDNESDAY, startTime: Times.fromString('14h00')})
+const sundaySession = factories.someSession({movie: movieInstance(), day: Days.SUNDAY})
+const otherMovieSession = factories.someSession({movie: differentMovie(), day: Days.SATURDAY})
+const movieSessions = [fridaySession, otherMovieSession, wednesdayAfternoonSession, wednesdayMorningSession, sundaySession]
+
+// const fridaySession = new PlannedMovieSession(102, movieInstance(), Theaters.CASINO, Days.FRIDAY, Times.fromString('14h30'))
+// const wednesdaySession = new PlannedMovieSession(101, movieInstance(), Theaters.ESPACE_LAC, Days.WEDNESDAY, Times.fromString('09h00'))
+// const sundaySession = new PlannedMovieSession(103, movieInstance(), Theaters.PARADISO, Days.SUNDAY, Times.fromString('20h00'))
+// const otherMovieSession = new PlannedMovieSession(201, differentMovie(), Theaters.CASINO, Days.SATURDAY, Times.fromString('16h00'))
+// const movieSessions = [fridaySession, otherMovieSession, wednesdaySession, sundaySession]
 
 const anchorMock = {
   location: {

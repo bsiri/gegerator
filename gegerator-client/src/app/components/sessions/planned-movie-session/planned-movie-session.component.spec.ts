@@ -16,7 +16,7 @@ import { Durations, Times } from 'src/app/models/time.utils'
 import { PlannedMovieSession } from 'src/app/models/session.model'
 import { Days, Theaters, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
-import * as factories from 'src/_testhelpers/testfactories'
+import * as factories from 'src/_testhelpers/factories'
 import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
 
 describe('PlannedMovieSessionComponent', () => {
