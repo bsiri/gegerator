@@ -18,6 +18,8 @@ import { Days, Theaters, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
 import * as factories from 'src/_testhelpers/factories'
 import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
+import { after } from 'node:test'
+import { toNamespacedPath } from 'node:path'
 
 describe('PlannedMovieSessionComponent', () => {
   /**
@@ -326,7 +328,7 @@ describe('PlannedMovieSessionComponent', () => {
     */
     // Arrange
     const session = factories.defaultSession()
-    const updated = session.copy({ rating: EventRatings.MANDATORY })
+    const updated = session.copy({ day: Days.SATURDAY })
     const roadmap = emptyRoadmap()
 
     component.session = session
@@ -334,8 +336,8 @@ describe('PlannedMovieSessionComponent', () => {
     fixture.detectChanges()
 
     // prepare dialog to return updated session
-    const dialogMock = mockUpdateSessionDialog(updated)
-    mockMatDialog.open = vi.fn(dialogMock.open)
+    const dialogRef = { afterClosed: () => of(updated) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
     component.update()
@@ -343,10 +345,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Assert: dialog opened with SessionDialog and data matching a copy of session
     expect(mockMatDialog.open).toHaveBeenCalled()
     const openArgs = mockMatDialog.open.mock.calls[0]
-    expect(openArgs[0].name || openArgs[0]).toBeDefined()
-    expect(openArgs[1]).toBeDefined()
-    expect(openArgs[1].data).toBeDefined()
-    expect(openArgs[1].data.movie.title).toBe(session.movie.title)
+    expect(openArgs[1].data).toEqual(session)
 
     // Store.dispatch must have been called with update_session and correct payload
     expect(mockStore.dispatch).toHaveBeenCalled()
@@ -378,7 +377,7 @@ describe('PlannedMovieSessionComponent', () => {
     fixture.detectChanges()
 
     // dialog will close with undefined
-    const dialogRef = { afterClosed: () => of(undefined), componentInstance: {} }
+    const dialogRef = { afterClosed: () => of(undefined) }
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
@@ -411,10 +410,10 @@ describe('PlannedMovieSessionComponent', () => {
     component['_swlitem'] = { id: 'anchor' } as any
     fixture.detectChanges()
 
-    // dialog returns with a different rating
+    // dialog returns void (that's how this one works) but componentInstance.eventRating is modified
     const newRating = EventRatings.MANDATORY
-    const dialogMock = mockRatingDialog(newRating)
-    mockMatDialog.open = vi.fn(dialogMock.open)
+    const dialogRef = { afterClosed: () => of(null), componentInstance: { eventRating: newRating } }
+    mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
     component.updateRating()
@@ -423,8 +422,7 @@ describe('PlannedMovieSessionComponent', () => {
     expect(mockMatDialog.open).toHaveBeenCalled()
     const openArgs = mockMatDialog.open.mock.calls[0]
     const opts = openArgs[1]
-    expect(opts.data.anchor).toBe(component['_swlitem'])
-    expect(opts.data.eventRating).toBe(session.rating)
+    expect(opts.data).toEqual({ anchor: component['_swlitem'], eventRating: session.rating })
 
     // Store.dispatch called with update_session and modified session
     expect(mockStore.dispatch).toHaveBeenCalled()
@@ -454,8 +452,8 @@ describe('PlannedMovieSessionComponent', () => {
     fixture.detectChanges()
 
     // dialog componentInstance.eventRating equals original session.rating
-    const dialogMock = mockRatingDialog(session.rating)
-    mockMatDialog.open = vi.fn(dialogMock.open)
+    const dialogRef = { afterClosed: () => of(null), componentInstance: { eventRating: session.rating } }
+    mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
     component.updateRating()
@@ -479,14 +477,12 @@ describe('PlannedMovieSessionComponent', () => {
       2. Store.dispatch called with delete_session payload
     */
     // Arrange
-    const session = factories.defaultSession()
-    const roadmap = emptyRoadmap()
-    component.session = session
-    component.roadmap = roadmap
+    component.session = factories.defaultSession()
+    component.roadmap = emptyRoadmap()
     fixture.detectChanges()
 
-    const dialogMock = mockConfirmDialog(ConfirmOutput.CONFIRM)
-    mockMatDialog.open = vi.fn(dialogMock.open)
+    const dialogRef = { afterClosed: () => of(ConfirmOutput.CONFIRM) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
     component.confirmThenDelete()
@@ -494,7 +490,7 @@ describe('PlannedMovieSessionComponent', () => {
     // Assert
     expect(mockMatDialog.open).toHaveBeenCalled()
     const dispatched = mockStore.dispatch.mock.calls[0][0]
-    expect(dispatched.session).toEqual(session.toMovieSession())
+    expect(dispatched.session).toEqual(component.session.toMovieSession())
   })
 
   it('confirmThenDelete() does not dispatch when user cancels', async () => {
@@ -511,14 +507,12 @@ describe('PlannedMovieSessionComponent', () => {
       1. Store.dispatch not called
     */
     // Arrange
-    const session = factories.defaultSession()
-    const roadmap = emptyRoadmap()
-    component.session = session
-    component.roadmap = roadmap
+    component.session = factories.defaultSession()
+    component.roadmap = emptyRoadmap()
     fixture.detectChanges()
 
-    const dialogMock = mockConfirmDialog(ConfirmOutput.CANCEL)
-    mockMatDialog.open = vi.fn(dialogMock.open)
+    const dialogRef = { afterClosed: () => of(ConfirmOutput.CANCEL) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
     component.confirmThenDelete()
@@ -563,41 +557,6 @@ describe('PlannedMovieSessionComponent', () => {
 
 
   // *************** Test configuration ***************
-
-
-  /**
-   * Creates a mock dialog ref for the session update dialog.
-   * If `session` is provided the `afterClosed()` observable emits it immediately,
-   * otherwise it emits `undefined`.
-   */
-  function mockUpdateSessionDialog(session: PlannedMovieSession | undefined){
-    const closed$ = of(session)
-    const dialogRef = {
-      afterClosed: () => closed$,
-      componentInstance: {}
-    }
-      const dialogMock = { open: vi.fn(() => dialogRef) }
-      return dialogMock
-  }
-
-
-  /**
-   * Mocks the dialog for the rating update dialog.
-   * The afterClosed observable emits the provided newRating.
-   * 
-   * @param newRating 
-   * @returns 
-   */
-  function mockRatingDialog(newRating: EventRating){
-    const closed$ = of(null)
-    const dialogRef = {
-      afterClosed: () => closed$,
-      componentInstance: { eventRating: newRating }
-    }
-      const dialogMock = { open: vi.fn(() => dialogRef) }
-      return dialogMock
-  }
-
   
   /**
    * Mocks the dialog for the confirm-then-delete dialog.

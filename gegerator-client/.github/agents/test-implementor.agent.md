@@ -33,6 +33,11 @@ For the test file that the Developper asked you to attend, read the test method 
 ## Preserve the test description in comments
 Your code should be right below the test description. Do not erase the description.
 
+## Technologies
+The application is now Zoneless (it does not require zonejs for detecting changes). In concrete terms, this means that:
+- async tests should prefer `await fixture.whenStable()`
+- sync tests can keep using `fixture.detectChanges()` 
+
 ## Test the UI components
 Instead of changing a value by code, simulate user interactions to change the value using the Angular Material Harnesses.
 
