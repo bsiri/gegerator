@@ -8,8 +8,8 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 
 # Tools
 - Apply `testids` to templates if they are useful. More on these in a moment;
-- Selecting Material test harnesses: consider using [harnessHelper](/src/_testhelpers/harnesshelper.ts);
-- Creating business objects: consider using the utilies in [factories](/src/_testhelpers/testfactories.ts);
+- Selecting Material test harnesses: consider using `/src/_testhelpers/harnesshelper.ts`;
+- Creating business objects: consider using the utilies in `/src/_testhelpers/testfactories.ts`;
 
 # What are testids ?
 - testids are *css classes* applied on UI elements solely for testing purposes;
@@ -25,6 +25,7 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 # Test design principles
 - Each UI component that can be interacted with should be physically tested in at least once test;
 - Interact with UI Material components using the test harnesses;
+- Use testids and the harnessHelper: they help keep the code concise and expressive;
 - Test validation errors by checking both the control group and whether the error message is actually displayed;
 
 # Coding Guidelines
@@ -45,8 +46,17 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 # After you finished coding
 - read your code again and adjust according to the guidelines;
 
+
+# Main phases
+- Phase1: Read the instructions below carefully;
+- Phase2: Plan you implementation strategy by applying guidelines "Before you code" and "Test design principles";
+- Phase3: Code the tests according to "Coding Guidelines";
+- Phase4: Run the tests and make sure they pass;
+- Phase5: Review your code according to "After you finished coding";
+
+
 # Examples
 For reference:
-- example usage of harnessHelper: [configdialog.component.spec.ts](/src/app/components/configuration/configdialog/configdialog.component.spec.ts);
-- exemple usage of object factory: [movie ctxt menu.component.spec.ts](/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
-- exemple of testing interactions: [planned movie session.component.spec.ts](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
+- example usage of harnessHelper: [/src/app/components/configuration/configdialog/configdialog.component.spec.ts](/src/app/components/configuration/configdialog/configdialog.component.spec.ts);
+- exemple usage of object factory: [/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts](/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
+- exemple of testing interactions: [/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
