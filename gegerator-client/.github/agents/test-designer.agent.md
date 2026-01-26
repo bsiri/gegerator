@@ -89,7 +89,7 @@ If you intend to test such UI element, explicitely says in the comment block tha
 Please note that all methods should be declared as `async`, except for `beforeEach` which should be synchronous.
 
 ## Entities and Test Data
-Entities usually are imported from files named `*.model.ts`.
+Entities usually are imported from files named like "*.model.ts".
 If you have to create entities as test data, create an actual instance using their constructor.
 You can refer to the [factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
 
