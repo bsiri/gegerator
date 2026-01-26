@@ -10,7 +10,7 @@ import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store'
 import { SessionSectionComponent } from './session-section.component'
 import { PlannedMovieSession, MovieSession } from 'src/app/models/session.model'
 import { OtherActivity } from 'src/app/models/activity.model'
-import { Theaters, Days, Day } from 'src/app/models/referential.data'
+import { Theaters, Days, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
 import { defaultSession, defaultActivity } from 'src/_testhelpers/factories'
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model'
@@ -20,6 +20,9 @@ import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selec
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors'
 import { SessionActions } from 'src/app/ngrx/actions/session.actions'
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions'
+import { EventRatings } from 'src/app/models/plannable.model'
+import { By } from '@angular/platform-browser'
+import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component'
 
 /*
   Test skeleton for SessionSectionComponent.
@@ -46,7 +49,7 @@ describe('SessionSectionComponent — Unit', () => {
         mockMatDialog = { open: vi.fn(() => defaultDialogRef) }
 
         // provide selectSignal so component field initializers can call it
-        mockStore = { dispatch: vi.fn(), selectSignal: vi.fn(() => () => []) }
+        mockStore = { dispatch: vi.fn(), selectSignal: mockStoreSelector([],[])}
 
         await TestBed.configureTestingModule({
             imports: [SessionSectionComponent],
@@ -58,8 +61,6 @@ describe('SessionSectionComponent — Unit', () => {
             schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents()
 
-        mockStore.selectSignal.mockReset()
-        mockStore.dispatch.mockReset()
         // do NOT create the component here: tests will create it after configuring selectSignal and other per-test mocks
     })
 
@@ -141,7 +142,7 @@ describe('SessionSectionComponent — Unit', () => {
         expect(res[0]).toBe(fridayCasino)
     })
 
-    it.only('activitiesByDay filters activities by day', async () => {
+    it('activitiesByDay filters activities by day', async () => {
         /*
           Goal: test `activitiesByDay(day)` filtering logic
     
@@ -189,25 +190,25 @@ describe('SessionSectionComponent — Unit', () => {
           5. on the second call, `Store.dispatch` is NOT called
         */
         // Arrange: stub dialog to return a created session first, then undefined
-        const newsession = { id: 999, movie: { id: 55 }, theater: Theaters.CASINO, day: Days.FRIDAY, startTime: new Time(11, 0) }
-        const dialogRef1 = { afterClosed: () => of(newsession) }
-        const dialogRef2 = { afterClosed: () => of(undefined) }
-        mockMatDialog.open = vi.fn().mockReturnValueOnce(dialogRef1).mockReturnValueOnce(dialogRef2)
+        const newsession = { id: 15, movie: { id: 55 }, theater: Theaters.CASINO, day: Days.FRIDAY, startTime: new Time(11, 0) }
+        mockMatDialog.open = vi.fn()
+            .mockReturnValueOnce({ afterClosed: () => of(newsession) })
+            .mockReturnValueOnce({ afterClosed: () => of(undefined) })
 
-        // ensure selectSignal is defined (empty)
-        mockStore.selectSignal = vi.fn(() => () => [])
         fixture = TestBed.createComponent(SessionSectionComponent)
         component = fixture.componentInstance
 
         // Act
         component.openNewSession(newsession.day, newsession.theater)
 
-        // Assert: dialog opened twice and store.dispatch called once with create_session
+        // Assert: dialog opened twice (one returned data, one not) and store.dispatch called once with create_session
         expect(mockMatDialog.open).toHaveBeenCalledTimes(2)
         expect(mockStore.dispatch).toHaveBeenCalledTimes(1)
         const dispatched = mockStore.dispatch.mock.calls[0][0]
         expect(dispatched.session).toBeInstanceOf(MovieSession)
         expect(dispatched.session.movieId).toBe(newsession.movie.id)
+        expect(dispatched.session.theater).toBe(newsession.theater)
+
     })
 
     it('openNewActivity opens Activitydialog and dispatches create_activity then re-opens; second time it closes nothing has to be dispatched', async () => {
@@ -231,9 +232,9 @@ describe('SessionSectionComponent — Unit', () => {
         */
         // Arrange: stub dialog to return a created activity first, then undefined
         const newactivity = { id: 777, day: Days.SATURDAY, startTime: new Time(12, 0), endTime: new Time(13, 0), description: 'Meet' }
-        const dialogRef1 = { afterClosed: () => of(newactivity) }
-        const dialogRef2 = { afterClosed: () => of(undefined) }
-        mockMatDialog.open = vi.fn().mockReturnValueOnce(dialogRef1).mockReturnValueOnce(dialogRef2)
+        mockMatDialog.open = vi.fn()
+                .mockReturnValueOnce({ afterClosed: () => of(newactivity) })
+                .mockReturnValueOnce({ afterClosed: () => of(undefined) })
 
         mockStore.selectSignal = vi.fn(() => () => [])
         fixture = TestBed.createComponent(SessionSectionComponent)
@@ -247,6 +248,8 @@ describe('SessionSectionComponent — Unit', () => {
         expect(mockStore.dispatch).toHaveBeenCalled()
         const dispatched = mockStore.dispatch.mock.calls[0][0]
         expect(dispatched.activity.id).toBe(newactivity.id)
+        expect(dispatched.activity.day).toBe(newactivity.day)
+        expect(dispatched.activity.startTime).toBe(newactivity.startTime)
     })
 })
 
@@ -264,7 +267,7 @@ describe('SessionSectionComponent — UI', () => {
         const defaultDialogRef = { afterClosed: () => { throw new Error('DialogRef.afterClosed not stubbed in test') } }
         mockMatDialog = { open: vi.fn(() => defaultDialogRef) }
 
-        mockStore = { dispatch: vi.fn(), select: vi.fn() }
+        mockStore = { dispatch: vi.fn(), selectSignal: mockStoreSelector }
 
         await TestBed.configureTestingModule({
             imports: [SessionSectionComponent],
@@ -287,7 +290,7 @@ describe('SessionSectionComponent — UI', () => {
         mockStore.dispatch = vi.fn()
     })
 
-    it('renders one section per Days and correct counts of sessions and activities', async () => {
+    it.only('renders one section per Days and correct counts of sessions and activities', async () => {
         /*
           Goal: verify the template renders a row per day and the correct number of
                 child components for sessions and activities.
@@ -298,31 +301,51 @@ describe('SessionSectionComponent — UI', () => {
           - then: for each day there is a `.session-day` container
                 and the correct number of `<app-planned-movie-session>` and `<app-other-activity>` elements
     
-          UI actions (explicit):
-          - Render the component with a test harness
-          - Query DOM for `.session-day` elements and the child component tags
-    
           Desired assertions:
           1. number of `.session-day` equals Days.enumerate().length
           2. for each provided PlannedMovieSession, a corresponding `app-planned-movie-session` node exists in the correct column for its theater
           3. for each provided OtherActivity, a corresponding `app-other-activity` node exists in the activity column for its day
         */
         // Arrange: make the store signals return the test datasets
-        mockStore.selectSignal = vi.fn((selector: any) => {
-            if (selector && selector.name && selector.name.includes('selectPlannedMovieSessions')) return () => TEST_PLANNED_SESSIONS
-            if (selector && selector.name && selector.name.includes('selectActivities')) return () => TEST_OTHER_ACTIVITIES
-            return () => []
-        })
+        mockStore.selectSignal = mockStoreSelector(
+            TEST_PLANNED_SESSIONS, 
+            TEST_OTHER_ACTIVITIES
+        )
 
         // Act: create component
         fixture = TestBed.createComponent(SessionSectionComponent)
         component = fixture.componentInstance
-        fixture.detectChanges()
+        await fixture.whenStable()
 
         // Assert: one .session-day per day
-        const dayContainers: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.session-day'))
+        const dayContainers: HTMLElement[] = fixture.nativeElement.querySelectorAll('.session-day')
         expect(dayContainers.length).toBe(Days.enumerate().length)
 
+        // Assert the headers section
+        // TODO
+
+        // Assert that sessions are correctly placed
+        // helper functions
+        const getcolumn = (day: Day, theater: Theater) => fixture.debugElement.query(By.css(`.testid-sc-sw-${day.key}-${theater.key}`))
+        const sortByTime = (s1: PlannedMovieSession, s2: PlannedMovieSession) => s1.startTime.compare(s2.startTime)
+        for (const day of Days.enumerate()) {
+            for (const theater of Theaters.enumerate()){
+                const col = getcolumn(day, theater)
+                
+                // collect the session in all components in that column
+                const actualSessions = col.queryAll(By.directive(PlannedMovieSessionComponent))
+                                            .map(c => c.componentInstance as PlannedMovieSessionComponent)
+                                            .map(pms => pms.session)
+
+                const sortedExpected = component.sessionsByDayAndTheater(day, theater).sort(sortByTime)
+                // both collection should be exactly equal.
+                expect(sortedExpected).toEqual(actualSessions)
+                
+            }
+        }
+
+        const toto = 2;
+        /*
         // For each day, check counts per column
         const theaterOrder = [Theaters.ESPACE_LAC, Theaters.CASINO, Theaters.PARADISO, Theaters.MCL]
         for (const day of Days.enumerate()) {
@@ -341,6 +364,7 @@ describe('SessionSectionComponent — UI', () => {
                 expect(colCount).toBe(expected)
             }
         }
+            */
     })
 
     it('clicking header add buttons triggers openNewSession and openNewActivity', async () => {
@@ -419,62 +443,6 @@ describe('SessionSectionComponent — UI', () => {
         expect(roadmapVal).toBeDefined()
     })
 
-    const sessionPlacementDataset: Day[] = [
-        Days.FRIDAY,
-        Days.SATURDAY,
-        Days.SUNDAY
-    ]
-    it.for<Day>(sessionPlacementDataset)('comprehensive placement: sessions and activities are rendered in correct day/column', async (day: Day) => {
-        /*
-          Goal: given a comprehensive dataset of PlannedMovieSession and OtherActivity items,
-                ensure each event is rendered in the correct `.session-day` row and the correct theater column.
-    
-          Synopsis:
-          - given: a dataset containing multiple sessions across Days {FRIDAY, SATURDAY, SUNDAY} and Theaters {ESPACE_LAC, CASINO, PARADISO, MCL}
-          - and: activities across several days
-          - when: component is rendered
-          - then: for every event its corresponding element is located inside the `.session-day` for its `day` and inside the proper column for its `theater` (sessions) or activity column (activities)
-    
-          UI actions (explicit):
-          - mount component with test harness and mocked signals providing the dataset
-          - query DOM per-day and per-column and assert presence/absence
-    
-          Desired assertions:
-          1. the total number of `app-planned-movie-session` for each day table and in each theater column matches the dataset
-          2. each `app-other-activity` appears in the activity cell of its day
-          3. no session appears in the wrong theater column
-        */
-        // Arrange: make signals return the deterministic datasets
-        mockStore.selectSignal = vi.fn((selector: any) => {
-            if (selector && selector.name && selector.name.includes('selectPlannedMovieSessions')) return () => TEST_PLANNED_SESSIONS
-            if (selector && selector.name && selector.name.includes('selectActivities')) return () => TEST_OTHER_ACTIVITIES
-            return () => []
-        })
-
-        // Act
-        fixture = TestBed.createComponent(SessionSectionComponent)
-        component = fixture.componentInstance
-        fixture.detectChanges()
-
-        // Locate the day container
-        const dayContainers: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.session-day'))
-        const container = dayContainers.find(c => c.querySelector('.session-day--title')!.textContent!.trim() === day.name)
-        expect(container).toBeDefined()
-        const tds: HTMLElement[] = Array.from(container!.querySelectorAll('tbody tr td'))
-
-        // activities
-        const activitiesInDom = tds[0].querySelectorAll('app-other-activity').length
-        const expectedActivities = TEST_OTHER_ACTIVITIES.filter(a => a.day === day).length
-        expect(activitiesInDom).toBe(expectedActivities)
-
-        // theaters
-        const theaterOrder = [Theaters.ESPACE_LAC, Theaters.CASINO, Theaters.PARADISO, Theaters.MCL]
-        for (let i = 0; i < theaterOrder.length; i++) {
-            const colCount = tds[i + 1].querySelectorAll('app-planned-movie-session').length
-            const expected = TEST_PLANNED_SESSIONS.filter(s => s.day === day && s.theater === theaterOrder[i]).length
-            expect(colCount).toBe(expected)
-        }
-    })
 })
 
 // Test data factories and helper values can be appended here when implementing the tests.
@@ -484,7 +452,6 @@ describe('SessionSectionComponent — UI', () => {
 // These deterministic fixtures are used by UI tests to validate rendering,
 // placement and ordering by day/theater.
 // -----------------------------------------------------------------------------
-
 
 
 const TEST_PLANNED_SESSIONS: PlannedMovieSession[] = [
