@@ -36,6 +36,7 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 - Use real implementations of Pipes and utility classes;
 - Create `Time` objects either with direct constructor call or `Times.fromString("french format time")`;
 - Create `Duration` objects either with direct constructor call of `Durations.fromString("french format time")`;
+- Avoid creating `expect(something).toBeTruthy()` if more assertions are made on that something: those assertions implicitly test the truthiness already.
 
 # Running tests
 - testing only one test suite: `ng test --watch=false --include "<test-file-path>" --ui=false --progress=false`;

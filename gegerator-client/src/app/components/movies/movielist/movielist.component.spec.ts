@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { Component, Input, NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { of } from 'rxjs';
 
 import { Movie } from 'src/app/models/movie.model';
@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import * as factories from 'src/_testhelpers/factories';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { harnessHelper } from 'src/_testhelpers/harnesshelper';
 
 
 describe('MovielistComponent (unit)', () => {
@@ -34,9 +35,9 @@ describe('MovielistComponent (unit)', () => {
         };
 
         TestBed.configureTestingModule({
-          declarations: [],
-          imports: [MovielistComponent, StubMovieComponent],
-          providers: [
+            declarations: [],
+            imports: [MovielistComponent, MovieComponent],
+            providers: [
                 { provide: Store, useValue: mockStore },
                 { provide: MatDialog, useValue: mockDialog }
             ],
@@ -61,10 +62,10 @@ describe('MovielistComponent (unit)', () => {
           1. `$movies()` length equals `MOCK_MOVIES.length`
           2. first and last elements are the same instances as in `MOCK_MOVIES`
         */
-          const movies = component.$movies();
-          expect(movies.length).toBe(MOCK_MOVIES.length);
-          expect(movies[0]).toBe(MOCK_MOVIES[0]);
-          expect(movies[movies.length - 1]).toBe(MOCK_MOVIES[MOCK_MOVIES.length - 1]);
+        const movies = component.$movies();
+        expect(movies.length).toBe(MOCK_MOVIES.length);
+        expect(movies[0]).toBe(MOCK_MOVIES[0]);
+        expect(movies[movies.length - 1]).toBe(MOCK_MOVIES[MOCK_MOVIES.length - 1]);
     })
 
     it('should compute $movies for filtered list', async () => {
@@ -82,10 +83,10 @@ describe('MovielistComponent (unit)', () => {
           1. `$movies()` length equals expected filtered count
           2. each returned movie title includes the filter string (lowercased)
         */
-          component.$filterString.set('alpha');
-          const movies = component.$movies();
-          expect(movies.length).toBe(1);
-          expect(movies[0].title.toLowerCase()).toContain('alpha');
+        component.$filterString.set('alpha');
+        const movies = component.$movies();
+        expect(movies.length).toBe(1);
+        expect(movies[0].title.toLowerCase()).toContain('alpha');
     })
 
     it('should compute $movies for sorted list', async () => {
@@ -101,11 +102,11 @@ describe('MovielistComponent (unit)', () => {
           Desired assertions:
           1. `$movies()` titles are in ascending alphabetical order
         */
-          // initial order in MOCK_MOVIES is [Beta, Gamma, Alpha]
-          component.$sorted.set(true);
-          const movies = component.$movies();
-          const titles = movies.map(m => m.title);
-          expect(titles).toEqual(['Alpha', 'Beta', 'Gamma']);
+        // initial order in MOCK_MOVIES is [Beta, Gamma, Alpha]
+        component.$sorted.set(true);
+        const movies = component.$movies();
+        const titles = movies.map(m => m.title);
+        expect(titles).toEqual(['Alpha', 'Beta', 'Gamma']);
     })
 
 });
@@ -131,10 +132,9 @@ describe('MovielistComponent (UI)', () => {
         };
 
         TestBed.configureTestingModule({
-          declarations: [],
-        //   imports: [MovielistComponent, StubMovieComponent],
-          imports: [MovielistComponent, MovieComponent],
-          providers: [
+            declarations: [],
+            imports: [MovielistComponent, MovieComponent],
+            providers: [
                 { provide: Store, useValue: mockStore },
                 { provide: MatDialog, useValue: mockDialog }
             ],
@@ -161,15 +161,9 @@ describe('MovielistComponent (UI)', () => {
           Desired assertions:
           1. count of `app-movie` elements equals `MOCK_MOVIES.length`
         */
-          fixture.detectChanges();
-          const elems = fixture.nativeElement.querySelectorAll('app-movie');
-          expect(elems.length).toBe(MOCK_MOVIES.length);
-
-          // confirm actual MovieComponent instances are present and bound
-          const movieDebugEls = fixture.debugElement.queryAll(By.directive(MovieComponent));
-          expect(movieDebugEls.length).toBe(MOCK_MOVIES.length);
-          const firstComp = movieDebugEls[0].componentInstance as MovieComponent;
-          expect(firstComp.movie).toBe(MOCK_MOVIES[0]);
+        await fixture.whenStable();
+        const elems = fixture.nativeElement.querySelectorAll('app-movie');
+        expect(elems.length).toBe(MOCK_MOVIES.length);
     })
 
     it('should filter displayed movies when typing in the search input', async () => {
@@ -191,19 +185,18 @@ describe('MovielistComponent (UI)', () => {
           2. after typing, visible elements count equals expected filtered count
           3. visible text contains expected movie titles in order
         */
-          fixture.detectChanges();
-          const input: HTMLInputElement = fixture.nativeElement.querySelector('input');
-          expect(input).toBeTruthy();
+        await fixture.whenStable();
 
-          // type a filter that matches 'Alpha'
-          input.value = 'Alpha';
-          input.dispatchEvent(new KeyboardEvent('keyup'));
-          fixture.detectChanges();
+        // use the harness helper to get the mat input by testid and set value
+        const hh = harnessHelper(loader);
+        const inputHarness = await hh.text('movielist-search');
+        await inputHarness.setValue('Alpha');
+        await fixture.whenStable();
 
-          const movieDebugEls = fixture.debugElement.queryAll(By.directive(MovieComponent));
-          expect(movieDebugEls.length).toBe(1);
-          const comp = movieDebugEls[0].componentInstance as MovieComponent;
-          expect(comp.movie.title).toBe('Alpha');
+        const movieDebugEls = fixture.debugElement.queryAll(By.directive(MovieComponent));
+        expect(movieDebugEls.length).toBe(1);
+        const comp = movieDebugEls[0].componentInstance as MovieComponent;
+        expect(comp.movie.title).toBe('Alpha');
     })
 
     it('should toggle sort when clicking the "Trier" button', async () => {
@@ -223,20 +216,22 @@ describe('MovielistComponent (UI)', () => {
           1. before click: visible titles are in original order
           2. after click: visible titles are in alphabetical order
         */
-          fixture.detectChanges();
-          // before click: original order (inspect child component instances)
-          const beforeDebug = fixture.debugElement.queryAll(By.directive(MovieComponent));
-          const beforeTitles = beforeDebug.map(d => (d.componentInstance as MovieComponent).movie.title);
-          expect(beforeTitles).toEqual(['Beta', 'Gamma', 'Alpha']);
+        await fixture.whenStable();
+        // before click: original order (inspect child component instances)
+        const beforeDebug = fixture.debugElement.queryAll(By.directive(MovieComponent));
+        const beforeTitles = beforeDebug.map(d => (d.componentInstance as MovieComponent).movie.title);
+        expect(beforeTitles).toEqual(['Beta', 'Gamma', 'Alpha']);
 
-          const sortBtn: HTMLButtonElement = fixture.nativeElement.querySelector('button[title="Trier par titre"]');
-          expect(sortBtn).toBeTruthy();
-          sortBtn.click();
-          fixture.detectChanges();
+        // click the sort button
+        const hh = harnessHelper(loader);
+        const sortBtnHarness = await hh.button('movielist-sort');
+        await sortBtnHarness.click();
+        await fixture.whenStable();
 
-          const afterDebug = fixture.debugElement.queryAll(By.directive(MovieComponent));
-          const afterTitles = afterDebug.map(d => (d.componentInstance as MovieComponent).movie.title);
-          expect(afterTitles).toEqual(['Alpha', 'Beta', 'Gamma']);
+        // after click: titles should be sorted
+        const afterDebug = fixture.debugElement.queryAll(By.directive(MovieComponent));
+        const afterTitles = afterDebug.map(d => (d.componentInstance as MovieComponent).movie.title);
+        expect(afterTitles).toEqual(['Alpha', 'Beta', 'Gamma']);
     })
 
     it('should handle create-movie dialog sequence: create then stop', async () => {
@@ -262,27 +257,27 @@ describe('MovielistComponent (UI)', () => {
              the new movie
           2. `MatDialog.open` was invoked two times
         */
-          fixture.detectChanges();
+        await fixture.whenStable();
 
-          const newMovie = factories.someMovie({ id: 99, title: 'Created' });
-          // make dialog.open return a dialog that first emits newMovie, then undefined
-          mockDialog.open = vi.fn()
+        const newMovie = factories.someMovie({ id: 99, title: 'Created' });
+        // make dialog.open return a dialog that first emits newMovie, then undefined
+        mockDialog.open = vi.fn()
             .mockImplementationOnce(() => ({ afterClosed: () => of(newMovie) }))
             .mockImplementationOnce(() => ({ afterClosed: () => of(undefined) }));
 
-          const addBtn: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-label="add a movie"]');
-          expect(addBtn).toBeTruthy();
-          addBtn.click();
-          fixture.detectChanges();
+        const hh = harnessHelper(loader);
+        const addBtnHarness = await hh.button('movielist-add');
+        await addBtnHarness.click();
+        await fixture.whenStable();
 
-          // dispatch should have been called once with a create_movie action
-          expect(mockStore.dispatch).toHaveBeenCalledTimes(1);
-          const dispatchedArg = mockStore.dispatch.mock.calls[0][0];
-          expect(dispatchedArg).toHaveProperty('movie');
-          expect(dispatchedArg.movie.title).toBe('Created');
+        // dispatch should have been called once with a create_movie action
+        expect(mockStore.dispatch).toHaveBeenCalledTimes(1);
+        const dispatchedArg = mockStore.dispatch.mock.calls[0][0];
+        expect(dispatchedArg).toHaveProperty('movie');
+        expect(dispatchedArg.movie.title).toBe('Created');
 
-          // dialog.open should have been called twice (first create, then reopen)
-          expect(mockDialog.open).toHaveBeenCalledTimes(2);
+        // dialog.open should have been called twice (first create, then reopen)
+        expect(mockDialog.open).toHaveBeenCalledTimes(2);
     })
 
 });
@@ -291,15 +286,9 @@ describe('MovielistComponent (UI)', () => {
 // Test data and simple mocks
 // ---------------------------------------------------------------------------
 
-// simple stub for `app-movie` to allow asserting rendered titles in UI tests
-@Component({ selector: 'app-movie', template: '{{ movie?.title }}' })
-class StubMovieComponent {
-    @Input() movie?: Movie
-}
-
 const movieAlpha = factories.someMovie({ id: 1, title: 'Alpha' });
 const movieBeta = factories.someMovie({ id: 2, title: 'Beta' });
 const movieGamma = factories.someMovie({ id: 3, title: 'Gamma' });
 
-export const MOCK_MOVIES: Movie[] = [ movieBeta, movieGamma, movieAlpha ];
+const MOCK_MOVIES: Movie[] = [movieBeta, movieGamma, movieAlpha];
 
