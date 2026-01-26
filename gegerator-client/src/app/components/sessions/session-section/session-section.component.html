@@ -3,7 +3,7 @@
   <div class="sessions--center">
     @for (day of Days.enumerate(); track day) {
       <div class="session-day">
-        <table class="session-day-table">
+        <table class="session-day-table testid-sc-tableday-{{day.key}}">
           <thead>
             <tr>
               <th class="th-day" colspan="5">
@@ -11,27 +11,27 @@
               </th>
             </tr>
             <tr>
-              <th class="th-col">
+              <th class="th-col testid-sc-header-{{day.key}}-act">
                 <ng-container [ngTemplateOutlet]="activityHeader"
                   [ngTemplateOutletContext]="{day:day}">
                 </ng-container>
               </th>
-              <th class="th-col">
+              <th class="th-col testid-sc-header-{{day.key}}-ESPACE_LAC">
                 <ng-container [ngTemplateOutlet]="sessionHeader"
                   [ngTemplateOutletContext]="{day:day, theater: Theaters.ESPACE_LAC}">
                 </ng-container>
               </th>
-              <th class="th-col">
+              <th class="th-col testid-sc-header-{{day.key}}-CASINO">
                 <ng-container [ngTemplateOutlet]="sessionHeader"
                   [ngTemplateOutletContext]="{day:day, theater: Theaters.CASINO}">
                 </ng-container>
               </th>
-              <th class="th-col">
+              <th class="th-col testid-sc-header-{{day.key}}-PARADISO">
                 <ng-container [ngTemplateOutlet]="sessionHeader"
                   [ngTemplateOutletContext]="{day:day, theater: Theaters.PARADISO}">
                 </ng-container>
               </th>
-              <th class="th-col">
+              <th class="th-col testid-sc-header-{{day.key}}-MCL">
                 <ng-container [ngTemplateOutlet]="sessionHeader"
                   [ngTemplateOutletContext]="{day:day, theater: Theaters.MCL}">
                 </ng-container>
@@ -40,27 +40,27 @@
           </thead>
           <tbody #sessionTableBody>
             <tr [ngStyle]="{'height': rowHeightInPixel}">
-              <td>
+              <td class="testid-sc-sw-{{day.key}}-act">
                 @for (activity of activitiesByDay(day); track activity.id) {
                   <app-other-activity [activity]="activity" [roadmap]="$roadmap()"></app-other-activity>
                 }
               </td>
-              <td>
+              <td class="testid-sc-sw-{{day.key}}-ESPACE_LAC">
                 @for (session of sessionsByDayAndTheater(day, Theaters.ESPACE_LAC); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
-              <td>
+              <td class="testid-sc-sw-{{day.key}}-CASINO">
                 @for (session of sessionsByDayAndTheater(day, Theaters.CASINO); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
-              <td>
+              <td class="testid-sc-sw-{{day.key}}-PARADISO">
                 @for (session of sessionsByDayAndTheater(day, Theaters.PARADISO); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
-              <td>
+              <td class="testid-sc-sw-{{day.key}}-MCL">
                 @for (session of sessionsByDayAndTheater(day, Theaters.MCL); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
@@ -83,7 +83,7 @@
 <ng-template #activityHeader let-day="day">
   <div class="session-header">
     <h2 class="session-header--title">Autres activités</h2>
-    <button matButton="filled" color="primary" (click)="openNewActivity(day)">
+    <button matButton="filled" class="testid-sc-newactivity" color="primary" (click)="openNewActivity(day)">
       <mat-icon class="fix-margin">add</mat-icon>
     </button>
   </div>
@@ -92,7 +92,7 @@
 <ng-template #sessionHeader let-day="day" let-theater="theater">
   <div class="session-header">
     <h2 class="session-header--title">{{theater.name}}</h2>
-    <button matButton="filled" color="primary" (click)="openNewSession(day, theater)">
+    <button matButton="filled" class="testid-sc-newsession" color="primary" (click)="openNewSession(day, theater)">
       <mat-icon class="fix-margin">add</mat-icon>
     </button>
   </div>

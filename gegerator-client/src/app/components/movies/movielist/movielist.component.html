@@ -6,9 +6,10 @@
     <button mat-raised-button
       color="primary"
       aria-label="add a movie"
-      (click)="openNewMovie()"
-      title="Ajouter un film"
-      >
+          (click)="openNewMovie()"
+          title="Ajouter un film"
+          class="testid-movielist-add"
+          >
       Ajouter
     </button>
   </div>
@@ -28,13 +29,14 @@
       <mat-icon>search</mat-icon>
       <mat-form-field>
         <mat-label>Rechercher...</mat-label>
-        <input matInput (keyup)="filterMovies($event)">
+        <input matInput class="testid-movielist-search" (keyup)="filterMovies($event)">
       </mat-form-field>
     </div>
     <button mat-raised-button aria-label="sort movies"
       [color]="$sorted() ? 'primary' : 'secondary'"
       (click)="toggleSort()"
       title="Trier par titre"
+      class="testid-movielist-sort"
       >
       Trier
     </button>

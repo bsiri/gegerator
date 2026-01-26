@@ -85,22 +85,6 @@ export function harnessHelper(loader: HarnessLoader){
         },
 
         // ******** other utilities ********
-        getDbgElement: async(arg: ClassTestId | ComponentHarness): Promise<DebugElement> => {
-            if (typeof(arg) === 'string'){
-                // taping in the hidden api but hmm sometimes you have to
-                return (loader as any)._fixture.debugElement.query(
-                    By.css('.testid-'+arg)
-                ) 
-            }
-            else {
-                const asHarness: ComponentHarness = arg 
-                const elt = await asHarness.host()
-                const eltclasses = await elt.getAttribute('class') || ''
-                return (loader as any)._fixture.debugElement.query(
-                    By.css(eltclasses)
-                ) 
-            }
-        },
         /**
          * Simulate selecting files on a native <input type="file"> element.
          * - `inputOrTestId` may be a testid (string) matching the `.testid-...` class

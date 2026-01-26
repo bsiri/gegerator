@@ -181,7 +181,7 @@ export function someSession(overrides: PlannedMovieSessionSpec = {}): PlannedMov
  */
 export function sessionBuilder() {
     return {
-        for: (specs: PlannedMovieSessionSpec) =>{
+        for: (specs: PlannedMovieSessionSpec = {}) =>{
             return new SessionBuilder(specs)
         }
     }
@@ -390,3 +390,4 @@ export function randomTitle(): string {
 
     return `${adjective} ${noun}`
 }
+
