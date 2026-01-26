@@ -12,7 +12,7 @@ import { PlannedMovieSession, MovieSession } from 'src/app/models/session.model'
 import { OtherActivity } from 'src/app/models/activity.model'
 import { Theaters, Days, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
-import { defaultSession, defaultActivity, sessionBuilder } from 'src/_testhelpers/factories'
+import { defaultSession, defaultActivity, sessionBuilder, someSession } from 'src/_testhelpers/factories'
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model'
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model'
 import { of } from 'rxjs'
@@ -23,7 +23,6 @@ import { ActivityActions } from 'src/app/ngrx/actions/activity.actions'
 import { EventRatings, PlannableEvent } from 'src/app/models/plannable.model'
 import { By } from '@angular/platform-browser'
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component'
-import { FormBuilder } from '@angular/forms'
 import { OtherActivityComponent } from '../other-activity/other-activity.component'
 
 /*
@@ -292,21 +291,20 @@ describe('SessionSectionComponent — UI', () => {
         mockStore.dispatch = vi.fn()
     })
 
-    it.only('renders one section per Days and correct counts of sessions and activities', async () => {
+    it('renders one section per Days and all the headers', async () => {
         /*
-          Goal: verify the template renders a row per day and the correct number of
-                child components for sessions and activities.
+          Goal: verify the template renders one section per day 
     
           Synopsis:
           - given: signals returning a list of sessions and activities covering several Days and Theaters
           - when: component is rendered in the DOM
           - then: for each day there is a `.session-day` container
-                and the correct number of `<app-planned-movie-session>` and `<app-other-activity>` elements
-    
+          - then: each day and section has all expected header columns (one per theater + one for activities)
+
           Desired assertions:
           1. number of `.session-day` equals Days.enumerate().length
-          2. for each provided PlannedMovieSession, a corresponding `app-planned-movie-session` node exists in the correct column for its theater
-          3. for each provided OtherActivity, a corresponding `app-other-activity` node exists in the activity column for its day
+          2. each day and each theaters + other activity has a header column with add button
+    
         */
         // Arrange: make the store signals return the test datasets
         mockStore.selectSignal = mockStoreSelector(
@@ -339,7 +337,31 @@ describe('SessionSectionComponent — UI', () => {
                 expect(findButton(thHeaderCol)).toBeTruthy()
             }
         }
+    })
 
+    it('renders the sessions in the correct swimlanes', async () => {
+        /*
+          Goal: verify the template renders the sessions in their expected days and theaters
+    
+          Synopsis:
+          - given: signals returning a list of sessions and activities covering several Days and Theaters
+          - when: component is rendered in the DOM
+          - then: the sessions appear in the expected swimlanes
+
+          Desired assertions:
+          1. for each provided PlannedMovieSession, a corresponding `app-planned-movie-session` node exists in the correct column for its theater and day
+        */
+        // Arrange: make the store signals return the test datasets
+        mockStore.selectSignal = mockStoreSelector(
+            TEST_PLANNED_SESSIONS, 
+            TEST_OTHER_ACTIVITIES
+        )
+
+        // Act: create component
+        fixture = TestBed.createComponent(SessionSectionComponent)
+        component = fixture.componentInstance
+        await fixture.whenStable()
+    
         ///////////////// Assert that sessions are correctly placed by day and theater
         // helper functions
         const getSessionColumn = (day: Day, theater: Theater) => fixture.debugElement.query(By.css(`.testid-sc-sw-${day.key}-${theater.key}`))
@@ -362,6 +384,30 @@ describe('SessionSectionComponent — UI', () => {
                 
             }
         }
+    })
+
+    it('renders the activities in the correct swimlanes', async () => {
+        /*
+          Goal: verify the template renders the sessions in their expected days and theaters
+    
+          Synopsis:
+          - given: signals returning a list of sessions and activities covering several Days and Theaters
+          - when: component is rendered in the DOM
+          - then: the sessions appear in the expected swimlanes
+
+          Desired assertions:
+          1. for each provided PlannedMovieSession, a corresponding `app-planned-movie-session` node exists in the correct column for its theater and day
+        */
+        // Arrange: make the store signals return the test datasets
+        mockStore.selectSignal = mockStoreSelector(
+            TEST_PLANNED_SESSIONS, 
+            TEST_OTHER_ACTIVITIES
+        )
+
+        // Act: create component
+        fixture = TestBed.createComponent(SessionSectionComponent)
+        component = fixture.componentInstance
+        await fixture.whenStable()
 
         ////////////////// Assert that the other activities are also correctly placed by day
         // helper function
@@ -381,12 +427,11 @@ describe('SessionSectionComponent — UI', () => {
             // both collection should be exactly equal
             expect(sortedExpected).toEqual(sortedActual)
         }
-
-        const toto = 2;
-
     })
 
-    it('clicking header add buttons triggers openNewSession and openNewActivity', async () => {
+
+    it.each<[Day, Theater]>(dayAndTheatersCombinations())("clicking %s %s header add buttons triggers openNewSession", 
+        async (day: Day, theater: Theater) => {
         /*
           Goal: ensure header buttons are wired to component handlers.
     
@@ -402,32 +447,69 @@ describe('SessionSectionComponent — UI', () => {
           1. the component method spies are called with expected parameters (day, theater)
         */
         // Arrange
-        mockStore.selectSignal = vi.fn(() => () => TEST_PLANNED_SESSIONS)
-        mockStore.selectSignal = vi.fn((selector: any) => {
-            if (selector && selector.name && selector.name.includes('selectPlannedMovieSessions')) return () => TEST_PLANNED_SESSIONS
-            if (selector && selector.name && selector.name.includes('selectActivities')) return () => TEST_OTHER_ACTIVITIES
-            return () => []
-        })
+        mockStore.selectSignal = mockStoreSelector(
+            TEST_PLANNED_SESSIONS, 
+            []
+        )
 
         fixture = TestBed.createComponent(SessionSectionComponent)
         component = fixture.componentInstance
         fixture.detectChanges()
 
-        // Spy on component methods
-        const spyNewSession = vi.spyOn(component, 'openNewSession')
-        const spyNewActivity = vi.spyOn(component, 'openNewActivity')
+        const newSession = someSession()
+        mockMatDialog.open = vi.fn()
+                .mockReturnValueOnce({ afterClosed: () => of(newSession) })
+                .mockReturnValueOnce({ afterClosed: () => of(undefined) })
 
-        // Click the activity add button (first th)
-        const firstDay = fixture.nativeElement.querySelector('.session-day') as Element
-        const activityButton = firstDay.querySelector('thead .th-col .session-header button') as HTMLElement | null
-        // activity header is the first th; click it
-        activityButton?.click()
-        expect(spyNewActivity).toHaveBeenCalled()
+        // When the button is clicked
+        const helper = harnessHelper(loader)
+        const button = await helper.button(`sc-header-${day.key}-${theater.key} button`)
+        await button.click()
+        await fixture.whenStable()
 
-        // Click a session header add button (second th)
-        const sessionHeaderButton = firstDay.querySelectorAll('thead .th-col .session-header button')[1] as HTMLElement | undefined
-        sessionHeaderButton?.click()
-        expect(spyNewSession).toHaveBeenCalled()
+        // Assert the dialog has been called and the newSession was returned once
+        expect(mockMatDialog.open).toHaveBeenCalled()
+    })
+
+    it.each(Days.enumerate())("clicking %s header activity add button triggers openNewActivity", 
+        async (day: Day) => {
+        /*
+          Goal: ensure header buttons are wired to component handlers.
+
+         Synopsis:
+            - given: the component rendered in the DOM            
+            - when: user clicks the 'add' button in the activity header
+            - then: the component's `openNewActivity` is invoked
+
+          UI actions (explicit):
+          - find the button via harnessHelper + testid and perform `click()`
+
+          Desired assertions:
+          1. the component method spy is called with expected parameter (day)
+        */
+        // Arrange
+        mockStore.selectSignal = mockStoreSelector(
+            [],
+            TEST_OTHER_ACTIVITIES
+        )
+
+        fixture = TestBed.createComponent(SessionSectionComponent)
+        component = fixture.componentInstance
+        fixture.detectChanges()
+        
+        const newActivity = someSession()
+        mockMatDialog.open = vi.fn()
+                .mockReturnValueOnce({ afterClosed: () => of(newActivity) })
+                .mockReturnValueOnce({ afterClosed: () => of(undefined) })
+
+        // When the button is clicked
+        const helper = harnessHelper(loader)
+        const button = await helper.button(`sc-header-${day.key}-act button`)
+        await button.click()
+        await fixture.whenStable()
+
+        // Assert the dialog has been called and the newActivity was returned once
+        expect(mockMatDialog.open).toHaveBeenCalled()
     })
 
     it('passes roadmap signal value to child components as `roadmap` input', async () => {
