@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { describe, it, beforeEach, vi, expect } from 'vitest'
 
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { of } from 'rxjs'
 import { MatDialog } from '@angular/material/dialog'
 import { Store } from '@ngrx/store'
 import { OtherActivityComponent } from './other-activity.component'
@@ -61,6 +62,21 @@ describe('OtherActivityComponent', () => {
       - set `component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])`
       - call `fixture.detectChanges()` and `await fixture.whenStable()` then query the DOM
     */
+    // Arrange
+    component.activity = factories.defaultActivity({ rating: EventRatings.DEFAULT })
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+
+    // Act
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // Assert
+    expect(component).toBeTruthy()
+    const ratingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-session-ratings')
+    expect(ratingsEl).not.toBeNull()
+    const icons: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('.swimlane-item-icon')
+    expect(icons.length).toBe(0)
+    expect(component.contentRendering).toBe('normal')
   })
 
   it('renders the never-icon when activity.rating is NEVER', async () => {
@@ -82,6 +98,22 @@ describe('OtherActivityComponent', () => {
       - assign `component.activity = factories.defaultActivity({ rating: EventRatings.NEVER })`
       - call `fixture.detectChanges()` and `await fixture.whenStable()` then query the DOM
     */
+    // Arrange
+    component.activity = factories.defaultActivity({ rating: EventRatings.NEVER })
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+
+    // Act
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // Assert
+    expect(component).toBeTruthy()
+    const ratingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-session-ratings')
+    expect(ratingsEl).not.toBeNull()
+    // the session-ratings component renders a span with class session-never
+    const neverIcon = fixture.nativeElement.querySelector('.session-never')
+    expect(neverIcon).not.toBeNull()
+    expect(component.contentRendering).toBe('disabled')
   })
 
   // -------- contentRendering / borderRendering behavior --------
@@ -103,6 +135,14 @@ describe('OtherActivityComponent', () => {
       - assign inputs and call `fixture.detectChanges()` if needed
       - assert on `component.contentRendering`
     */
+    const activity = factories.defaultActivity()
+    const roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+
+    component.activity = activity
+    component.roadmap = roadmap
+    await fixture.whenStable()
+
+    expect(component.contentRendering).toBe('outstanding')
   })
 
   it('contentRendering returns "disabled" when activity.rating is NEVER', async () => {
@@ -117,6 +157,11 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. `contentRendering === 'disabled'`
     */
+    component.activity = factories.defaultActivity({ rating: EventRatings.NEVER })
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    await fixture.whenStable()
+
+    expect(component.contentRendering).toBe('disabled')
   })
 
   it('contentRendering returns "normal" for non-NEVER non-outstanding activities', async () => {
@@ -131,6 +176,11 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. `contentRendering === 'normal'`
     */
+    component.activity = factories.defaultActivity({ rating: EventRatings.DEFAULT })
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    await fixture.whenStable()
+
+    expect(component.contentRendering).toBe('normal')
   })
 
   it('borderRendering returns "outstanding" when activity is in roadmap and author is MACHINE', async () => {
@@ -145,6 +195,14 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. `borderRendering === 'outstanding'`
     */
+    const activity = factories.defaultActivity()
+    const roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+
+    component.activity = activity
+    component.roadmap = roadmap
+    await fixture.whenStable()
+
+    expect(component.borderRendering).toBe('outstanding')
   })
 
   const borderRenderingCases: [string, any][] = [
@@ -169,6 +227,11 @@ describe('OtherActivityComponent', () => {
       - build activity via factories.defaultActivity({ rating }) or similar
       - assign and assert on `component.borderRendering`
     */
+    component.activity = factories.defaultActivity({ rating })
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    await fixture.whenStable()
+
+    expect(component.borderRendering).toBe(expectedClassname)
   })
 
   // -------- Interaction / dialog / store tests --------
@@ -195,6 +258,30 @@ describe('OtherActivityComponent', () => {
         event on the `app-swimlane-item` host element (or perform the UI double-click) so the
         `(requestUpdate)` output binding fires and the test covers the same code paths as a user.
     */
+    // Arrange
+    const activity = factories.defaultActivity()
+    const updated = activity.copy({ description: activity.description + ' updated' })
+    component.activity = activity
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const dialogRef = { afterClosed: () => of(updated) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act: trigger the requestUpdate output by dispatching the custom event on the host element
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    expect(host).not.toBeNull()
+    host!.dispatchEvent(new CustomEvent('requestUpdate', { bubbles: true }))
+    await fixture.whenStable()
+
+    // Assert
+    expect(mockMatDialog.open).toHaveBeenCalled()
+    const openArgs = mockMatDialog.open.mock.calls[0]
+    expect(openArgs[1].data).toEqual(activity)
+    expect(mockStore.dispatch).toHaveBeenCalled()
+    const dispatched = mockStore.dispatch.mock.calls[0][0]
+    expect(dispatched.activity).toEqual(updated)
   })
 
   it('update() does not dispatch when dialog afterClosed yields falsy', async () => {
@@ -210,6 +297,23 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. Store.dispatch not called
     */
+    // Arrange
+    const activity = factories.defaultActivity()
+    component.activity = activity
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const dialogRef = { afterClosed: () => of(undefined) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    host!.dispatchEvent(new CustomEvent('requestUpdate', { bubbles: true }))
+    await fixture.whenStable()
+
+    // Assert
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
   })
 
   it('updateRating() opens EventRatingMenu and updates when rating changed', async () => {
@@ -233,6 +337,31 @@ describe('OtherActivityComponent', () => {
         `requestContextMenu` event (or firing a `contextmenu` event) on the `app-swimlane-item` host
         element so Angular output bindings are exercised.
     */
+    // Arrange
+    const activity = factories.defaultActivity()
+    component.activity = activity
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component['_swlitem'] = { id: 'anchor' } as any
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const newRating = EventRatings.MANDATORY
+    const dialogRef = { afterClosed: () => of(null), componentInstance: { eventRating: newRating } }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act: trigger requestContextMenu
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    host!.dispatchEvent(new CustomEvent('requestContextMenu', { bubbles: true }))
+    await fixture.whenStable()
+
+    // Assert
+    expect(mockMatDialog.open).toHaveBeenCalled()
+    const openArgs = mockMatDialog.open.mock.calls[0]
+    const opts = openArgs[1]
+    expect(opts.data).toEqual({ anchor: component['_swlitem'], eventRating: activity.rating })
+    expect(mockStore.dispatch).toHaveBeenCalled()
+    const dispatched = mockStore.dispatch.mock.calls[0][0]
+    expect(dispatched.activity).toEqual(activity.copy({ rating: newRating }))
   })
 
   it('updateRating() does not dispatch when rating remains unchanged', async () => {
@@ -248,6 +377,24 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. Store.dispatch not called
     */
+    // Arrange
+    const activity = factories.defaultActivity()
+    component.activity = activity
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component['_swlitem'] = {} as any
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const dialogRef = { afterClosed: () => of(null), componentInstance: { eventRating: activity.rating } }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    host!.dispatchEvent(new CustomEvent('requestContextMenu', { bubbles: true }))
+    await fixture.whenStable()
+
+    // Assert
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
   })
 
   it('confirmThenDelete() opens confirm dialog and dispatches delete_activity on confirm', async () => {
@@ -266,6 +413,25 @@ describe('OtherActivityComponent', () => {
       - IMPORTANT: trigger the deletion flow by dispatching the `requestDelete` event (or clicking
         the delete control in the swimlane item) so the `(requestDelete)` binding is exercised.
     */
+    // Arrange
+    component.activity = factories.defaultActivity()
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const dialogRef = { afterClosed: () => of(ConfirmOutput.CONFIRM) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act: trigger requestDelete
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    host!.dispatchEvent(new CustomEvent('requestDelete', { bubbles: true }))
+    await fixture.whenStable()
+
+    // Assert
+    expect(mockMatDialog.open).toHaveBeenCalled()
+    expect(mockStore.dispatch).toHaveBeenCalled()
+    const dispatched = mockStore.dispatch.mock.calls[0][0]
+    expect(dispatched.activity).toEqual(component.activity)
   })
 
   it('confirmThenDelete() does not dispatch when user cancels', async () => {
@@ -281,6 +447,22 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. Store.dispatch not called
     */
+    // Arrange
+    component.activity = factories.defaultActivity()
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const dialogRef = { afterClosed: () => of(ConfirmOutput.CANCEL) }
+    mockMatDialog.open = vi.fn(() => dialogRef)
+
+    // Act
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    host!.dispatchEvent(new CustomEvent('requestDelete', { bubbles: true }))
+    await fixture.whenStable()
+
+    // Assert
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
   })
 
   // -------- Edge / negative tests --------
@@ -298,6 +480,23 @@ describe('OtherActivityComponent', () => {
       1. true when activity in roadmap and author MACHINE
       2. false when activity not in roadmap or author is HUMAN
     */
+    const activity = factories.defaultActivity()
+
+    // True when activity in roadmap and author MACHINE
+    component.activity = activity
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+    await fixture.whenStable()
+    expect(component._isOutstanding()).toBe(true)
+
+    // False when activity not in roadmap
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [])
+    await fixture.whenStable()
+    expect(component._isOutstanding()).toBe(false)
+
+    // False when author is HUMAN even if activity present
+    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [activity])
+    await fixture.whenStable()
+    expect(component._isOutstanding()).toBe(false)
   })
 
 })
