@@ -10,6 +10,8 @@ import { EventRatings } from 'src/app/models/plannable.model'
 import { RoadmapAuthor, FestivalRoadmap } from 'src/app/models/roadmap.model'
 import * as factories from 'src/_testhelpers/factories'
 import { ConfirmOutput } from '../../genericpurposedialog/genericpurposedialog.component'
+import { Times } from 'src/app/models/time.utils'
+import { OtherActivity } from 'src/app/models/activity.model'
 
 describe('OtherActivityComponent', () => {
   // Shared fixtures / mocks
@@ -56,24 +58,27 @@ describe('OtherActivityComponent', () => {
       2. `app-session-ratings` element is present
       3. no element matching `.swimlane-item-icon` exists (or the icon container is empty)
       4. `component.contentRendering` equals "normal"
-
-      Notes for implementation:
-      - assign `component.activity = factories.defaultActivity({ rating: EventRatings.DEFAULT })`
-      - set `component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])`
-      - call `fixture.detectChanges()` and `await fixture.whenStable()` then query the DOM
     */
     // Arrange
     component.activity = factories.defaultActivity({ rating: EventRatings.DEFAULT })
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
 
     // Act
-    fixture.detectChanges()
     await fixture.whenStable()
 
     // Assert
-    expect(component).toBeTruthy()
-    const ratingsEl: HTMLElement | null = fixture.nativeElement.querySelector('app-session-ratings')
-    expect(ratingsEl).not.toBeNull()
+    // description show in title
+    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+    expect(host).not.toBeNull()
+    expect(host!.textContent).toContain(component.activity.description)
+
+    // start end end time are shown
+    const expectedInterval = Times.toStrInterval(component.activity.startTime, component.activity.endTime)
+    const timeEl: HTMLElement | null = fixture.nativeElement.querySelector('.swimlane-item-time')
+    expect(timeEl).not.toBeNull()
+    expect(timeEl!.textContent).toContain(expectedInterval)
+
+    // no icons shown 
     const icons: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('.swimlane-item-icon')
     expect(icons.length).toBe(0)
     expect(component.contentRendering).toBe('normal')
@@ -93,17 +98,12 @@ describe('OtherActivityComponent', () => {
       2. `app-session-ratings` element is present
       3. an element matching `.swimlane-item-icon` exists (icon shown)
       4. `component.contentRendering` equals "disabled"
-
-      Notes for implementation:
-      - assign `component.activity = factories.defaultActivity({ rating: EventRatings.NEVER })`
-      - call `fixture.detectChanges()` and `await fixture.whenStable()` then query the DOM
     */
     // Arrange
     component.activity = factories.defaultActivity({ rating: EventRatings.NEVER })
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
 
     // Act
-    fixture.detectChanges()
     await fixture.whenStable()
 
     // Assert
@@ -130,13 +130,9 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. `contentRendering === 'outstanding'`
 
-      Implementation notes:
-      - create an activity, create a FestivalRoadmap authored by MACHINE containing the activity
-      - assign inputs and call `fixture.detectChanges()` if needed
-      - assert on `component.contentRendering`
     */
     const activity = factories.defaultActivity()
-    const roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+    const roadmap = machineRoadmap(activity)
 
     component.activity = activity
     component.roadmap = roadmap
@@ -158,7 +154,7 @@ describe('OtherActivityComponent', () => {
       1. `contentRendering === 'disabled'`
     */
     component.activity = factories.defaultActivity({ rating: EventRatings.NEVER })
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
     expect(component.contentRendering).toBe('disabled')
@@ -177,7 +173,7 @@ describe('OtherActivityComponent', () => {
       1. `contentRendering === 'normal'`
     */
     component.activity = factories.defaultActivity({ rating: EventRatings.DEFAULT })
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
     expect(component.contentRendering).toBe('normal')
@@ -196,7 +192,7 @@ describe('OtherActivityComponent', () => {
       1. `borderRendering === 'outstanding'`
     */
     const activity = factories.defaultActivity()
-    const roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+    const roadmap = machineRoadmap(activity)
 
     component.activity = activity
     component.roadmap = roadmap
@@ -210,7 +206,6 @@ describe('OtherActivityComponent', () => {
     ['normal', EventRatings.DEFAULT],
     ['disabled', EventRatings.NEVER]
   ]
-
   it.each(borderRenderingCases)('borderRendering returns "%s" for EventRating %s', async (expectedClassname, rating) => {
     /*
       Goal: verify borderRendering for various activity ratings.
@@ -223,12 +218,9 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. `borderRendering === expectedClassname`
 
-      Implementation notes:
-      - build activity via factories.defaultActivity({ rating }) or similar
-      - assign and assert on `component.borderRendering`
     */
     component.activity = factories.defaultActivity({ rating })
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
     expect(component.borderRendering).toBe(expectedClassname)
@@ -249,30 +241,19 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. MatDialog.open called with Activitydialog and a clone of the activity
       2. Store.dispatch called with update_activity and correct payload
-
-      Implementation notes:
-      - set `component.activity`
-      - stub `mockMatDialog.open` to return an object with `afterClosed: () => of(updatedActivity)`
-      - call `component.update()` and assert `mockStore.dispatch` called with expected action
-      - IMPORTANT: simulate the user triggering the update pathway by dispatching the `requestUpdate`
-        event on the `app-swimlane-item` host element (or perform the UI double-click) so the
-        `(requestUpdate)` output binding fires and the test covers the same code paths as a user.
     */
     // Arrange
     const activity = factories.defaultActivity()
-    const updated = activity.copy({ description: activity.description + ' updated' })
     component.activity = activity
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
-    fixture.detectChanges()
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
+    const updated = activity.copy({ description: activity.description + ' updated' })
     const dialogRef = { afterClosed: () => of(updated) }
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act: trigger the requestUpdate output by dispatching the custom event on the host element
-    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
-    expect(host).not.toBeNull()
-    host!.dispatchEvent(new CustomEvent('requestUpdate', { bubbles: true }))
+    triggerRequestUpdate(fixture, 'requestUpdate')
     await fixture.whenStable()
 
     // Assert
@@ -300,16 +281,14 @@ describe('OtherActivityComponent', () => {
     // Arrange
     const activity = factories.defaultActivity()
     component.activity = activity
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
-    fixture.detectChanges()
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
     const dialogRef = { afterClosed: () => of(undefined) }
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
-    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
-    host!.dispatchEvent(new CustomEvent('requestUpdate', { bubbles: true }))
+    component.update()
     await fixture.whenStable()
 
     // Assert
@@ -329,20 +308,12 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. MatDialog.open called with anchor equal to component._swlitem and correct eventRating
       2. Store.dispatch called with update_activity and modified activity
-
-      Implementation notes:
-      - ensure `component['_swlitem']` is set to a mock anchor
-      - stub `mockMatDialog.open` to return `componentInstance: { eventRating: newRating }` and `afterClosed` observable
-      - IMPORTANT: simulate the user interaction that opens the rating menu by dispatching the
-        `requestContextMenu` event (or firing a `contextmenu` event) on the `app-swimlane-item` host
-        element so Angular output bindings are exercised.
     */
     // Arrange
     const activity = factories.defaultActivity()
     component.activity = activity
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
     component['_swlitem'] = { id: 'anchor' } as any
-    fixture.detectChanges()
     await fixture.whenStable()
 
     const newRating = EventRatings.MANDATORY
@@ -350,8 +321,7 @@ describe('OtherActivityComponent', () => {
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act: trigger requestContextMenu
-    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
-    host!.dispatchEvent(new CustomEvent('requestContextMenu', { bubbles: true }))
+    triggerRequestUpdate(fixture, 'requestContextMenu')
     await fixture.whenStable()
 
     // Assert
@@ -380,17 +350,15 @@ describe('OtherActivityComponent', () => {
     // Arrange
     const activity = factories.defaultActivity()
     component.activity = activity
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+    component.roadmap = emptyRoadmap()
     component['_swlitem'] = {} as any
-    fixture.detectChanges()
     await fixture.whenStable()
 
     const dialogRef = { afterClosed: () => of(null), componentInstance: { eventRating: activity.rating } }
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
-    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
-    host!.dispatchEvent(new CustomEvent('requestContextMenu', { bubbles: true }))
+    component.updateRating()
     await fixture.whenStable()
 
     // Assert
@@ -410,21 +378,17 @@ describe('OtherActivityComponent', () => {
       Desired assertions:
       1. MatDialog.open called with GenericPurposeDialog and confirm type
       2. Store.dispatch called with delete_activity payload
-      - IMPORTANT: trigger the deletion flow by dispatching the `requestDelete` event (or clicking
-        the delete control in the swimlane item) so the `(requestDelete)` binding is exercised.
     */
     // Arrange
     component.activity = factories.defaultActivity()
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
-    fixture.detectChanges()
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
     const dialogRef = { afterClosed: () => of(ConfirmOutput.CONFIRM) }
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act: trigger requestDelete
-    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
-    host!.dispatchEvent(new CustomEvent('requestDelete', { bubbles: true }))
+    triggerRequestUpdate(fixture, 'requestDelete')
     await fixture.whenStable()
 
     // Assert
@@ -449,16 +413,14 @@ describe('OtherActivityComponent', () => {
     */
     // Arrange
     component.activity = factories.defaultActivity()
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
-    fixture.detectChanges()
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
 
     const dialogRef = { afterClosed: () => of(ConfirmOutput.CANCEL) }
     mockMatDialog.open = vi.fn(() => dialogRef)
 
     // Act
-    const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
-    host!.dispatchEvent(new CustomEvent('requestDelete', { bubbles: true }))
+    component.confirmThenDelete()
     await fixture.whenStable()
 
     // Assert
@@ -484,19 +446,45 @@ describe('OtherActivityComponent', () => {
 
     // True when activity in roadmap and author MACHINE
     component.activity = activity
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+    component.roadmap = machineRoadmap(activity)
     await fixture.whenStable()
     expect(component._isOutstanding()).toBe(true)
 
     // False when activity not in roadmap
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [])
+    component.roadmap = emptyRoadmap()
     await fixture.whenStable()
     expect(component._isOutstanding()).toBe(false)
 
     // False when author is HUMAN even if activity present
-    component.roadmap = new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [activity])
+    component.roadmap = humanRoadmap(activity)
     await fixture.whenStable()
     expect(component._isOutstanding()).toBe(false)
   })
 
 })
+
+
+// ************ helper functions ************* //
+
+function emptyRoadmap(): FestivalRoadmap {
+    return new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+}
+
+function machineRoadmap(activity: OtherActivity): FestivalRoadmap {
+    return new FestivalRoadmap(RoadmapAuthor.MACHINE, [], [activity])
+}
+
+function humanRoadmap(activity: OtherActivity): FestivalRoadmap {
+    return new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [activity])
+}
+
+/**
+ * Helpers to trigger the requestUpdate or requestContextMenu events
+ * @param fixture  * 
+ * @param eventName 
+ */
+function triggerRequestUpdate(fixture: ComponentFixture<OtherActivityComponent>, eventName: string): void {
+  const host: HTMLElement | null = fixture.nativeElement.querySelector('app-swimlane-item')
+  expect(host).not.toBeNull()
+  host!.dispatchEvent(new CustomEvent(eventName, { bubbles: true }))
+}
