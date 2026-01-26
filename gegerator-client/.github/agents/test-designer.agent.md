@@ -19,7 +19,7 @@ You proceed in steps as described below.
 Read the code that must be tested. Analyse the important related files: 
 * the class itself,
 * html templates,
-* the model entities that are manipulated by this class (usually imported from files like `*.model.ts`).
+* the model entities that are manipulated by this class (usually imported from files like "*.model.ts").
 
 ## Step 3: iterate with the Developper
 
@@ -51,12 +51,13 @@ Proceed with creating the test file, and the test suite according to the guideli
 # Guidelines
 
 ## General structure
-One can create one or several test suites, eg one for the component and one for its UI.
-Test suites are declared with vitest `describe`. Tests are declared with vitest `it`.
-The first method of a test suite is `beforeEach`.
-Datasets and mocks should be created at the end of the file.
+- One can create one or several test suites, eg one for the component and one for its UI.
+- Test suites are declared with vitest `describe`. Tests are declared with vitest `it`.
+- The first method of a test suite is `beforeEach`.
+- For combinatorial test, use `it.each` or `it.for`; 
+- Datasets and mocks should be created at the end of the file.
 
-Here is an example of test with various desirable features: [planned-movie-session.component.spec.ts](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts)
+Here is an example of test with various desirable features: `/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts`
 
 
 ## Provide guidance, no implementation
@@ -85,13 +86,20 @@ However, in each method you will include a block comment describing the test. Fo
 If the Component has UI elements the User can interact with, it should be tested at least once in the test suite. It could be a text input, a menu select, a button etc.
 If you intend to test such UI element, explicitely says in the comment block that the test should actually type text in the input, click the button etc as opposed to bypassing the UI and directly calling the backing component code.
 
+## The right language in the right context
+Use the right language for the right context. For example, when describing UI tests, use words about what the User can interact with. When describing unit component test, refer to the component methods and properties.
+
+Example of the same test described in two different ways:
+* UI test : "when the user clicks on submit, the form is sent and a notification is shown"
+* Unit component test: "the submit method calls the API service, and on successful completion it calls the UI notification service"
+
 ## Async
 Please note that all methods should be declared as `async`, except for `beforeEach` which should be synchronous.
 
 ## Entities and Test Data
 Entities usually are imported from files named like "*.model.ts".
 If you have to create entities as test data, create an actual instance using their constructor.
-You can refer to the [factories](/src/_testhelpers/testfactories.ts) for examples of how to create instances of business objects.
+Make use of `src/_testhelpers/testfactories.ts` to help you building well-formed, consistent entities.
 
 ## Test the cardinality
 If the component can display one or several more components (for example with a `for` loop in the template), remember to plan for tests or assertions to test that the correct number of elements is rendered, then each of them separately.
