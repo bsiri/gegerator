@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core'
+import { DebugElement, NO_ERRORS_SCHEMA, signal } from '@angular/core'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { harnessHelper } from 'src/_testhelpers/harnesshelper'
@@ -12,7 +12,7 @@ import { PlannedMovieSession, MovieSession } from 'src/app/models/session.model'
 import { OtherActivity } from 'src/app/models/activity.model'
 import { Theaters, Days, Day, Theater } from 'src/app/models/referential.data'
 import { Time } from 'src/app/models/time.model'
-import { defaultSession, defaultActivity } from 'src/_testhelpers/factories'
+import { defaultSession, defaultActivity, sessionBuilder } from 'src/_testhelpers/factories'
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model'
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model'
 import { of } from 'rxjs'
@@ -20,9 +20,11 @@ import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selec
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors'
 import { SessionActions } from 'src/app/ngrx/actions/session.actions'
 import { ActivityActions } from 'src/app/ngrx/actions/activity.actions'
-import { EventRatings } from 'src/app/models/plannable.model'
+import { EventRatings, PlannableEvent } from 'src/app/models/plannable.model'
 import { By } from '@angular/platform-browser'
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component'
+import { FormBuilder } from '@angular/forms'
+import { OtherActivityComponent } from '../other-activity/other-activity.component'
 
 /*
   Test skeleton for SessionSectionComponent.
@@ -267,7 +269,7 @@ describe('SessionSectionComponent — UI', () => {
         const defaultDialogRef = { afterClosed: () => { throw new Error('DialogRef.afterClosed not stubbed in test') } }
         mockMatDialog = { open: vi.fn(() => defaultDialogRef) }
 
-        mockStore = { dispatch: vi.fn(), selectSignal: mockStoreSelector }
+        mockStore = { dispatch: vi.fn(), selectSignal: mockStoreSelector([],[]) }
 
         await TestBed.configureTestingModule({
             imports: [SessionSectionComponent],
@@ -317,54 +319,71 @@ describe('SessionSectionComponent — UI', () => {
         component = fixture.componentInstance
         await fixture.whenStable()
 
-        // Assert: one .session-day per day
+        ////////////////// Assert: one .session-day per day
         const dayContainers: HTMLElement[] = fixture.nativeElement.querySelectorAll('.session-day')
         expect(dayContainers.length).toBe(Days.enumerate().length)
 
-        // Assert the headers section
-        // TODO
+        ////////////////// Assert the headers section
+        // helper function
+        const getHeaderColumn = (day: Day, suffix: string) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-${suffix}`))
+        const findButton = (elt: DebugElement) => elt.query(By.css('button'))
+        // main loop
+        for (const day of Days.enumerate()){
+            // activity header
+            const actHeaderCol = getHeaderColumn(day, 'act')
+            expect(findButton(actHeaderCol)).toBeTruthy()
 
-        // Assert that sessions are correctly placed
+            // theater headers
+            for (const theater of Theaters.enumerate()){
+                const thHeaderCol = getHeaderColumn(day, theater.key)
+                expect(findButton(thHeaderCol)).toBeTruthy()
+            }
+        }
+
+        ///////////////// Assert that sessions are correctly placed by day and theater
         // helper functions
-        const getcolumn = (day: Day, theater: Theater) => fixture.debugElement.query(By.css(`.testid-sc-sw-${day.key}-${theater.key}`))
-        const sortByTime = (s1: PlannedMovieSession, s2: PlannedMovieSession) => s1.startTime.compare(s2.startTime)
+        const getSessionColumn = (day: Day, theater: Theater) => fixture.debugElement.query(By.css(`.testid-sc-sw-${day.key}-${theater.key}`))
+        // main loop
         for (const day of Days.enumerate()) {
             for (const theater of Theaters.enumerate()){
-                const col = getcolumn(day, theater)
+                const col = getSessionColumn(day, theater)
                 
-                // collect the session in all components in that column
-                const actualSessions = col.queryAll(By.directive(PlannedMovieSessionComponent))
+                // collect the sessions in all components in that column
+                const sortedActual = col.queryAll(By.directive(PlannedMovieSessionComponent))
                                             .map(c => c.componentInstance as PlannedMovieSessionComponent)
                                             .map(pms => pms.session)
+                                            .sort(sortPlannable)
 
-                const sortedExpected = component.sessionsByDayAndTheater(day, theater).sort(sortByTime)
-                // both collection should be exactly equal.
-                expect(sortedExpected).toEqual(actualSessions)
+                // collect the sessions as returned by the component
+                const sortedExpected = component.sessionsByDayAndTheater(day, theater).sort(sortPlannable)
+
+                // both collection should be exactly equal
+                expect(sortedExpected).toEqual(sortedActual)
                 
             }
+        }
+
+        ////////////////// Assert that the other activities are also correctly placed by day
+        // helper function
+        const getActivityColumn = (day: Day) => fixture.debugElement.query(By.css(`.testid-sc-sw-${day.key}-act`))
+        // main loop
+        for (const day of Days.enumerate()){
+            const col = getActivityColumn(day)
+
+            // collect the activities in all components in that column 
+            const sortedActual = col.queryAll(By.directive(OtherActivityComponent))
+                                        .map(de => de.componentInstance as OtherActivityComponent)
+                                        .map(oa => oa.activity)
+                                        .sort(sortPlannable)
+
+            // collect the activities as returned by the component
+            const sortedExpected = component.activitiesByDay(day).sort(sortPlannable)
+            // both collection should be exactly equal
+            expect(sortedExpected).toEqual(sortedActual)
         }
 
         const toto = 2;
-        /*
-        // For each day, check counts per column
-        const theaterOrder = [Theaters.ESPACE_LAC, Theaters.CASINO, Theaters.PARADISO, Theaters.MCL]
-        for (const day of Days.enumerate()) {
-            const container = dayContainers.find(c => c.querySelector('.session-day--title')!.textContent!.trim() === day.name)
-            expect(container).toBeDefined()
-            const tds: HTMLElement[] = Array.from(container!.querySelectorAll('tbody tr td'))
-            // activities column
-            const activitiesInDom = tds[0].querySelectorAll('app-other-activity').length
-            const expectedActivities = TEST_OTHER_ACTIVITIES.filter(a => a.day === day).length
-            expect(activitiesInDom).toBe(expectedActivities)
 
-            // theaters columns
-            for (let i = 0; i < theaterOrder.length; i++) {
-                const colCount = tds[i + 1].querySelectorAll('app-planned-movie-session').length
-                const expected = TEST_PLANNED_SESSIONS.filter(s => s.day === day && s.theater === theaterOrder[i]).length
-                expect(colCount).toBe(expected)
-            }
-        }
-            */
     })
 
     it('clicking header add buttons triggers openNewSession and openNewActivity', async () => {
@@ -443,6 +462,55 @@ describe('SessionSectionComponent — UI', () => {
         expect(roadmapVal).toBeDefined()
     })
 
+    it('should rended sessions from top to bottom in the swimlane depending on their startTime', async () => {
+        /*
+          Goal: verify that sessions are rendered from top to bottom in a swimlane depending on their startTime
+    
+          Synopsis:
+          - given: a set of sessions for a given day and theater with different startTimes
+          - when: the component is rendered
+          - then: the sessions are rendered from top to bottom in increasing order of startTime
+    
+          UI actions (explicit):
+          - Render the component and inspect the order of rendered session components in a given swimlane
+    
+          Desired assertions:
+          1. the order of rendered session components matches the order of their startTimes
+        */
+        // Arrange: sessions for a given day and theater with different startTimes
+        const day = Days.FRIDAY
+        const theater = Theaters.CASINO
+        const session1 = defaultSession({ id: 1, day, theater, startTime: new Time(10, 0) })
+        const session2 = defaultSession({ id: 2, day, theater, startTime: new Time(12, 0) })
+        const session3 = defaultSession({ id: 3, day, theater, startTime: new Time(9, 0) })
+        mockStore.selectSignal = mockStoreSelector([session1, session2, session3], [])
+
+        // Act: create component
+        fixture = TestBed.createComponent(SessionSectionComponent)
+        component = fixture.componentInstance
+        await fixture.whenStable()
+
+        // Assert: sessions are rendered in order of startTime
+        const col = fixture.debugElement.query(By.css(`.testid-sc-sw-${day.key}-${theater.key}`))
+        
+        const sortByTopPosition: (a: PlannedMovieSessionComponent, b: PlannedMovieSessionComponent) => number = (a, b) => {
+            // Note: here we cannot ask directly for the top position because
+            // the component is not styled in the test environment; we access the
+            // internal _swlitem property instead and parse the computed pixel value.
+            // This is a bit brittle but sufficient for this test.
+            const aPos = a['_swlitem'].topPosInPixel.replace('px', '')
+            const bPos = b['_swlitem'].topPosInPixel.replace('px', '')
+            return parseInt(aPos) - parseInt(bPos)
+        }
+        const renderedSessions = col.queryAll(By.directive(PlannedMovieSessionComponent))
+                                        .map(de => de.componentInstance as PlannedMovieSessionComponent)
+                                        .sort(sortByTopPosition)
+                                        .map(pms => pms.session)
+
+        const expectedOrder = [session3, session1, session2] // sorted by startTime
+        expect(renderedSessions).toEqual(expectedOrder)
+    })
+
 })
 
 // Test data factories and helper values can be appended here when implementing the tests.
@@ -454,33 +522,7 @@ describe('SessionSectionComponent — UI', () => {
 // -----------------------------------------------------------------------------
 
 
-const TEST_PLANNED_SESSIONS: PlannedMovieSession[] = [
-    defaultSession({ id: 101, theater: Theaters.ESPACE_LAC, day: Days.FRIDAY, startTime: new Time(10, 0) }),
-    defaultSession({ id: 102, theater: Theaters.CASINO, day: Days.FRIDAY, startTime: new Time(12, 30) }),
-    defaultSession({ id: 103, theater: Theaters.PARADISO, day: Days.FRIDAY, startTime: new Time(15, 0) }),
-    defaultSession({ id: 104, theater: Theaters.MCL, day: Days.SATURDAY, startTime: new Time(9, 30) }),
-    defaultSession({ id: 105, theater: Theaters.ESPACE_LAC, day: Days.SATURDAY, startTime: new Time(11, 45) }),
-    defaultSession({ id: 106, theater: Theaters.CASINO, day: Days.SATURDAY, startTime: new Time(14, 0) }),
-    defaultSession({ id: 107, theater: Theaters.PARADISO, day: Days.SUNDAY, startTime: new Time(10, 15) }),
-    defaultSession({ id: 108, theater: Theaters.MCL, day: Days.SUNDAY, startTime: new Time(13, 30) }),
-    defaultSession({ id: 109, theater: Theaters.ESPACE_LAC, day: Days.WEDNESDAY, startTime: new Time(16, 0) }),
-    defaultSession({ id: 110, theater: Theaters.CASINO, day: Days.WEDNESDAY, startTime: new Time(18, 30) }),
-    defaultSession({ id: 111, theater: Theaters.PARADISO, day: Days.THURSDAY, startTime: new Time(20, 0) }),
-    defaultSession({ id: 112, theater: Theaters.MCL, day: Days.THURSDAY, startTime: new Time(21, 30) }),
-]
-
-const TEST_OTHER_ACTIVITIES: OtherActivity[] = [
-    defaultActivity({ id: 201, day: Days.FRIDAY, startTime: new Time(9, 0), endTime: new Time(9, 45), description: 'Setup' }),
-    defaultActivity({ id: 202, day: Days.FRIDAY, startTime: new Time(17, 0), endTime: new Time(18, 0), description: 'Q&A' }),
-    defaultActivity({ id: 203, day: Days.SATURDAY, startTime: new Time(12, 0), endTime: new Time(13, 0), description: 'Lunch Talk' }),
-    defaultActivity({ id: 204, day: Days.SUNDAY, startTime: new Time(8, 30), endTime: new Time(9, 30), description: 'Breakfast Meetup' }),
-    defaultActivity({ id: 205, day: Days.WEDNESDAY, startTime: new Time(15, 0), endTime: new Time(16, 30), description: 'Panel' }),
-    defaultActivity({ id: 206, day: Days.THURSDAY, startTime: new Time(19, 0), endTime: new Time(20, 0), description: 'Afterparty' }),
-]
-
-function emptyRoadmap(): FestivalRoadmap {
-    return new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
-}
+// **** Mocks ********* //
 
 function mockStoreSelector(sessionsArr: PlannedMovieSession[], activitiesArr: OtherActivity[]=[]) {
     return (selector: any) => {
@@ -488,4 +530,60 @@ function mockStoreSelector(sessionsArr: PlannedMovieSession[], activitiesArr: Ot
         if (selector === selectActivities) return signal(activitiesArr)
         return signal([])
     }
+}
+
+// *********** Test Data ************** //
+
+// Build a random number of sessions per day/theater combination
+const sbuilder = sessionBuilder().for({})
+dayAndTheatersCombinations().forEach( ([day, theater], index) => {
+    const sub = sbuilder.with({day, theater})
+    for (let i=0; i<=(index % 3)+1; i++){
+        sub.add()
+    }
+    sub.done()
+})
+
+const TEST_PLANNED_SESSIONS: PlannedMovieSession[] = randomizedArray(sbuilder.done() as PlannedMovieSession[])
+
+const TEST_OTHER_ACTIVITIES: OtherActivity[] = [
+    defaultActivity({ id: 201, day: Days.FRIDAY, startTime: new Time(9, 0), endTime: new Time(9, 45), description: 'Setup' }),
+    defaultActivity({ id: 203, day: Days.SATURDAY, startTime: new Time(12, 0), endTime: new Time(13, 0), description: 'Lunch Talk' }),
+    defaultActivity({ id: 205, day: Days.WEDNESDAY, startTime: new Time(15, 0), endTime: new Time(16, 30), description: 'Panel' }),
+    defaultActivity({ id: 202, day: Days.FRIDAY, startTime: new Time(17, 0), endTime: new Time(18, 0), description: 'Q&A' }),
+    defaultActivity({ id: 206, day: Days.THURSDAY, startTime: new Time(19, 0), endTime: new Time(20, 0), description: 'Afterparty' }),
+    defaultActivity({ id: 204, day: Days.SUNDAY, startTime: new Time(8, 30), endTime: new Time(9, 30), description: 'Breakfast Meetup' }),
+]
+
+function emptyRoadmap(): FestivalRoadmap {
+    return new FestivalRoadmap(RoadmapAuthor.HUMAN, [], [])
+}
+
+// ********** Utility methods *************** //
+
+function sortPlannable(a: PlannableEvent, b: PlannableEvent): number {
+    // first by day
+    const dayDiff = a.day.compare(b.day)
+    if (dayDiff !== 0) return dayDiff
+    // then by startTime
+    return a.startTime.compare(b.startTime)
+}
+
+function dayAndTheatersCombinations(): [Day, Theater][] {
+    const combinations: [Day, Theater][] = []
+    for (const day of Days.enumerate()) {
+        for (const theater of Theaters.enumerate()) {
+            combinations.push([day, theater])
+        }
+    }
+    return combinations
+}
+
+function randomizedArray<T>(arr: T[]): T[] {
+    const copy = [...arr]
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[copy[i], copy[j]] = [copy[j], copy[i]]
+    }
+    return copy
 }
