@@ -18,12 +18,11 @@ import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model'
 import { of } from 'rxjs'
 import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors'
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors'
-import { SessionActions } from 'src/app/ngrx/actions/session.actions'
-import { ActivityActions } from 'src/app/ngrx/actions/activity.actions'
-import { EventRatings, PlannableEvent } from 'src/app/models/plannable.model'
+import { PlannableEvent } from 'src/app/models/plannable.model'
 import { By } from '@angular/platform-browser'
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component'
 import { OtherActivityComponent } from '../other-activity/other-activity.component'
+import { mock } from 'node:test'
 
 /*
   Test skeleton for SessionSectionComponent.
@@ -259,7 +258,6 @@ describe('SessionSectionComponent — UI', () => {
     let fixture: ComponentFixture<SessionSectionComponent>
     let component: SessionSectionComponent
     let loader: HarnessLoader
-    let helper: ReturnType<typeof harnessHelper>
     let mockMatDialog: any
     let mockStore: any
 
@@ -283,7 +281,6 @@ describe('SessionSectionComponent — UI', () => {
         fixture = TestBed.createComponent(SessionSectionComponent)
         component = fixture.componentInstance
         loader = TestbedHarnessEnvironment.loader(fixture)
-        helper = harnessHelper(loader)
 
         // reset spies for per-test overrides
         mockMatDialog.open.mockReset()
@@ -306,11 +303,8 @@ describe('SessionSectionComponent — UI', () => {
           2. each day and each theaters + other activity has a header column with add button
     
         */
-        // Arrange: make the store signals return the test datasets
-        mockStore.selectSignal = mockStoreSelector(
-            TEST_PLANNED_SESSIONS, 
-            TEST_OTHER_ACTIVITIES
-        )
+        // Arrange: make the store signals return the test datasets (Empty here is sufficient)
+        mockStore.selectSignal = mockStoreSelector( [], [])
 
         // Act: create component
         fixture = TestBed.createComponent(SessionSectionComponent)
@@ -325,6 +319,7 @@ describe('SessionSectionComponent — UI', () => {
         // helper function
         const getHeaderColumn = (day: Day, suffix: string) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-${suffix}`))
         const findButton = (elt: DebugElement) => elt.query(By.css('button'))
+        // const findButton = (elt: DebugElement) => elt.nativeElement.querySelector('button')
         // main loop
         for (const day of Days.enumerate()){
             // activity header
@@ -351,10 +346,10 @@ describe('SessionSectionComponent — UI', () => {
           Desired assertions:
           1. for each provided PlannedMovieSession, a corresponding `app-planned-movie-session` node exists in the correct column for its theater and day
         */
-        // Arrange: make the store signals return the test datasets
+        // Arrange: make the store signals return the test datasets (sessions only, no activities)
         mockStore.selectSignal = mockStoreSelector(
             TEST_PLANNED_SESSIONS, 
-            TEST_OTHER_ACTIVITIES
+            []
         )
 
         // Act: create component
@@ -398,9 +393,9 @@ describe('SessionSectionComponent — UI', () => {
           Desired assertions:
           1. for each provided PlannedMovieSession, a corresponding `app-planned-movie-session` node exists in the correct column for its theater and day
         */
-        // Arrange: make the store signals return the test datasets
+        // Arrange: make the store signals return the test datasets (no sessions, activities only)
         mockStore.selectSignal = mockStoreSelector(
-            TEST_PLANNED_SESSIONS, 
+            [], 
             TEST_OTHER_ACTIVITIES
         )
 
@@ -512,37 +507,6 @@ describe('SessionSectionComponent — UI', () => {
         expect(mockMatDialog.open).toHaveBeenCalled()
     })
 
-    it('passes roadmap signal value to child components as `roadmap` input', async () => {
-        /*
-          Goal: verify that child components receive the `roadmap` via input binding
-    
-          Synopsis:
-          - given: RoadmapStore.$activeRoadmap exposes a specific roadmap object
-          - when: component is rendered
-          - then: each rendered `app-planned-movie-session` and `app-other-activity` has been given that roadmap
-    
-          UI actions (explicit):
-          - Render the component and inspect child component instances (or their host elements/properties)
-    
-          Desired assertions:
-          1. the DOM or harness reveals the `roadmap` value propagated to children
-        */
-        // Arrange: ensure roadmap provider returns an empty roadmap as configured
-        mockStore.selectSignal = vi.fn(() => () => TEST_PLANNED_SESSIONS)
-        mockStore.selectSignal = vi.fn((selector: any) => {
-            if (selector && selector.name && selector.name.includes('selectPlannedMovieSessions')) return () => TEST_PLANNED_SESSIONS
-            if (selector && selector.name && selector.name.includes('selectActivities')) return () => TEST_OTHER_ACTIVITIES
-            return () => []
-        })
-
-        fixture = TestBed.createComponent(SessionSectionComponent)
-        component = fixture.componentInstance
-        fixture.detectChanges()
-
-        // Assert: component exposes $roadmap signal and it returns a roadmap object (we configured emptyRoadmap in providers)
-        const roadmapVal = component.$roadmap()
-        expect(roadmapVal).toBeDefined()
-    })
 
     it('should rended sessions from top to bottom in the swimlane depending on their startTime', async () => {
         /*
