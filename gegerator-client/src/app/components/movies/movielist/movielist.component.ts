@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, Signal, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, Signal, signal, viewChild, AfterContentInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 
@@ -19,7 +19,10 @@ import { Movie } from 'src/app/models/movie.model';
     styleUrls: ['./movielist.component.scss'],
     imports: [MatButton, MovieComponent, MatIcon, MatFormField, MatLabel, MatInput]
 })
-export class MovielistComponent {
+export class MovielistComponent implements AfterContentInit {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+
 
   // reference to the search bar element
   searchbar = viewChild<ElementRef<HTMLDivElement>>('movielist_search');
@@ -31,7 +34,10 @@ export class MovielistComponent {
   // the final movie list outputed after sorting and filtering
   $movies: Signal<Movie[]>
 
-  constructor(private store: Store, private dialog: MatDialog) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
 
     const movieStore = this.store.selectSignal(selectMovies)
     this.$movies = computed(() => {
@@ -59,7 +65,7 @@ export class MovielistComponent {
     });
 
     dialogRef.afterClosed().subscribe(newmovie => {
-      if (!!newmovie){
+      if (newmovie){
         /*
           if a Movie model has been created:
           - create it

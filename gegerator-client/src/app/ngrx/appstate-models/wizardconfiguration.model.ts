@@ -7,7 +7,7 @@ export class WizardConfiguration{
         public casinoRating: TheaterRating = TheaterRatings.DEFAULT, 
         public paradisoRating: TheaterRating = TheaterRatings.DEFAULT,
         public mclRating: TheaterRating = TheaterRatings.DEFAULT,
-        public movieVsTheaterBias: number = 0.5
+        public movieVsTheaterBias = 0.5
     ){}
     
     toJSON(): WizardConfigurationJSON{

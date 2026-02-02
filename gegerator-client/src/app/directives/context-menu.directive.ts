@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, Directive, ElementRef, Inject, Input, ViewRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentRef, Directive, ElementRef, Input, ViewRef, inject } from '@angular/core';
 import { DialogPosition, MatDialogRef } from '@angular/material/dialog';
 
 // magic number to account for the Dialog padding when rendering on the left
@@ -6,10 +6,15 @@ const DIALOG_PADDING_PX = 28
 
 @Directive({ selector: '[appContextMenu]' })
 export class ContextMenuDirective implements AfterViewInit{
+  private thiselt = inject(ElementRef);
+
   @Input() recipient!: ContextMenuRecipient
   @Input() dialogRef!: MatDialogRef<any>
 
-  constructor(private thiselt: ElementRef) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
 
 
   // Repositions the RatingDialog either immediately if needed 

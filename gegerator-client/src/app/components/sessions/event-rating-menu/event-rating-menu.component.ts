@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
@@ -20,6 +20,8 @@ import { ContextMenuDirective } from '../../../directives/context-menu.directive
     imports: [ContextMenuDirective, MatRadioGroup, MatRadioButton]
 })
 export class EventRatingMenu {
+  dialogRef = inject<MatDialogRef<EventRatingMenu>>(MatDialogRef);
+
 
   public _anchor: ContextMenuRecipient
 
@@ -35,9 +37,12 @@ export class EventRatingMenu {
    */
   eventRating: EventRating
 
-  constructor(
-    public dialogRef: MatDialogRef<EventRatingMenu>,
-    @Inject(MAT_DIALOG_DATA) model: SessionRatingMenuModel) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+      const model = inject<SessionRatingMenuModel>(MAT_DIALOG_DATA);
+
       this.eventRating = model.eventRating
       this._anchor = model.anchor
     }

@@ -1,6 +1,6 @@
 import { Time } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Days, Theaters } from '../models/referential.data';
 import { MovieSession, MovieSessionJSON } from '../models/session.model';
@@ -12,8 +12,13 @@ const sessionsUrl = "./api/movie-sessions"
   providedIn: 'root'
 })
 export class SessionlistService {
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() { }
 
   getAll(): Observable<MovieSession[]>{
     return this.http.get<MovieSessionJSON[]>(sessionsUrl)

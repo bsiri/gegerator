@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, Inject, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit, Signal, inject } from '@angular/core';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -26,6 +26,9 @@ import { MatButton } from '@angular/material/button';
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatAutocomplete, MatOption, MatFormField, MatInput, MatAutocompleteTrigger, MatError, MatLabel, MatSelect, MatDialogActions, MatButton, AsyncPipe]
 })
 export class SessionDialog {
+  dialogRef = inject<MatDialogRef<SessionDialog>>(MatDialogRef);
+  private store = inject(Store);
+
 
   // note: these attributes are never modified by this form,
   // however we must remember it because enventually
@@ -48,11 +51,12 @@ export class SessionDialog {
   filteredTitles$: Observable<string[]>
   plannableInterval = PLANNABLE_EVENT_TIME_INTERVAL
 
-  constructor(
-    public dialogRef: MatDialogRef<SessionDialog>,
-    @Inject(MAT_DIALOG_DATA) session: PlannedMovieSession,
-    private store: Store
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+      const session = inject<PlannedMovieSession>(MAT_DIALOG_DATA);
+
 
       this.$availableMovies = this.store.selectSignal(selectMovies)
 

@@ -17,16 +17,16 @@ import { Time } from "./time.model";
 
 
 // duck typing
-type TimeDurationLike = {
+interface TimeDurationLike {
     hours: number;
     minutes: number;
 }
 
 
 // duration : hours (1 digit) 'h' minutes (2 digits)
-const durationEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
+const durationEx = RegExp(/^(\d)h([0-5]\d)$/);
 // time : hours (1 or 2 digits) 'h' minutes (2 digits)
-const timeEx: RegExp = RegExp(/^(\d\d?)h([0-5]\d)$/)
+const timeEx = RegExp(/^(\d\d?)h([0-5]\d)$/)
 
 export namespace Durations{
 
@@ -117,7 +117,7 @@ export namespace Times{
 }
 
 
-function _toString(value: Time | Duration, sep: string = 'h', paddHours: boolean = false): string{
+function _toString(value: Time | Duration, sep = 'h', paddHours = false): string{
     if (!value){
         return "";
     }

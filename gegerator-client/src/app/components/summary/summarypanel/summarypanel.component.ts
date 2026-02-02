@@ -26,6 +26,8 @@ import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store';
     imports: [MatTabGroup, MatTab, EventLinkComponent, MovieRatingsComponent, NgTemplateOutlet, SessionRatingsComponent, OrderByComparablePipe]
 })
 export class SummarypanelComponent {
+  private store = inject(Store);
+
 
   // same thing as always : bring the Days in 'this' context
   // so we can use them in the template.
@@ -37,7 +39,10 @@ export class SummarypanelComponent {
 
   $roadmap = inject(RoadmapStore).$activeRoadmap
 
-  constructor(private store: Store) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.$movies = this.store.selectSignal(selectMovies)
 
     const sessionStoreSignal = this.store.selectSignal(selectPlannedMovieSessions)

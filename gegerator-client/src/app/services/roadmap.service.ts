@@ -9,13 +9,16 @@ const wizardroadmapUrl = "./api/wizard/roadmap"
   providedIn: 'root',
 })
 export class RoadmapService {
+  private _zone = inject(NgZone);
+
 
   private source: EventSource
   private roadmapStore = inject(RoadmapStore)
 
-  constructor(
-    private _zone: NgZone
-  ){
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor(){
     this.source = this.initEventSource()
   }
 
@@ -44,7 +47,7 @@ export class RoadmapService {
   }
 }
 
-function toRoadmapData(data: Array<any>): RoadmapData{
+function toRoadmapData(data: any[]): RoadmapData{
   const sessionIds: number[] = []
   const activityIds: number[] = []
   data.forEach(evt => isMovieSession(evt) ? sessionIds.push(evt.id) : activityIds.push(evt.id))

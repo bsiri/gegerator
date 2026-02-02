@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Inject, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, Signal, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { Store } from '@ngrx/store';
@@ -27,6 +27,9 @@ import { PlannedMovieSession } from 'src/app/models/session.model';
     imports: [ContextMenuDirective, MatRadioGroup, MatRadioButton, EventLinkComponent, OrderByComparablePipe]
 })
 export class MovieCtxtMenu implements OnInit {
+  private store = inject(Store);
+  dialogRef = inject<MatDialogRef<MovieCtxtMenu>>(MatDialogRef);
+
 
   public _anchor: ContextMenuRecipient
 
@@ -42,10 +45,12 @@ export class MovieCtxtMenu implements OnInit {
   movie: Movie
   $sessions: Signal<PlannedMovieSession[]>
 
-  constructor(
-    private store: Store,
-    public dialogRef: MatDialogRef<MovieCtxtMenu>,
-    @Inject(MAT_DIALOG_DATA) model: MovieCtxtMenuModel) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const model = inject<MovieCtxtMenuModel>(MAT_DIALOG_DATA);
+
     this.movie = model.movie
     this._anchor = model.anchor
 

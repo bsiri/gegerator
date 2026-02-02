@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
@@ -18,6 +18,8 @@ import { MatButton } from '@angular/material/button';
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatSlider, MatSliderThumb, MatDialogActions, MatButton]
 })
 export class ConfigDialog implements OnInit {
+  dialogRef = inject<MatDialogRef<ConfigDialog>>(MatDialogRef);
+
 
   Theaters = Theaters
   TheaterRatings = TheaterRatings
@@ -25,9 +27,12 @@ export class ConfigDialog implements OnInit {
   formGroup: UntypedFormGroup
   movieVsTheaterBias: number
 
-  constructor(public dialogRef: MatDialogRef<ConfigDialog>,
-    @Inject(MAT_DIALOG_DATA) wizconf: WizardConfiguration
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const wizconf = inject<WizardConfiguration>(MAT_DIALOG_DATA);
+
     this.formGroup = new UntypedFormGroup({
       espaceLacRating: new UntypedFormControl(wizconf.espaceLacRating),
       casinoRating: new UntypedFormControl(wizconf.casinoRating),

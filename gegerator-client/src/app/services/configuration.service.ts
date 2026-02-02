@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { WizardConfiguration, WizardConfigurationJSON } from '../ngrx/appstate-models/wizardconfiguration.model';
 
@@ -9,8 +9,13 @@ const wizconfUrl = "./api/configuration/wizard"
   providedIn: 'root'
 })
 export class ConfigurationService {
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() { }
 
   getWizardConfiguration(): Observable<WizardConfiguration>{
     return this.http.get<WizardConfigurationJSON>(wizconfUrl)

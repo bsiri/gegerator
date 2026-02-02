@@ -86,8 +86,8 @@ export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
    * Computed properties, used to determine the final
    * rendering (see ngOnInit)
    */
-  heightInPixel: string = '0px'
-  topPosInPixel: string = '0px'
+  heightInPixel = '0px'
+  topPosInPixel = '0px'
 
   extraClasses(): string[]{
     return [

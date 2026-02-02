@@ -3,7 +3,7 @@ import { OtherActivity } from "src/app/models/activity.model";
 import { ActivityActions } from "../actions/activity.actions";
 
 
-export const initialActivityList: ReadonlyArray<OtherActivity> = []
+export const initialActivityList: readonly OtherActivity[] = []
 
 export const activityReducer = createReducer(
     initialActivityList,

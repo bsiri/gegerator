@@ -28,6 +28,9 @@ import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store';
     imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, TimePipe]
 })
 export class SessionSectionComponent {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+
 
   /*
     "Importing" Days, Theaters and SESSION_DAY_BOUNDARIES as properties of this Component
@@ -51,8 +54,11 @@ export class SessionSectionComponent {
 
   $roadmap = inject(RoadmapStore).$activeRoadmap
 
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-  constructor(private store: Store, private dialog: MatDialog) {
+
+  constructor() {
   }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
@@ -76,7 +82,7 @@ export class SessionSectionComponent {
     })
 
     dialogRef.afterClosed().subscribe(newsession => {
-      if (!!newsession){
+      if (newsession){
         /*
           if a MovieSession model has been created:
           - create it
@@ -113,7 +119,7 @@ export class SessionSectionComponent {
     })
 
     dialogRef.afterClosed().subscribe(newactivity => {
-      if (!!newactivity){
+      if (newactivity){
         const activity = new OtherActivity(
           newactivity.id,
           newactivity.day,

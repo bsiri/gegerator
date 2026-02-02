@@ -36,7 +36,7 @@ export class SessionDayBoundaries extends TimeInterval {
      * @param skipFirstAndLast 
      * @returns 
      */
-    enumerateHours(step: number = 1): Time[] {
+    enumerateHours(step = 1): Time[] {
         const hours: Time[] = []
         let currentHour = this.start.hours ?? 0
         if((this.start.minutes ?? 0) > 0){

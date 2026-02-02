@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
@@ -13,12 +13,15 @@ import { SessionActions } from "../actions/session.actions";
 
 @Injectable()
 export class AppStateEffects{
-    constructor(
-        private store: Store,
-        private actions$: Actions,
-        private service: AppStateService,
-        private dialog: MatDialog
-    ){}
+    private store = inject(Store);
+    private actions$ = inject(Actions);
+    private service = inject(AppStateService);
+    private dialog = inject(MatDialog);
+
+    /** Inserted by Angular inject() migration for backwards compatibility */
+    constructor(...args: unknown[]);
+
+    constructor(){}
 
     upload$ = createEffect(() => this.actions$.pipe(
         ofType(AppStateActions.upload_appstate),

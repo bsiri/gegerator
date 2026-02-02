@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
@@ -24,14 +24,20 @@ import { PlannableEvent } from 'src/app/models/plannable.model';
     imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent, EventLinkComponent]
 })
 export class PlannedMovieSessionComponent{
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+
 
   @Input() session!: PlannedMovieSession
 
   @Input() roadmap!: FestivalRoadmap
 
-  @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
+  @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent
 
-  constructor(private store: Store, private dialog: MatDialog) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]); 
+
+  constructor() {
   }
 
 

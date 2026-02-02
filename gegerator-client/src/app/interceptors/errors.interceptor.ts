@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
 } from '@angular/common/http';
@@ -12,8 +12,13 @@ const PRECONDITION_FAILED = 412
 
 @Injectable()
 export class ErrorsInterceptor implements HttpInterceptor {
+  private dialog = inject(MatDialog);
 
-  constructor(private dialog: MatDialog){
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor(){
 
   }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { OtherActivity } from 'src/app/models/activity.model';
@@ -19,6 +19,9 @@ import { SessionRatingsComponent } from '../../small-comps/session-ratings/sessi
     imports: [SwimlaneItemComponent, SessionRatingsComponent]
 })
 export class OtherActivityComponent {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+
 
   @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
 
@@ -26,7 +29,10 @@ export class OtherActivityComponent {
 
   @Input() roadmap!: FestivalRoadmap
 
-  constructor(private store: Store, private dialog: MatDialog) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
   }
 
   // *********** border styles **************

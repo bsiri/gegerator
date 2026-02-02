@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { ContextMenuRecipient } from 'src/app/directives/context-menu.directive';
@@ -21,6 +21,9 @@ import { DurationPipe } from '../../../pipes/duration.pipe';
     imports: [MatCard, MatButton, MatIcon, MatCardHeader, MatCardTitle, MatCardContent, MovieRatingsComponent, DurationPipe]
 })
 export class MovieComponent implements ContextMenuRecipient {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+
 
   @ViewChild('_container') private _container!: ElementRef
 
@@ -30,7 +33,10 @@ export class MovieComponent implements ContextMenuRecipient {
     return this._container.nativeElement.getBoundingClientRect()
   }
 
-  constructor(private store: Store, private dialog: MatDialog) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
 
 
   updateMovie(): void{
@@ -42,7 +48,7 @@ export class MovieComponent implements ContextMenuRecipient {
     });   
 
     dialogRef.afterClosed().subscribe(updatedMovieData =>{
-      if (!!updatedMovieData){
+      if (updatedMovieData){
         this.store.dispatch(MovieActions.update_movie({movie: updatedMovieData}));
       }
     })

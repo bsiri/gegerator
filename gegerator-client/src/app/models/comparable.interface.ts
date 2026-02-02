@@ -41,7 +41,7 @@ export function sortByComparableAttributes<T extends any>(toSort: readonly T[] |
 export function chainComparator<T extends any>(...attrNames: string[]): (o1: T, o2: T) => number{
     return (o1: T, o2: T) => {
         let cmpRes = NaN
-        for (let attr of attrNames){
+        for (const attr of attrNames){
           const getter = _makeGetter(attr)
           cmpRes = getter(o1).compare(getter(o2))
           if (cmpRes != 0) {
