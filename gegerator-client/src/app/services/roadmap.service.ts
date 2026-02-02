@@ -11,12 +11,8 @@ const wizardroadmapUrl = "./api/wizard/roadmap"
 export class RoadmapService {
   private _zone = inject(NgZone);
 
-
   private source: EventSource
   private roadmapStore = inject(RoadmapStore)
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor(){
     this.source = this.initEventSource()

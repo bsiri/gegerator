@@ -22,7 +22,6 @@ import { signal } from '@angular/core';
 
 describe('SessionDialog - Template', async () => {
   let fixture: ComponentFixture<SessionDialog>
-  let component: SessionDialog
   let dialogRef: MatDialogRef<SessionDialog>
   let loader: HarnessLoader
 
@@ -42,14 +41,13 @@ describe('SessionDialog - Template', async () => {
       },{
         provide: Store,
         useValue: {
-          selectSignal: (_: any) => signal(sampleMovies())
+          selectSignal: () => signal(sampleMovies())
         }
       }]
     })
     fixture = TestBed.createComponent(SessionDialog);
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
-    component = fixture.componentInstance;
   })
 
   it('should open in edit mode when supplied an existing session', async () => {
@@ -209,7 +207,7 @@ describe('SessionDialog - Template', async () => {
 describe('SessionDialog - Component', async () => {
   let dialogRefStub: any;
   const movies = sampleMovies()
-  const mockStore = { selectSignal: (_: any) => (() => movies) } as unknown as Store<any>
+  const mockStore = { selectSignal: () => (() => movies) } as unknown as Store<any>
   let component: SessionDialog;
 
   beforeEach(() => {

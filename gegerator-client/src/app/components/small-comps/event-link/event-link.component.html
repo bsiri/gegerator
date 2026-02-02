@@ -1,5 +1,5 @@
 @if (event) {
-  <span class="pseudolink" (click)="showSelected(event.htmlId)" title="{{ event.toString() }}">
+  <span tabindex="0"  class="pseudolink" (click)="showSelected(event.htmlId)" title="{{ event.toString() }}">
     <ng-content>
       <!-- whatever we need to put in there -->
     </ng-content>

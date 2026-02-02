@@ -10,11 +10,6 @@ export class ConfigurationEffects{
     private actions$ = inject(Actions);
     private service = inject(ConfigurationService);
 
-    /** Inserted by Angular inject() migration for backwards compatibility */
-    constructor(...args: unknown[]);
-
-    constructor(){}
-
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(ConfigurationActions.reload_wizconf),
         mergeMap(() => this.service.getWizardConfiguration()

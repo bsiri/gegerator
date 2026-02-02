@@ -11,12 +11,6 @@ const activitiesUrl = './api/other-activities'
 export class ActivitylistService {
   private http = inject(HttpClient);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-
-  constructor() {}
-
   getAll(): Observable<OtherActivity[]>{
     return this.http.get<OtherActivityJSON[]>(activitiesUrl)
       .pipe(map(aoActs => aoActs.map(OtherActivity.fromJSON) ))

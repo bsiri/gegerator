@@ -11,12 +11,6 @@ const wizconfUrl = "./api/configuration/wizard"
 export class ConfigurationService {
   private http = inject(HttpClient);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-
-  constructor() { }
-
   getWizardConfiguration(): Observable<WizardConfiguration>{
     return this.http.get<WizardConfigurationJSON>(wizconfUrl)
     .pipe(

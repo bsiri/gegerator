@@ -17,7 +17,7 @@
                     </app-event-link>
                   </li>
                 }
-                @if ($roadmap().dailyPlanning().get(day)?.length == 0) {
+                @if ($roadmap().dailyPlanning().get(day)?.length === 0) {
                   <li>
                     <span>{{'('+day.name+' : Rien)'}}</span>
                   </li>

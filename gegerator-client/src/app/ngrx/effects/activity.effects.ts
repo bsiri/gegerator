@@ -9,11 +9,6 @@ export class OtherActivityEffects{
     private actions$ = inject(Actions);
     private service = inject(ActivitylistService);
 
-    /** Inserted by Angular inject() migration for backwards compatibility */
-    constructor(...args: unknown[]);
-
-    constructor(){}
-
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(ActivityActions.reload_activities),
         mergeMap(() => this.service.getAll()

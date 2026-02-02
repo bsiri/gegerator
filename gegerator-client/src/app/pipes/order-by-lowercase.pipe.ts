@@ -19,8 +19,8 @@ export class OrderByLowercasePipe implements PipeTransform {
       throw new Error(`cannot order by ${attrName} : attribute not found in type ${o.constructor.name}`)
     }
     return arr.slice().sort((o1, o2) => {
-      return getattr(o1).toLocaleLowerCase().localeCompare
-            (getattr(o2).toLocaleLowerCase())
+      return getattr(o1).toLocaleLowerCase()
+            .localeCompare(getattr(o2).toLocaleLowerCase())
     })
 
   }

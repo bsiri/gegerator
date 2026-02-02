@@ -10,8 +10,5 @@ import { NgClass } from '@angular/common';
     imports: [NgClass]
 })
 export class SessionRatingsComponent {
-
   @Input() rating! : EventRating
-
-  constructor() { }
 }

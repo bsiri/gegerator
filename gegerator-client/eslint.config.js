@@ -31,6 +31,10 @@ module.exports = defineConfig([
           style: "kebab-case",
         },
       ],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unnecessary-type-constraint": "off",
+      "@typescript-eslint/no-namespace": "off",
+      "@angular-eslint/template/click-events-have-key-events": "off",
     },
   },
   {

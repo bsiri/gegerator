@@ -12,8 +12,6 @@ import { PlannableEvent } from 'src/app/models/plannable.model';
 export class EventLinkComponent {
 
   @Input() event!: PlannableEvent
-
-  constructor() { }
   
   showSelected(target: string){
     const elt = document.getElementById(target)

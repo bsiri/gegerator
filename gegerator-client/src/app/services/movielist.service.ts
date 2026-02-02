@@ -11,12 +11,6 @@ const moviesUrl = "./api/movies"
 export class MovielistService{
   private http = inject(HttpClient);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-
-  constructor() {}
-
   getAll(): Observable<Movie[]>{
     return this.http.get<MovieJSON[]>(moviesUrl)
       .pipe(map(aoMovies => aoMovies.map(Movie.fromJSON))

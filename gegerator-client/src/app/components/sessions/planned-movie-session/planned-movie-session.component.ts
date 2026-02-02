@@ -26,20 +26,9 @@ import { PlannableEvent } from 'src/app/models/plannable.model';
 export class PlannedMovieSessionComponent{
   private store = inject(Store);
   private dialog = inject(MatDialog);
-
-
   @Input() session!: PlannedMovieSession
-
   @Input() roadmap!: FestivalRoadmap
-
   @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]); 
-
-  constructor() {
-  }
-
 
   // *********** content & border styles **************
 
@@ -142,7 +131,7 @@ export class PlannedMovieSessionComponent{
     // (remember that this dialog is blur only, so the API doesn't
     // allow to set a result).
     // Then update the event rating if changed.
-    dialogRef.afterClosed().subscribe((whatever) =>{
+    dialogRef.afterClosed().subscribe(() =>{
       const newSessionRating = dialogRef.componentInstance.eventRating
 
       const plannedSession = this.session

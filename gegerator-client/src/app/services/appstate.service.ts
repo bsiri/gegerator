@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { AppState, AppStateJSON } from '../ngrx/appstate-models/app.state';
 
 const stateUrl = './api/app-state'
@@ -10,12 +10,6 @@ const stateUrl = './api/app-state'
 })
 export class AppStateService {
   private http = inject(HttpClient);
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-
-  constructor() { }
 
   upload(file: File): Observable<AppState>{
     const formData = new FormData();

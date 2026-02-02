@@ -10,11 +10,6 @@ export class MovieSessionEffects{
     private actions$ = inject(Actions);
     private service = inject(SessionlistService);
 
-    /** Inserted by Angular inject() migration for backwards compatibility */
-    constructor(...args: unknown[]);
-
-    constructor(){}
-
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(SessionActions.reload_sessions),
         mergeMap(() => this.service.getAll()

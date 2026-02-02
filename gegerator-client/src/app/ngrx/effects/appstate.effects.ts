@@ -18,11 +18,6 @@ export class AppStateEffects{
     private service = inject(AppStateService);
     private dialog = inject(MatDialog);
 
-    /** Inserted by Angular inject() migration for backwards compatibility */
-    constructor(...args: unknown[]);
-
-    constructor(){}
-
     upload$ = createEffect(() => this.actions$.pipe(
         ofType(AppStateActions.upload_appstate),
         mergeMap(action => this.service.upload(action.file)
@@ -39,7 +34,7 @@ export class AppStateEffects{
 
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(AppStateActions.reload_appstate),
-        mergeMap(action => this.service.reload()
+        mergeMap( () => this.service.reload()
         .pipe(
             map(appstate => AppStateActions.appstate_reloaded({appstate}))
         ))

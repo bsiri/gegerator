@@ -30,7 +30,7 @@ import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store';
 export class SessionSectionComponent {
   private store = inject(Store);
   private dialog = inject(MatDialog);
-
+  $roadmap = inject(RoadmapStore).$activeRoadmap
 
   /*
     "Importing" Days, Theaters and SESSION_DAY_BOUNDARIES as properties of this Component
@@ -45,21 +45,11 @@ export class SessionSectionComponent {
   */
   rowHeightInPixel: string = ''+SESSION_DAY_BOUNDARIES.sessionDayInPixel()+'px'
 
-
   /*
     Data model
   */
   $sessions = this.store.selectSignal(selectPlannedMovieSessions)
   $activities = this.store.selectSignal(selectActivities)
-
-  $roadmap = inject(RoadmapStore).$activeRoadmap
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-
-  constructor() {
-  }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
     return this.$sessions().filter(s => s.day == day && s.theater == theater)

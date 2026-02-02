@@ -1,4 +1,4 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessLoader, HarnessPredicate } from "@angular/cdk/testing"
+import { HarnessLoader} from "@angular/cdk/testing"
 import { MatOptionHarness } from "@angular/material/core/testing"
 import { MatErrorHarness, MatFormFieldHarness } from "@angular/material/form-field/testing"
 import { MatSelectHarness } from "@angular/material/select/testing"
@@ -7,8 +7,8 @@ import { MatButtonHarness } from "@angular/material/button/testing"
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing"
 import { MatSliderHarness, MatSliderThumbHarness } from "@angular/material/slider/testing"
 import { By } from "@angular/platform-browser"
-import { DebugElement } from "@angular/core"
 import { MatRadioGroupHarness } from "@angular/material/radio/testing"
+import { DebugElement } from "node_modules/@angular/core/types/_discovery-chunk"
 
 /**
  * Name of the testid for the input, that will be looked-up in the css.
@@ -94,7 +94,7 @@ export function harnessHelper(loader: HarnessLoader){
         simulateFileInput: async (inputOrTestId: ClassTestId | HTMLInputElement, files: File[]) => {
             let inputEl: HTMLInputElement
             if (typeof inputOrTestId === 'string'){
-                const dbg = (loader as any)._fixture.debugElement.query(By.css('.testid-'+inputOrTestId))
+                const dbg: DebugElement = (loader as any)._fixture.debugElement.query(By.css('.testid-'+inputOrTestId))
                 if (!dbg) throw new Error('element not found for testid: '+inputOrTestId)
                 inputEl = dbg.nativeElement as HTMLInputElement
             } else {

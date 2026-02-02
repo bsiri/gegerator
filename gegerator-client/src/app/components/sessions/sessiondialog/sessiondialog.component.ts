@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, OnInit, Signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Signal, inject } from '@angular/core';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -51,12 +51,8 @@ export class SessionDialog {
   filteredTitles$: Observable<string[]>
   plannableInterval = PLANNABLE_EVENT_TIME_INTERVAL
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
       const session = inject<PlannedMovieSession>(MAT_DIALOG_DATA);
-
 
       this.$availableMovies = this.store.selectSignal(selectMovies)
 

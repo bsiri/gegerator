@@ -100,7 +100,6 @@ export class SwimlaneItemComponent implements OnInit, ContextMenuRecipient{
     return this._container.nativeElement.getBoundingClientRect()
   }
 
-  constructor() { }
 
   ngOnInit(): void {
     /*

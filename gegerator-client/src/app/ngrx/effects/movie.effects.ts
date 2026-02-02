@@ -9,12 +9,6 @@ export class MovieEffects {
     private actions$ = inject(Actions);
     private service = inject(MovielistService);
 
-    /** Inserted by Angular inject() migration for backwards compatibility */
-    constructor(...args: unknown[]);
-
-
-    constructor(){}
-
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(MovieActions.reload_movies),
         mergeMap(() => this.service.getAll()
