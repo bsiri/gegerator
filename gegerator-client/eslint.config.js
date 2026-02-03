@@ -34,7 +34,7 @@ module.exports = defineConfig([
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unnecessary-type-constraint": "off",
       "@typescript-eslint/no-namespace": "off",
-      "@angular-eslint/template/click-events-have-key-events": "off",
+      "@typescript-eslint/no-empty-function": "off",
     },
   },
   {
@@ -43,6 +43,8 @@ module.exports = defineConfig([
       angular.configs.templateRecommended,
       angular.configs.templateAccessibility,
     ],
-    rules: {},
+    rules: {
+      "@angular-eslint/template/click-events-have-key-events": "off",
+    },
   }
 ]);

@@ -36,7 +36,7 @@ describe('MovieCtxtMenu (component + unit)', () => {
       providers: [
         { provide: MatDialogRef, useValue: { close: vi.fn(), updatePosition: vi.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { movie: movieInstance(), anchor: anchorMock } },
-        { provide: Store, useValue: { selectSignal: (_: any) => signal(sessions) } }
+        { provide: Store, useValue: { selectSignal: () => signal(sessions) } }
       ]
     })
     fixture = TestBed.createComponent(MovieCtxtMenu)

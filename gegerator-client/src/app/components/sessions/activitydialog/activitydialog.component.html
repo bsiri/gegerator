@@ -17,9 +17,9 @@ This mode decides what will be:
 <div mat-dialog-content [formGroup]="formGroup">
 
   <div class="dialog-field">
-    <span>Jour : </span>
+    <label for="oad-day">Jour : </label>
     <mat-form-field appearance="fill" class="testid-oad-day">
-      <mat-select formControlName="day">
+      <mat-select formControlName="day" id="oad-day">
         @for (sday of Days.enumerate(); track sday) {
           <mat-option (keyup.enter)="confirm()" [value]="sday"
             class="testid-oad-opt-{{sday.key}}"
@@ -32,25 +32,25 @@ This mode decides what will be:
   </div>
 
   <div class="dialog-field">
-    <label>Description : </label>
+    <label for="oad-description">Description : </label>
     <mat-form-field appearance="fill" class="testid-oad-description">
-      <input (keyup.enter)="confirm()" matInput formControlName="description">
+      <input (keyup.enter)="confirm()" matInput formControlName="description" id="oad-description">
     </mat-form-field>
   </div>
 
   <div class="dialog-field">
-    <label>Début : </label>
+    <label for="oad-starttime">Début : </label>
     <mat-form-field appearance="fill" class="testid-oad-starttime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
-      <input (keyup.enter)="confirm()" matInput formControlName="startTime">
+      <input (keyup.enter)="confirm()" matInput formControlName="startTime" id="oad-starttime">
     </mat-form-field>
   </div>
 
   <div class="dialog-field">
-    <label>Fin : </label>
+    <label for="oad-endtime">Fin : </label>
     <mat-form-field appearance="fill" class="testid-oad-endtime">
       <mat-label>{{plannableInterval.toString()}}</mat-label>
-      <input (keyup.enter)="confirm()" matInput formControlName="endTime">
+      <input (keyup.enter)="confirm()" matInput formControlName="endTime" id="oad-endtime">
     </mat-form-field>
   </div>
 

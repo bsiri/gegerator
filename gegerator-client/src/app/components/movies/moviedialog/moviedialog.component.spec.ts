@@ -7,7 +7,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { harnessHelper  } from 'src/_testhelpers/harnesshelper';
 import { MovieDialog } from './moviedialog.component';
-import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
+import { Movie, MovieRatings } from 'src/app/models/movie.model';
 import { Durations } from 'src/app/models/time.utils';
 import * as factories from 'src/_testhelpers/factories';
 
@@ -16,7 +16,6 @@ import * as factories from 'src/_testhelpers/factories';
 
 describe('MovieDialog-Template', async() => {
   let fixture: ComponentFixture<MovieDialog>
-  let component: MovieDialog
   let dialogRef: MatDialogRef<MovieDialog>
   let loader: HarnessLoader
 
@@ -39,7 +38,6 @@ describe('MovieDialog-Template', async() => {
     fixture = TestBed.createComponent(MovieDialog);
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
-    component = fixture.componentInstance;
   })
 
   it('should open in edit mode when supplied an existing movie', async () => {
@@ -140,8 +138,9 @@ describe('MovieDialog-Template', async() => {
     try{
       await helper.error('md-title-error')
       expect(false, "the error for the title field should initially be not displayed").toBe(true)
-    }catch(elementnotfound){
+    }catch(e){
       // all clear, proceed
+      expect(e).toBeTruthy()
     }
 
     // set bogus data in all inputs then attempt to submit
@@ -173,6 +172,7 @@ describe('MovieDialog-Template', async() => {
     // succeeding in selecting it is an indicator that 
     // it is present in the page in itself
     const titleError = await helper.error('md-title-error')
+    expect(titleError).toBeTruthy()
 
   })
 

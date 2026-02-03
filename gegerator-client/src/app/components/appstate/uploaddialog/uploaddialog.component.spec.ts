@@ -3,7 +3,6 @@ import { Injector, runInInjectionContext } from '@angular/core'
 import { UploadDialog } from './uploaddialog.component'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
-import { By } from '@angular/platform-browser'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatButtonModule } from '@angular/material/button'
@@ -109,7 +108,6 @@ describe('UploadDialog - Template', () => {
     let fixture: ComponentFixture<UploadDialog>
     let dialogRef: MatDialogRef<UploadDialog>
     let loader: HarnessLoader
-    let component: UploadDialog
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -119,7 +117,6 @@ describe('UploadDialog - Template', () => {
         fixture = TestBed.createComponent(UploadDialog)
         loader = TestbedHarnessEnvironment.loader(fixture)
         dialogRef = TestBed.inject(MatDialogRef)
-        component = fixture.componentInstance
         fixture.detectChanges()
     })
 

@@ -64,7 +64,7 @@ export class MovieComponent implements ContextMenuRecipient {
     // (remember that this dialog is blur only, so the API doesn't
     // allow to set a result).
     // Then update the movie rating if changed.
-    dialogRef.afterClosed().subscribe((whatever) =>{
+    dialogRef.afterClosed().subscribe(() =>{
       const newMovie= dialogRef.componentInstance.movie
 
       if (this.movie.rating !== newMovie.rating){

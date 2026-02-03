@@ -2,9 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { describe, it, beforeEach, vi, expect } from 'vitest'
 
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { HarnessLoader } from '@angular/cdk/testing'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { harnessHelper } from 'src/_testhelpers/harnesshelper'
 import { of } from 'rxjs'
 import { MatDialog} from '@angular/material/dialog'
 import { Store } from '@ngrx/store'
@@ -30,8 +27,6 @@ describe('PlannedMovieSessionComponent', () => {
   let mockMatDialog: any
   let mockDialogRef: any
   let mockStore: any
-  let loader: HarnessLoader
-  let helper: ReturnType<typeof harnessHelper>
 
   beforeEach(async () => {
     // baseline mocks (will be fine-tuned per-test)
@@ -51,8 +46,6 @@ describe('PlannedMovieSessionComponent', () => {
     // create fresh component instance for each test and reset spies
     fixture = TestBed.createComponent(PlannedMovieSessionComponent)
     component = fixture.componentInstance
-    loader = TestbedHarnessEnvironment.loader(fixture)
-    helper = harnessHelper(loader)
 
     mockMatDialog.open.mockReset()
     mockMatDialog.open.mockReturnValue(mockDialogRef)

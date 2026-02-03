@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, Signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Signal, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ import { PlannedMovieSession } from 'src/app/models/session.model';
     styleUrls: ['./movie-ctxt-menu.component.scss'],
     imports: [ContextMenuDirective, MatRadioGroup, MatRadioButton, EventLinkComponent, OrderByComparablePipe]
 })
-export class MovieCtxtMenu implements OnInit {
+export class MovieCtxtMenu {
   private store = inject(Store);
   dialogRef = inject<MatDialogRef<MovieCtxtMenu>>(MatDialogRef);
 
@@ -57,10 +57,6 @@ export class MovieCtxtMenu implements OnInit {
       return sessions.filter(s => s.movie.id == this.movie.id)
     })
   }
-
-  ngOnInit(): void {
-  }
-
 
   updateMovieRating($event: MatRadioChange): void {
     this.movie.rating = $event.value

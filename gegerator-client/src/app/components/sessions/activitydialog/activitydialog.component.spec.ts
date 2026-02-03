@@ -16,7 +16,6 @@ import { By } from '@angular/platform-browser';
 
 describe('ActivityDialog-Template', async() => {
   let fixture: ComponentFixture<Activitydialog>
-  let component: Activitydialog
   let dialogRef: MatDialogRef<Activitydialog>
   let loader: HarnessLoader
 
@@ -39,7 +38,6 @@ describe('ActivityDialog-Template', async() => {
     fixture = TestBed.createComponent(Activitydialog);
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
-    component = fixture.componentInstance;
 
   })
 

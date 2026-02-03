@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +20,6 @@ import { Durations } from 'src/app/models/time.utils';
 describe('MovieComponent - Template', async () => {
   let fixture: ComponentFixture<MovieComponent>
   let component: MovieComponent
-  let loader: HarnessLoader
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -46,7 +43,6 @@ describe('MovieComponent - Template', async () => {
     })
 
     fixture = TestBed.createComponent(MovieComponent)
-    loader = TestbedHarnessEnvironment.loader(fixture)
     component = fixture.componentInstance
     component.movie = sampleMovie(1)
     fixture.detectChanges()
@@ -150,7 +146,7 @@ describe('MovieComponent - Component', async () => {
   let comp: MovieComponent
 
   beforeEach(() => {
-    dialogStub = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (_: any) => {} }), componentInstance: {} })) }
+    dialogStub = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: () => {} }), componentInstance: {} })) }
     storeStub = { dispatch: vi.fn() }
     const inj = Injector.create({ providers: [
       { provide: Store, useValue: storeStub },

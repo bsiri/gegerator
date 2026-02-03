@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Movie, MovieRating } from 'src/app/models/movie.model';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +9,6 @@ import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 
-const durEx = RegExp(/^(\d)h([0-5]\d)$/);
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,7 +17,7 @@ const durEx = RegExp(/^(\d)h([0-5]\d)$/);
     styleUrls: ['./moviedialog.component.scss'],
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatError, MatLabel, MatDialogActions, MatButton]
 })
-export class MovieDialog implements OnInit {
+export class MovieDialog {
   dialogRef = inject<MatDialogRef<MovieDialog>>(MatDialogRef);
 
 
@@ -51,8 +50,6 @@ export class MovieDialog implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
 
   toMovie(): Movie{
     return new Movie(
