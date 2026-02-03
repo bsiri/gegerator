@@ -342,8 +342,40 @@ describe('AppComponent — UI tests (harnesses)', () => {
 })
 
 describe('AppComponent — Unit tests (component methods)', () => {
+  let component: AppComponent
+  let mockStore: any
+  let mockDialog: any
+  let mockRoadmapStore: any
+  let mockRoadmapService: any
+
   beforeEach(() => {
-    // Synchronous setup placeholder: configure spies for Store, RoadmapStore, MatDialog
+    // configure lightweight injector-less component instance using plain mocks
+    mockStore = {
+      dispatch: vi.fn(),
+      selectSignal: () => signal<any>([]) // default
+    }
+
+    mockDialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: () => {} }) })) }
+
+    mockRoadmapService = {}
+
+    mockRoadmapStore = {
+      $mode: signal(Mode.WIZARD),
+      $activeRoadmap: signal(sampleRoadmap()),
+      toggleMode: vi.fn()
+    }
+
+    // create a component object without running Angular's injection (avoid inject())
+    component = Object.create(AppComponent.prototype) as AppComponent
+    ;(component as any).store = mockStore
+    ;(component as any).dialog = mockDialog
+    ;(component as any).roadmapService = mockRoadmapService
+    ;(component as any).roadmapStore = mockRoadmapStore
+
+    // Signals normally set in constructor
+    ;(component as any).$wizconf = signal(sampleConfiguration())
+    ;(component as any).$wizardmode = mockRoadmapStore.$mode
+    ;(component as any).$roadmap = mockRoadmapStore.$activeRoadmap
   })
 
   it('ngOnInit should dispatch AppStateActions.reload_appstate', async () => {
@@ -360,6 +392,8 @@ describe('AppComponent — Unit tests (component methods)', () => {
       2. call `component.ngOnInit()`
       3. assert dispatch was called with the expected action creator result
     */
+    component.ngOnInit()
+    expect(mockStore.dispatch).toHaveBeenCalledWith(AppStateActions.reload_appstate())
   })
 
   it('uploadAppState should dispatch upload_appstate when dialog returns a File', async () => {
@@ -375,6 +409,12 @@ describe('AppComponent — Unit tests (component methods)', () => {
       1. mock `MatDialog.open` to return an object with `afterClosed: () => of(file)`
       2. call method and assert `store.dispatch` called with correct action payload
     */
+    const mockFile = new File(['{}'], 'state.json', { type: 'application/json' })
+    mockDialog.open = vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(mockFile) }) }))
+
+    component.uploadAppState()
+
+    expect(mockStore.dispatch).toHaveBeenCalledWith(AppStateActions.upload_appstate({ file: mockFile }))
   })
 
   it('openWizardConfiguration should dispatch ConfigurationActions.update_wizconf when dialog returns new conf', async () => {
@@ -391,25 +431,16 @@ describe('AppComponent — Unit tests (component methods)', () => {
       2. call method and simulate dialog close with `newconf`
       3. assert dispatch called with expected action
     */
+    const newconf = sampleConfiguration()
+    mockDialog.open = vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(newconf) }) }))
+
+    component.openWizardConfiguration()
+
+    // lazy-check that dispatch was called with the expected configuration action
+    const { ConfigurationActions } = await import('./ngrx/actions/configuration.actions')
+    expect(mockStore.dispatch).toHaveBeenCalledWith(ConfigurationActions.update_wizconf({ wizconf: newconf }))
   })
 
-  it('exportRoadmap should build a textual roadmap and create an anchor download', async () => {
-    /*
-      Goal: unit-test the string-building logic and anchor creation in `exportRoadmap()`.
-
-      Synopsis:
-      - given: a mocked `$roadmap()` whose `dailyPlanning()` returns a known Map
-      - when: call `component.exportRoadmap()`
-      - then: an anchor is created with `download === 'roadmap.txt'` and `href` includes encoded planning
-
-      Desired tests and assertions:
-      1. mock `$roadmap()` to return a small roadmap with 1-2 days/events
-      2. spy on `document.createElement` and capture the created anchor
-      3. assert anchor.download and anchor.href contents
-
-      Note: restore `document.createElement` after the test.
-    */
-  })
 
   it('formatEventStr should strip the day prefix from PlannableEvent.toString()', async () => {
     /*
@@ -424,6 +455,9 @@ describe('AppComponent — Unit tests (component methods)', () => {
       1. prepare a minimal stub object with `toString()` method
       2. call method and assert returned value equals expected transformed string
     */
+    const ev = { toString: () => 'Lundi, 10h00 - Movie Title' }
+    const out = component.formatEventStr(ev as any)
+    expect(out).toBe('    10h00 - Movie Title')
   })
 
   it('toggleMode should delegate to RoadmapStore.toggleMode()', async () => {
@@ -440,13 +474,10 @@ describe('AppComponent — Unit tests (component methods)', () => {
       2. call component method
       3. assert spy was called
     */
+    component.toggleMode()
+    expect(mockRoadmapStore.toggleMode).toHaveBeenCalled()
   })
 
-  // Test data and mock factories
-  // Placeholders: import or build realistic FestivalRoadmap and PlannableEvent instances
-  const testData = {
-    // Example usage: build FestivalRoadmap via factories in src/_testhelpers/factories.ts
-  }
 
 })
 
