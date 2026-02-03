@@ -17,6 +17,8 @@ import { AppComponent } from './app.component'
 import { Mode } from './ngrx/appstate-models/mode.model'
 import { TheaterRating, TheaterRatings, WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model'
 import { Movie } from './models/movie.model'
+import { ConfigDialog } from './components/configuration/configdialog/configdialog.component'
+import { selectConfiguration } from './ngrx/selectors/configuration.selectors'
 
 /*
   Implementation notes / helpful references for the test implementor:
@@ -40,6 +42,7 @@ describe('AppComponent — UI tests (harnesses)', () => {
   let modeSignal: WritableSignal<Mode>
   let roadmapSignal: WritableSignal<FestivalRoadmap>
   let configSignal: WritableSignal<WizardConfiguration>
+  let mockDialog: any
 
 
   beforeEach(async () => {
@@ -48,13 +51,12 @@ describe('AppComponent — UI tests (harnesses)', () => {
     configSignal = signal(sampleConfiguration())
 
 
-    const mockDialog = { open: vi.fn() }
+    mockDialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: () => {} }) })) }
     const mockConfigStore = {
       dispatch: vi.fn(),
       selectSignal: (selector: any) => {
-        const name = selector && selector.name
-        if (name === 'selectConfiguration') return configSignal
-        // default [] signal for the sidebars
+        if (selector === selectConfiguration) return configSignal
+        // default [] signal for other selectors
         return signal<any[]>([])
       }
     }
@@ -62,7 +64,11 @@ describe('AppComponent — UI tests (harnesses)', () => {
     const mockRoadmapStore = { 
         $mode: modeSignal, 
         $activeRoadmap: roadmapSignal, 
-        toggleMode: vi.fn() 
+        toggleMode: () => {
+            const newmode = (modeSignal() === Mode.MANUAL) ? Mode.WIZARD : Mode.MANUAL
+            modeSignal.set(newmode)
+        }
+        
     }
     const mockRoadmapService = {}
 
@@ -126,6 +132,35 @@ describe('AppComponent — UI tests (harnesses)', () => {
 
       Important: interact with the UI (click), do not call `toggle()` programmatically.
     */
+    await fixture.whenStable()
+
+    // locate the two header buttons by position inside the button bar
+    const btns: NodeListOf<HTMLButtonElement> = fixture.nativeElement.querySelectorAll('#app-buttonbar button')
+    const movieBtn = btns[0]
+    const summaryBtn = btns[1]
+
+    // harnesses for the two sidenavs
+    const movieSidenav = await loader.getHarness(MatSidenavHarness.with({ selector: '#app-movie' }))
+    const summarySidenav = await loader.getHarness(MatSidenavHarness.with({ selector: '#app-summary' }))
+
+    // initially closed
+    expect(await movieSidenav.isOpen()).toBe(false)
+    expect(await summarySidenav.isOpen()).toBe(false)
+
+    // open movie sidenav
+    movieBtn.click()
+    await fixture.whenStable()
+    expect(await movieSidenav.isOpen()).toBe(true)
+
+    // open summary sidenav
+    summaryBtn.click()
+    await fixture.whenStable()
+    expect(await summarySidenav.isOpen()).toBe(true)
+
+    // toggle movie sidenav closed again
+    movieBtn.click()
+    await fixture.whenStable()
+    expect(await movieSidenav.isOpen()).toBe(false)
   })
 
   it('should display correct label in Mode menu depending on current mode', async () => {
@@ -142,6 +177,23 @@ describe('AppComponent — UI tests (harnesses)', () => {
       1. open menu and read the first menu item's text for MANUAL
       2. change mocked signal to WIZARD, re-open menu and assert text changes
     */
+    await fixture.whenStable()
+
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Mode' }))
+
+    // initial state: WIZARD -> label should be 'Désactiver l'assistant'
+    await menu.open()
+    let itemHarnesses = await menu.getItems()
+    let items = await Promise.all(itemHarnesses.map(i => i.getText()))
+    expect(items.length).toBeGreaterThan(0)
+    expect(items[0].trim()).toBe("Désactiver l'assistant")
+
+    // change to MANUAL and re-open -> label should be 'Activer l'assistant'
+    await itemHarnesses[0].click()
+    await fixture.whenStable()
+    items = await Promise.all(itemHarnesses.map(i => i.getText()))
+    expect(items[0].trim()).toBe("Activer l'assistant")
+    await menu.close()
   })
 
   it('should open configuration dialog from menu and pass a copy of the wizconf', async () => {
@@ -161,6 +213,37 @@ describe('AppComponent — UI tests (harnesses)', () => {
 
       Note: this is a UI-level test — perform a real click on the menu item.
     */
+    await fixture.whenStable()
+
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Mode' }))
+    await menu.open()
+    const items = await menu.getItems()
+
+    // find the menu item whose text contains 'Configurer'
+    const cfgItem = items.find(i => i.getText().then(t => t.includes('Configurer')))
+    // resolve harness (the predicate returns a Promise<boolean>, so ensure we pick correct index)
+    let cfgHarness = null as any
+    for (const it of items){
+      const t = await it.getText()
+      if (t.includes('Configurer')){ cfgHarness = it; break }
+    }
+    expect(cfgHarness).not.toBeNull()
+
+    // click it
+    await cfgHarness.click()
+    await fixture.whenStable()
+
+    // assert dialog was opened with ConfigDialog and a copied configuration
+    expect(mockDialog.open).toHaveBeenCalled()
+    const callArgs = mockDialog.open.mock.calls[0]
+    expect(callArgs[0]).toBe(ConfigDialog)
+    const options = callArgs[1]
+    expect(options).toHaveProperty('data')
+    const original = configSignal()
+    const expectedCopy = original.copy()
+    expect(options.data).toEqual(expectedCopy)
+    expect(options.data).not.toBe(original)
+    await menu.close()
   })
 
   it('should open upload dialog from Save/Load menu and dispatch upload when a file is returned', async () => {
