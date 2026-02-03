@@ -29,7 +29,7 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 - Test validation errors by checking both the control group and whether the error message is actually displayed;
 
 # Coding Guidelines
-- Preserve the original comments that contains the test specifications;
+- *IMPORTANT*: Preserve the original comments that contains the test specifications;
 - Use Vitest : `describe`, `it`, `fn` etc;
 - In async test methods, use `await fixture.whenStable()` for waiting a component to render;
 - In sync test methods, keep using `fixture.detectChanges()`;
