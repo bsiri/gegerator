@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { provideMockStore } from '@ngrx/store/testing'
 import { NO_ERRORS_SCHEMA, signal, Signal, WritableSignal } from '@angular/core'
 import { describe, it, beforeEach, expect, vi } from 'vitest'
+import { harnessHelper } from 'src/_testhelpers/harnesshelper'
 import { MemoizedSelector, Store } from '@ngrx/store'
 import { RoadmapStore } from './ngrx/stores/roadmap.store'
 import { RoadmapService } from './services/roadmap.service'
@@ -18,6 +19,8 @@ import { Mode } from './ngrx/appstate-models/mode.model'
 import { TheaterRating, TheaterRatings, WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model'
 import { Movie } from './models/movie.model'
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component'
+import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component'
+import { AppStateActions } from './ngrx/actions/appstate.actions'
 import { selectConfiguration } from './ngrx/selectors/configuration.selectors'
 
 /*
@@ -178,21 +181,23 @@ describe('AppComponent — UI tests (harnesses)', () => {
       2. change mocked signal to WIZARD, re-open menu and assert text changes
     */
     await fixture.whenStable()
+    const helper = harnessHelper(loader)
 
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Mode' }))
 
-    // initial state: WIZARD -> label should be 'Désactiver l'assistant'
     await menu.open()
-    let itemHarnesses = await menu.getItems()
-    let items = await Promise.all(itemHarnesses.map(i => i.getText()))
-    expect(items.length).toBeGreaterThan(0)
-    expect(items[0].trim()).toBe("Désactiver l'assistant")
+    // const toggleBtn = await helper.menuitem('app-toggle-mode')
+    const toggleBtn = (await menu.getItems())[0]
 
-    // change to MANUAL and re-open -> label should be 'Activer l'assistant'
-    await itemHarnesses[0].click()
+    // initial state: WIZARD -> label should be 'Désactiver l'assistant'
+    expect(await toggleBtn.getText()).toBe("Désactiver l'assistant")
+
+    // change to MANUAL by clicking the toggle menu item using harnessHelper
+    await toggleBtn.click()
     await fixture.whenStable()
-    items = await Promise.all(itemHarnesses.map(i => i.getText()))
-    expect(items[0].trim()).toBe("Activer l'assistant")
+
+    // The label should now have changed
+    expect(await toggleBtn.getText()).toBe("Activer l'assistant")
     await menu.close()
   })
 
@@ -217,20 +222,11 @@ describe('AppComponent — UI tests (harnesses)', () => {
 
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Mode' }))
     await menu.open()
-    const items = await menu.getItems()
 
-    // find the menu item whose text contains 'Configurer'
-    const cfgItem = items.find(i => i.getText().then(t => t.includes('Configurer')))
-    // resolve harness (the predicate returns a Promise<boolean>, so ensure we pick correct index)
-    let cfgHarness = null as any
-    for (const it of items){
-      const t = await it.getText()
-      if (t.includes('Configurer')){ cfgHarness = it; break }
-    }
-    expect(cfgHarness).not.toBeNull()
+    let cfgBtn = (await menu.getItems())[1]
 
     // click it
-    await cfgHarness.click()
+    await cfgBtn.click()
     await fixture.whenStable()
 
     // assert dialog was opened with ConfigDialog and a copied configuration
@@ -263,6 +259,33 @@ describe('AppComponent — UI tests (harnesses)', () => {
 
       Note: prefer to mock `MatDialog` for the dispatch assertion but interact with the menu for the UI part.
     */
+    await fixture.whenStable()
+    const helper = harnessHelper(loader)
+
+    // prepare a mock file that the dialog will return
+    const mockFile = new File(['{}'], 'state.json', { type: 'application/json' })
+
+    // make the dialog.open return a dialogRef whose afterClosed subscribes with the file
+    mockDialog.open = vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(mockFile) }) }))
+
+    // find the Save/Load menu by selector and open it
+    // const saveLoadMenu = await loader.getHarness(MatMenuHarness.with({ selector: '.testid-app-save-load' }))
+    const saveLoadMenu = await helper.menu('app-save-load')
+    await saveLoadMenu.open()
+    const loadBtn = (await saveLoadMenu.getItems())[1]
+
+    await loadBtn.click()
+    await fixture.whenStable()
+
+    // assert dialog opened with UploadDialog
+    expect(mockDialog.open).toHaveBeenCalled()
+    const openArgs = mockDialog.open.mock.calls[0]
+    expect(openArgs[0]).toBe(UploadDialog)
+
+    // assert the store received the upload action
+    const store = TestBed.inject(Store) as any
+    expect(store.dispatch).toHaveBeenCalledWith(AppStateActions.upload_appstate({ file: mockFile }))
+    await saveLoadMenu.close()
   })
 
   it('should trigger roadmap export and create a download anchor', async () => {
@@ -281,6 +304,39 @@ describe('AppComponent — UI tests (harnesses)', () => {
 
       Note: this is a UI-triggered action — click the menu item rather than directly calling the method.
     */
+    await fixture.whenStable()
+
+    // spy on document.createElement to capture the created anchor
+    const originalCreate = document.createElement.bind(document)
+    let capturedAnchor: HTMLAnchorElement | null = null
+    const createSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+      const el = originalCreate(tagName)
+      if (tagName === 'a') {
+        capturedAnchor = el as HTMLAnchorElement
+      }
+      return el
+    })
+
+    // open Export menu and click the 'Exporter la Roadmap' item
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Exporter' }))
+    await menu.open()
+    const exportBtn = (await menu.getItems())[0]
+    await exportBtn.click()
+    await fixture.whenStable()
+
+    // assert an anchor was created and clicked
+    expect(createSpy).toHaveBeenCalled()
+    expect(capturedAnchor).not.toBeNull()
+    expect(capturedAnchor!.download).toBe('roadmap.txt')
+    expect(capturedAnchor!.href).toContain('data:application/octet-stream,')
+
+    // the exported content should contain the movie title from the sample roadmap
+    const sampleTitle = roadmapSignal().sessions[0].movie.title
+    expect(capturedAnchor!.href).toContain(encodeURIComponent(sampleTitle))
+
+    // restore
+    createSpy.mockRestore()
+    await menu.close()
   })
 
 })
