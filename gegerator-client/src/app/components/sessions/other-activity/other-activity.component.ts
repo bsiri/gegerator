@@ -29,11 +29,7 @@ export class OtherActivityComponent {
 
   @Input() roadmap!: FestivalRoadmap
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {
-  }
+  
 
   // *********** border styles **************
 

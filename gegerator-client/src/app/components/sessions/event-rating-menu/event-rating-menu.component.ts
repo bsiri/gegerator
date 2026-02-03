@@ -37,9 +37,6 @@ export class EventRatingMenu {
    */
   eventRating: EventRating
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
       const model = inject<SessionRatingMenuModel>(MAT_DIALOG_DATA);
 

@@ -17,11 +17,7 @@ export class UploadDialog {
 
   file: File | null = null
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   
-  constructor(){ 
-  }
 
   changeFile(event: any) {
     const files: FileList = event.target.files

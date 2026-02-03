@@ -45,9 +45,6 @@ export class MovieCtxtMenu implements OnInit {
   movie: Movie
   $sessions: Signal<PlannedMovieSession[]>
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     const model = inject<MovieCtxtMenuModel>(MAT_DIALOG_DATA);
 

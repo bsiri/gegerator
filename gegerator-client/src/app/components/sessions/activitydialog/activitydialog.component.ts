@@ -38,9 +38,6 @@ export class Activitydialog {
   // Form referential data
   Days = Days
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     const activity = inject<OtherActivity>(MAT_DIALOG_DATA);
 

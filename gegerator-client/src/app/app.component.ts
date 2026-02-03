@@ -46,9 +46,6 @@ export class AppComponent implements OnInit{
   $wizardmode: Signal<Mode>
   $roadmap: Signal<FestivalRoadmap>
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor(){
       this.$wizconf = this.store.selectSignal(selectConfiguration)
       this.$wizardmode = this.roadmapStore.$mode

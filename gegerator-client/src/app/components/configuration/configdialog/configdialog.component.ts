@@ -27,9 +27,6 @@ export class ConfigDialog implements OnInit {
   formGroup: UntypedFormGroup
   movieVsTheaterBias: number
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     const wizconf = inject<WizardConfiguration>(MAT_DIALOG_DATA);
 

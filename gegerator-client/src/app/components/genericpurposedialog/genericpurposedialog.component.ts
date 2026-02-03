@@ -31,9 +31,6 @@ export class GenericPurposeDialog {
   content: string;
   type: string;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     const data = this.data;
  

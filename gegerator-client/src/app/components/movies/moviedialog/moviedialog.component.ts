@@ -34,9 +34,6 @@ export class MovieDialog implements OnInit {
   // is an existing instance of a Movie, or a shim for a new Movie.
   mode: string;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     const movie = inject<Movie>(MAT_DIALOG_DATA);
 

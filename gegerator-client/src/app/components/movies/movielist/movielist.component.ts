@@ -34,9 +34,6 @@ export class MovielistComponent implements AfterContentInit {
   // the final movie list outputed after sorting and filtering
   $movies: Signal<Movie[]>
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
 
     const movieStore = this.store.selectSignal(selectMovies)

@@ -33,10 +33,7 @@ export class MovieComponent implements ContextMenuRecipient {
     return this._container.nativeElement.getBoundingClientRect()
   }
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() { }
+  
 
 
   updateMovie(): void{
