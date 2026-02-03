@@ -9,6 +9,7 @@ import { MatSliderHarness, MatSliderThumbHarness } from "@angular/material/slide
 import { By } from "@angular/platform-browser"
 import { MatRadioGroupHarness } from "@angular/material/radio/testing"
 import { DebugElement } from "node_modules/@angular/core/types/_discovery-chunk"
+import { MatMenuHarness, MatMenuItemHarness } from "@angular/material/menu/testing"
 
 /**
  * Name of the testid for the input, that will be looked-up in the css.
@@ -76,6 +77,18 @@ export function harnessHelper(loader: HarnessLoader){
                 return loader.getHarness(MatSliderThumbHarness)
             }
             return loader.getHarness(MatSliderThumbHarness.with(selid(testid)))
+        },
+        menu: async(testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatMenuHarness)
+            }
+            return loader.getHarness(MatMenuHarness.with(selid(testid)))
+        },
+        menuitem: async(testid?: ClassTestId) => {
+            if (testid === undefined){
+                return loader.getHarness(MatMenuItemHarness)
+            }
+            return loader.getHarness(MatMenuItemHarness.with(selid(testid)))
         },
         error: async (testid?: ClassTestId) => {
             if (testid === undefined){
