@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { map, Observable } from 'rxjs';
 import { Movie, MovieJSON } from '../models/movie.model';
@@ -9,8 +9,7 @@ const moviesUrl = "./api/movies"
   providedIn: 'root'
 })
 export class MovielistService{
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getAll(): Observable<Movie[]>{
     return this.http.get<MovieJSON[]>(moviesUrl)

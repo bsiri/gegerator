@@ -2,7 +2,7 @@ import { createReducer, on } from "@ngrx/store";
 import { Movie } from "../../models/movie.model";
 import { MovieActions } from "../actions/movie.actions";
 
-export const initialMovielist: ReadonlyArray<Movie> = []
+export const initialMovielist: readonly Movie[] = []
 
 export const movieReducer = createReducer(
     initialMovielist,

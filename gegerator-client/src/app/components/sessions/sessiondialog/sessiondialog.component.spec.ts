@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
@@ -21,7 +22,6 @@ import { signal } from '@angular/core';
 
 describe('SessionDialog - Template', async () => {
   let fixture: ComponentFixture<SessionDialog>
-  let component: SessionDialog
   let dialogRef: MatDialogRef<SessionDialog>
   let loader: HarnessLoader
 
@@ -41,14 +41,13 @@ describe('SessionDialog - Template', async () => {
       },{
         provide: Store,
         useValue: {
-          selectSignal: (_: any) => signal(sampleMovies())
+          selectSignal: () => signal(sampleMovies())
         }
       }]
     })
     fixture = TestBed.createComponent(SessionDialog);
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
-    component = fixture.componentInstance;
   })
 
   it('should open in edit mode when supplied an existing session', async () => {
@@ -208,26 +207,38 @@ describe('SessionDialog - Template', async () => {
 describe('SessionDialog - Component', async () => {
   let dialogRefStub: any;
   const movies = sampleMovies()
-  const mockStore = { selectSignal: (_: any) => (() => movies) } as unknown as Store<any>
+  const mockStore = { selectSignal: () => (() => movies) } as unknown as Store<any>
+  let component: SessionDialog;
 
   beforeEach(() => {
     dialogRefStub = { close: vi.fn() };
+    const inj = Injector.create({ providers: [
+      { provide: MatDialogRef, useValue: dialogRefStub },
+      { provide: MAT_DIALOG_DATA, useValue: sampleSession(1) },
+      { provide: Store, useValue: mockStore }
+    ] })
+    component = runInInjectionContext(inj, () => new SessionDialog())
+
   });
 
   it('should instantiate and set create mode when id is undefined', async () => {
-    const comp = new SessionDialog(dialogRefStub as any, sampleSession(undefined), mockStore as any)
+    const inj = Injector.create({ providers: [
+      { provide: MatDialogRef, useValue: dialogRefStub },
+      { provide: MAT_DIALOG_DATA, useValue: sampleSession(undefined) },
+      { provide: Store, useValue: mockStore }
+    ] })
+    const comp = runInInjectionContext(inj, () => new SessionDialog())
     expect(comp).toBeTruthy()
     expect(comp.mode).toBe('create')
   })
 
   it('confirm() should close dialog with a PlannedMovieSession when form is valid', async () => {
-    const comp = new SessionDialog(dialogRefStub as any, sampleSession(1), mockStore as any)
-    comp.formGroup.get('title')!.setValue(movies[0].title)
-    comp.formGroup.get('startTime')!.setValue('10h00')
-    comp.formGroup.get('day')!.setValue(Days.WEDNESDAY)
-    comp.formGroup.get('theater')!.setValue(Theaters.CASINO)
+    component.formGroup.get('title')!.setValue(movies[0].title)
+    component.formGroup.get('startTime')!.setValue('10h00')
+    component.formGroup.get('day')!.setValue(Days.WEDNESDAY)
+    component.formGroup.get('theater')!.setValue(Theaters.CASINO)
 
-    comp.confirm()
+    component.confirm()
     expect(dialogRefStub.close).toHaveBeenCalled()
     const closedArg = dialogRefStub.close.mock.calls[0][0]
     expect(closedArg).toHaveProperty('movie')
@@ -235,17 +246,15 @@ describe('SessionDialog - Component', async () => {
   })
 
   it('cancel() should close dialog without args', async () => {
-    const comp = new SessionDialog(dialogRefStub as any, sampleSession(2), mockStore as any)
-    comp.cancel()
+    component.cancel()
     expect(dialogRefStub.close).toHaveBeenCalled()
     const args = dialogRefStub.close.mock.calls[0]
     expect(args.length).toBe(0)
   })
 
   it('validateTime() returns error for invalid string', async () => {
-    const comp = new SessionDialog(dialogRefStub as any, sampleSession(3), mockStore as any)
     const fakeCtrl: any = { value: 'invalid-time' }
-    const res = comp.validateTime(fakeCtrl as any)
+    const res = component.validateTime(fakeCtrl as any)
     expect(res).not.toBeNull()
   })
 

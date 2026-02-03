@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { Injector, runInInjectionContext } from '@angular/core'
 import { UploadDialog } from './uploaddialog.component'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
-import { By } from '@angular/platform-browser'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatButtonModule } from '@angular/material/button'
@@ -10,10 +10,13 @@ import { harnessHelper } from 'src/_testhelpers/harnesshelper'
 
 describe('UploadDialog - Component', () => {
     let component: UploadDialog
+    let mockClose: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
-        // instantiate with a minimal mock MatDialogRef
-        component = new UploadDialog({ close: () => { } } as any)
+        // instantiate with a minimal mock MatDialogRef using an injection context
+        mockClose = vi.fn()
+        const inj = Injector.create({ providers: [{ provide: MatDialogRef, useValue: { close: mockClose } }] })
+        component = runInInjectionContext(inj, () => new UploadDialog())
     })
 
     it('should create the component', async () => {
@@ -71,8 +74,6 @@ describe('UploadDialog - Component', () => {
           1. `close` called exactly once
           2. `close` called with the `component.file` value
         */
-        const mockClose = vi.fn()
-        component = new UploadDialog({ close: mockClose } as any)
         component.file = mockFile
 
         component.confirm()
@@ -94,76 +95,73 @@ describe('UploadDialog - Component', () => {
           1. `close` called exactly once
           2. `close` called with undefined or no parameter
         */
-        const mockClose = vi.fn()
-        component = new UploadDialog({ close: mockClose } as any)
-
         component.cancel()
 
         expect(mockClose).toHaveBeenCalledTimes(1)
         expect(mockClose.mock.calls[0].length).toBe(0)
     })
 
-    // UI integration tests: TestBed rendering to check template binding for buttons
-    describe('UploadDialog - Template', () => {
-        let fixture: ComponentFixture<UploadDialog>
-        let dialogRef: MatDialogRef<UploadDialog>
-        let loader: HarnessLoader
+})
 
-        beforeEach(() => {
-            TestBed.configureTestingModule({
-                imports: [MatDialogModule, MatButtonModule],
-                providers: [{ provide: MatDialogRef, useValue: { close: vi.fn() } }]
-            })
-            fixture = TestBed.createComponent(UploadDialog)
-            loader = TestbedHarnessEnvironment.loader(fixture)
-            dialogRef = TestBed.inject(MatDialogRef)
-            component = fixture.componentInstance
-            fixture.detectChanges()
+// UI integration tests: TestBed rendering to check template binding for buttons
+describe('UploadDialog - Template', () => {
+    let fixture: ComponentFixture<UploadDialog>
+    let dialogRef: MatDialogRef<UploadDialog>
+    let loader: HarnessLoader
+
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [MatDialogModule, MatButtonModule],
+            providers: [{ provide: MatDialogRef, useValue: { close: vi.fn() } }]
         })
-
-        it('OK button is disabled when no file selected', async () => {
-            await fixture.whenStable()
-            const helper = harnessHelper(loader)
-            const okBtn = await helper.button('uad-ok')
-            expect(await okBtn.isDisabled()).toBe(true)
-        })
-
-        it('Cancel button triggers dialogRef.close without args', async () => {
-            await fixture.whenStable()
-            const helper = harnessHelper(loader)
-            const cancelBtn = await helper.button('uad-cancel')
-
-            await cancelBtn.click()
-            await fixture.whenStable()
-
-            const viClose = dialogRef.close as any
-            expect(viClose).toHaveBeenCalled()
-            expect(viClose.mock.calls[0].length).toBe(0)
-        })
-
-        it('selecting a file enables OK and confirm closes with the file', async () => {
-            await fixture.whenStable()
-            const helper = harnessHelper(loader)
-            const okBtn = await helper.button('uad-ok')
-            expect(await okBtn.isDisabled()).toBe(true)
-
-            // simulate selecting a file via harness helper
-            const f = mockFile
-            await helper.simulateFileInput('uad-file', [f])
-            fixture.detectChanges()
-            await fixture.whenStable()
-
-            expect(await okBtn.isDisabled()).toBe(false)
-
-            await helper.clickByTestId('uad-ok')
-            await fixture.whenStable()
-
-            const viClose = dialogRef.close as any
-            expect(viClose).toHaveBeenCalled()
-            expect(viClose).toHaveBeenCalledWith(f)
-        })
+        fixture = TestBed.createComponent(UploadDialog)
+        loader = TestbedHarnessEnvironment.loader(fixture)
+        dialogRef = TestBed.inject(MatDialogRef)
+        fixture.detectChanges()
     })
 
-    // Test data / mocks
-    const mockFile = new File(['{}'], 'state.json', { type: 'application/json' })
+    it('OK button is disabled when no file selected', async () => {
+        await fixture.whenStable()
+        const helper = harnessHelper(loader)
+        const okBtn = await helper.button('uad-ok')
+        expect(await okBtn.isDisabled()).toBe(true)
+    })
+
+    it('Cancel button triggers dialogRef.close without args', async () => {
+        await fixture.whenStable()
+        const helper = harnessHelper(loader)
+        const cancelBtn = await helper.button('uad-cancel')
+
+        await cancelBtn.click()
+        await fixture.whenStable()
+
+        const viClose = dialogRef.close as any
+        expect(viClose).toHaveBeenCalled()
+        expect(viClose.mock.calls[0].length).toBe(0)
+    })
+
+    it('selecting a file enables OK and confirm closes with the file', async () => {
+        await fixture.whenStable()
+        const helper = harnessHelper(loader)
+        const okBtn = await helper.button('uad-ok')
+        expect(await okBtn.isDisabled()).toBe(true)
+
+        // simulate selecting a file via harness helper
+        const f = mockFile
+        await helper.simulateFileInput('uad-file', [f])
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        expect(await okBtn.isDisabled()).toBe(false)
+
+        await helper.clickByTestId('uad-ok')
+        await fixture.whenStable()
+
+        const viClose = dialogRef.close as any
+        expect(viClose).toHaveBeenCalled()
+        expect(viClose).toHaveBeenCalledWith(f)
+    })
 })
+
+// Test data / mocks
+const mockFile = new File(['{}'], 'state.json', { type: 'application/json' })

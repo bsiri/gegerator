@@ -3,7 +3,7 @@ import { MovieSession } from "src/app/models/session.model";
 import { SessionActions } from "../actions/session.actions";
 
 
-export const initialSessionList: ReadonlyArray<MovieSession> = []
+export const initialSessionList: readonly MovieSession[] = []
 
 export const sessionReducer = createReducer(
     initialSessionList,

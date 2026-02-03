@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Movie, MovieRating } from 'src/app/models/movie.model';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +9,6 @@ import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 
-const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,7 +17,9 @@ const durEx: RegExp = RegExp(/^(\d)h([0-5]\d)$/);
     styleUrls: ['./moviedialog.component.scss'],
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatError, MatLabel, MatDialogActions, MatButton]
 })
-export class MovieDialog implements OnInit {
+export class MovieDialog {
+  dialogRef = inject<MatDialogRef<MovieDialog>>(MatDialogRef);
+
 
   // note: the following attributes are never modified by this form,
   // however we must remember it because enventually
@@ -32,10 +33,9 @@ export class MovieDialog implements OnInit {
   // is an existing instance of a Movie, or a shim for a new Movie.
   mode: string;
 
-  constructor(
-    public dialogRef: MatDialogRef<MovieDialog>,
-    @Inject(MAT_DIALOG_DATA) movie: Movie
-  ) {
+  constructor() {
+    const movie = inject<Movie>(MAT_DIALOG_DATA);
+
     this.mode = (movie.id === undefined) ? 'create' : 'update'
     this.id = movie.id;
     this.rating = movie.rating;
@@ -50,8 +50,6 @@ export class MovieDialog implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
 
   toMovie(): Movie{
     return new Movie(

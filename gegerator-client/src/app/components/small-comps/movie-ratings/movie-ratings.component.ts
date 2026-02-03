@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MovieRating } from 'src/app/models/movie.model';
 import { NgClass } from '@angular/common';
 
@@ -10,9 +10,5 @@ import { NgClass } from '@angular/common';
     imports: [NgClass]
 })
 export class MovieRatingsComponent {
-
   @Input() rating!: MovieRating
-
-  constructor() { }
-
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
@@ -13,12 +13,10 @@ import { SessionActions } from "../actions/session.actions";
 
 @Injectable()
 export class AppStateEffects{
-    constructor(
-        private store: Store,
-        private actions$: Actions,
-        private service: AppStateService,
-        private dialog: MatDialog
-    ){}
+    private store = inject(Store);
+    private actions$ = inject(Actions);
+    private service = inject(AppStateService);
+    private dialog = inject(MatDialog);
 
     upload$ = createEffect(() => this.actions$.pipe(
         ofType(AppStateActions.upload_appstate),
@@ -36,7 +34,7 @@ export class AppStateEffects{
 
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(AppStateActions.reload_appstate),
-        mergeMap(action => this.service.reload()
+        mergeMap( () => this.service.reload()
         .pipe(
             map(appstate => AppStateActions.appstate_reloaded({appstate}))
         ))

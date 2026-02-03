@@ -159,5 +159,5 @@ export const initialRating: EventRating = EventRatings.DEFAULT
 /* A minimal mock for MatDialogRef which tests can extend or replace as needed. */
 export const mockDialogRef = {
   componentInstance: {},
-  updatePosition: (_pos: any) => { /* no-op */ }
+  updatePosition: () => {}
 } as any

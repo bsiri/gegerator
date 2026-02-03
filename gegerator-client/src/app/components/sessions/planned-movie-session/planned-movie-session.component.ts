@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { SessionActions } from 'src/app/ngrx/actions/session.actions';
@@ -24,16 +24,11 @@ import { PlannableEvent } from 'src/app/models/plannable.model';
     imports: [SwimlaneItemComponent, MovieRatingsComponent, SessionRatingsComponent, EventLinkComponent]
 })
 export class PlannedMovieSessionComponent{
-
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
   @Input() session!: PlannedMovieSession
-
   @Input() roadmap!: FestivalRoadmap
-
-  @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
-
-  constructor(private store: Store, private dialog: MatDialog) {
-  }
-
+  @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent
 
   // *********** content & border styles **************
 
@@ -136,7 +131,7 @@ export class PlannedMovieSessionComponent{
     // (remember that this dialog is blur only, so the API doesn't
     // allow to set a result).
     // Then update the event rating if changed.
-    dialogRef.afterClosed().subscribe((whatever) =>{
+    dialogRef.afterClosed().subscribe(() =>{
       const newSessionRating = dialogRef.componentInstance.eventRating
 
       const plannedSession = this.session

@@ -112,7 +112,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
     1. mockDialogRef.close called once with ConfirmOutput.CONFIRM
   */
   it('confirm() should close dialog with ConfirmOutput.CONFIRM', async () => {
-    const { fixture: f, component: c, mockRef, helper } = setupTestBed(CONFIRM_MESSAGE);
+    const { mockRef, helper } = setupTestBed(CONFIRM_MESSAGE);
 
     await helper.clickByTestId('gpd-confirm');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CONFIRM);
@@ -130,7 +130,7 @@ describe('GenericPurposeDialog - Confirm Suite', () => {
     1. mockDialogRef.close called once with ConfirmOutput.CANCEL
   */
   it('cancel() should close dialog with ConfirmOutput.CANCEL', async () => {
-    const { fixture: f, component: c, mockRef, helper } = setupTestBed(CONFIRM_MESSAGE);
+    const { mockRef, helper } = setupTestBed(CONFIRM_MESSAGE);
 
     await helper.clickByTestId('gpd-cancel');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
@@ -180,7 +180,7 @@ describe('GenericPurposeDialog - Info Suite', () => {
       Desired assertions:
       1. mockDialogRef.close called with ConfirmOutput.CANCEL
     */
-    const { fixture: f, component: c, mockRef, helper } = setupTestBed(INFO_DATA);
+    const { mockRef, helper } = setupTestBed(INFO_DATA);
     await helper.clickByTestId('gpd-info-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });
@@ -215,7 +215,7 @@ describe('GenericPurposeDialog - Error Suite', () => {
   });
 
   it('error action should close with ConfirmOutput.CANCEL', async () => {
-    const { fixture: f, component: c, mockRef, helper } = setupTestBed(ERROR_DATA);
+    const { mockRef, helper } = setupTestBed(ERROR_DATA);
     await helper.clickByTestId('gpd-error-action');
     expect(mockRef.close).toHaveBeenCalledWith(ConfirmOutput.CANCEL);
   });

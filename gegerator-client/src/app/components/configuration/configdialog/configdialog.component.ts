@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
@@ -17,7 +17,9 @@ import { MatButton } from '@angular/material/button';
     styleUrls: ['./configdialog.component.scss'],
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatSlider, MatSliderThumb, MatDialogActions, MatButton]
 })
-export class ConfigDialog implements OnInit {
+export class ConfigDialog  {
+  dialogRef = inject<MatDialogRef<ConfigDialog>>(MatDialogRef);
+
 
   Theaters = Theaters
   TheaterRatings = TheaterRatings
@@ -25,9 +27,9 @@ export class ConfigDialog implements OnInit {
   formGroup: UntypedFormGroup
   movieVsTheaterBias: number
 
-  constructor(public dialogRef: MatDialogRef<ConfigDialog>,
-    @Inject(MAT_DIALOG_DATA) wizconf: WizardConfiguration
-  ) {
+  constructor() {
+    const wizconf = inject<WizardConfiguration>(MAT_DIALOG_DATA);
+
     this.formGroup = new UntypedFormGroup({
       espaceLacRating: new UntypedFormControl(wizconf.espaceLacRating),
       casinoRating: new UntypedFormControl(wizconf.casinoRating),
@@ -37,11 +39,8 @@ export class ConfigDialog implements OnInit {
     // mat-slider doesn't work with formgroups, so we 
     // manage the bias outside of it
     this.movieVsTheaterBias = wizconf.movieVsTheaterBias
-   }
-
-  ngOnInit(): void {
   }
-  
+
   confirm(): void{
     const wizconf = this.toWizardConfiguration();
     this.dialogRef.close(wizconf);

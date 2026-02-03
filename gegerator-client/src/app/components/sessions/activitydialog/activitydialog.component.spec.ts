@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { Activitydialog } from './activitydialog.component';
 import { Days } from 'src/app/models/referential.data';
 import { Times } from 'src/app/models/time.utils';
@@ -15,7 +16,6 @@ import { By } from '@angular/platform-browser';
 
 describe('ActivityDialog-Template', async() => {
   let fixture: ComponentFixture<Activitydialog>
-  let component: Activitydialog
   let dialogRef: MatDialogRef<Activitydialog>
   let loader: HarnessLoader
 
@@ -38,7 +38,6 @@ describe('ActivityDialog-Template', async() => {
     fixture = TestBed.createComponent(Activitydialog);
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
-    component = fixture.componentInstance;
 
   })
 
@@ -233,22 +232,35 @@ describe('ActivityDialog-Template', async() => {
 
 describe('Activitydialog-Component', async () => {
   let dialogRefStub: any;
+  let component: Activitydialog;
 
   beforeEach(() => {
     dialogRefStub = { close: vi.fn() };
+    const inj = Injector.create({
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRefStub },
+        { provide: MAT_DIALOG_DATA, useValue: sampleActivity(1) }
+      ]
+    })
+    component = runInInjectionContext(inj, () => new Activitydialog());
   });
 
 
   it('should instantiate and set create mode when id is undefined', async () => {
-    const comp = new Activitydialog(dialogRefStub as any, sampleActivity(undefined));
-    expect(comp).toBeTruthy();
-    expect(comp.mode).toBe('create');
+    const inj = Injector.create({
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRefStub },
+        { provide: MAT_DIALOG_DATA, useValue: sampleActivity(undefined) }
+      ]
+    })
+    component = runInInjectionContext(inj, () => new Activitydialog());
+    expect(component).toBeTruthy();
+    expect(component.mode).toBe('create');
   });
 
   it('confirm() should close dialog with an OtherActivity when form is valid', async () => {
-    const comp = new Activitydialog(dialogRefStub as any, sampleActivity(1));
     // form is initialized with valid values in constructor
-    comp.confirm();
+    component.confirm();
     expect(dialogRefStub.close).toHaveBeenCalled();
     const closedArg = dialogRefStub.close.mock.calls[0][0];
     expect(closedArg).toHaveProperty('id', 1);
@@ -256,17 +268,15 @@ describe('Activitydialog-Component', async () => {
   });
 
   it('cancel() should close dialog without args', async () => {
-    const comp = new Activitydialog(dialogRefStub as any, sampleActivity(2));
-    comp.cancel();
+    component.cancel();
     expect(dialogRefStub.close).toHaveBeenCalled();
     const args = dialogRefStub.close.mock.calls[0];
     expect(args.length).toBe(0);
   });
 
   it('validateTime() returns error for invalid string', async () => {
-    const comp = new Activitydialog(dialogRefStub as any, sampleActivity(3));
     const fakeCtrl: any = { value: 'invalid-time' };
-    const res = comp.validateTime(fakeCtrl as any);
+    const res = component.validateTime(fakeCtrl as any);
     expect(res).not.toBeNull();
   });
 

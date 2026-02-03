@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -25,13 +25,15 @@ export interface ConfirmDialogData{
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatDialogActions, MatButton]
 })
 export class GenericPurposeDialog {
+  dialogRef = inject<MatDialogRef<GenericPurposeDialog>>(MatDialogRef);
+  data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);
+
   content: string;
   type: string;
 
-  constructor(
-    public dialogRef: MatDialogRef<GenericPurposeDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
-  ) { 
+  constructor() {
+    const data = this.data;
+ 
     // TODO : actually if a message is supplied instead of html,
     // at least we should html-encode it before usage.
     this.content = data.message || data.html || "Confirmer ?"

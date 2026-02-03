@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +20,6 @@ import { Durations } from 'src/app/models/time.utils';
 describe('MovieComponent - Template', async () => {
   let fixture: ComponentFixture<MovieComponent>
   let component: MovieComponent
-  let loader: HarnessLoader
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -45,7 +43,6 @@ describe('MovieComponent - Template', async () => {
     })
 
     fixture = TestBed.createComponent(MovieComponent)
-    loader = TestbedHarnessEnvironment.loader(fixture)
     component = fixture.componentInstance
     component.movie = sampleMovie(1)
     fixture.detectChanges()
@@ -146,10 +143,16 @@ describe('MovieComponent - Template', async () => {
 describe('MovieComponent - Component', async () => {
   let dialogStub: any
   let storeStub: any
+  let comp: MovieComponent
 
   beforeEach(() => {
-    dialogStub = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (_: any) => {} }), componentInstance: {} })) }
+    dialogStub = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: () => {} }), componentInstance: {} })) }
     storeStub = { dispatch: vi.fn() }
+    const inj = Injector.create({ providers: [
+      { provide: Store, useValue: storeStub },
+      { provide: MatDialog, useValue: dialogStub }
+    ] })
+    comp = runInInjectionContext(inj, () => new MovieComponent())
   })
 
   it('should instantiate', async () => {
@@ -165,7 +168,6 @@ describe('MovieComponent - Component', async () => {
       Desired assertions:
       1. component instance is defined and not null.
     */
-    const comp = new MovieComponent(storeStub as any, dialogStub as any)
     expect(comp).toBeTruthy()
   })
 
@@ -187,7 +189,8 @@ describe('MovieComponent - Component', async () => {
     const updated = ({ ...sampleMovie(1), title: 'updated' } as unknown) as Movie
     const dialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(updated) }) })) }
     const store = { dispatch: vi.fn() }
-    const comp = new MovieComponent(store as any, dialog as any)
+    const inj = Injector.create({ providers: [ { provide: Store, useValue: store }, { provide: MatDialog, useValue: dialog } ] })
+    const comp = runInInjectionContext(inj, () => new MovieComponent())
     comp.movie = sampleMovie(1)
 
     comp.updateMovie()
@@ -215,7 +218,8 @@ describe('MovieComponent - Component', async () => {
     const changed = ({ ...sampleMovie(1), rating: MovieRatings.HIGHEST } as unknown) as Movie
     const dialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb() }), componentInstance: { movie: changed } })) }
     const store = { dispatch: vi.fn() }
-    const comp = new MovieComponent(store as any, dialog as any)
+    const inj = Injector.create({ providers: [ { provide: Store, useValue: store }, { provide: MatDialog, useValue: dialog } ] })
+    const comp = runInInjectionContext(inj, () => new MovieComponent())
     comp.movie = sampleMovie(1)
 
     comp.updateRating()
@@ -240,7 +244,8 @@ describe('MovieComponent - Component', async () => {
     */
     const dialog = { open: vi.fn(() => ({ afterClosed: () => ({ subscribe: (cb: any) => cb(ConfirmOutput.CONFIRM) }) })) }
     const store = { dispatch: vi.fn() }
-    const comp = new MovieComponent(store as any, dialog as any)
+    const inj = Injector.create({ providers: [ { provide: Store, useValue: store }, { provide: MatDialog, useValue: dialog } ] })
+    const comp = runInInjectionContext(inj, () => new MovieComponent())
     comp.movie = sampleMovie(1)
 
     comp.confirmThenDelete()
@@ -264,7 +269,6 @@ describe('MovieComponent - Component', async () => {
       Desired assertions:
       1. calling the getter returns the object returned by the mocked method.
     */
-    const comp = new MovieComponent(storeStub as any, dialogStub as any)
     const mockedRect = { x: 1, y: 2, width: 10, height: 20 } as unknown as DOMRect
     ;(comp as any)._container = { nativeElement: { getBoundingClientRect: () => mockedRect } }
     expect(comp.location).toBe(mockedRect)
@@ -275,7 +279,7 @@ describe('MovieComponent - Component', async () => {
 
 // ************ Helper factories *************** //
 
-function sampleMovie(id: number=10): Movie {
+function sampleMovie(id=10): Movie {
   return new Movie(
     id,
     'Sample Movie',

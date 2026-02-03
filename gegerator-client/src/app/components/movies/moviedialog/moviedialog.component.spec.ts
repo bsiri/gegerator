@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { Injector, runInInjectionContext } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
@@ -6,7 +7,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { harnessHelper  } from 'src/_testhelpers/harnesshelper';
 import { MovieDialog } from './moviedialog.component';
-import { Movie, MovieRating, MovieRatings } from 'src/app/models/movie.model';
+import { Movie, MovieRatings } from 'src/app/models/movie.model';
 import { Durations } from 'src/app/models/time.utils';
 import * as factories from 'src/_testhelpers/factories';
 
@@ -15,7 +16,6 @@ import * as factories from 'src/_testhelpers/factories';
 
 describe('MovieDialog-Template', async() => {
   let fixture: ComponentFixture<MovieDialog>
-  let component: MovieDialog
   let dialogRef: MatDialogRef<MovieDialog>
   let loader: HarnessLoader
 
@@ -38,7 +38,6 @@ describe('MovieDialog-Template', async() => {
     fixture = TestBed.createComponent(MovieDialog);
     loader = TestbedHarnessEnvironment.loader(fixture);
     dialogRef = TestBed.inject(MatDialogRef);
-    component = fixture.componentInstance;
   })
 
   it('should open in edit mode when supplied an existing movie', async () => {
@@ -139,8 +138,9 @@ describe('MovieDialog-Template', async() => {
     try{
       await helper.error('md-title-error')
       expect(false, "the error for the title field should initially be not displayed").toBe(true)
-    }catch(elementnotfound){
+    }catch(e){
       // all clear, proceed
+      expect(e).toBeTruthy()
     }
 
     // set bogus data in all inputs then attempt to submit
@@ -172,6 +172,7 @@ describe('MovieDialog-Template', async() => {
     // succeeding in selecting it is an indicator that 
     // it is present in the page in itself
     const titleError = await helper.error('md-title-error')
+    expect(titleError).toBeTruthy()
 
   })
 
@@ -181,29 +182,39 @@ describe('MovieDialog-Template', async() => {
 
 describe('MovieDalog-Component', async () => {
   let dialogRef: any
+  let component: MovieDialog
 
   beforeEach(() => {
     dialogRef = { close: vi.fn() }
+    const inj = Injector.create({ providers: [
+      { provide: MatDialogRef, useValue: dialogRef },
+      { provide: MAT_DIALOG_DATA, useValue: sampleMovie(undefined) }
+    ] })
+    component = runInInjectionContext(inj, () => new MovieDialog())
+
   })
 
   it('should instantiate and set create mode when id is undefined', async () => {
-    const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
-    expect(comp).toBeTruthy()
-    expect(comp.mode).toBe("create")
+    // Note: beforeEach creates a movie with undefined id
+    expect(component).toBeTruthy()
+    expect(component.mode).toBe("create")
   })
   
   it('should instantiate and set modification mode when id is set', async () => {
-    const comp = new MovieDialog(dialogRef as any, sampleMovie(1))
-    expect(comp).toBeTruthy()
-    expect(comp.mode).toBe("update")
+    const inj = Injector.create({ providers: [
+      { provide: MatDialogRef, useValue: dialogRef },
+      { provide: MAT_DIALOG_DATA, useValue: sampleMovie(1) }
+    ] })
+    component = runInInjectionContext(inj, () => new MovieDialog())
+    expect(component).toBeTruthy()
+    expect(component.mode).toBe("update")
   })
 
   it('confirm() should close dialog with a valid Movie when form is valid', async () =>{
-    const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
     // emulate some changes
-    comp.formGroup.get('title')?.setValue('Greated show on Earth!')
-    comp.formGroup.get('duration')?.setValue('1h25')
-    comp.confirm()
+    component.formGroup.get('title')?.setValue('Greated show on Earth!')
+    component.formGroup.get('duration')?.setValue('1h25')
+    component.confirm()
 
     expect(dialogRef.close).toHaveBeenCalled()
     const resultMovie = dialogRef.close.mock.calls[0][0]
@@ -212,8 +223,7 @@ describe('MovieDalog-Component', async () => {
   })
 
   it('close() should close the dialog and abort the creation of the movie', async () => {
-    const comp = new MovieDialog(dialogRef as any, sampleMovie(undefined))
-    comp.cancel()
+    component.cancel()
     expect(dialogRef.close).toHaveBeenCalled()
     expect(dialogRef.close.mock.calls[0].length).toBe(0)
   })

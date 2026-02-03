@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
 } from '@angular/common/http';
@@ -9,13 +9,11 @@ import { GenericPurposeDialog } from '../components/genericpurposedialog/generic
 
 
 const PRECONDITION_FAILED = 412
+const INTERNAL_SERVER_ERROR = 500
 
 @Injectable()
 export class ErrorsInterceptor implements HttpInterceptor {
-
-  constructor(private dialog: MatDialog){
-
-  }
+  private dialog = inject(MatDialog);
 
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
@@ -27,7 +25,7 @@ export class ErrorsInterceptor implements HttpInterceptor {
                 if (httpError.status == PRECONDITION_FAILED ){
                   this.openBusinessErrorDialog(httpError)
                 }
-                else if (httpError.status >= 500){
+                else if (httpError.status >= INTERNAL_SERVER_ERROR){
                   this.openServerErrorDialog(httpError)
                 }
                 else{

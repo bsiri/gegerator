@@ -28,6 +28,9 @@ import { RoadmapStore } from 'src/app/ngrx/stores/roadmap.store';
     imports: [NgTemplateOutlet, NgStyle, OtherActivityComponent, PlannedMovieSessionComponent, MatButton, MatIcon, TimePipe]
 })
 export class SessionSectionComponent {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+  $roadmap = inject(RoadmapStore).$activeRoadmap
 
   /*
     "Importing" Days, Theaters and SESSION_DAY_BOUNDARIES as properties of this Component
@@ -42,18 +45,11 @@ export class SessionSectionComponent {
   */
   rowHeightInPixel: string = ''+SESSION_DAY_BOUNDARIES.sessionDayInPixel()+'px'
 
-
   /*
     Data model
   */
   $sessions = this.store.selectSignal(selectPlannedMovieSessions)
   $activities = this.store.selectSignal(selectActivities)
-
-  $roadmap = inject(RoadmapStore).$activeRoadmap
-
-
-  constructor(private store: Store, private dialog: MatDialog) {
-  }
 
   sessionsByDayAndTheater(day: Day, theater: Theater) : PlannedMovieSession[]{
     return this.$sessions().filter(s => s.day == day && s.theater == theater)
@@ -76,7 +72,7 @@ export class SessionSectionComponent {
     })
 
     dialogRef.afterClosed().subscribe(newsession => {
-      if (!!newsession){
+      if (newsession){
         /*
           if a MovieSession model has been created:
           - create it
@@ -113,7 +109,7 @@ export class SessionSectionComponent {
     })
 
     dialogRef.afterClosed().subscribe(newactivity => {
-      if (!!newactivity){
+      if (newactivity){
         const activity = new OtherActivity(
           newactivity.id,
           newactivity.day,

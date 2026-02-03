@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { OtherActivity } from 'src/app/models/activity.model';
@@ -19,6 +19,9 @@ import { SessionRatingsComponent } from '../../small-comps/session-ratings/sessi
     imports: [SwimlaneItemComponent, SessionRatingsComponent]
 })
 export class OtherActivityComponent {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+
 
   @ViewChild(SwimlaneItemComponent) private _swlitem!: SwimlaneItemComponent 
 
@@ -26,8 +29,7 @@ export class OtherActivityComponent {
 
   @Input() roadmap!: FestivalRoadmap
 
-  constructor(private store: Store, private dialog: MatDialog) {
-  }
+  
 
   // *********** border styles **************
 
@@ -90,7 +92,7 @@ export class OtherActivityComponent {
     // (remember that this dialog is blur only, so the API doesn't
     // allow to set a result).
     // Then update the event rating if changed.
-    dialogRef.afterClosed().subscribe((whatever) =>{
+    dialogRef.afterClosed().subscribe(() =>{
       const newRating = dialogRef.componentInstance.eventRating
 
       

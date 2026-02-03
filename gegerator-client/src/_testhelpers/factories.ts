@@ -345,7 +345,7 @@ export function randomTime(after?: Time, before?: Time): Time {
  * @param maxHours 
  * @returns 
  */
-export function randomDuration(minHours: number = 0, maxHours: number = 5): Duration {
+export function randomDuration(minHours = 0, maxHours = 5): Duration {
     const minHoursValue = minHours ?? 0
     const maxHoursValue = maxHours ?? 5
 

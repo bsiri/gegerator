@@ -1,12 +1,11 @@
 
 import { FestivalRoadmap, RoadmapAuthor, RoadmapData } from "src/app/models/roadmap.model";
 import { Mode } from "../appstate-models/mode.model";
-import { signalStore, withState, withHooks, withMethods, patchState, withComputed } from '@ngrx/signals';
+import { signalStore, withState, withMethods, patchState, withComputed } from '@ngrx/signals';
 import { selectPlannedMovieSessions } from "../selectors/session.selectors";
 import { computed, inject } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { selectActivities } from "../selectors/activity.selectors";
-import { __importDefault } from "tslib";
 import { EventRatings } from "src/app/models/plannable.model";
 
 /*

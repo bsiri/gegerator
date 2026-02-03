@@ -10,7 +10,7 @@
         <mat-radio-button
           [value]="mr" class="radiobtn--block"
           [disableRipple]="true"
-          [checked]="mr == movie.rating">
+          [checked]="mr === movie.rating">
           {{mr.description}}
         </mat-radio-button>
       }

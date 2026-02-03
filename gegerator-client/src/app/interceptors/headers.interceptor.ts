@@ -17,8 +17,8 @@ export class HeadersInterceptor implements HttpInterceptor {
 
   }
 
-  private addHeaderIfMissing(newReq: HttpRequest<any>, headers: {[key: string]: string}){
-    for (let key of Object.keys(headers)){
+  private addHeaderIfMissing(newReq: HttpRequest<any>, headers: Record<string, string>){
+    for (const key of Object.keys(headers)){
       if (! newReq.headers.has(key)){
         newReq.headers.set(key, headers[key])
       }

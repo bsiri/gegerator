@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { OtherActivity, OtherActivityJSON } from '../models/activity.model';
 
@@ -9,8 +9,7 @@ const activitiesUrl = './api/other-activities'
   providedIn: 'root'
 })
 export class ActivitylistService {
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getAll(): Observable<OtherActivity[]>{
     return this.http.get<OtherActivityJSON[]>(activitiesUrl)

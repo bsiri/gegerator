@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MovielistService } from "../../services/movielist.service";
 import { MovieActions } from "../actions/movie.actions";
@@ -6,11 +6,8 @@ import { map, mergeMap } from "rxjs";
 
 @Injectable()
 export class MovieEffects {
-
-    constructor(
-        private actions$: Actions,
-        private service: MovielistService
-    ){}
+    private actions$ = inject(Actions);
+    private service = inject(MovielistService);
 
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(MovieActions.reload_movies),

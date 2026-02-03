@@ -22,7 +22,6 @@ import { PlannableEvent } from 'src/app/models/plannable.model'
 import { By } from '@angular/platform-browser'
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component'
 import { OtherActivityComponent } from '../other-activity/other-activity.component'
-import { mock } from 'node:test'
 
 /*
   Test skeleton for SessionSectionComponent.
@@ -38,8 +37,6 @@ describe('SessionSectionComponent — Unit', () => {
     // Shared fixtures
     let fixture: ComponentFixture<SessionSectionComponent>
     let component: SessionSectionComponent
-    let loader: HarnessLoader
-    let helper: ReturnType<typeof harnessHelper>
     let mockMatDialog: any
     let mockStore: any
 

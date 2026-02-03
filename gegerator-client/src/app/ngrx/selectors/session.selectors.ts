@@ -3,9 +3,9 @@ import { Movie } from "src/app/models/movie.model";
 import { MovieSession, PlannedMovieSession } from "src/app/models/session.model";
 import { selectMovies } from "./movie.selectors";
 
-interface MoviesById{[id: number]: Movie}
+type MoviesById = Record<number, Movie>;
 
-const selectSessions = createFeatureSelector<ReadonlyArray<MovieSession>>('sessions')
+const selectSessions = createFeatureSelector<readonly MovieSession[]>('sessions')
 
 const indexedMoviesSelector = createSelector(
     selectMovies,

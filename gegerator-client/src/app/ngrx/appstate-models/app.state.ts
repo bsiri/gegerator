@@ -10,9 +10,9 @@ import { WizardConfiguration, WizardConfigurationJSON } from "src/app/ngrx/appst
 export class AppState{
     constructor(
         public wizardConfiguration: WizardConfiguration,
-        public movies: ReadonlyArray<Movie>,
-        public sessions: ReadonlyArray<MovieSession>,
-        public activities: ReadonlyArray<OtherActivity>
+        public movies: readonly Movie[],
+        public sessions: readonly MovieSession[],
+        public activities: readonly OtherActivity[]
     ){}
 
     toJSON(): AppStateJSON{

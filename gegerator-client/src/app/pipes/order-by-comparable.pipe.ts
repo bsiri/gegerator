@@ -14,7 +14,6 @@ import { sortByComparableAttributes } from '../models/comparable.interface';
  * 
  */
 
-type Comparator<T> = (o1: T, o2: T) => number
 
 @Pipe({ name: 'orderByComparable' })
 export class OrderByComparablePipe implements PipeTransform {

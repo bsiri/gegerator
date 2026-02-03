@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { OtherActivity } from 'src/app/models/activity.model';
@@ -20,6 +20,8 @@ import { MatButton } from '@angular/material/button';
     imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatInput, MatLabel, MatError, NgStyle, MatDialogActions, MatButton]
 })
 export class Activitydialog {
+  dialogRef = inject<MatDialogRef<Activitydialog>>(MatDialogRef);
+
 
   // note: the ID is never modified by this form,
   // however we must remember it because enventually
@@ -36,10 +38,9 @@ export class Activitydialog {
   // Form referential data
   Days = Days
 
-  constructor(
-    public dialogRef: MatDialogRef<Activitydialog>,
-    @Inject(MAT_DIALOG_DATA) activity: OtherActivity
-  ) {
+  constructor() {
+    const activity = inject<OtherActivity>(MAT_DIALOG_DATA);
+
     this.mode = (activity.id === undefined) ? 'create' : 'update'
     this.id = activity.id
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, inject, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.component';
@@ -29,6 +29,10 @@ import { RoadmapStore } from './ngrx/stores/roadmap.store';
     imports: [MatButton, MatMenuTrigger, MatMenu, MatMenuItem, MatLabel, MatIcon, MatSidenavContainer, MatSidenav, MovielistComponent, MatSidenavContent, SessionSectionComponent, SummarypanelComponent]
 })
 export class AppComponent implements OnInit{
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+  private roadmapService = inject(RoadmapService);
+
 
   // exposing the enum Mode as an attribute 
   // so that I can access them from the template
@@ -42,12 +46,7 @@ export class AppComponent implements OnInit{
   $wizardmode: Signal<Mode>
   $roadmap: Signal<FestivalRoadmap>
 
-  constructor(private store: Store,
-    private dialog: MatDialog,
-    // HACK : injecting the RoadmapService just to have them bootstrapped.
-    // There surely is a better way to do this but for now I can live with it.
-    private roadmapService: RoadmapService
-    ){
+  constructor(){
       this.$wizconf = this.store.selectSignal(selectConfiguration)
       this.$wizardmode = this.roadmapStore.$mode
       this.$roadmap = this.roadmapStore.$activeRoadmap
@@ -64,7 +63,7 @@ export class AppComponent implements OnInit{
     });
 
     dialogRef.afterClosed().subscribe(file => {
-      if (!!file){
+      if (file){
         this.store.dispatch(AppStateActions.upload_appstate({file}));
       }
     });
@@ -75,7 +74,7 @@ export class AppComponent implements OnInit{
     const planningMap = this.$roadmap().dailyPlanning()
     let planningStr = "=== Roadmap Gérardmer ===\n\n"
 
-    for (let entry of planningMap.entries()) {
+    for (const entry of planningMap.entries()) {
       const [day, events] = entry
       planningStr += `${day.name} :\n` + events.map(this.formatEventStr).join('\n')
       planningStr += '\n\n'
@@ -97,7 +96,7 @@ export class AppComponent implements OnInit{
     })
 
     dialogRef.afterClosed().subscribe(newconf =>{
-      if (!!newconf){
+      if (newconf){
         this.store.dispatch(ConfigurationActions.update_wizconf({wizconf: newconf}))
       }
     })

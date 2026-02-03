@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { map, mergeMap } from "rxjs";
 import { ActivitylistService } from "src/app/services/activitylist.service";
@@ -6,10 +6,8 @@ import { ActivityActions } from "../actions/activity.actions";
 
 @Injectable()
 export class OtherActivityEffects{
-    constructor(
-        private actions$: Actions,
-        private service: ActivitylistService
-    ){}
+    private actions$ = inject(Actions);
+    private service = inject(ActivitylistService);
 
     reload$ = createEffect(() => this.actions$.pipe(
         ofType(ActivityActions.reload_activities),

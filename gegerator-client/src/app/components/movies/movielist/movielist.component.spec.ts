@@ -26,8 +26,8 @@ describe('MovielistComponent (unit)', () => {
         // provide a mocked store that exposes a selectSignal returning a signal
         const movieSignal = signal(MOCK_MOVIES);
         mockStore = {
-            selectSignal: (_: any) => movieSignal,
-            dispatch: vi.fn()
+          selectSignal: () => movieSignal,
+          dispatch: vi.fn()
         };
 
         mockDialog = {
@@ -114,7 +114,6 @@ describe('MovielistComponent (unit)', () => {
 describe('MovielistComponent (UI)', () => {
 
     let fixture: ComponentFixture<MovielistComponent>;
-    let component: MovielistComponent;
     let mockStore: any;
     let mockDialog: any;
     let loader: HarnessLoader
@@ -123,8 +122,8 @@ describe('MovielistComponent (UI)', () => {
         // provide a mocked store that exposes a selectSignal returning a signal
         const movieSignal = signal(MOCK_MOVIES);
         mockStore = {
-            selectSignal: (_: any) => movieSignal,
-            dispatch: vi.fn()
+          selectSignal: () => movieSignal,
+          dispatch: vi.fn()
         };
 
         mockDialog = {
@@ -142,7 +141,6 @@ describe('MovielistComponent (UI)', () => {
         });
 
         fixture = TestBed.createComponent(MovielistComponent);
-        component = fixture.componentInstance;
         loader = TestbedHarnessEnvironment.loader(fixture);
     })
 

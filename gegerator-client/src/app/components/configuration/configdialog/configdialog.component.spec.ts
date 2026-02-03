@@ -20,7 +20,7 @@ describe('ConfigDialog', () => {
   let loader: HarnessLoader;
 
   beforeEach(async () => {
-    let dialogMock = { close: vi.fn() as any }
+    const dialogMock = { close: vi.fn() as any }
 
       await TestBed.configureTestingModule({
         imports: [

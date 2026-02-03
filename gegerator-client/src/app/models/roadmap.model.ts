@@ -76,10 +76,10 @@ export class FestivalRoadmap{
      * @returns day by day, and sorted by time, the items that 
      * constitutes that roadmap.
      */
-    dailyPlanning(): Map<Day, Array<PlannableEvent>>{
+    dailyPlanning(): Map<Day, PlannableEvent[]>{
         const finalized = new Map<Day, PlannableEvent[]>(Days.enumerate().map(day => [day, []]))
 
-        let allPlannable: PlannableEvent[] = [...this.sessions, ...this.activities].sort(chainComparator('day', 'startTime'))
+        const allPlannable: PlannableEvent[] = [...this.sessions, ...this.activities].sort(chainComparator('day', 'startTime'))
 
         allPlannable.forEach(plannable => finalized.get(plannable.day)?.push(plannable))
         
@@ -95,6 +95,6 @@ export class FestivalRoadmap{
  * in the Store after all.
  */
 export interface RoadmapData{
-    sessionIds: Array<number>
-    activityIds: Array<number>
+    sessionIds: number[]
+    activityIds: number[]
 }
