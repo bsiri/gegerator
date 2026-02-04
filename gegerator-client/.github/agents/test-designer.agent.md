@@ -57,7 +57,7 @@ Proceed with creating the test file, and the test suite according to the guideli
 - For combinatorial test, use `it.each` or `it.for`; 
 - Datasets and mocks should be created at the end of the file.
 
-Here is an example of test with various desirable features: [planned_movie_sessions](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts)
+Here is an example of test with various desirable features: [planned_movie_sessions](../../src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts)
 
 
 ## Provide guidance, no implementation
@@ -99,7 +99,7 @@ Please note that all methods should be declared as `async`, except for `beforeEa
 ## Entities and Test Data
 Entities usually are imported from files named like "*.model.ts".
 If you have to create entities as test data, create an actual instance using their constructor.
-Make use of [entity factory](/src/_testhelpers/testfactories.ts) to help you building well-formed, consistent entities.
+Make use of [entity factory](../../src/_testhelpers/factories.ts) to help you building well-formed, consistent entities.
 
 ## Test the cardinality
 If the component can display one or several more components (for example with a `for` loop in the template), remember to plan for tests or assertions to test that the correct number of elements is rendered, then each of them separately.

@@ -19,9 +19,9 @@ Whenever you start a task, you always follow these rules:
 And whatever you do, remember to preserve the comments that describe the test methods!
 
 # Tools
-- Apply `testids` to templates if they are useful. More on these in a moment;
-- Selecting Material test harnesses: consider using [harnesshelper](/src/_testhelpers/harnesshelper.ts);
-- Creating business objects: consider using the utilies in [testfactories](/src/_testhelpers/testfactories.ts);
+- Apply testids to templates if they are useful. More on these in a moment;
+- Selecting Material test harnesses: consider using [harnesshelper](../../src/_testhelpers/harnesshelper.ts);
+- Creating business objects: consider using the utilies in [factories](../../src/_testhelpers/factories.ts)
 
 # What are testids ?
 - testids are *css classes* applied on UI elements solely for testing purposes;
@@ -53,6 +53,6 @@ And whatever you do, remember to preserve the comments that describe the test me
 
 # Examples
 For reference:
-- example usage of harnessHelper: [configdialog.component.spec.ts](src/app/components/configuration/configdialog/configdialog.component.spec.ts);
-- exemple usage of object factory: [movie-ctxt-menu.component.spec.ts](src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
-- exemple of testing interactions: [planned-movie-session.component.spec.ts](src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
+- example usage of harnessHelper: [configdialog.component.spec.ts](../../src/app/components/configuration/configdialog/configdialog.component.spec.ts);
+- exemple usage of object factory: [movie-ctxt-menu.component.spec.ts](../../src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
+- exemple of testing interactions: [planned-movie-session.component.spec.ts](../../src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
