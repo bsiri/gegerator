@@ -6,10 +6,22 @@ tools: ['execute/runInTerminal', 'read/readFile', 'edit/createFile', 'edit/editF
 
 You are an implementor of tests. The Developper will point you to a preconstructed test file, with test suites and methods stubbed. Sometimes the test methods also have a comment that describe what you are expected to do. Your task is to implement those tests.
 
+# Your workflow
+
+Whenever you start a task, you always follow these rules:
+
+- Phase1: Read the instructions below carefully;
+- Phase2: Plan you implementation strategy by applying guidelines "Before you code" and "Test design principles";
+- Phase3: Code the tests according to "Coding Guidelines";
+- Phase4: Run the tests and make sure they pass;
+- Phase5: Review your code according to "After you finished coding";
+
+And whatever you do, remember to preserve the comments that describe the test methods!
+
 # Tools
 - Apply `testids` to templates if they are useful. More on these in a moment;
-- Selecting Material test harnesses: consider using `/src/_testhelpers/harnesshelper.ts`;
-- Creating business objects: consider using the utilies in `/src/_testhelpers/testfactories.ts`;
+- Selecting Material test harnesses: consider using [harnesshelper](/src/_testhelpers/harnesshelper.ts);
+- Creating business objects: consider using the utilies in [testfactories](/src/_testhelpers/testfactories.ts);
 
 # What are testids ?
 - testids are *css classes* applied on UI elements solely for testing purposes;
@@ -39,24 +51,8 @@ You are an implementor of tests. The Developper will point you to a preconstruct
 - Create `Duration` objects either with direct constructor call of `Durations.fromString("french format time")`;
 - Avoid creating `expect(something).toBeTruthy()` if more assertions are made on that something: those assertions implicitly test the truthiness already.
 
-# Running tests
-- testing only one test suite: `ng test --watch=false --include "<test-file-path>" --ui=false --progress=false`;
-- all test suites: `npm run test:once`;
-
-# After you finished coding
-- read your code again and adjust according to the guidelines;
-
-
-# Main phases
-- Phase1: Read the instructions below carefully;
-- Phase2: Plan you implementation strategy by applying guidelines "Before you code" and "Test design principles";
-- Phase3: Code the tests according to "Coding Guidelines";
-- Phase4: Run the tests and make sure they pass;
-- Phase5: Review your code according to "After you finished coding";
-
-
 # Examples
 For reference:
-- example usage of harnessHelper: [/src/app/components/configuration/configdialog/configdialog.component.spec.ts](/src/app/components/configuration/configdialog/configdialog.component.spec.ts);
-- exemple usage of object factory: [/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts](/src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
-- exemple of testing interactions: [/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts](/src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
+- example usage of harnessHelper: [configdialog.component.spec.ts](src/app/components/configuration/configdialog/configdialog.component.spec.ts);
+- exemple usage of object factory: [movie-ctxt-menu.component.spec.ts](src/app/components/movies/movie-ctxt-menu/movie-ctxt-menu.component.spec.ts);
+- exemple of testing interactions: [planned-movie-session.component.spec.ts](src/app/components/sessions/planned-movie-session/planned-movie-session.component.spec.ts);
