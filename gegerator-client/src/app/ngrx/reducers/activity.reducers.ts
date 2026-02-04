@@ -21,6 +21,10 @@ export const activityReducer = createReducer(
         (state, {activity}) => {
             const newState = state.slice();
             const activityIndex = newState.findIndex( s => s.id == activity.id)
+            if (activityIndex === -1){
+                throw Error(`Programmatic error : attempted to update activity '${activity.id}:${activity.description}', "+
+                    "however it does not exists in the store !`)
+            }
             newState.splice(activityIndex, 1, activity);
             return newState;              
         }
