@@ -60,8 +60,7 @@ describe('OtherActivityEffects', () => {
     const emitted = await firstValueFrom(effects.reload$)
 
     expect(serviceMock.getAll).toHaveBeenCalledTimes(1)
-    expect(emitted.type).toBe(ActivityActions.activities_reloaded.type)
-    expect(emitted.activities).toEqual(activities)
+    expect(emitted).toEqual(ActivityActions.activities_reloaded({ activities }))
   });
 
   it('should dispatch activity_created when create_activity is received', async () => {
@@ -97,8 +96,7 @@ describe('OtherActivityEffects', () => {
     const emitted = await firstValueFrom(effects.create$)
 
     expect(serviceMock.save).toHaveBeenCalledWith(input)
-    expect(emitted.type).toBe(ActivityActions.activity_created.type)
-    expect(emitted.activity).toEqual(input)
+    expect(emitted).toEqual(ActivityActions.activity_created({ activity: input }))
   });
 
   it('should dispatch activity_updated when update_activity is received', async () => {
@@ -131,8 +129,7 @@ describe('OtherActivityEffects', () => {
     const emitted = await firstValueFrom(effects.update$)
 
     expect(serviceMock.update).toHaveBeenCalledWith(input)
-    expect(emitted.type).toBe(ActivityActions.activity_updated.type)
-    expect(emitted.activity).toEqual(input)
+    expect(emitted).toEqual(ActivityActions.activity_updated({ activity: input }))
   });
 
   it('should dispatch activity_deleted when delete_activity is received', async () => {
@@ -166,8 +163,7 @@ describe('OtherActivityEffects', () => {
     const emitted = await firstValueFrom(effects.delete$)
 
     expect(serviceMock.delete).toHaveBeenCalledWith(input)
-    expect(emitted.type).toBe(ActivityActions.activity_deleted.type)
-    expect(emitted.activity).toEqual(input)
+    expect(emitted).toEqual(ActivityActions.activity_deleted({ activity: input }))
   });
 
   it('should propagate errors from the service through the effect', async () => {
