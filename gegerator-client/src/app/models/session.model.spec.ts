@@ -101,6 +101,24 @@ describe('MovieSession (model)', () => {
     expect(reconstructed.rating).toBe(ms.rating)
   })
 
+  it('copy creates a clone and applies given modifiers (MovieSession)', async () => {
+    /*
+      Goal: ensure MovieSession.copy(modifiers) returns a new MovieSession with overridden fields.
+
+      Synopsis:
+      - given: a MovieSession instance
+      - when: calling copy({ movieId: X, rating: EventRatings.HIGH })
+      - then: returned instance is not the same reference, has the overridden values and original remains unchanged
+    */
+    const ms = sampleMovieSession()
+    const cloned = ms.copy({ movieId: 42, rating: EventRatings.MANDATORY })
+
+    expect(cloned).not.toBe(ms)
+    expect(cloned.movieId).toBe(42)
+    expect(ms.movieId).not.toBe(42)
+    expect(cloned.rating).toBe(EventRatings.MANDATORY)
+  })
+
   it('toJSON and fromJson roundtrip should preserve data', async () => {
     /*
       Goal: ensure a MovieSession roundtrip through toJSON() and fromJson() keeps semantic equality.
