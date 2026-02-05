@@ -40,6 +40,19 @@ export class MovieSession{
             EventRatings.fromKey(json.rating)
         )
     }
+
+    public copy(modifiers: Partial<MovieSession> = {}): MovieSession {
+        const clone = new MovieSession(
+            this.id,
+            this.movieId,
+            this.theater,
+            this.day,
+            this.startTime,
+            this.rating
+        )
+        Object.assign(clone, modifiers)
+        return clone
+    }
 }
 
 export interface MovieSessionJSON{

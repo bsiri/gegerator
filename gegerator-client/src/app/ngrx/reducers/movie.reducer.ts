@@ -20,6 +20,10 @@ export const movieReducer = createReducer(
         (state, {movie}) => {
             const newState = state.slice();
             const movieIndex = newState.findIndex( m => m.id == movie.id)
+            if (movieIndex === -1){
+                throw Error(`Programmatic error : attempted to update movie '${movie.id}:${movie.title}', `+
+                    "however it does not exists in the store !")
+            }
             newState.splice(movieIndex, 1, movie);
             return newState;            
     }),

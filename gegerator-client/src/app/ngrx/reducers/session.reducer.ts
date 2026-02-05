@@ -21,6 +21,10 @@ export const sessionReducer = createReducer(
         (state, {session}) => {
             const newState = state.slice();
             const sessionIndex = newState.findIndex( s => s.id == session.id)
+            if (sessionIndex === -1){
+                throw Error(`Programmatic error : attempted to update session '${session.id}', `+
+                    "however it does not exists in the store !")
+            }
             newState.splice(sessionIndex, 1, session);
             return newState;              
         }

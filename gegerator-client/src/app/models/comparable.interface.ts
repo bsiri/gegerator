@@ -9,6 +9,9 @@ export interface Comparable<T>{
 class PrimitiveComparable<T> implements Comparable<PrimitiveComparable<T>>{
   constructor(public value: T){}
   compare(this: PrimitiveComparable<T>, other: PrimitiveComparable<T>): number {
+    if (this.value === other.value) {
+      return 0
+    }
     return this.value < other.value ? -1 : 1
   }
 }

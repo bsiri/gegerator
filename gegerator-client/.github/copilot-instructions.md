@@ -3,5 +3,5 @@ This is an Angular project (21 at the time of writing), using Typescript and Ang
 
 # General guidelines
 - use french notation for time: use "10h00", avoid "10:00"
-- run single test suite with : `ng test --watch=false --include "<test-file-path>" --ui=false --progress=false`
+- run single test suite with : `npx ng test --watch=false --include "<test-file-path>" --ui=false --progress=false`
 - run all tests with `npm run test:once`
