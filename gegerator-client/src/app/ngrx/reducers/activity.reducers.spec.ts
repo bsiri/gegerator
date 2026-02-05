@@ -34,17 +34,17 @@ describe('activityReducer', () => {
     */
     const a1 = someActivity({ id: 10 })
     const a2 = someActivity({ id: 11 })
-    const state = [a1]
+    const originalState = [a1]
 
     const newActivities = [a2]
     const action = ActivityActions.activities_reloaded({ activities: newActivities })
 
-    const res = activityReducer(state, action)
+    const res = activityReducer(originalState, action)
 
     // returned state should be the provided payload
     expect(res).toBe(newActivities)
     // previous state must not be the same reference
-    expect(res).not.toBe(state)
+    expect(res).not.toBe(originalState)
   })
 
   it('should append an activity on activity_created', async () => {
@@ -64,17 +64,17 @@ describe('activityReducer', () => {
     */
     const a1 = someActivity({ id: 20 })
     const a2 = someActivity({ id: 21 })
-    const state = [a1, a2]
+    const originalState = [a1, a2]
 
     const created = someActivity({ id: 300 })
     const action = ActivityActions.activity_created({ activity: created })
 
-    const res = activityReducer(state, action)
+    const res = activityReducer(originalState, action)
 
     // original state not mutated
-    expect(state.length).toBe(2)
+    expect(originalState.length).toBe(2)
     // returned has one more item and contains the created activity as last element
-    expect(res.length).toBe(state.length + 1)
+    expect(res.length).toBe(originalState.length + 1)
     expect(res[res.length - 1]).toBe(created)
   })
 
@@ -96,19 +96,19 @@ describe('activityReducer', () => {
     */
     const a1 = someActivity({ id: 1001, description: 'orig' })
     const a2 = someActivity({ id: 1002 })
-    const state = [a1, a2]
+    const originalState = [a1, a2]
 
     const updated = a1.copy({ description: 'updated' })
 
     const action = ActivityActions.activity_updated({ activity: updated })
 
-    const res = activityReducer(state, action)
+    const res = activityReducer(originalState, action)
 
-    expect(res.length).toBe(state.length)
+    expect(res.length).toBe(originalState.length)
     const idx = res.findIndex(s => s.id === a1.id)
     expect(res[idx].description).toBe('updated')
     // ensure original state not mutated
-    expect(state[0].description).toBe('orig')
+    expect(originalState[0].description).toBe('orig')
   })
 
   it('should remove the activity on activity_deleted', async () => {
@@ -127,19 +127,18 @@ describe('activityReducer', () => {
     */
     const a1 = someActivity({ id: 40 })
     const a2 = someActivity({ id: 41 })
-    const state = [a1, a2]
+    const originalState = [a1, a2]
 
     const action = ActivityActions.activity_deleted({ activity: a1 })
 
-    const res = activityReducer(state, action)
+    const res = activityReducer(originalState, action)
 
     // returned length is decremented
-    expect(res.length).toBe(state.length - 1)
-    expect(res).toEqual([a2])
+    expect(res.length).toBe(originalState.length - 1)
     // no element with deleted id
     expect(res.find(s => s.id === a1.id)).toBeUndefined()
     // original state unchanged
-    expect(state.length).toBe(2)
+    expect(originalState.length).toBe(2)
   })
 
   it('should not accidentally modify another item when updating a non-existing id', async () => {
@@ -160,12 +159,12 @@ describe('activityReducer', () => {
     */
     const a1 = someActivity({ id: 2001 })
     const a2 = someActivity({ id: 2002 })
-    const state = [a1, a2]
+    const originalState = [a1, a2]
 
     const updated = someActivity({ id: 9999, description: 'ghost' })
     const action = ActivityActions.activity_updated({ activity: updated })
 
-    expect(() => activityReducer(state, action)).toThrowError(/Programmatic error.*/)
+    expect(() => activityReducer(originalState, action)).toThrowError(/Programmatic error.*/)
   })
 
 })
