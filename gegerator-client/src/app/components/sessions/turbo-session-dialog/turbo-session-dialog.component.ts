@@ -31,6 +31,29 @@ interface TurboParseState {
 }
 
 type MatchStatus = 'ok' | 'missing' | 'ambiguous';
+type FieldName = 'movie' | 'theater' | 'day' | 'time';
+
+interface TokenCandidates {
+  token: string;
+  movie: Movie[];
+  theater: Theater[];
+  day: Day[];
+  time: Time[];
+}
+
+interface CandidateMaps {
+  movie: Map<string, Movie>;
+  theater: Map<string, Theater>;
+  day: Map<string, Day>;
+  time: Map<string, Time>;
+}
+
+interface CandidateScore {
+  ok: number;
+  ambiguous: number;
+  missing: number;
+  total: number;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -165,15 +188,16 @@ export class TurboSessionDialog {
       return this.emptyState(raw);
     }
 
+    const tokenCandidates = tokens.map(token => this.buildTokenCandidates(token, movies));
+    const best = this.pickBestAssignment(tokenCandidates);
+
     return {
       raw,
       tokens,
-      // note: for movies with spaces in their title, it sometimes becomes impossible to desambiguate
-      // so here we match on titles without spaces. For example, "redst" can now match "Red Storm"
-      movie: this.matchFromTokens(tokens, movies, movie => movie.title.replaceAll(' ', ''), movie => String(movie.id)),
-      theater: this.matchFromTokens(tokens, Theaters.enumerate(), theater => `${theater.name} ${theater.key}`, theater => theater.key),
-      day: this.matchFromTokens(tokens, Days.enumerate(), day => day.name, day => day.key),
-      time: this.matchTime(tokens)
+      movie: this.toMatch(best.movie),
+      theater: this.toMatch(best.theater),
+      day: this.toMatch(best.day),
+      time: this.toMatch(best.time)
     };
   }
 
@@ -184,49 +208,166 @@ export class TurboSessionDialog {
       .filter(token => token.length > 0);
   }
 
-  private matchFromTokens<T>(
-    tokens: string[],
-    candidates: readonly T[],
-    labeler: (candidate: T) => string,
-    keyer: (candidate: T) => string
-  ): TurboMatch<T> {
-    const matched = new Map<string, T>();
-    tokens.forEach(token => {
-      const lowerToken = token.toLowerCase();
-      candidates.forEach(candidate => {
-        const label = labeler(candidate).toLowerCase();
-        if (label.includes(lowerToken)) {
-          matched.set(keyer(candidate), candidate);
-        }
-      });
-    });
-
-    const matches = Array.from(matched.values());
+  private buildTokenCandidates(token: string, movies: readonly Movie[]): TokenCandidates {
+    // note: for movies with spaces in their title, it sometimes becomes impossible to desambiguate
+    // so here we match on titles without spaces. For example, "redst" can now match "Red Storm"
     return {
-      candidates: matches,
-      match: matches.length === 1 ? matches[0] : undefined
+      token,
+      movie: this.matchToken(token, movies, movie => movie.title.replaceAll(' ', ''), movie => String(movie.id)),
+      theater: this.matchToken(token, Theaters.enumerate(), theater => `${theater.name} ${theater.key}`, theater => theater.key),
+      day: this.matchToken(token, Days.enumerate(), day => day.name, day => day.key),
+      time: this.matchTimeToken(token)
     };
   }
 
-  private matchTime(tokens: string[]): TurboMatch<Time> {
-    const matched = new Map<string, Time>();
+  private matchToken<T>(
+    token: string,
+    candidates: readonly T[],
+    labeler: (candidate: T) => string,
+    keyer: (candidate: T) => string
+  ): T[] {
+    if (!token) {
+      return [];
+    }
 
-    tokens.forEach(token => {
-      const time = this.parseTimeToken(token);
-      if (!time) {
-        return;
+    const matched = new Map<string, T>();
+    const lowerToken = token.toLowerCase();
+    candidates.forEach(candidate => {
+      const label = labeler(candidate).toLowerCase();
+      if (label.includes(lowerToken)) {
+        matched.set(keyer(candidate), candidate);
       }
-      if (!PLANNABLE_EVENT_TIME_INTERVAL.isInRange(time)) {
-        return;
-      }
-      matched.set(Times.toString(time), time);
     });
 
-    const matches = Array.from(matched.values());
-    return {
-      candidates: matches,
-      match: matches.length === 1 ? matches[0] : undefined
+    return Array.from(matched.values());
+  }
+
+  private matchTimeToken(token: string): Time[] {
+    const time = this.parseTimeToken(token);
+    if (!time) {
+      return [];
+    }
+    if (!PLANNABLE_EVENT_TIME_INTERVAL.isInRange(time)) {
+      return [];
+    }
+    return [time];
+  }
+
+  private pickBestAssignment(tokens: TokenCandidates[]): CandidateMaps {
+    const empty = this.emptyCandidateMaps();
+    let bestState = this.cloneCandidateMaps(empty);
+    let bestScore: CandidateScore | null = null;
+
+    const visit = (index: number, state: CandidateMaps) => {
+      if (index >= tokens.length) {
+        const score = this.scoreState(state);
+        if (!bestScore || this.isBetterScore(score, bestScore)) {
+          bestScore = score;
+          bestState = this.cloneCandidateMaps(state);
+        }
+        return;
+      }
+
+      const token = tokens[index];
+      const options = this.tokenAssignmentOptions(token);
+      options.forEach(option => {
+        const nextState = this.cloneCandidateMaps(state);
+        if (option) {
+          this.addCandidates(nextState, option, token[option]);
+        }
+        visit(index + 1, nextState);
+      });
     };
+
+    visit(0, empty);
+    return bestState;
+  }
+
+
+  private tokenAssignmentOptions(tokenCandidates: TokenCandidates): Array<FieldName | null> {
+    const uniqueFields = this.fieldNames().filter(field => tokenCandidates[field].length === 1);
+    const candidateFields = uniqueFields.length > 0
+      ? uniqueFields
+      : this.fieldNames().filter(field => tokenCandidates[field].length > 0);
+
+    if (candidateFields.length === 0) {
+      return [null];
+    }
+
+    return [...candidateFields, null];
+  }
+
+  private addCandidates(state: CandidateMaps, field: FieldName, candidates: unknown[]): void {
+    switch (field) {
+      case 'movie':
+        this.addToMap(state.movie, candidates as Movie[], movie => String(movie.id));
+        break;
+      case 'theater':
+        this.addToMap(state.theater, candidates as Theater[], theater => theater.key);
+        break;
+      case 'day':
+        this.addToMap(state.day, candidates as Day[], day => day.key);
+        break;
+      case 'time':
+        this.addToMap(state.time, candidates as Time[], time => Times.toString(time));
+        break;
+    }
+  }
+
+  private addToMap<T>(map: Map<string, T>, candidates: T[], keyer: (item: T) => string): void {
+    candidates.forEach(candidate => map.set(keyer(candidate), candidate));
+  }
+
+  private scoreState(state: CandidateMaps): CandidateScore {
+    const sizes = this.fieldNames().map(field => state[field].size);
+    const ok = sizes.filter(size => size === 1).length;
+    const ambiguous = sizes.filter(size => size > 1).length;
+    const missing = sizes.filter(size => size === 0).length;
+    const total = sizes.reduce((sum, size) => sum + size, 0);
+    return { ok, ambiguous, missing, total };
+  }
+
+  private isBetterScore(candidate: CandidateScore, current: CandidateScore): boolean {
+    if (candidate.ok !== current.ok) {
+      return candidate.ok > current.ok;
+    }
+    if (candidate.ambiguous !== current.ambiguous) {
+      return candidate.ambiguous < current.ambiguous;
+    }
+    if (candidate.missing !== current.missing) {
+      return candidate.missing < current.missing;
+    }
+    return candidate.total < current.total;
+  }
+
+  private toMatch<T>(map: Map<string, T>): TurboMatch<T> {
+    const candidates = Array.from(map.values());
+    return {
+      candidates,
+      match: candidates.length === 1 ? candidates[0] : undefined
+    };
+  }
+
+  private emptyCandidateMaps(): CandidateMaps {
+    return {
+      movie: new Map(),
+      theater: new Map(),
+      day: new Map(),
+      time: new Map()
+    };
+  }
+
+  private cloneCandidateMaps(state: CandidateMaps): CandidateMaps {
+    return {
+      movie: new Map(state.movie),
+      theater: new Map(state.theater),
+      day: new Map(state.day),
+      time: new Map(state.time)
+    };
+  }
+
+  private fieldNames(): FieldName[] {
+    return ['movie', 'theater', 'day', 'time'];
   }
 
   private parseTimeToken(token: string): Time | null {
