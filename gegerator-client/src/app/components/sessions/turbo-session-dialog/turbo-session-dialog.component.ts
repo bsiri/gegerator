@@ -110,7 +110,12 @@ export class TurboSessionDialog {
   // *************** Labelling ******************* //
 
   get movieLabel(): string {
-    return this.formatMatch(this.state().movie, movie => movie.title);
+    let label = this.formatMatch(this.state().movie, movie => movie.title);
+    // limit the label to only two ambiguous candidates to avoid overflow in the UI
+    if (label.startsWith('Ambigu:')) {
+      label = label.split(',').slice(0, 2).join(', ');
+    }
+    return label
   }
 
   get theaterLabel(): string {
@@ -339,10 +344,10 @@ export class TurboSessionDialog {
    * all possible combinations of token assignments to fields (movie, theater, day, time) 
    * and scores them to find the best overall assignment.
    * 
-   * @param candidates : all matches for each fields for a given token.
+   * @param candidatesList : all matches for each fields for a given token.
    * @returns 
    */
-  private pickBestAssignment(candidates: TokenMatchCandidates[]): CandidateMaps {
+  private pickBestAssignment(candidatesList: TokenMatchCandidates[]): CandidateMaps {
     const empty = this.emptyCandidateMaps();
     let bestState = this.cloneCandidateMaps(empty);
     let bestScore: CandidateScore | null = null;
@@ -352,7 +357,7 @@ export class TurboSessionDialog {
     * 
     */
     const visit = (index: number, state: CandidateMaps) => {
-      if (index >= candidates.length) {
+      if (index >= candidatesList.length) {
         const score = this.scoreState(state);
         if (!bestScore || this.isBetterScore(score, bestScore)) {
           bestScore = score;
@@ -361,12 +366,12 @@ export class TurboSessionDialog {
         return;
       }
 
-      const token = candidates[index];
-      const options = this.tokenAssignmentOptions(token);
-      options.forEach(option => {
+      const candidates = candidatesList[index];
+      const fieldnames = this.matchedFieldnames(candidates);
+      fieldnames.forEach(fieldname => {
         const nextState = this.cloneCandidateMaps(state);
-        if (option) {
-          this.addCandidates(nextState, option, token[option]);
+        if (fieldname) {
+          this.addCandidates(nextState, fieldname, candidates[fieldname]);
         }
         visit(index + 1, nextState);
       });
@@ -381,18 +386,62 @@ export class TurboSessionDialog {
    * Returns the list of fields that have candidates for the given token, 
    * prioritizing fields with a single candidate.
    * 
+   * Priorities are:
+   * 1. If the token has at least one field with a single candidate, only those fields are returned.
+   * 2. Else, if the token has fields with multiple candidates, those fields are returned.
+   * 3. Else, if the token has no candidates for any field, an array with a single null value is returned to indicate that this token does not contribute to any field.
+   * 
+   * -----
+   * Note:
+   * 
+   * Previous vesrion of the algorithm would always include null as a possible fieldname
+   * for each token. In effect, it allows the algorithm to "skip" the token and explore 
+   * combinations where the token is ignored. The idea was to eliminate noisy tokens 
+   * that could lower the score if they were forcibly assigned to a field even if that was clearly 
+   * suboptimal (see 'pickBestAssignment' about the skip part) (see definition of suboptimal below).
+   * 
+   * However, the algorithm considers that no result is better than ambiguous results (see 'isBetterScore"). 
+   * So even if a token would match something, the algorithm would prefer to skip it. 
+   * In the end it would lead to situations where the user could enter a value for which she expects
+   * at least some matches, but sees a "missing" label (no match) in the UI.
+   *  
+   * After having an argument with Copilot (we did not fight literally but had opposite views on what 
+   * the correct behavior should be), I have chosen instead to return null only if there is absolutely no match. 
+   * This avoid suprising results in the UI as explained above.
+   * 
+   * However I am keeping the previous version as dead code here in case my choice was a mistake.
+   * 
    * @param candidates 
    * @returns 
    */
-  private tokenAssignmentOptions(candidates: TokenMatchCandidates): Array<FieldName | null> {
+  private matchedFieldnames(candidates: TokenMatchCandidates): Array<FieldName | null> {
+    // 1. Fields with a single candidate
+    let fieldnames: FieldName[] = FIELD_NAMES.filter(field => candidates[field].length === 1);
+    if (fieldnames.length > 0){
+      return fieldnames;
+    }
+    // 2. Fields with multiple candidates
+    fieldnames = FIELD_NAMES.filter(field => candidates[field].length > 0);
+    if (fieldnames.length > 0){
+      return fieldnames;
+    }
+    // 3. No candidates for any field
+    return [null];
+
+    /*
+    // Pervious version, that always allows to skip ambiguous fields (see comment above):
+
     let candidateFields: FieldName[] = [];    
     const uniqueFields = FIELD_NAMES.filter(field => candidates[field].length === 1);
     if (uniqueFields.length > 0) {
+      // exact matches
       candidateFields = uniqueFields;
     } else {
+      // ambiguous matches
       candidateFields = FIELD_NAMES.filter(field => candidates[field].length > 0);
     }
     return [...candidateFields, null];
+    */
   }
 
   private addCandidates(state: CandidateMaps, field: FieldName, candidates: unknown[]): void {
