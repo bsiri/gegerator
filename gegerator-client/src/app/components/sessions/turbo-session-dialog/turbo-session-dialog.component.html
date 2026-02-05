@@ -4,9 +4,9 @@
   <mat-form-field appearance="fill" class="turbo-input-field">
     <mat-label>Saisie rapide</mat-label>
     <input matInput [formControl]="inputControl" (keyup.enter)="confirm()">
-    <mat-hint>Ex: "casino vendredi 935 alien" ou "mcl samedi 11h00 dune"</mat-hint>
+    <mat-hint>Ex: "casino vendredi 935 alien"</mat-hint>
     @if (inputControl.invalid && (inputControl.dirty || inputControl.touched)) {
-      <mat-error>Entree requise.</mat-error>
+      <mat-error>Donne moi des infos !</mat-error>
     }
   </mat-form-field>
 

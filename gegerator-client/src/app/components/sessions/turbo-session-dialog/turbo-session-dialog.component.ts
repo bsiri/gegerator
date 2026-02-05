@@ -17,6 +17,8 @@ import { selectMovies } from 'src/app/ngrx/selectors/movie.selectors';
 import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
 
 
+const FIELD_NAMES: FieldName[] = ['movie', 'theater', 'day', 'time'];
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-turbo-session-dialog',
@@ -160,8 +162,8 @@ export class TurboSessionDialog {
       return this.emptyState(rawInput);
     }
 
-    const tokenCandidates = tokens.map(token => this.buildTokenCandidates(token, movies));
-    const best = this.pickBestAssignment(tokenCandidates);
+    const candidates = tokens.map(token => this.buildTokenMatchCandidates(token, movies));
+    const best = this.pickBestAssignment(candidates);
 
     return {
       raw: rawInput,
@@ -189,16 +191,17 @@ export class TurboSessionDialog {
    * @param movies The list of available movies to match against.
    * @returns An object containing candidate matches for each category.
    */
-  private buildTokenCandidates(token: string, movies: readonly Movie[]): TokenCandidates {
+  private buildTokenMatchCandidates(token: string, movies: readonly Movie[]): TokenMatchCandidates {
     // note: for movies with spaces in their title, it sometimes becomes impossible to desambiguate
     // so here we match on titles without spaces. For example, "redst" can now match "Red Storm"
-    return {
+    const candidates = {
       token,
       movie: this.matchToken(token, movies, movie => movie.title.replaceAll(' ', ''), movie => String(movie.id)),
       theater: this.matchToken(token, Theaters.enumerate(), theater => `${theater.name} ${theater.key}`, theater => theater.key),
       day: this.matchToken(token, Days.enumerate(), day => day.name, day => day.key),
       time: this.matchTimeToken(token)
     };
+    return candidates;
   }
 
   /**
@@ -331,13 +334,25 @@ export class TurboSessionDialog {
 
   /////////////// Best candidate selection logic ////////////////
 
-  private pickBestAssignment(tokens: TokenCandidates[]): CandidateMaps {
+  /**
+   * Given the candidate matches for each token, this function explores 
+   * all possible combinations of token assignments to fields (movie, theater, day, time) 
+   * and scores them to find the best overall assignment.
+   * 
+   * @param candidates : all matches for each fields for a given token.
+   * @returns 
+   */
+  private pickBestAssignment(candidates: TokenMatchCandidates[]): CandidateMaps {
     const empty = this.emptyCandidateMaps();
     let bestState = this.cloneCandidateMaps(empty);
     let bestScore: CandidateScore | null = null;
 
+    /*
+    * The visit function recursively explores all combinations of token assignments.
+    * 
+    */
     const visit = (index: number, state: CandidateMaps) => {
-      if (index >= tokens.length) {
+      if (index >= candidates.length) {
         const score = this.scoreState(state);
         if (!bestScore || this.isBetterScore(score, bestScore)) {
           bestScore = score;
@@ -346,7 +361,7 @@ export class TurboSessionDialog {
         return;
       }
 
-      const token = tokens[index];
+      const token = candidates[index];
       const options = this.tokenAssignmentOptions(token);
       options.forEach(option => {
         const nextState = this.cloneCandidateMaps(state);
@@ -362,16 +377,21 @@ export class TurboSessionDialog {
   }
 
 
-  private tokenAssignmentOptions(tokenCandidates: TokenCandidates): Array<FieldName | null> {
-    const uniqueFields = this.fieldNames().filter(field => tokenCandidates[field].length === 1);
-    const candidateFields = uniqueFields.length > 0
-      ? uniqueFields
-      : this.fieldNames().filter(field => tokenCandidates[field].length > 0);
-
-    if (candidateFields.length === 0) {
-      return [null];
+  /**
+   * Returns the list of fields that have candidates for the given token, 
+   * prioritizing fields with a single candidate.
+   * 
+   * @param candidates 
+   * @returns 
+   */
+  private tokenAssignmentOptions(candidates: TokenMatchCandidates): Array<FieldName | null> {
+    let candidateFields: FieldName[] = [];    
+    const uniqueFields = FIELD_NAMES.filter(field => candidates[field].length === 1);
+    if (uniqueFields.length > 0) {
+      candidateFields = uniqueFields;
+    } else {
+      candidateFields = FIELD_NAMES.filter(field => candidates[field].length > 0);
     }
-
     return [...candidateFields, null];
   }
 
@@ -396,15 +416,41 @@ export class TurboSessionDialog {
     candidates.forEach(candidate => map.set(keyer(candidate), candidate));
   }
 
+  /**
+   * Scores the current state of candidate maps by counting how many fields are correctly matched,
+   * how many are ambiguous, how many are missing, and the total number of candidates.
+   * 
+   * @param state : the current candidate maps for movie, theater, day, and time
+   * @returns : an object containing the counts of ok, ambiguous, missing, and total candidates across all fields
+   */
   private scoreState(state: CandidateMaps): CandidateScore {
-    const sizes = this.fieldNames().map(field => state[field].size);
-    const ok = sizes.filter(size => size === 1).length;
-    const ambiguous = sizes.filter(size => size > 1).length;
-    const missing = sizes.filter(size => size === 0).length;
-    const total = sizes.reduce((sum, size) => sum + size, 0);
+    let ok = 0;
+    let ambiguous = 0;
+    let missing = 0;
+    let total = 0;
+    for (const field of FIELD_NAMES) {
+      const size = state[field].size;
+      if (size === 1) ok++;
+      if (size > 1) ambiguous++;
+      if (size === 0) missing++;
+      total += size;
+    }
     return { ok, ambiguous, missing, total };
   }
 
+  /**
+   * Determines if the candidate score is better than the current best score. 
+   * 
+   * The comparison is based on the following criteria, in order of importance:
+   * 1. How many fields are correctly matched (ok) - more is better
+   * 2. How many fields are ambiguous (ambiguous) - fewer is better
+   * 3. How many fields are missing (missing) - fewer is better
+   * 4. Total number of candidates across all fields (total) - fewer is better
+   * 
+   * @param candidate the candidate score to compare
+   * @param current the current best score
+   * @returns true if the candidate score is better than the current score, false otherwise
+   */
   private isBetterScore(candidate: CandidateScore, current: CandidateScore): boolean {
     if (candidate.ok !== current.ok) {
       return candidate.ok > current.ok;
@@ -417,6 +463,10 @@ export class TurboSessionDialog {
     }
     return candidate.total < current.total;
   }
+
+
+
+  // *************** small logic utils ******************* //
 
   private toMatch<T>(map: Map<string, T>): TurboMatch<T> {
     const candidates = Array.from(map.values());
@@ -444,14 +494,6 @@ export class TurboSessionDialog {
     };
   }
 
-  private fieldNames(): FieldName[] {
-    return ['movie', 'theater', 'day', 'time'];
-  }
-
-
-
-  // *************** small logic utils ******************* //
-
   private emptyState(raw: string): TurboParseState {
     return {
       raw,
@@ -461,10 +503,6 @@ export class TurboSessionDialog {
       day: { candidates: [] },
       time: { candidates: [] }
     };
-  }
-
-  private twoDigits(value: number): string {
-    return value < 10 ? `0${value}` : `${value}`;
   }
 
   private statusOf(match: TurboMatch<unknown>): MatchStatus {
@@ -507,7 +545,7 @@ interface TurboParseState {
 type MatchStatus = 'ok' | 'missing' | 'ambiguous';
 type FieldName = 'movie' | 'theater' | 'day' | 'time';
 
-interface TokenCandidates {
+interface TokenMatchCandidates {
   token: string;
   movie: Movie[];
   theater: Theater[];
