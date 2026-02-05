@@ -16,44 +16,6 @@ import { EventRatings } from 'src/app/models/plannable.model';
 import { selectMovies } from 'src/app/ngrx/selectors/movie.selectors';
 import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
 
-interface TurboMatch<T> {
-  candidates: T[];
-  match?: T;
-}
-
-interface TurboParseState {
-  raw: string;
-  tokens: string[];
-  movie: TurboMatch<Movie>;
-  theater: TurboMatch<Theater>;
-  day: TurboMatch<Day>;
-  time: TurboMatch<Time>;
-}
-
-type MatchStatus = 'ok' | 'missing' | 'ambiguous';
-type FieldName = 'movie' | 'theater' | 'day' | 'time';
-
-interface TokenCandidates {
-  token: string;
-  movie: Movie[];
-  theater: Theater[];
-  day: Day[];
-  time: Time[];
-}
-
-interface CandidateMaps {
-  movie: Map<string, Movie>;
-  theater: Map<string, Theater>;
-  day: Map<string, Day>;
-  time: Map<string, Time>;
-}
-
-interface CandidateScore {
-  ok: number;
-  ambiguous: number;
-  missing: number;
-  total: number;
-}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -99,7 +61,8 @@ export class TurboSessionDialog {
     this.destroyRef.onDestroy(() => this.created.complete());
   }
 
-  @HostListener('window:keyup.Enter')
+  // ********** dialog effectors ********************* //
+
   confirm(): void {
     if (!this.canSubmit) {
       return;
@@ -117,11 +80,15 @@ export class TurboSessionDialog {
 
     this.created.next(session);
     this.inputControl.reset('');
+    console.log('submitted')
+    console.log(arguments)
   }
 
   close(): void {
     this.dialogRef.close();
   }
+
+  // ************** lifecycle ************* //
 
   get hasInput(): boolean {
     return this.state().tokens.length > 0;
@@ -137,6 +104,8 @@ export class TurboSessionDialog {
       parsed.time.match
     );
   }
+
+  // *************** Labelling ******************* //
 
   get movieLabel(): string {
     return this.formatMatch(this.state().movie, movie => movie.title);
@@ -170,16 +139,7 @@ export class TurboSessionDialog {
     return this.statusOf(this.state().time);
   }
 
-  private emptyState(raw: string): TurboParseState {
-    return {
-      raw,
-      tokens: [],
-      movie: { candidates: [] },
-      theater: { candidates: [] },
-      day: { candidates: [] },
-      time: { candidates: [] }
-    };
-  }
+  // ******************* parser logic ********************* //
 
   private parseInput(raw: string, movies: readonly Movie[]): TurboParseState {
     const tokens = this.tokenize(raw);
@@ -372,16 +332,20 @@ export class TurboSessionDialog {
 
   private parseTimeToken(token: string): Time | null {
     // Supports shorthand: 11 -> 11h00, 1234 -> 12h34, 935 -> 09h35.
-    const normalized = token.trim().toLowerCase();
-    if (!normalized) {
+    const strtime = token.trim().toLowerCase();
+    if (!strtime) {
       return null;
     }
 
     let hours: number | null = null;
     let minutes: number | null = null;
 
-    if (normalized.includes('h')) {
-      const parts = normalized.split('h');
+    /*
+      Case: use the 'h' notation.
+      In this case we expect 1-2 digits for the hour and 2 digits for minutes.
+    */
+    if (strtime.includes('h')) {
+      const parts = strtime.split('h');
       if (parts.length !== 2) {
         return null;
       }
@@ -391,30 +355,49 @@ export class TurboSessionDialog {
       }
       hours = Number(hStr);
       minutes = Number(mStr);
-    } else if (/^\d{1,4}$/.test(normalized)) {
-      if (normalized.length <= 2) {
-        hours = Number(normalized);
+    } 
+
+    /*
+      Case: 
+    */
+    else if (/^\d{1,4}$/.test(strtime)) {
+      if (strtime.length <= 2) {
+        hours = Number(strtime);
         minutes = 0;
       } else {
-        const mStr = normalized.slice(-2);
-        const hStr = normalized.slice(0, -2);
+        const mStr = strtime.slice(-2);
+        const hStr = strtime.slice(0, -2);
         hours = Number(hStr);
         minutes = Number(mStr);
       }
-    } else {
+    }
+    /*
+      Case: no match
+    */
+    else {
       return null;
     }
 
+    // Sanity check
     if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
       return null;
     }
 
-    const formatted = `${this.twoDigits(hours)}h${this.twoDigits(minutes)}`;
-    try {
-      return Times.fromString(formatted);
-    } catch {
-      return null;
-    }
+    return new Time(hours, minutes)
+  }
+
+
+  // *************** small logic utils ******************* //
+
+  private emptyState(raw: string): TurboParseState {
+    return {
+      raw,
+      tokens: [],
+      movie: { candidates: [] },
+      theater: { candidates: [] },
+      day: { candidates: [] },
+      time: { candidates: [] }
+    };
   }
 
   private twoDigits(value: number): string {
@@ -440,4 +423,45 @@ export class TurboSessionDialog {
     }
     return `Ambigu: ${match.candidates.map(labeler).join(', ')}`;
   }
+}
+
+// ******************* Support interfaces ******************* //
+
+interface TurboMatch<T> {
+  candidates: T[];
+  match?: T;
+}
+
+interface TurboParseState {
+  raw: string;
+  tokens: string[];
+  movie: TurboMatch<Movie>;
+  theater: TurboMatch<Theater>;
+  day: TurboMatch<Day>;
+  time: TurboMatch<Time>;
+}
+
+type MatchStatus = 'ok' | 'missing' | 'ambiguous';
+type FieldName = 'movie' | 'theater' | 'day' | 'time';
+
+interface TokenCandidates {
+  token: string;
+  movie: Movie[];
+  theater: Theater[];
+  day: Day[];
+  time: Time[];
+}
+
+interface CandidateMaps {
+  movie: Map<string, Movie>;
+  theater: Map<string, Theater>;
+  day: Map<string, Day>;
+  time: Map<string, Time>;
+}
+
+interface CandidateScore {
+  ok: number;
+  ambiguous: number;
+  missing: number;
+  total: number;
 }
