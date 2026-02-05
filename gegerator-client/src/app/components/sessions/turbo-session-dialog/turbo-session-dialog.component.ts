@@ -139,20 +139,32 @@ export class TurboSessionDialog {
     return this.statusOf(this.state().time);
   }
 
-  // ******************* parser logic ********************* //
+  /**************************************************************************
+   * Parser logic 
+   **************************************************************************/
 
-  private parseInput(raw: string, movies: readonly Movie[]): TurboParseState {
-    const tokens = this.tokenize(raw);
+  /**
+   * Parses the raw input string into a structured state containing the identified movie, theater, day, and time.
+   * 
+   * If multiple combinations of matches are possible, the one with the best score is chosen. 
+   * The scoring favors states with more fields matched, fewer ambiguous matches, and fewer total candidates.
+   * 
+   * @param rawInput : the raw input string to parse
+   * @param movies : the list of available movies to match against
+   * @returns 
+   */
+  private parseInput(rawInput: string, movies: readonly Movie[]): TurboParseState {
+    const tokens = this.tokenize(rawInput);
 
     if (tokens.length === 0) {
-      return this.emptyState(raw);
+      return this.emptyState(rawInput);
     }
 
     const tokenCandidates = tokens.map(token => this.buildTokenCandidates(token, movies));
     const best = this.pickBestAssignment(tokenCandidates);
 
     return {
-      raw,
+      raw: rawInput,
       tokens,
       movie: this.toMatch(best.movie),
       theater: this.toMatch(best.theater),
@@ -161,6 +173,8 @@ export class TurboSessionDialog {
     };
   }
 
+  /////////////// Tokenization and match logic ////////////////
+
   private tokenize(raw: string): string[] {
     return raw
       .split(/[\s,]+/)
@@ -168,6 +182,13 @@ export class TurboSessionDialog {
       .filter(token => token.length > 0);
   }
 
+  /**
+   * Builds the candidate matches for a given token across movies, theaters, days, and times.
+   * 
+   * @param token The input token to match.
+   * @param movies The list of available movies to match against.
+   * @returns An object containing candidate matches for each category.
+   */
   private buildTokenCandidates(token: string, movies: readonly Movie[]): TokenCandidates {
     // note: for movies with spaces in their title, it sometimes becomes impossible to desambiguate
     // so here we match on titles without spaces. For example, "redst" can now match "Red Storm"
@@ -180,6 +201,18 @@ export class TurboSessionDialog {
     };
   }
 
+  /**
+   * Collect all values from candidates that match the token, and returns them as an array.
+   * 
+   * The token is tested against the candidates using the provided labeler function. 
+   * The keyer function is used to ensure uniqueness of candidates.
+   * 
+   * @param token : the input token to match
+   * @param candidates : the list of candidates to match against
+   * @param labeler : a function that produces a string label for a candidate, used for matching against the token
+   * @param keyer : a function that produces a unique string key for a candidate, used to ensure uniqueness in the results
+   * @returns An array of candidates that match the token.
+   */
   private matchToken<T>(
     token: string,
     candidates: readonly T[],
@@ -190,8 +223,8 @@ export class TurboSessionDialog {
       return [];
     }
 
-    const matched = new Map<string, T>();
     const lowerToken = token.toLowerCase();
+    const matched = new Map<string, T>();
     candidates.forEach(candidate => {
       const label = labeler(candidate).toLowerCase();
       if (label.includes(lowerToken)) {
@@ -202,6 +235,14 @@ export class TurboSessionDialog {
     return Array.from(matched.values());
   }
 
+
+  /**
+   * Parses the token as a time and ensure it is within the plannable event time interval. 
+   * Supports various formats and notations as described in parseTimeToken.
+   * 
+   * @param token : the input token to parse as a time
+   * @returns : an array containing the matched Time if parsing is successful and within range, or an empty array otherwise.
+   */
   private matchTimeToken(token: string): Time[] {
     const time = this.parseTimeToken(token);
     if (!time) {
@@ -212,6 +253,83 @@ export class TurboSessionDialog {
     }
     return [time];
   }
+
+  /**
+   * Parses a time token into a Time object. Supports full format, and shorthand
+   * notations. For example:
+   * - "14h30" -> Time(14, 30)
+   * - "1430" -> Time(14, 30)
+   * - "905" -> Time(9, 5)
+   * - "11" -> Time(11, 0)
+   * - "8" -> Time(8, 0)
+   * 
+   * Returns null if the token cannot be parsed as a valid time or is out of range.
+   * The range here is 0-23 for hours and 0-59 for minutes.
+   * 
+   * @param token The time token to parse.
+   * @returns The parsed Time object if successful, or null if parsing fails or the time is out of range.
+   */
+  private parseTimeToken(token: string): Time | null {
+    const strtime = token.trim().toLowerCase();
+    if (!strtime) {
+      return null;
+    }
+
+    let hours: number | null = null;
+    let minutes: number | null = null;
+
+    /*
+      Case: use the 'h' notation.
+      In this case we expect 1-2 digits for the hour and 2 digits for minutes.
+    */
+    if (strtime.includes('h')) {
+      const parts = strtime.split('h');
+      if (parts.length !== 2) {
+        return null;
+      }
+      const [hStr, mStr] = parts;
+      if (!/^\d{1,2}$/.test(hStr) || !/^\d{2}$/.test(mStr)) {
+        return null;
+      }
+      hours = Number(hStr);
+      minutes = Number(mStr);
+    } 
+
+    /*
+      Case: numeral only.
+      Depending on the number of digits the interpretation differs:
+      - 1-2 digits: hours only
+      - 3-4 digits: last two are minutes, the others are hours
+    */
+    else if (/^\d{1,4}$/.test(strtime)) {
+      if (strtime.length <= 2) {
+        hours = Number(strtime);
+        minutes = 0;
+      } 
+      else {
+        const mStr = strtime.slice(-2);
+        const hStr = strtime.slice(0, -2);
+        hours = Number(hStr);
+        minutes = Number(mStr);
+      }
+    }
+    /*
+      Case: no match
+    */
+    else {
+      return null;
+    }
+
+    // Sanity check
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+      return null;
+    }
+
+    return new Time(hours, minutes)
+  }
+
+
+  /////////////// Best candidate selection logic ////////////////
 
   private pickBestAssignment(tokens: TokenCandidates[]): CandidateMaps {
     const empty = this.emptyCandidateMaps();
@@ -330,61 +448,6 @@ export class TurboSessionDialog {
     return ['movie', 'theater', 'day', 'time'];
   }
 
-  private parseTimeToken(token: string): Time | null {
-    // Supports shorthand: 11 -> 11h00, 1234 -> 12h34, 935 -> 09h35.
-    const strtime = token.trim().toLowerCase();
-    if (!strtime) {
-      return null;
-    }
-
-    let hours: number | null = null;
-    let minutes: number | null = null;
-
-    /*
-      Case: use the 'h' notation.
-      In this case we expect 1-2 digits for the hour and 2 digits for minutes.
-    */
-    if (strtime.includes('h')) {
-      const parts = strtime.split('h');
-      if (parts.length !== 2) {
-        return null;
-      }
-      const [hStr, mStr] = parts;
-      if (!/^\d{1,2}$/.test(hStr) || !/^\d{2}$/.test(mStr)) {
-        return null;
-      }
-      hours = Number(hStr);
-      minutes = Number(mStr);
-    } 
-
-    /*
-      Case: 
-    */
-    else if (/^\d{1,4}$/.test(strtime)) {
-      if (strtime.length <= 2) {
-        hours = Number(strtime);
-        minutes = 0;
-      } else {
-        const mStr = strtime.slice(-2);
-        const hStr = strtime.slice(0, -2);
-        hours = Number(hStr);
-        minutes = Number(mStr);
-      }
-    }
-    /*
-      Case: no match
-    */
-    else {
-      return null;
-    }
-
-    // Sanity check
-    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
-      return null;
-    }
-
-    return new Time(hours, minutes)
-  }
 
 
   // *************** small logic utils ******************* //
