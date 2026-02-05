@@ -1,0 +1,300 @@
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, Signal, effect, inject, signal } from '@angular/core';
+import { UntypedFormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Subject, startWith } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatFormField, MatError, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { Movie } from 'src/app/models/movie.model';
+import { Day, Days, Theater, Theaters } from 'src/app/models/referential.data';
+import { PlannedMovieSession } from 'src/app/models/session.model';
+import { Time } from 'src/app/models/time.model';
+import { Times } from 'src/app/models/time.utils';
+import { EventRatings } from 'src/app/models/plannable.model';
+import { selectMovies } from 'src/app/ngrx/selectors/movie.selectors';
+import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
+
+interface TurboMatch<T> {
+  candidates: T[];
+  match?: T;
+}
+
+interface TurboParseState {
+  raw: string;
+  tokens: string[];
+  movie: TurboMatch<Movie>;
+  theater: TurboMatch<Theater>;
+  day: TurboMatch<Day>;
+  time: TurboMatch<Time>;
+}
+
+type MatchStatus = 'ok' | 'missing' | 'ambiguous';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-turbo-session-dialog',
+  templateUrl: './turbo-session-dialog.component.html',
+  styleUrls: ['./turbo-session-dialog.component.scss'],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatHint,
+    MatError,
+    MatButton
+  ]
+})
+export class TurboSessionDialog {
+  dialogRef = inject<MatDialogRef<TurboSessionDialog>>(MatDialogRef);
+  private store = inject(Store);
+  private destroyRef = inject(DestroyRef);
+
+  $availableMovies: Signal<readonly Movie[]> = this.store.selectSignal(selectMovies);
+  inputControl = new UntypedFormControl('', [Validators.required]);
+  created = new Subject<PlannedMovieSession>();
+
+  private inputValue = signal('');
+  private state = signal<TurboParseState>(this.emptyState(''));
+
+  constructor() {
+    this.inputControl.valueChanges
+      .pipe(startWith(this.inputControl.value ?? ''), takeUntilDestroyed(this.destroyRef))
+      .subscribe(value => this.inputValue.set(String(value ?? '')));
+
+    effect(() => {
+      const raw = this.inputValue();
+      const movies = this.$availableMovies();
+      this.state.set(this.parseInput(raw, movies));
+    });
+
+    this.destroyRef.onDestroy(() => this.created.complete());
+  }
+
+  @HostListener('window:keyup.Enter')
+  confirm(): void {
+    if (!this.canSubmit) {
+      return;
+    }
+
+    const parsed = this.state();
+    const session = new PlannedMovieSession(
+      undefined as unknown as number,
+      parsed.movie.match!,
+      parsed.theater.match!,
+      parsed.day.match!,
+      parsed.time.match!,
+      EventRatings.DEFAULT
+    );
+
+    this.created.next(session);
+    this.inputControl.reset('');
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
+
+  get hasInput(): boolean {
+    return this.state().tokens.length > 0;
+  }
+
+  get canSubmit(): boolean {
+    const parsed = this.state();
+    return !!(
+      parsed.tokens.length > 0 &&
+      parsed.movie.match &&
+      parsed.theater.match &&
+      parsed.day.match &&
+      parsed.time.match
+    );
+  }
+
+  get movieLabel(): string {
+    return this.formatMatch(this.state().movie, movie => movie.title);
+  }
+
+  get theaterLabel(): string {
+    return this.formatMatch(this.state().theater, theater => theater.name);
+  }
+
+  get dayLabel(): string {
+    return this.formatMatch(this.state().day, day => day.name);
+  }
+
+  get timeLabel(): string {
+    return this.formatMatch(this.state().time, time => Times.toString(time));
+  }
+
+  get movieStatus(): MatchStatus {
+    return this.statusOf(this.state().movie);
+  }
+
+  get theaterStatus(): MatchStatus {
+    return this.statusOf(this.state().theater);
+  }
+
+  get dayStatus(): MatchStatus {
+    return this.statusOf(this.state().day);
+  }
+
+  get timeStatus(): MatchStatus {
+    return this.statusOf(this.state().time);
+  }
+
+  private emptyState(raw: string): TurboParseState {
+    return {
+      raw,
+      tokens: [],
+      movie: { candidates: [] },
+      theater: { candidates: [] },
+      day: { candidates: [] },
+      time: { candidates: [] }
+    };
+  }
+
+  private parseInput(raw: string, movies: readonly Movie[]): TurboParseState {
+    const tokens = this.tokenize(raw);
+
+    if (tokens.length === 0) {
+      return this.emptyState(raw);
+    }
+
+    return {
+      raw,
+      tokens,
+      movie: this.matchFromTokens(tokens, movies, movie => movie.title, movie => String(movie.id)),
+      theater: this.matchFromTokens(tokens, Theaters.enumerate(), theater => `${theater.name} ${theater.key}`, theater => theater.key),
+      day: this.matchFromTokens(tokens, Days.enumerate(), day => day.name, day => day.key),
+      time: this.matchTime(tokens)
+    };
+  }
+
+  private tokenize(raw: string): string[] {
+    return raw
+      .split(/[\s,]+/)
+      .map(token => token.trim())
+      .filter(token => token.length > 0);
+  }
+
+  private matchFromTokens<T>(
+    tokens: string[],
+    candidates: readonly T[],
+    labeler: (candidate: T) => string,
+    keyer: (candidate: T) => string
+  ): TurboMatch<T> {
+    const matched = new Map<string, T>();
+    tokens.forEach(token => {
+      const lowerToken = token.toLowerCase();
+      candidates.forEach(candidate => {
+        const label = labeler(candidate).toLowerCase();
+        if (label.includes(lowerToken)) {
+          matched.set(keyer(candidate), candidate);
+        }
+      });
+    });
+
+    const matches = Array.from(matched.values());
+    return {
+      candidates: matches,
+      match: matches.length === 1 ? matches[0] : undefined
+    };
+  }
+
+  private matchTime(tokens: string[]): TurboMatch<Time> {
+    const matched = new Map<string, Time>();
+
+    tokens.forEach(token => {
+      const time = this.parseTimeToken(token);
+      if (!time) {
+        return;
+      }
+      if (!PLANNABLE_EVENT_TIME_INTERVAL.isInRange(time)) {
+        return;
+      }
+      matched.set(Times.toString(time), time);
+    });
+
+    const matches = Array.from(matched.values());
+    return {
+      candidates: matches,
+      match: matches.length === 1 ? matches[0] : undefined
+    };
+  }
+
+  private parseTimeToken(token: string): Time | null {
+    // Supports shorthand: 11 -> 11h00, 1234 -> 12h34, 935 -> 09h35.
+    const normalized = token.trim().toLowerCase();
+    if (!normalized) {
+      return null;
+    }
+
+    let hours: number | null = null;
+    let minutes: number | null = null;
+
+    if (normalized.includes('h')) {
+      const parts = normalized.split('h');
+      if (parts.length !== 2) {
+        return null;
+      }
+      const [hStr, mStr] = parts;
+      if (!/^\d{1,2}$/.test(hStr) || !/^\d{2}$/.test(mStr)) {
+        return null;
+      }
+      hours = Number(hStr);
+      minutes = Number(mStr);
+    } else if (/^\d{1,4}$/.test(normalized)) {
+      if (normalized.length <= 2) {
+        hours = Number(normalized);
+        minutes = 0;
+      } else {
+        const mStr = normalized.slice(-2);
+        const hStr = normalized.slice(0, -2);
+        hours = Number(hStr);
+        minutes = Number(mStr);
+      }
+    } else {
+      return null;
+    }
+
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+      return null;
+    }
+
+    const formatted = `${this.twoDigits(hours)}h${this.twoDigits(minutes)}`;
+    try {
+      return Times.fromString(formatted);
+    } catch {
+      return null;
+    }
+  }
+
+  private twoDigits(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+
+  private statusOf(match: TurboMatch<unknown>): MatchStatus {
+    if (match.match) {
+      return 'ok';
+    }
+    if (match.candidates.length === 0) {
+      return 'missing';
+    }
+    return 'ambiguous';
+  }
+
+  private formatMatch<T>(match: TurboMatch<T>, labeler: (item: T) => string): string {
+    if (match.match) {
+      return labeler(match.match);
+    }
+    if (match.candidates.length === 0) {
+      return 'Manquant';
+    }
+    return `Ambigu: ${match.candidates.map(labeler).join(', ')}`;
+  }
+}

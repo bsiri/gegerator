@@ -1,0 +1,62 @@
+<h1 mat-dialog-title>Turbo creation de session</h1>
+
+<div mat-dialog-content>
+  <mat-form-field appearance="fill" class="turbo-input-field">
+    <mat-label>Saisie rapide</mat-label>
+    <input matInput [formControl]="inputControl" (keyup.enter)="confirm()">
+    <mat-hint>Ex: "casino vendredi 935 alien" ou "mcl samedi 11h00 dune"</mat-hint>
+    @if (inputControl.invalid && (inputControl.dirty || inputControl.touched)) {
+      <mat-error>Entree requise.</mat-error>
+    }
+  </mat-form-field>
+
+  @if (hasInput) {
+    <div class="turbo-summary">
+      <div class="turbo-summary-row">
+        <span class="turbo-summary-label">Film :</span>
+        <span
+          class="turbo-summary-value"
+          [class.is-ok]="movieStatus === 'ok'"
+          [class.is-missing]="movieStatus === 'missing'"
+          [class.is-ambiguous]="movieStatus === 'ambiguous'">
+          {{movieLabel}}
+        </span>
+      </div>
+      <div class="turbo-summary-row">
+        <span class="turbo-summary-label">Cinema :</span>
+        <span
+          class="turbo-summary-value"
+          [class.is-ok]="theaterStatus === 'ok'"
+          [class.is-missing]="theaterStatus === 'missing'"
+          [class.is-ambiguous]="theaterStatus === 'ambiguous'">
+          {{theaterLabel}}
+        </span>
+      </div>
+      <div class="turbo-summary-row">
+        <span class="turbo-summary-label">Jour :</span>
+        <span
+          class="turbo-summary-value"
+          [class.is-ok]="dayStatus === 'ok'"
+          [class.is-missing]="dayStatus === 'missing'"
+          [class.is-ambiguous]="dayStatus === 'ambiguous'">
+          {{dayLabel}}
+        </span>
+      </div>
+      <div class="turbo-summary-row">
+        <span class="turbo-summary-label">Heure :</span>
+        <span
+          class="turbo-summary-value"
+          [class.is-ok]="timeStatus === 'ok'"
+          [class.is-missing]="timeStatus === 'missing'"
+          [class.is-ambiguous]="timeStatus === 'ambiguous'">
+          {{timeLabel}}
+        </span>
+      </div>
+    </div>
+  }
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="confirm()" [disabled]="!canSubmit" class="testid-tsd-submit">Ajouter</button>
+  <button mat-button (click)="close()" class="testid-tsd-cancel">Fermer</button>
+</div>

@@ -12,6 +12,7 @@ import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selec
 import { Activitydialog } from '../activitydialog/activitydialog.component';
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model';
 import { SessionDialog } from '../sessiondialog/sessiondialog.component';
+import { TurboSessionDialog } from '../turbo-session-dialog/turbo-session-dialog.component';
 import { NgTemplateOutlet, NgStyle } from '@angular/common';
 import { OtherActivityComponent } from '../other-activity/other-activity.component';
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component';
@@ -120,6 +121,21 @@ export class SessionSectionComponent {
         this.store.dispatch(ActivityActions.create_activity({activity}))
         this.openNewActivity(newactivity.day)
       }
+    })
+  }
+
+  openTurboSessionCreate(): void{
+    const dialogRef = this.dialog.open(TurboSessionDialog, {
+      autoFocus: 'first-tabbable'
+    })
+
+    const createdSub = dialogRef.componentInstance.created.subscribe(newsession => {
+      const movieSession = newsession.toMovieSession()
+      this.store.dispatch(SessionActions.create_session({session: movieSession}))
+    })
+
+    dialogRef.afterClosed().subscribe(() => {
+      createdSub.unsubscribe()
     })
   }
 }

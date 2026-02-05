@@ -28,6 +28,14 @@
             margin-bottom: 4px;
         }
 
+        .session-day-header{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: vars.$gap-small;
+            flex-wrap: wrap;
+        }
+
 
         thead{
             border-bottom: 1px solid black;
