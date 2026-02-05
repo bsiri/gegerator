@@ -168,7 +168,9 @@ export class TurboSessionDialog {
     return {
       raw,
       tokens,
-      movie: this.matchFromTokens(tokens, movies, movie => movie.title, movie => String(movie.id)),
+      // note: for movies with spaces in their title, it sometimes becomes impossible to desambiguate
+      // so here we match on titles without spaces. For example, "redst" can now match "Red Storm"
+      movie: this.matchFromTokens(tokens, movies, movie => movie.title.replaceAll(' ', ''), movie => String(movie.id)),
       theater: this.matchFromTokens(tokens, Theaters.enumerate(), theater => `${theater.name} ${theater.key}`, theater => theater.key),
       day: this.matchFromTokens(tokens, Days.enumerate(), day => day.name, day => day.key),
       time: this.matchTime(tokens)
