@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TurboSessionDialog } from './turbo-session-dialog.component';
-import * as factories from 'src/_testhelpers/factories'
+import { someMovie } from 'src/_testhelpers/factories'
 import { Movie } from 'src/app/models/movie.model';
 import { Theater, Day, Theaters, Days } from 'src/app/models/referential.data';
 import { Time } from 'src/app/models/time.model';
@@ -94,7 +94,7 @@ describe('TurboSessionDialog — UI', () => {
       3. assert the submit button element is enabled
     */
     // Arrange: add a movie that will match the token 'alien'
-    const movie = factories.someMovie({ title: 'Alien' })
+    const movie = someMovie({ title: 'Alien' })
     movies.length = 0
     movies.push(movie)
 
@@ -128,7 +128,7 @@ describe('TurboSessionDialog — UI', () => {
       4. assert the `inputControl` value is reset/empty
     */
     // Arrange: create a matching movie and populate per-suite movies
-    const movie = factories.someMovie({ title: 'Alien' })
+    const movie = someMovie({ title: 'Alien' })
     movies.length = 0
     movies.push(movie)
 
@@ -206,7 +206,7 @@ describe('TurboSessionDialog — UI', () => {
       3. assert the summary panel contains the expected text values for each label
     */
     // Arrange: ensure a matching movie exists
-    const movie = factories.someMovie({ title: 'Alien' })
+    const movie = someMovie({ title: 'Alien' })
     movies.length = 0
     movies.push(movie)
 
@@ -251,9 +251,9 @@ describe('TurboSessionDialog — UI', () => {
     */
 
     // Arrange the data
-    const m1 = factories.someMovie({ title: 'ABC' })
-    const m2 = factories.someMovie({ title: 'ABCDEF' })
-    const m3 = factories.someMovie({ title: 'ABCDEFGH' })
+    const m1 = someMovie({ title: 'ABC' })
+    const m2 = someMovie({ title: 'ABCDEF' })
+    const m3 = someMovie({ title: 'ABCDEFGH' })
     movies.length = 0
     movies.push(m1, m2, m3)
 
@@ -386,9 +386,9 @@ describe('TurboSessionDialog — Parser', () => {
     const exposed = exposePrivate(component);
 
     // Movies: none / single / many
-    const m1 = factories.someMovie({ id: 11, title: 'Star' });
-    const m2 = factories.someMovie({ id: 12, title: 'Star Wars' });
-    const m3 = factories.someMovie({ id: 13, title: 'Other' });
+    const m1 = someMovie({ id: 11, title: 'Star' });
+    const m2 = someMovie({ id: 12, title: 'Star Wars' });
+    const m3 = someMovie({ id: 13, title: 'Other' });
     const moviesArr = [m1, m2, m3];
 
     // keyers/labelers
@@ -430,9 +430,9 @@ describe('TurboSessionDialog — Parser', () => {
     const exposed = exposePrivate(component);
 
     // Movies fixtures
-    const ma = factories.someMovie({ id: 21, title: 'Alpha' });
-    const mb = factories.someMovie({ id: 22, title: 'AlphaBeta' });
-    const mc = factories.someMovie({ id: 23, title: 'Gamma' });
+    const ma = someMovie({ id: 21, title: 'Alpha' });
+    const mb = someMovie({ id: 22, title: 'AlphaBeta' });
+    const mc = someMovie({ id: 23, title: 'Gamma' });
     movies.length = 0
     movies.push(ma, mb, mc)
 
@@ -498,7 +498,7 @@ describe('TurboSessionDialog — Parser', () => {
 
     // prepare movies
     movies.length = 0
-    const mv = factories.someMovie({ title: 'Alien' })
+    const mv = someMovie({ title: 'Alien' })
     movies.push(mv)
 
     // token matching a movie
@@ -527,34 +527,148 @@ describe('TurboSessionDialog — Parser', () => {
     /*
       Goal of the test: validate prioritisation rules for `matchedFieldnames`.
 
-      Synopsis:
-      - given: tokenMatches objects with unique-field matches and with ambiguous matches
-      - when: calling `matchedFieldnames`
-      - then: if a field has exactly one candidate it is returned alone (plus null); otherwise all non-empty fields are returned (plus null)
-
-      Desired tests and assertions:
-      1. unique-field scenario -> returned array === [thatField, null]
-      2. ambiguous-fields scenario -> returned contains all non-empty fields and null
-      3. null is always present as a final option
+      We create synthetic TokenMatchCandidates objects to exercise two scenarios:
+      - unique-field: one field has exactly one candidate -> only that field + null returned
+      - ambiguous-fields: multiple fields have >1 candidates and none have exactly one -> all non-empty fields + null returned
     */
+
+    const exposed = exposePrivate(component);
+
+    // unique-field scenario: only 'movie' has exactly one candidate
+    const uniqueTokenMatches = {
+      token: 't1',
+      movie: [someMovie({ id: 101, title: 'X' })],
+      theater: [],
+      day: [],
+      time: []
+    } as any;
+
+    const uniqueResult = exposed.matchedFieldnames(uniqueTokenMatches);
+    expect(uniqueResult).toEqual(['movie', null]);
+
+    // ambiguous-fields scenario: movie and theater have multiple candidates, none has exactly one
+    const ambiguousTokenMatches = {
+      token: 't2',
+      movie: [someMovie({ title: 'A' }), someMovie({ title: 'B' })],
+      theater: [Theaters.CASINO, Theaters.PARADISO],
+      day: [],
+      time: []
+    } as any;
+
+    const ambResult = exposed.matchedFieldnames(ambiguousTokenMatches);
+    // should contain movie and theater (in FIELD_NAMES order) and always end with null
+    expect(ambResult).toContain('movie');
+    expect(ambResult).toContain('theater');
+    expect(ambResult[ambResult.length - 1]).toBeNull();
+  });
+
+  it('should compute the scode for a CandidatesAcumulator in various situations', async () => {
+    /*
+      Goal of the test: verify the scoring computation and comparisons used to pick best assignment.
+
+      Strategy:
+      - create accumulators via `pickBestAssignment([])` (returns an empty accumulator)
+      - use `addToField` to craft states with controlled map sizes
+      - assert `.score` counts and compare scores with `isBetterScore`
+    */
+
+    const exposed = exposePrivate(component);
+    const newAccumulator = () => exposed.pickBestAssignment([]);
+
+    // base accumulator with no matches
+    const acc = newAccumulator()
+    // total counts the number of candidate entries across all fields
+    expect(acc.score).toEqual({ ok: 0, missing: 4, ambiguous: 0, totalMatches: 0 });
+
+    // add a single ok field (movie)
+    acc.addToField('movie', [someMovie()]);
+    expect(acc.score).toEqual({ ok: 1, missing: 3, ambiguous: 0, totalMatches: 1 });
+
+    // add an ambiguous field (theater)
+    acc.addToField('theater', [Theaters.CASINO, Theaters.PARADISO]);
+    expect(acc.score).toEqual({ ok: 1, missing: 2, ambiguous: 1, totalMatches: 3 });
+
+    // add another ok field (day)
+    acc.addToField('day', [Days.WEDNESDAY]);
+    expect(acc.score).toEqual({ ok: 2, missing: 1, ambiguous: 1, totalMatches: 4 });
+
+
   });
 
   it('CandidatesAccumulator score getter and isBetterScore rules', async () => {
     /*
       Goal of the test: verify the scoring computation and comparisons used to pick best assignment.
 
-      Synopsis:
-      - given: several `CandidatesAccumulator` instances with controlled map sizes
-      - when: reading `.score` and comparing `AccumulatorScore` objects using `isBetterScore`
-      - then: scores reflect counts of ok/ambiguous/missing/total and `isBetterScore` orders them correctly
-
-      Desired tests and assertions:
-      1. a state with three ok fields and one missing -> score.ok === 3, score.missing === 1
-      2. compare two scores where one has more `ok` -> `isBetterScore` returns true
-      3. compare two scores same `ok` but different `missing` -> fewer missing is better
-      4. compare two scores same `ok` and `missing` but different `ambiguous` -> fewer ambiguous is better
-      5. tie on the above resolved by smaller `total`
+      Strategy:
+      - create accumulators via `pickBestAssignment([])` (returns an empty accumulator)
+      - use `addToField` to craft states with controlled map sizes
+      - assert `.score` counts and compare scores with `isBetterScore`
     */
+
+    const exposed = exposePrivate(component);
+    const newAccumulator = () => exposed.pickBestAssignment([]);
+
+    // base accumulators
+    const OK3 = newAccumulator()
+
+    ////// Testing precedence of the 'ok' count in the score (more ok is better) //////
+
+    // add movie, theater, day -> 3 ok, time missing
+    OK3.addToField('movie', [someMovie({ id: 301, title: 'M' })]);
+    OK3.addToField('theater', [Theaters.CASINO]);
+    OK3.addToField('day', [Days.FRIDAY]);
+
+    const O3score = OK3.score;
+    expect(O3score.ok).toBe(3);
+    expect(O3score.missing).toBe(1);
+
+    // Create another accumulator with fewer ok (2 ok)
+    const OK2 = newAccumulator()
+    OK2.addToField('movie', [someMovie({ id: 302, title: 'X' })]);
+    OK2.addToField('theater', [Theaters.CASINO]);
+
+    expect(exposed.isBetterScore(O3score, OK2.score)).toBe(true);
+
+    // Same ok but more missing -> worse
+    const c = newAccumulator()
+    c.addToField('movie', [someMovie({ id: 303, title: 'Y' })]);
+    c.addToField('theater', [Theaters.CASINO]);
+    c.addToField('day', [Days.FRIDAY]);
+
+    const d = newAccumulator()
+    d.addToField('movie', [someMovie({ id: 304, title: 'Z' })]);
+    // d has fewer ok (1), more missing -> c better than d
+    expect(exposed.isBetterScore(c.score, d.score)).toBe(true);
+
+    // Same ok & missing but different ambiguous -> fewer ambiguous is better
+    const e = newAccumulator()
+    e.addToField('movie', [someMovie({ id: 401 })]);
+    e.addToField('theater', [Theaters.CASINO]);
+    // make day ambiguous (2 entries)
+    e.addToField('day', [Days.FRIDAY, Days.SATURDAY]);
+
+    const f = newAccumulator()
+    f.addToField('movie', [someMovie({ id: 402 })]);
+    f.addToField('theater', [Theaters.CASINO]);
+    // day single (less ambiguous)
+    f.addToField('day', [Days.FRIDAY]);
+
+    expect(exposed.isBetterScore(f.score, e.score)).toBe(true);
+
+    // Tie resolved by smaller total
+    const g = newAccumulator()
+    g.addToField('movie', [someMovie({ id: 501 })]);
+    g.addToField('theater', [Theaters.CASINO]);
+    g.addToField('day', [Days.FRIDAY]);
+    // total = 3
+
+    const h = newAccumulator()
+    h.addToField('movie', [someMovie({ id: 502 })]);
+    h.addToField('theater', [Theaters.CASINO, Theaters.PARADISO]);
+    h.addToField('day', [Days.FRIDAY]);
+    // total = 4 (one ambiguous)
+
+    expect(exposed.isBetterScore(g.score, h.score)).toBe(true);
   });
 
 });
@@ -570,6 +684,9 @@ function exposePrivate(component: TurboSessionDialog) {
     parseTimeToken: (component as any).parseTimeToken.bind(component),
     matchTimeToken: (component as any).matchTimeToken.bind(component),
     matchToken: (component as any).matchToken.bind(component),
-    buildTokenMatchCandidates: (component as any).buildTokenMatchCandidates.bind(component)
+    buildTokenMatchCandidates: (component as any).buildTokenMatchCandidates.bind(component),
+    matchedFieldnames: (component as any).matchedFieldnames.bind(component),
+    pickBestAssignment: (component as any).pickBestAssignment.bind(component),
+    isBetterScore: (component as any).isBetterScore.bind(component)
   }
 }

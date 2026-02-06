@@ -450,7 +450,7 @@ export class TurboSessionDialog {
     if (candidate.ambiguous !== current.ambiguous) {
       return candidate.ambiguous < current.ambiguous;
     }
-    return candidate.total < current.total;
+    return candidate.totalMatches < current.totalMatches;
   }
 
 
@@ -528,10 +528,10 @@ interface AccumulatorScore {
   ok: number;
   ambiguous: number;
   missing: number;
-  total: number;
+  totalMatches: number;
 }
 
-const WORST_SCORE: AccumulatorScore = { ok: 0, ambiguous: 0, missing: FIELD_NAMES.length, total: 0 };
+const WORST_SCORE: AccumulatorScore = { ok: 0, ambiguous: 0, missing: FIELD_NAMES.length, totalMatches: 0 };
 
 /**
  * CandidatesAccumulator holds all candidate values for each field (movie, theater, day, time) 
@@ -598,15 +598,15 @@ class CandidatesAccumulator {
     let ok = 0;
     let ambiguous = 0;
     let missing = 0;
-    let total = 0;
+    let totalMatches = 0;
     for (const field of FIELD_NAMES) {
       const size = this[field].size;
       if (size === 0) missing++;
       if (size === 1) ok++;
       if (size > 1) ambiguous++;
-      total += size;
+      totalMatches += size;
     }
-    return { ok, ambiguous, missing, total };
+    return { ok, ambiguous, missing, totalMatches: totalMatches };
   }
 
 }
