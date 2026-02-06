@@ -16,6 +16,11 @@ import { EventRatings } from 'src/app/models/plannable.model';
 import { selectMovies } from 'src/app/ngrx/selectors/movie.selectors';
 import { PLANNABLE_EVENT_TIME_INTERVAL } from '../session-day-boundaries.model';
 
+/*
+ * Credits to Copilot for the initial implementation, generated from `specs/feat-turbosessioncreate.md`.
+ * Bugfixes, renaming for clarity and comments by me.
+ */
+
 
 const FIELD_NAMES: FieldName[] = ['movie', 'theater', 'day', 'time'];
 
