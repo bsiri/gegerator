@@ -346,21 +346,22 @@ export class TurboSessionDialog {
    * possibility of not using a token for any field a a mean to discard noisy (irrelevant)
    * tokens.
    * 
-   * @param candidatesList : all matches for each fields for a given token.
+   * @param tokenMatchesList : all matches for each fields for a given token.
    * @returns 
    */
-  private pickBestAssignment(candidatesList: TokenMatchCandidates[]): CandidateMaps {
-    let bestState = CandidateMaps.newEmpty();
-    let bestScore: CandidateScore = WORST_SCORE;
+  private pickBestAssignment(tokenMatchesList: TokenMatchCandidates[]): CandidatesAccumulator {
+    let bestState = CandidatesAccumulator.newEmpty();
+    let bestScore: AccumulatorScore = WORST_SCORE;
 
     /*
-    * The visit function recursively explores all combinations of token assignments.
-    * 
+    * The visit function recursively explores all combinations of token assignments, 
+    * accumulating candidates for each field in the current state. When all tokens have been processed,
+    * it scores the current state and updates the best state if the score is better than the current best score.
     */
-    const visit = (index: number, currentState: CandidateMaps) => {
+    const visit = (index: number, currentState: CandidatesAccumulator) => {
       // Termination condition: once all candidates have been processed, 
       // we score the current state and update the best state if necessary
-      if (index >= candidatesList.length) {
+      if (index >= tokenMatchesList.length) {
         const score = currentState.score;
         if (this.isBetterScore(score, bestScore)) {
           bestScore = score;
@@ -369,20 +370,23 @@ export class TurboSessionDialog {
         return;
       }
 
-      // Otherwise explore the next token's candidates and 
-      // explore all possible assignments from there.
-      const candidates = candidatesList[index];
-      const fieldnames = this.matchedFieldnames(candidates);
+      // Else, accumulate all matched fields for the current token and 
+      // recursively explore each possible assignment for the next token.
+      // Also explore the possibility of not assigning the token to any 
+      // field (null) to allow for noise reduction, see the "null" returned
+      // in matchedFieldnames().
+      const tokenMatches = tokenMatchesList[index];
+      const fieldnames = this.matchedFieldnames(tokenMatches);
       fieldnames.forEach(fieldname => {
         const nextState = currentState.clone();
         if (fieldname) {
-          nextState.addToField(fieldname, candidates[fieldname]);
+          nextState.addToField(fieldname, tokenMatches[fieldname]);
         }
         visit(index + 1, nextState);
       });
     };
 
-    visit(0, CandidateMaps.newEmpty());
+    visit(0, CandidatesAccumulator.newEmpty());
     return bestState;
   }
 
@@ -397,19 +401,18 @@ export class TurboSessionDialog {
    * of not assigning the token to any field, which can be important for finding the best overall assignment 
    * when some tokens are irrelevant or do not match well with any field (see pickBestAssignment).
    * 
-   * 
-   * @param candidates 
+   * @param tokenMatches 
    * @returns 
    */
-  private matchedFieldnames(candidates: TokenMatchCandidates): Array<FieldName | null> {
+  private matchedFieldnames(tokenMatches: TokenMatchCandidates): Array<FieldName | null> {
     let candidateFields: FieldName[] = [];    
-    const uniqueFields = FIELD_NAMES.filter(field => candidates[field].length === 1);
+    const uniqueFields = FIELD_NAMES.filter(field => tokenMatches[field].length === 1);
     if (uniqueFields.length > 0) {
       // exact matches
       candidateFields = uniqueFields;
     } else {
       // ambiguous matches
-      candidateFields = FIELD_NAMES.filter(field => candidates[field].length > 0);
+      candidateFields = FIELD_NAMES.filter(field => tokenMatches[field].length > 0);
     }
     return [...candidateFields, null];
   }
@@ -428,7 +431,7 @@ export class TurboSessionDialog {
    * @param current the current best score
    * @returns true if the candidate score is better than the current score, false otherwise
    */
-  private isBetterScore(candidate: CandidateScore, current: CandidateScore): boolean {
+  private isBetterScore(candidate: AccumulatorScore, current: AccumulatorScore): boolean {
     if (candidate.ok !== current.ok) {
       return candidate.ok > current.ok;
     }
@@ -512,16 +515,28 @@ interface TokenMatchCandidates {
   time: Time[];
 }
 
-interface CandidateScore {
+interface AccumulatorScore {
   ok: number;
   ambiguous: number;
   missing: number;
   total: number;
 }
 
-const WORST_SCORE: CandidateScore = { ok: 0, ambiguous: 0, missing: FIELD_NAMES.length, total: 0 };
+const WORST_SCORE: AccumulatorScore = { ok: 0, ambiguous: 0, missing: FIELD_NAMES.length, total: 0 };
 
-class CandidateMaps {
+/**
+ * CandidatesAccumulator holds all candidate values for each field (movie, theater, day, time) 
+ * during the best assignment search process.
+ *
+ * Impl note: we use `Map<string, T>` instead of Sets/arrays so we can
+ * - deduplicate candidates by a stable key (e.g. movie id, theater key, time string),
+ * - cheaply clone and merge maps during recursive search (`new Map(old)`),
+ * - get O(1) size/lookup and overwrite semantics via `set(key, value)`.
+ * 
+ * At the time of writing a Set would be fine as all objects have unique reference and unique content, 
+ * but the use of a Map enforce uniqueness by a key we can control.
+ */
+class CandidatesAccumulator {
   constructor(
     public movie: Map<string, Movie>,
     public theater: Map<string, Theater>,
@@ -529,12 +544,12 @@ class CandidateMaps {
     public time: Map<string, Time>
   ) {}
 
-  static newEmpty(): CandidateMaps {
-    return new CandidateMaps(new Map(), new Map(), new Map(), new Map());
+  static newEmpty(): CandidatesAccumulator {
+    return new CandidatesAccumulator(new Map(), new Map(), new Map(), new Map());
   }
 
-  clone(): CandidateMaps {
-    return new CandidateMaps(
+  clone(): CandidatesAccumulator {
+    return new CandidatesAccumulator(
       new Map(this.movie),
       new Map(this.theater),
       new Map(this.day),
@@ -570,7 +585,7 @@ class CandidateMaps {
    * @param state : the current candidate maps for movie, theater, day, and time
    * @returns : an object containing the counts of ok, ambiguous, missing, and total candidates across all fields
    */
-  get score(): CandidateScore {
+  get score(): AccumulatorScore {
     let ok = 0;
     let ambiguous = 0;
     let missing = 0;
@@ -584,4 +599,5 @@ class CandidateMaps {
     }
     return { ok, ambiguous, missing, total };
   }
+
 }
