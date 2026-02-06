@@ -15,10 +15,10 @@ import { Time } from 'src/app/models/time.model'
 import { defaultSession, defaultActivity, sessionBuilder, someSession } from 'src/_testhelpers/factories'
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model'
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model'
-import { of } from 'rxjs'
+import { of, Subject } from 'rxjs'
 import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors'
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors'
-import { PlannableEvent } from 'src/app/models/plannable.model'
+import { PlannableEvent, EventRatings } from 'src/app/models/plannable.model'
 import { By } from '@angular/platform-browser'
 import { PlannedMovieSessionComponent } from '../planned-movie-session/planned-movie-session.component'
 import { OtherActivityComponent } from '../other-activity/other-activity.component'
@@ -247,6 +247,52 @@ describe('SessionSectionComponent — Unit', () => {
         expect(dispatched.activity.id).toBe(newactivity.id)
         expect(dispatched.activity.day).toBe(newactivity.day)
         expect(dispatched.activity.startTime).toBe(newactivity.startTime)
+    })
+
+    it('openTurboSessionCreate opens TurboSessionDialog, and on created event dispatches create_session', async () => {
+        /*
+            Goal: verify openTurboSessionCreate flow: dialog open, on created event dispatch create_session
+
+            Synopsis:
+            - given: a MatDialog mock and a Store mock
+            - and: the dialog.componentInstance.created emits a session payload
+            - when: calling `openTurboSessionCreate()`
+            - then: Store.dispatch is called with `create_session` and a MovieSession built from the emitted session
+            
+            Desired assertions:
+            1. `MatDialog.open` called with `TurboSessionDialog`
+            2. `Store.dispatch` called with `create_session` and a MovieSession built from emitted session
+        */
+        // Arrange: prepare a MovieSession to be returned by the emitted object
+        const newSession = someSession()
+        const createSubject = new Subject<PlannedMovieSession>()
+        const closeSubject = new Subject<void>()
+
+        // mock dialog: componentInstance.created.subscribe(cb) will call cb(emitted)
+        mockMatDialog.open = vi.fn().mockReturnValue({
+            componentInstance: {
+                created: createSubject.asObservable()
+            },
+            afterClosed: () => closeSubject.asObservable()
+        })
+
+        // create component
+        fixture = TestBed.createComponent(SessionSectionComponent)
+        component = fixture.componentInstance
+
+        // Act
+        component.openTurboSessionCreate()
+
+        // Assert: dialog opened 
+        expect(mockMatDialog.open).toHaveBeenCalled()
+        // Assert: store.dispatch called with a MovieSession
+        createSubject.next(newSession) 
+        expect(mockStore.dispatch).toHaveBeenCalledTimes(1)
+        const dispatched = mockStore.dispatch.mock.calls[0][0]
+        expect(dispatched.session).toBeInstanceOf(MovieSession)
+        expect(dispatched.session).toEqual(newSession.toMovieSession())
+        // close the dialog for properly unsubscribing
+        closeSubject.next(undefined)
     })
 })
 
