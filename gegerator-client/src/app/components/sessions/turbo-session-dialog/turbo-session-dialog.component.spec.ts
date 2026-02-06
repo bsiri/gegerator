@@ -634,6 +634,251 @@ describe('TurboSessionDialog — Parser', () => {
 });
 
 
+describe('TurboSessionDialog — Parser Integration Tests', () => {
+
+  let fixture: ComponentFixture<TurboSessionDialog>
+  let component: TurboSessionDialog
+  // per-suite movies array to avoid mutating module-level shared fixtures
+  let movies: Movie[]
+
+  beforeEach(async () => {
+    movies = []
+    // Create a minimal TestBed to instantiate the component and call the private method
+    await TestBed.configureTestingModule({
+      imports: [TurboSessionDialog],
+      providers: [
+        { provide: Store, useValue: { selectSignal: vi.fn(() => signal<Movie[]>(movies)) } },
+        { provide: MatDialogRef, useValue: {} }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TurboSessionDialog);
+    component = fixture.componentInstance;
+  });
+
+  it('should parse a complex input and produce correct matches', async () => {
+    /*
+      Goal of the test: end-to-end test of the parsing logic by directly calling `parseInput` with a complex input string.
+
+      Strategy:
+      - prepare the movies array with known titles to match against
+      - call `parseInput` with a string containing tokens for movie, theater, day and time
+      - assert that the component state reflects the expected matches for each field
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const m1 = someMovie({ title: 'Alien' })
+    const m2 = someMovie({ title: 'Robert' })
+    movies.length = 0
+    movies.push(m1, m2)
+
+    // Act: call parseInput with a complex input string
+    const state = exposed.parseInput('Casino Vendredi 935 Alien', movies)
+    // Assert: state should reflect correct matches
+    expect(state.movie.candidates).toEqual([m1]) // should match 'Alien' only, not 'Robert'
+    expect(state.theater.candidates).toEqual([Theaters.CASINO])
+    expect(state.day.candidates).toEqual([Days.FRIDAY])
+    expect(state.time.candidates).toEqual([new Time(9,35)])
+
+    expect(state.movie.match).toBeDefined()
+    expect(state.theater.match).toBeDefined()
+    expect(state.day.match).toBeDefined()
+    expect(state.time.match).toBeDefined()
+  })
+
+  it('should work with partial matches', async () => {
+    /*
+      Goal of the test: ensure that partial inputs are correctly reflected in the state.
+
+      Strategy:
+      - prepare movies with similar titles to create ambiguity
+      - call `parseInput` with a token that matches multiple movies and verify the state reflects ambiguity
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const m1 = someMovie({ title: 'Alien' })
+    const m2 = someMovie({ title: 'Robert' })
+    movies.length = 0
+    movies.push(m1, m2)
+
+    // Act: call parseInput with a complex input string
+    const state = exposed.parseInput('casi ven 935 ali', movies)
+    // Assert: state should reflect correct matches
+    expect(state.movie.candidates).toEqual([m1]) // should match 'Alien' only, not 'Robert'
+    expect(state.theater.candidates).toEqual([Theaters.CASINO])
+    expect(state.day.candidates).toEqual([Days.FRIDAY])
+    expect(state.time.candidates).toEqual([new Time(9,35)])
+
+    expect(state.movie.match).toBeDefined()
+    expect(state.theater.match).toBeDefined()
+    expect(state.day.match).toBeDefined()
+    expect(state.time.match).toBeDefined()
+
+  });
+
+  it('should work in any order', async () => {
+    /*
+      Goal of the test: verify that the parser can handle tokens in any order and still produce correct matches.
+
+      Strategy:
+      - prepare movies and referential data
+      - call `parseInput` with tokens in a different order (e.g., time first, then movie, then theater, then day)
+      - assert that the state still reflects correct matches for each field
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const m1 = someMovie({ title: 'Alien' })
+    const m2 = someMovie({ title: 'Robert' })
+    movies.length = 0
+    movies.push(m1, m2)
+
+    // Act: call parseInput with tokens in a different order
+    const state = exposed.parseInput('935 alie cas ven', movies)
+    // Assert: state should reflect correct matches regardless of token order
+    expect(state.movie.candidates).toEqual([m1]) // should match 'Alien' only, not 'Robert'
+    expect(state.theater.candidates).toEqual([Theaters.CASINO])
+    expect(state.day.candidates).toEqual([Days.FRIDAY])
+    expect(state.time.candidates).toEqual([new Time(9,35)])
+
+    expect(state.movie.match).toBeDefined()
+    expect(state.theater.match).toBeDefined()
+    expect(state.day.match).toBeDefined()
+    expect(state.time.match).toBeDefined()
+  });
+
+  it('should be able to lift ambiguities across fields by assigning adequate tokens to each (1)', async() => {
+    /*
+      Goal: if a token is a better match for a field B, do not use it for the field A.
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const paradise = someMovie({ title: 'Paradise' })
+    const alien = someMovie({ title: 'Alien'})
+    movies.length = 0
+    movies.push(paradise, alien)
+
+    // Act: call parseInput with twice the same token but with different interpretation
+    const state = exposed.parseInput('ali par', movies)
+    // Assert:  "ali" matches "Alien" and "par" matches Theaters.PARADISO
+    expect(state.movie.candidates).toEqual([alien]) 
+    expect(state.theater.candidates).toEqual([Theaters.PARADISO])
+  })
+
+  it('should be able to lift ambiguities across fields by assigning adequate tokens to each (2)', async() => {
+    /*
+      Goal: input "par par" should allow to match ambiguities across fields like 
+      movie = "Paradise" and Theater = "Paradiso"
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const m1 = someMovie({ title: 'Paradise' })
+    movies.length = 0
+    movies.push(m1)
+
+    // Act: call parseInput with twice the same token but with different interpretation
+    const state = exposed.parseInput('par par', movies)
+    // Assert: tokens correctly assigned
+    expect(state.movie.candidates).toEqual([m1]) 
+    expect(state.theater.candidates).toEqual([Theaters.PARADISO])
+
+  })
+
+  it('should be able to match movies with spaces by ommiting them in the input', async() =>{
+    /*
+      Goal: lift ambiguitites and match a particular movies by just putting all the characters
+      without spaces
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const reduxredux = someMovie({ title: 'Redux Redux' })
+    const redstorm = someMovie({ title: 'Red Storm' })
+    movies.length = 0
+    movies.push(reduxredux, redstorm)
+
+    // Assert that when spaces are ignored we can obtain a single match
+    const state = exposed.parseInput('redst', movies)
+    expect(state.movie.candidates).toEqual([redstorm]) 
+  })
+
+  it('state should not show a field as green if no exact match was possible', async() => {
+    /*
+      Goal: check that the 'match' attribute of the state remains undefined if no match has 
+      been found.
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const reduxredux = someMovie({ title: 'Redux Redux' })
+    const redstorm = someMovie({ title: 'Red Storm' })
+    movies.length = 0
+    movies.push(reduxredux, redstorm)
+
+    // movie and day are matched, input and theater are not
+    const state = exposed.parseInput('redst ven', movies)
+    expect(state.movie.match).toBeDefined()
+    expect(state.day.match).toBeDefined()
+    expect(state.theater.match).toBeUndefined()
+    expect(state.time.match).toBeUndefined()
+  })
+
+  it('should ignore bogus entries', async() => {
+    /*
+      Goal: test that tokens that match nothing do not pollute the state
+      somehow
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const alien = someMovie({ title: 'Alien' })
+    movies.length = 0
+    movies.push(alien)
+
+    // movie and day are matched, input and theater are not
+    const state = exposed.parseInput('ali casi 800 ven trololo bogus data', movies)
+    expect(state.movie.match).toBeDefined()
+    expect(state.day.match).toBeDefined()
+    expect(state.theater.match).toBeDefined()
+    expect(state.time.match).toBeDefined()
+  })
+
+  it('should report matches, missing, and ambiguities', async() => {
+    /*
+      A situation with ambiguous matches, single matches and no matches
+    */
+    const exposed = exposePrivate(component);
+
+    // Arrange: prepare movies
+    const reduxredux = someMovie({ title: 'Redux Redux' })
+    const redstorm = someMovie({ title: 'Red Storm' })
+    movies.length = 0
+    movies.push(reduxredux, redstorm)
+
+    // movie is ambiguous, day is matched, rest is missing
+    const state = exposed.parseInput('red ven', movies)
+    expect(state.movie.candidates).toEqual([reduxredux, redstorm])
+    expect(state.movie.match).toBeUndefined()
+
+    expect(state.day.candidates).toEqual([Days.FRIDAY])
+    expect(state.day.match).toBeDefined()
+
+    expect(state.time.candidates).toEqual([])
+    expect(state.time.match).toBeUndefined()
+
+    expect(state.theater.candidates).toEqual([])
+    expect(state.theater.match).toBeUndefined()
+  })
+
+});
+
+
+
 // Sample fixtures and factories for tests (placeholders).
 // Use the project's entity factory helpers (`_testhelpers/factories.ts`) when implementing tests.
 
@@ -647,6 +892,7 @@ function exposePrivate(component: TurboSessionDialog) {
     buildTokenMatchCandidates: (component as any).buildTokenMatchCandidates.bind(component),
     matchedFieldnames: (component as any).matchedFieldnames.bind(component),
     pickBestAssignment: (component as any).pickBestAssignment.bind(component),
-    isBetterScore: (component as any).isBetterScore.bind(component)
+    isBetterScore: (component as any).isBetterScore.bind(component),
+    parseInput: (component as any).parseInput.bind(component)
   }
 }
