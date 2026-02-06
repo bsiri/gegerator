@@ -284,8 +284,25 @@ describe('TurboSessionDialog — UI', () => {
 
 
 describe('TurboSessionDialog — Parser', () => {
-  beforeEach(() => {
-    // synchronous setup placeholder for parser-focused unit tests
+  let fixture: ComponentFixture<TurboSessionDialog>
+  let component: TurboSessionDialog
+  // per-suite movies array to avoid mutating module-level shared fixtures
+  let movies: Movie[]
+
+  beforeEach(async () => {
+    movies = []
+    // Create a minimal TestBed to instantiate the component and call the private method
+    await TestBed.configureTestingModule({
+      imports: [TurboSessionDialog],
+      providers: [
+        { provide: Store, useValue: { selectSignal: vi.fn(() => signal<Movie[]>(movies)) } },
+        { provide: MatDialogRef, useValue: {} }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TurboSessionDialog);
+    component = fixture.componentInstance;
   });
 
   it('tokenize: should split input into tokens and handle empty input', async () => {
@@ -302,6 +319,18 @@ describe('TurboSessionDialog — Parser', () => {
       2. 'a,b   c' -> ['a','b','c']
       3. leading/trailing spaces are trimmed
     */
+
+    const exposed = exposePrivate(component);
+
+    // Empty input -> []
+    expect(exposed.tokenize('')).toEqual([]);
+
+    // Comma and whitespace splitting
+    expect(exposed.tokenize('a,b   c')).toEqual(['a', 'b', 'c']);
+
+    // Leading/trailing spaces trimmed and empty tokens removed
+    expect(exposed.tokenize('  foo  ')).toEqual(['foo']);
+    expect(exposed.tokenize(' , , ')).toEqual([]);
   });
 
   it('parseTimeToken: should parse various time formats and reject invalid ones', async () => {
@@ -412,3 +441,9 @@ describe('TurboSessionDialog — Parser', () => {
 // Sample fixtures and factories for tests (placeholders).
 // Use the project's entity factory helpers (`_testhelpers/factories.ts`) when implementing tests.
 
+
+function exposePrivate(component: TurboSessionDialog) {
+    return {
+        tokenize: (component as any).tokenize.bind(component)
+    }
+}
