@@ -43,17 +43,21 @@ const FIELD_NAMES: FieldName[] = ['movie', 'theater', 'day', 'time'];
   ]
 })
 export class TurboSessionDialog {
+  // inputs
   dialogRef = inject<MatDialogRef<TurboSessionDialog>>(MatDialogRef);
   private store = inject(Store);
   private destroyRef = inject(DestroyRef);
-
   $availableMovies: Signal<readonly Movie[]> = this.store.selectSignal(selectMovies);
-  inputControl = new UntypedFormControl('', [Validators.required]);
+
+  // outputs
   created = new Subject<PlannedMovieSession>();
 
+  // internal state
+  inputControl = new UntypedFormControl('', [Validators.required]);
   private inputValue = signal('');
   private state = signal<TurboParseState>(this.emptyState(''));
 
+  // bootstrap
   constructor() {
     this.inputControl.valueChanges
       .pipe(startWith(this.inputControl.value ?? ''), takeUntilDestroyed(this.destroyRef))
