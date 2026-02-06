@@ -342,42 +342,47 @@ export class TurboSessionDialog {
   /**
    * Given the candidate matches for each token, this function explores 
    * all possible combinations of token assignments to fields (movie, theater, day, time) 
-   * and scores them to find the best overall assignment.
+   * and scores them to find the best overall assignment. The algorithm also explore the 
+   * possibility of not using a token for any field a a mean to discard noisy (irrelevant)
+   * tokens.
    * 
    * @param candidatesList : all matches for each fields for a given token.
    * @returns 
    */
   private pickBestAssignment(candidatesList: TokenMatchCandidates[]): CandidateMaps {
-    const empty = this.emptyCandidateMaps();
-    let bestState = this.cloneCandidateMaps(empty);
-    let bestScore: CandidateScore | null = null;
+    let bestState = CandidateMaps.newEmpty();
+    let bestScore: CandidateScore = WORST_SCORE;
 
     /*
     * The visit function recursively explores all combinations of token assignments.
     * 
     */
-    const visit = (index: number, state: CandidateMaps) => {
+    const visit = (index: number, currentState: CandidateMaps) => {
+      // Termination condition: once all candidates have been processed, 
+      // we score the current state and update the best state if necessary
       if (index >= candidatesList.length) {
-        const score = this.scoreState(state);
-        if (!bestScore || this.isBetterScore(score, bestScore)) {
+        const score = currentState.score;
+        if (this.isBetterScore(score, bestScore)) {
           bestScore = score;
-          bestState = this.cloneCandidateMaps(state);
+          bestState = currentState.clone();
         }
         return;
       }
 
+      // Otherwise explore the next token's candidates and 
+      // explore all possible assignments from there.
       const candidates = candidatesList[index];
       const fieldnames = this.matchedFieldnames(candidates);
       fieldnames.forEach(fieldname => {
-        const nextState = this.cloneCandidateMaps(state);
+        const nextState = currentState.clone();
         if (fieldname) {
-          this.addCandidates(nextState, fieldname, candidates[fieldname]);
+          nextState.addToField(fieldname, candidates[fieldname]);
         }
         visit(index + 1, nextState);
       });
     };
 
-    visit(0, empty);
+    visit(0, CandidateMaps.newEmpty());
     return bestState;
   }
 
@@ -409,48 +414,6 @@ export class TurboSessionDialog {
     return [...candidateFields, null];
   }
 
-  private addCandidates(state: CandidateMaps, field: FieldName, candidates: unknown[]): void {
-    switch (field) {
-      case 'movie':
-        this.addToMap(state.movie, candidates as Movie[], movie => String(movie.id));
-        break;
-      case 'theater':
-        this.addToMap(state.theater, candidates as Theater[], theater => theater.key);
-        break;
-      case 'day':
-        this.addToMap(state.day, candidates as Day[], day => day.key);
-        break;
-      case 'time':
-        this.addToMap(state.time, candidates as Time[], time => Times.toString(time));
-        break;
-    }
-  }
-
-  private addToMap<T>(map: Map<string, T>, candidates: T[], keyer: (item: T) => string): void {
-    candidates.forEach(candidate => map.set(keyer(candidate), candidate));
-  }
-
-  /**
-   * Scores the current state of candidate maps by counting how many fields are correctly matched,
-   * how many are ambiguous, how many are missing, and the total number of candidates.
-   * 
-   * @param state : the current candidate maps for movie, theater, day, and time
-   * @returns : an object containing the counts of ok, ambiguous, missing, and total candidates across all fields
-   */
-  private scoreState(state: CandidateMaps): CandidateScore {
-    let ok = 0;
-    let ambiguous = 0;
-    let missing = 0;
-    let total = 0;
-    for (const field of FIELD_NAMES) {
-      const size = state[field].size;
-      if (size === 0) missing++;
-      if (size === 1) ok++;
-      if (size > 1) ambiguous++;
-      total += size;
-    }
-    return { ok, ambiguous, missing, total };
-  }
 
   /**
    * Determines if the candidate score is better than the current best score. 
@@ -487,24 +450,6 @@ export class TurboSessionDialog {
     return {
       candidates,
       match: candidates.length === 1 ? candidates[0] : undefined
-    };
-  }
-
-  private emptyCandidateMaps(): CandidateMaps {
-    return {
-      movie: new Map(),
-      theater: new Map(),
-      day: new Map(),
-      time: new Map()
-    };
-  }
-
-  private cloneCandidateMaps(state: CandidateMaps): CandidateMaps {
-    return {
-      movie: new Map(state.movie),
-      theater: new Map(state.theater),
-      day: new Map(state.day),
-      time: new Map(state.time)
     };
   }
 
@@ -567,16 +512,76 @@ interface TokenMatchCandidates {
   time: Time[];
 }
 
-interface CandidateMaps {
-  movie: Map<string, Movie>;
-  theater: Map<string, Theater>;
-  day: Map<string, Day>;
-  time: Map<string, Time>;
-}
-
 interface CandidateScore {
   ok: number;
   ambiguous: number;
   missing: number;
   total: number;
+}
+
+const WORST_SCORE: CandidateScore = { ok: 0, ambiguous: 0, missing: FIELD_NAMES.length, total: 0 };
+
+class CandidateMaps {
+  constructor(
+    public movie: Map<string, Movie>,
+    public theater: Map<string, Theater>,
+    public day: Map<string, Day>,
+    public time: Map<string, Time>
+  ) {}
+
+  static newEmpty(): CandidateMaps {
+    return new CandidateMaps(new Map(), new Map(), new Map(), new Map());
+  }
+
+  clone(): CandidateMaps {
+    return new CandidateMaps(
+      new Map(this.movie),
+      new Map(this.theater),
+      new Map(this.day),
+      new Map(this.time)
+    );
+  }
+  
+  addToField(field: FieldName, candidates: unknown[]): void {
+    switch (field) {
+      case 'movie':
+        const movieCandidates = candidates as Movie[];
+        movieCandidates.forEach(movie => this.movie.set(String(movie.id), movie));
+        break;
+      case 'theater':
+        const theaterCandidates = candidates as Theater[];
+        theaterCandidates.forEach(theater => this.theater.set(theater.key, theater));
+        break;
+      case 'day':
+        const dayCandidates = candidates as Day[];
+        dayCandidates.forEach(day => this.day.set(day.key, day));
+        break;
+      case 'time':
+        const timeCandidates = candidates as Time[];
+        timeCandidates.forEach(time => this.time.set(Times.toString(time), time));
+        break;
+    }
+  }
+
+  /**
+   * Scores the current state of candidate maps by counting how many fields are correctly matched,
+   * how many are ambiguous, how many are missing, and the total number of candidates.
+   * 
+   * @param state : the current candidate maps for movie, theater, day, and time
+   * @returns : an object containing the counts of ok, ambiguous, missing, and total candidates across all fields
+   */
+  get score(): CandidateScore {
+    let ok = 0;
+    let ambiguous = 0;
+    let missing = 0;
+    let total = 0;
+    for (const field of FIELD_NAMES) {
+      const size = this[field].size;
+      if (size === 0) missing++;
+      if (size === 1) ok++;
+      if (size > 1) ambiguous++;
+      total += size;
+    }
+    return { ok, ambiguous, missing, total };
+  }
 }
