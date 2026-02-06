@@ -379,11 +379,10 @@ export class TurboSessionDialog {
         return;
       }
 
-      // Else, accumulate all matched fields for the current token and 
-      // recursively explore each possible assignment for the next token.
-      // Also explore the possibility of not assigning the token to any 
-      // field (null) to allow for noise reduction, see the "null" returned
-      // in matchedFieldnames().
+      // Else, test each possible assignment for the current token.
+      // The token is tested against each field (assignation), and for each field 
+      // that has matching candidates, we create a new state with those candidates 
+      // added to the field and continue the exploration recursively.
       const tokenMatches = tokenMatchesList[index];
       const fieldnames = this.matchedFieldnames(tokenMatches);
       fieldnames.forEach(fieldname => {
