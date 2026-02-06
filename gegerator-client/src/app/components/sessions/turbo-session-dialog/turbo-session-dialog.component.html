@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Turbo creation de session</h1>
 
 <div mat-dialog-content>
-  <mat-form-field appearance="fill" class="turbo-input-field">
+  <mat-form-field appearance="fill" class="turbo-input-field testid-tsd-input">
     <mat-label>Saisie rapide</mat-label>
     <input matInput [formControl]="inputControl" (keyup.enter)="confirm()">
     <mat-hint>Ex: "casino vendredi 935 alien"</mat-hint>
@@ -15,7 +15,7 @@
       <div class="turbo-summary-row">
         <span class="turbo-summary-label">Film :</span>
         <span
-          class="turbo-summary-value"
+          class="turbo-summary-value testid-tsd-movie"
           [class.is-ok]="movieStatus === 'ok'"
           [class.is-missing]="movieStatus === 'missing'"
           [class.is-ambiguous]="movieStatus === 'ambiguous'">
@@ -25,7 +25,7 @@
       <div class="turbo-summary-row">
         <span class="turbo-summary-label">Cinema :</span>
         <span
-          class="turbo-summary-value"
+          class="turbo-summary-value testid-tsd-theater"
           [class.is-ok]="theaterStatus === 'ok'"
           [class.is-missing]="theaterStatus === 'missing'"
           [class.is-ambiguous]="theaterStatus === 'ambiguous'">
@@ -35,7 +35,7 @@
       <div class="turbo-summary-row">
         <span class="turbo-summary-label">Jour :</span>
         <span
-          class="turbo-summary-value"
+          class="turbo-summary-value testid-tsd-day"
           [class.is-ok]="dayStatus === 'ok'"
           [class.is-missing]="dayStatus === 'missing'"
           [class.is-ambiguous]="dayStatus === 'ambiguous'">
@@ -45,7 +45,7 @@
       <div class="turbo-summary-row">
         <span class="turbo-summary-label">Heure :</span>
         <span
-          class="turbo-summary-value"
+          class="turbo-summary-value testid-tsd-time"
           [class.is-ok]="timeStatus === 'ok'"
           [class.is-missing]="timeStatus === 'missing'"
           [class.is-ambiguous]="timeStatus === 'ambiguous'">

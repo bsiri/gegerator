@@ -1,17 +1,54 @@
-import { describe, it, beforeEach } from 'vitest';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TurboSessionDialog } from './turbo-session-dialog.component';
+import * as factories from 'src/_testhelpers/factories'
 import { Movie } from 'src/app/models/movie.model';
-import { Theater, Day } from 'src/app/models/referential.data';
+import { Theater, Day, Theaters, Days } from 'src/app/models/referential.data';
 import { Time } from 'src/app/models/time.model';
 import { PlannedMovieSession } from 'src/app/models/session.model';
+import { Store } from '@ngrx/store';
+import { MatDialogRef } from '@angular/material/dialog';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { harnessHelper } from 'src/_testhelpers/harnesshelper';
 
 // Note: these tests are skeletons only. Each `it` is async (except `beforeEach`) and
 // contains a descriptive block comment explaining the goal, setup, actions and assertions.
 
 describe('TurboSessionDialog — UI', () => {
-  beforeEach(() => {
-    // synchronous setup placeholder: will initialise the testing module / component fixture
-  });
+  // Shared fixtures / mocks for UI tests
+  let fixture: ComponentFixture<TurboSessionDialog>
+  let component: TurboSessionDialog
+  let mockStore: any
+  let mockDialogRef: any
+  let loader: HarnessLoader
+  // per-suite movies array to avoid mutating module-level shared fixtures
+  let movies: Movie[]
+
+  beforeEach(async () => {
+    // baseline mocks
+    mockDialogRef = { close: vi.fn() }
+    movies = []
+    mockStore = {
+      dispatch: vi.fn(),
+      // selectSignal returns a signal over the per-suite movies array
+      selectSignal: vi.fn(() => signal<Movie[]>(movies))
+    }
+
+    await TestBed.configureTestingModule({
+      imports: [TurboSessionDialog],
+      providers: [
+        { provide: Store, useValue: mockStore },
+        { provide: MatDialogRef, useValue: mockDialogRef }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents()
+
+    fixture = TestBed.createComponent(TurboSessionDialog)
+    component = fixture.componentInstance
+    loader = TestbedHarnessEnvironment.loader(fixture)
+  })
 
   it('should create the component and initial state', async () => {
     /*
@@ -27,6 +64,19 @@ describe('TurboSessionDialog — UI', () => {
       2. `component.canSubmit` is false
       3. submit button element has `disabled` attribute (UI assertion)
     */
+    // implementation: assertions below
+    const helper = harnessHelper(loader)
+    expect(component).toBeTruthy()
+
+    // wait for Angular change detection and any effects to stabilise
+    await fixture.whenStable()
+
+    // logical assertion
+    expect(component.canSubmit).toBe(false)
+
+    // template assertion: submit button is disabled
+    const submitBtn = await helper.button('tsd-submit')
+    expect(await submitBtn.isDisabled()).toBe(true)
   });
 
   it('should enable submit when parsed input is fully matched', async () => {
@@ -43,6 +93,22 @@ describe('TurboSessionDialog — UI', () => {
       2. assert `component.canSubmit` is true
       3. assert the submit button element is enabled
     */
+    // Arrange: add a movie that will match the token 'alien'
+    const movie = factories.someMovie({ title: 'Alien' })
+    movies.length = 0
+    movies.push(movie)
+
+    // Act: set the form control value which triggers the parser subscription
+    component.inputControl.setValue('Casino Vendredi 935 Alien')
+    // wait for the form control and parser to stabilise
+    await fixture.whenStable()
+
+    // Assert: component logic and template
+    expect(component.canSubmit).toBe(true)
+    const helper = harnessHelper(loader)
+    const submitBtn = await helper.button('tsd-submit')
+    expect(submitBtn).toBeTruthy()
+    expect(await submitBtn.isDisabled()).toBe(false)
   });
 
   it('should emit `created` and reset input on confirm', async () => {
@@ -61,6 +127,37 @@ describe('TurboSessionDialog — UI', () => {
       3. assert the emitted value is an instance of `PlannedMovieSession` with expected fields
       4. assert the `inputControl` value is reset/empty
     */
+    // Arrange: create a matching movie and populate per-suite movies
+    const movie = factories.someMovie({ title: 'Alien' })
+    movies.length = 0
+    movies.push(movie)
+
+    // prepare the input so the parser will produce a full match
+    component.inputControl.setValue('Casino Vendredi 935 Alien')
+    await fixture.whenStable()
+
+    // subscribe to the output
+    let emitted: PlannedMovieSession | undefined = undefined
+    component.created.subscribe(v => emitted = v)
+
+    // Act: click the submit button
+    const helper = harnessHelper(loader)
+    const submitBtn = await helper.button('tsd-submit')
+    await submitBtn.click()
+    await fixture.whenStable()
+
+    // Assert: emission happened and contains expected values
+    expect(emitted).toBeTruthy()
+    // movie instance should be the same object pushed into movies
+    expect(emitted!.movie).toBe(movie)
+    expect(emitted!.theater).toBe(Theaters.CASINO)
+    expect(emitted!.day).toBe(Days.FRIDAY)
+    expect(emitted!.startTime).toEqual(new Time(9,35))
+
+    // input control must be reset to empty string
+    expect(component.inputControl.value).toBe('')
+    expect(component.canSubmit).toBe(false) // also back to non-submittable state
+    expect(await submitBtn.isDisabled()).toBe(true) // submit button disabled again
   });
 
   it('should call dialogRef.close() on close', async () => {
@@ -250,14 +347,4 @@ describe('TurboSessionDialog — Parser', () => {
 
 // Sample fixtures and factories for tests (placeholders).
 // Use the project's entity factory helpers (`_testhelpers/factories.ts`) when implementing tests.
-const SAMPLE_MOVIES: Movie[] = []; // fill using entity factory in real tests
-const SAMPLE_THEATERS: Theater[] = []; // fill using referential helpers
-const SAMPLE_DAYS: Day[] = [];
-const SAMPLE_TIMES: Time[] = [];
 
-export {
-  SAMPLE_MOVIES,
-  SAMPLE_THEATERS,
-  SAMPLE_DAYS,
-  SAMPLE_TIMES
-};
