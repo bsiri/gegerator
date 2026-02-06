@@ -249,6 +249,36 @@ describe('TurboSessionDialog — UI', () => {
       3. set state with multiple movie candidates: assert `movieStatus === 'ambiguous'` and `movieLabel` starts with 'Ambigu:'
       4. test label truncation for `movieLabel` when many candidates exist (only first two shown)
     */
+
+    // Arrange the data
+    const m1 = factories.someMovie({ title: 'ABC' })
+    const m2 = factories.someMovie({ title: 'ABCDEF' })
+    const m3 = factories.someMovie({ title: 'ABCDEFGH' })
+    movies.length = 0
+    movies.push(m1, m2, m3)
+
+    // Now simulate user input: should match Friday (vendredi), ambiguity on the movies, and 
+    // nothing for the rest.
+    const helper = harnessHelper(loader)
+    const inputField = await helper.text('tsd-input input')
+    await inputField.setValue("ven abc")
+    await fixture.whenStable()
+
+    // Day ok
+    expect(component.dayStatus).toBe('ok')
+    expect(component.dayLabel).toBe('Vendredi')
+
+    // Theater missing
+    expect(component.theaterStatus).toBe('missing')
+    expect(component.theaterLabel).toBe('Manquant')
+
+    // Movie ambiguous and truncation
+    expect(component.movieStatus).toBe('ambiguous')
+    const ml = component.movieLabel
+    expect(ml.startsWith('Ambigu:')).toBe(true)
+    expect(ml).toContain('ABC')
+    expect(ml).toContain('ABCDEF')
+    expect(ml).not.toContain('ABCDEFGH')
   });
 });
 
