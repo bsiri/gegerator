@@ -350,22 +350,73 @@ describe('TurboSessionDialog — Parser', () => {
       5. invalids ('14h3','25','9999','abc') -> null
       6. times outside `PLANNABLE_EVENT_TIME_INTERVAL` -> null
     */
+    const exposed = exposePrivate(component);
+
+    // Valid formats
+    expect(exposed.parseTimeToken('14h30')).toEqual(new Time(14,30));
+    expect(exposed.parseTimeToken('1430')).toEqual(new Time(14,30));
+    expect(exposed.parseTimeToken('905')).toEqual(new Time(9,5));
+    expect(exposed.parseTimeToken('11')).toEqual(new Time(11,0));
+
+    // Invalid formats
+    expect(exposed.parseTimeToken('14h3')).toBeNull();
+    expect(exposed.parseTimeToken('25')).toBeNull();
+    expect(exposed.parseTimeToken('9999')).toBeNull();
+    expect(exposed.parseTimeToken('abc')).toBeNull();
+
+    // matchTimeToken enforces PLANNABLE_EVENT_TIME_INTERVAL
+    // a valid parse but out of plannable interval should return []
+    expect(exposed.parseTimeToken('03h00')).toEqual(new Time(3,0));
+    expect(exposed.matchTimeToken('03h00')).toEqual([]);
+
+    // and a valid in-range time returns a single-element array
+    expect(exposed.matchTimeToken('09h05')).toEqual([new Time(9,5)]);
   });
 
   it('matchToken: should return correct candidate lists (none, single, many)', async () => {
     /*
       Goal of the test: verify matching against candidate lists using the provided labeler/keyer.
 
-      Synopsis:
-      - given: small arrays of mock candidates (movies/theaters/days) with known labels/keys
-      - when: call `matchToken` with tokens matching zero, one or multiple candidates
-      - then: result arrays reflect the expected matches and deduplication
-
-      Desired tests and assertions:
-      1. token that matches nothing -> []
-      2. token that matches exactly one candidate -> [candidate]
-      3. token that matches multiple candidates -> array of all unique candidates
+      We exercise three categories (movies, theaters, days) and for each ensure:
+      - token matching nothing -> []
+      - token matching a single candidate -> [candidate]
+      - token matching multiple candidates -> array of matching unique candidates
     */
+
+    const exposed = exposePrivate(component);
+
+    // Movies: none / single / many
+    const m1 = factories.someMovie({ id: 11, title: 'Star' });
+    const m2 = factories.someMovie({ id: 12, title: 'Star Wars' });
+    const m3 = factories.someMovie({ id: 13, title: 'Other' });
+    const moviesArr = [m1, m2, m3];
+
+    // keyers/labelers
+    const keyerMovie = (m: Movie) => String(m.id);
+    const labelerMovie = (m: Movie) => m.title;
+    const keyerTheater = (t: Theater) => t.key;
+    const labelerTheater = (t: Theater) => t.name;
+    const keyerDay = (d: Day) => d.key;
+    const labelerDay = (d: Day) => d.name;
+
+    expect(exposed.matchToken('zzz', moviesArr, labelerMovie, keyerMovie)).toEqual([]);
+    expect(exposed.matchToken('star', moviesArr, labelerMovie, keyerMovie)).toEqual([m1, m2]);
+
+    // Theaters: none / single / many
+    const theaters = Theaters.enumerate();
+    expect(exposed.matchToken('zzz', theaters, labelerTheater, keyerTheater)).toEqual([]);
+    expect(exposed.matchToken('cas', theaters, labelerTheater, keyerTheater)).toEqual([Theaters.CASINO]);
+    // token 'a' should match multiple theaters (Espace Lac, Casino, Paradiso)
+    const thMatches = exposed.matchToken('a', theaters, labelerTheater, keyerTheater);
+    expect(thMatches.length).toBeGreaterThan(1);
+
+    // Days: none / single / many
+    const days = Days.enumerate();
+    expect(exposed.matchToken('zzz', days, labelerDay, keyerDay)).toEqual([]);
+    expect(exposed.matchToken('vend', days, labelerDay, keyerDay)).toEqual([Days.FRIDAY]);
+    // token 'e' should match multiple day names (Mercredi, Jeudi, Vendredi, ...)
+    const dayMatches = exposed.matchToken('e', days, labelerDay, keyerDay);
+    expect(dayMatches.length).toBeGreaterThan(1);
   });
 
   it('per-field matching: each field should handle no match / single match / ambiguous', async () => {
@@ -443,7 +494,10 @@ describe('TurboSessionDialog — Parser', () => {
 
 
 function exposePrivate(component: TurboSessionDialog) {
-    return {
-        tokenize: (component as any).tokenize.bind(component)
-    }
+  return {
+    tokenize: (component as any).tokenize.bind(component),
+    parseTimeToken: (component as any).parseTimeToken.bind(component),
+    matchTimeToken: (component as any).matchTimeToken.bind(component),
+    matchToken: (component as any).matchToken.bind(component)
+  }
 }
