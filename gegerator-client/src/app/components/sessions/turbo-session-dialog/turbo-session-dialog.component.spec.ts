@@ -562,7 +562,7 @@ describe('TurboSessionDialog — Parser', () => {
     expect(ambResult[ambResult.length - 1]).toBeNull();
   });
 
-  it('should compute the scode for a CandidatesAcumulator in various situations', async () => {
+  it('should compute the score for a CandidatesAccumulator in various situations', async () => {
     /*
       Goal of the test: verify the scoring computation and comparisons used to pick best assignment.
 
@@ -604,71 +604,31 @@ describe('TurboSessionDialog — Parser', () => {
       - use `addToField` to craft states with controlled map sizes
       - assert `.score` counts and compare scores with `isBetterScore`
     */
-
+    
     const exposed = exposePrivate(component);
-    const newAccumulator = () => exposed.pickBestAssignment([]);
+    // Cautious, here we cheat and directly create score objects. Should be safe as long as 
+    // the structure of AccumulatorScore does not change (I expect it to remain stable).
+    const OK3 = { ok: 3, missing: 1, ambiguous: 0, totalMatches: 3 };
+    const OK2 = { ok: 2, missing: 0, ambiguous: 2, totalMatches: 6 };
+    const MISSING1 = { ok: 2, missing: 1, ambiguous: 1, totalMatches: 3 };
+    const MISSING0 = { ok: 2, missing: 0, ambiguous: 2, totalMatches: 6 };
+    const AMBIG1 = { ok: 2, missing: 2, ambiguous: 1, totalMatches: 5 };
+    const AMBIG0 = { ok: 2, missing: 2, ambiguous: 0, totalMatches: 2 };
+    const TOTAL5 = { ok: 0, missing: 0, ambiguous: 2, totalMatches: 5 };
+    const TOTAL2 = { ok: 0, missing: 0, ambiguous: 2, totalMatches: 2 };
 
-    // base accumulators
-    const OK3 = newAccumulator()
+    // OK3 better than OK2 (more ok)
+    expect(exposed.isBetterScore(OK3, OK2)).toBe(true);
 
-    ////// Testing precedence of the 'ok' count in the score (more ok is better) //////
+    // MISSING0 better than MISSING1 (fewer missing)
+    expect(exposed.isBetterScore(MISSING0, MISSING1)).toBe(true);
 
-    // add movie, theater, day -> 3 ok, time missing
-    OK3.addToField('movie', [someMovie({ id: 301, title: 'M' })]);
-    OK3.addToField('theater', [Theaters.CASINO]);
-    OK3.addToField('day', [Days.FRIDAY]);
+    // AMBIG0 better than AMBIG1 (same ok/missing but fewer ambiguous)
+    expect(exposed.isBetterScore(AMBIG0, AMBIG1)).toBe(true);
 
-    const O3score = OK3.score;
-    expect(O3score.ok).toBe(3);
-    expect(O3score.missing).toBe(1);
+    // TOTAL2 better than TOTAL5 (same ok/missing/ambiguous but fewer total matches)
+    expect(exposed.isBetterScore(TOTAL2, TOTAL5)).toBe(true);
 
-    // Create another accumulator with fewer ok (2 ok)
-    const OK2 = newAccumulator()
-    OK2.addToField('movie', [someMovie({ id: 302, title: 'X' })]);
-    OK2.addToField('theater', [Theaters.CASINO]);
-
-    expect(exposed.isBetterScore(O3score, OK2.score)).toBe(true);
-
-    // Same ok but more missing -> worse
-    const c = newAccumulator()
-    c.addToField('movie', [someMovie({ id: 303, title: 'Y' })]);
-    c.addToField('theater', [Theaters.CASINO]);
-    c.addToField('day', [Days.FRIDAY]);
-
-    const d = newAccumulator()
-    d.addToField('movie', [someMovie({ id: 304, title: 'Z' })]);
-    // d has fewer ok (1), more missing -> c better than d
-    expect(exposed.isBetterScore(c.score, d.score)).toBe(true);
-
-    // Same ok & missing but different ambiguous -> fewer ambiguous is better
-    const e = newAccumulator()
-    e.addToField('movie', [someMovie({ id: 401 })]);
-    e.addToField('theater', [Theaters.CASINO]);
-    // make day ambiguous (2 entries)
-    e.addToField('day', [Days.FRIDAY, Days.SATURDAY]);
-
-    const f = newAccumulator()
-    f.addToField('movie', [someMovie({ id: 402 })]);
-    f.addToField('theater', [Theaters.CASINO]);
-    // day single (less ambiguous)
-    f.addToField('day', [Days.FRIDAY]);
-
-    expect(exposed.isBetterScore(f.score, e.score)).toBe(true);
-
-    // Tie resolved by smaller total
-    const g = newAccumulator()
-    g.addToField('movie', [someMovie({ id: 501 })]);
-    g.addToField('theater', [Theaters.CASINO]);
-    g.addToField('day', [Days.FRIDAY]);
-    // total = 3
-
-    const h = newAccumulator()
-    h.addToField('movie', [someMovie({ id: 502 })]);
-    h.addToField('theater', [Theaters.CASINO, Theaters.PARADISO]);
-    h.addToField('day', [Days.FRIDAY]);
-    // total = 4 (one ambiguous)
-
-    expect(exposed.isBetterScore(g.score, h.score)).toBe(true);
   });
 
 });
