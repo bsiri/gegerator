@@ -174,6 +174,18 @@ describe('TurboSessionDialog — UI', () => {
       2. trigger the close action (UI click or `component.close()`)
       3. assert `dialogRef.close` was called
     */
+    // ensure template is stable and rendered
+    await fixture.whenStable()
+
+    // Act: click the cancel button in the template
+    const helper = harnessHelper(loader)
+    await helper.clickByTestId('tsd-cancel')
+
+    // wait for any effects
+    await fixture.whenStable()
+
+    // Assert: our mocked dialogRef.close was called
+    expect(mockDialogRef.close).toHaveBeenCalledOnce()
   });
 
   it('should render correct summary panel for a full unambiguous input', async () => {
@@ -193,6 +205,28 @@ describe('TurboSessionDialog — UI', () => {
       2. wait for the template to update
       3. assert the summary panel contains the expected text values for each label
     */
+    // Arrange: ensure a matching movie exists
+    const movie = factories.someMovie({ title: 'Alien' })
+    movies.length = 0
+    movies.push(movie)
+
+    // ensure initial rendering
+    await fixture.whenStable()
+
+    // Use harness to simulate user typing (realistic key events)
+    const helper = harnessHelper(loader)
+    const input = await helper.text('tsd-input input')
+    await input.setValue('Casino Vendredi 935 Alien')
+    await fixture.whenStable()
+
+    // Assert: summary panel shows expected labels
+    const values: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('.turbo-summary-value')
+    expect(values.length).toBe(4)
+    const [movieLabelEl, theaterLabelEl, dayLabelEl, timeLabelEl] = Array.from(values)
+    expect(movieLabelEl.textContent!.trim()).toBe('Alien')
+    expect(theaterLabelEl.textContent!.trim()).toBe('Casino')
+    expect(dayLabelEl.textContent!.trim()).toBe('Vendredi')
+    expect(timeLabelEl.textContent!.trim()).toBe('09h35')
   });
 
   it('Labelling & status logic (direct state set)', async () => {
