@@ -424,17 +424,61 @@ describe('TurboSessionDialog — Parser', () => {
       Goal of the test: for movie, theater, day and time fields, ensure the parser returns
       an empty array when no match, a single-element array when exact match, and multi-element array when ambiguous.
 
-      Synopsis:
-      - given: sample movies, theaters, days and time-able tokens
-      - when: call the per-field matchers (via `buildTokenMatchCandidates`)
-      - then: for each field assert the three cases
-
-      Desired tests and assertions:
-      1. for movie: token that matches none / one / many
-      2. same for theater
-      3. same for day
-      4. for time: valid time within range -> [Time], invalid or out-of-range -> []
+      We use `buildTokenMatchCandidates` to obtain per-field matches for given tokens.
     */
+
+    const exposed = exposePrivate(component);
+
+    // Movies fixtures
+    const ma = factories.someMovie({ id: 21, title: 'Alpha' });
+    const mb = factories.someMovie({ id: 22, title: 'AlphaBeta' });
+    const mc = factories.someMovie({ id: 23, title: 'Gamma' });
+    movies.length = 0
+    movies.push(ma, mb, mc)
+
+    // none
+    let res = exposed.buildTokenMatchCandidates('zzz', movies);
+    expect(res.movie.length).toBe(0);
+
+    // single (gamma)
+    res = exposed.buildTokenMatchCandidates('gamma', movies);
+    expect(res.movie.length).toBe(1);
+    expect(res.movie[0]).toBe(mc);
+
+    // many (alpha -> matches Alpha and AlphaBeta)
+    res = exposed.buildTokenMatchCandidates('alpha', movies);
+    expect(res.movie.length).toBeGreaterThan(1);
+
+    // Theaters: none / single / many
+    res = exposed.buildTokenMatchCandidates('zzz', movies);
+    expect(res.theater.length).toBe(0);
+
+    res = exposed.buildTokenMatchCandidates('cas', movies);
+    expect(res.theater.length).toBe(1);
+    expect(res.theater[0]).toBe(Theaters.CASINO);
+
+    res = exposed.buildTokenMatchCandidates('a', movies);
+    expect(res.theater.length).toBeGreaterThan(1);
+
+    // Days: none / single / many
+    res = exposed.buildTokenMatchCandidates('zzz', movies);
+    expect(res.day.length).toBe(0);
+
+    res = exposed.buildTokenMatchCandidates('vend', movies);
+    expect(res.day.length).toBe(1);
+    expect(res.day[0]).toBe(Days.FRIDAY);
+
+    res = exposed.buildTokenMatchCandidates('e', movies);
+    expect(res.day.length).toBeGreaterThan(1);
+
+    // Time: valid in-range -> single element, invalid/out-of-range -> []
+    res = exposed.buildTokenMatchCandidates('09h00', movies);
+    expect(res.time.length).toBe(1);
+    expect(res.time[0]).toEqual(new Time(9,0));
+
+    res = exposed.buildTokenMatchCandidates('03h00', movies);
+    expect(res.time.length).toBe(0);
+    expect(res.time).toEqual([]);
   });
 
   it('buildTokenMatchCandidates: should collect matches for all fields for a token', async () => {
@@ -450,6 +494,33 @@ describe('TurboSessionDialog — Parser', () => {
       1. returned object includes the original token
       2. movie/theater/day/time arrays contain the expected matches
     */
+    const exposed = exposePrivate(component);
+
+    // prepare movies
+    movies.length = 0
+    const mv = factories.someMovie({ title: 'Alien' })
+    movies.push(mv)
+
+    // token matching a movie
+    const r1 = exposed.buildTokenMatchCandidates('Alien', movies)
+    expect(r1.token).toBe('Alien')
+    expect(r1.movie.length).toBe(1)
+    expect(r1.movie[0]).toBe(mv)
+    expect(r1.theater.length).toBe(0)
+    expect(r1.day.length).toBe(0)
+    expect(r1.time.length).toBe(0)
+
+    // token matching a theater
+    const r2 = exposed.buildTokenMatchCandidates('Casino', movies)
+    expect(r2.token).toBe('Casino')
+    expect(r2.theater.length).toBe(1)
+    expect(r2.theater[0]).toBe(Theaters.CASINO)
+
+    // token matching a time
+    const r3 = exposed.buildTokenMatchCandidates('09h35', movies)
+    expect(r3.token).toBe('09h35')
+    expect(r3.time.length).toBe(1)
+    expect(r3.time[0]).toEqual(new Time(9,35))
   });
 
   it('matchedFieldnames: prefers unique-field matches and always includes null', async () => {
@@ -498,6 +569,7 @@ function exposePrivate(component: TurboSessionDialog) {
     tokenize: (component as any).tokenize.bind(component),
     parseTimeToken: (component as any).parseTimeToken.bind(component),
     matchTimeToken: (component as any).matchTimeToken.bind(component),
-    matchToken: (component as any).matchToken.bind(component)
+    matchToken: (component as any).matchToken.bind(component),
+    buildTokenMatchCandidates: (component as any).buildTokenMatchCandidates.bind(component)
   }
 }
