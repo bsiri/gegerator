@@ -1,0 +1,44 @@
+@use '../../../../_variables' as vars;
+
+.mat-mdc-dialog-title {
+  text-align: center;
+}
+
+.mat-mdc-dialog-actions {
+  justify-content: center;
+}
+
+.turbo-input-field {
+  width: 100%;
+}
+
+.turbo-summary {
+  margin-top: vars.$gap-small;
+  display: flex;
+  flex-direction: column;
+  gap: vars.$gap-small;
+}
+
+.turbo-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: vars.$gap-small;
+  align-items: baseline;
+}
+
+.turbo-summary-label {
+  min-width: 80px;
+  font-weight: vars.$font-weight-lightbold;
+}
+
+.turbo-summary-value.is-ok {
+  color: #1f6f2a;
+}
+
+.turbo-summary-value.is-ambiguous {
+  color: #7b4b00;
+}
+
+.turbo-summary-value.is-missing {
+  color: vars.$color-warn;
+}

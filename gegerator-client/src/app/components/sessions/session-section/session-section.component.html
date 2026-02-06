@@ -6,8 +6,17 @@
         <table class="session-day-table testid-sc-tableday-{{day.key}}">
           <thead>
             <tr>
-              <th class="th-day" colspan="5">
-                <h1 class="session-day--title">{{day.name}}</h1>
+              <th class="th-day testid-sc-header-{{day.key}}-primary" colspan="5">
+                <div class="session-day-header">
+                  <h1 class="session-day--title">{{day.name}}</h1>
+                  <button
+                    matButton="filled"
+                    class="testid-sc-newsession-turbo-{{day.key}}"
+                    color="primary"
+                    (click)="openTurboSessionCreate()">
+                    <mat-icon class="fix-margin">flash_on</mat-icon>
+                  </button>
+                </div>
               </th>
             </tr>
             <tr>

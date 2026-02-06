@@ -15,7 +15,7 @@ import { Time } from 'src/app/models/time.model'
 import { defaultSession, defaultActivity, sessionBuilder, someSession } from 'src/_testhelpers/factories'
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model'
 import { SESSION_DAY_BOUNDARIES } from '../session-day-boundaries.model'
-import { of } from 'rxjs'
+import { of, Subject } from 'rxjs'
 import { selectPlannedMovieSessions } from 'src/app/ngrx/selectors/session.selectors'
 import { selectActivities } from 'src/app/ngrx/selectors/activity.selectors'
 import { PlannableEvent } from 'src/app/models/plannable.model'
@@ -248,6 +248,52 @@ describe('SessionSectionComponent — Unit', () => {
         expect(dispatched.activity.day).toBe(newactivity.day)
         expect(dispatched.activity.startTime).toBe(newactivity.startTime)
     })
+
+    it('openTurboSessionCreate opens TurboSessionDialog, and on created event dispatches create_session', async () => {
+        /*
+            Goal: verify openTurboSessionCreate flow: dialog open, on created event dispatch create_session
+
+            Synopsis:
+            - given: a MatDialog mock and a Store mock
+            - and: the dialog.componentInstance.created emits a session payload
+            - when: calling `openTurboSessionCreate()`
+            - then: Store.dispatch is called with `create_session` and a MovieSession built from the emitted session
+            
+            Desired assertions:
+            1. `MatDialog.open` called with `TurboSessionDialog`
+            2. `Store.dispatch` called with `create_session` and a MovieSession built from emitted session
+        */
+        // Arrange: prepare a MovieSession to be returned by the emitted object
+        const newSession = someSession()
+        const createSubject = new Subject<PlannedMovieSession>()
+        const closeSubject = new Subject<void>()
+
+        // mock dialog: componentInstance.created.subscribe(cb) will call cb(emitted)
+        mockMatDialog.open = vi.fn().mockReturnValue({
+            componentInstance: {
+                created: createSubject.asObservable()
+            },
+            afterClosed: () => closeSubject.asObservable()
+        })
+
+        // create component
+        fixture = TestBed.createComponent(SessionSectionComponent)
+        component = fixture.componentInstance
+
+        // Act
+        component.openTurboSessionCreate()
+
+        // Assert: dialog opened 
+        expect(mockMatDialog.open).toHaveBeenCalled()
+        // Assert: store.dispatch called with a MovieSession
+        createSubject.next(newSession) 
+        expect(mockStore.dispatch).toHaveBeenCalledTimes(1)
+        const dispatched = mockStore.dispatch.mock.calls[0][0]
+        expect(dispatched.session).toBeInstanceOf(MovieSession)
+        expect(dispatched.session).toEqual(newSession.toMovieSession())
+        // close the dialog for properly unsubscribing
+        closeSubject.next(undefined)
+    })
 })
 
 describe('SessionSectionComponent — UI', () => {
@@ -314,18 +360,24 @@ describe('SessionSectionComponent — UI', () => {
 
         ////////////////// Assert the headers section
         // helper function
-        const getHeaderColumn = (day: Day, suffix: string) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-${suffix}`))
+        const getPrimaryHeader = (day: Day) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-primary`))
+        const getSecondHeaderColumn = (day: Day, suffix: string) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-${suffix}`))
         const findButton = (elt: DebugElement) => elt.query(By.css('button'))
         // const findButton = (elt: DebugElement) => elt.nativeElement.querySelector('button')
         // main loop
         for (const day of Days.enumerate()){
-            // activity header
-            const actHeaderCol = getHeaderColumn(day, 'act')
+            
+            // day header + turbo session button
+            const primaryHeader = getPrimaryHeader(day)
+            expect(findButton(primaryHeader)).toBeTruthy()
+
+            // activity header + create activity button
+            const actHeaderCol = getSecondHeaderColumn(day, 'act')
             expect(findButton(actHeaderCol)).toBeTruthy()
 
-            // theater headers
+            // theater headers + create session buttons
             for (const theater of Theaters.enumerate()){
-                const thHeaderCol = getHeaderColumn(day, theater.key)
+                const thHeaderCol = getSecondHeaderColumn(day, theater.key)
                 expect(findButton(thHeaderCol)).toBeTruthy()
             }
         }
@@ -502,6 +554,48 @@ describe('SessionSectionComponent — UI', () => {
 
         // Assert the dialog has been called and the newActivity was returned once
         expect(mockMatDialog.open).toHaveBeenCalled()
+    })
+
+    it.each(Days.enumerate())("clicking %s header turbo session add button triggers openTurboSessionCreate", 
+        async (day: Day) => {
+            /*
+                Goal: ensure header buttons are wired to component handlers.
+
+                Synopsis:
+                - given: the component rendered in the DOM            
+                - when: user clicks the 'add' button in the day header
+                - then: the component's `openTurboSessionCreate` is invoked
+                
+                UI actions (explicit):
+                - find the button via harnessHelper + testid and perform `click()`
+                Desired assertions:
+                1. the component method spy is called
+            */
+            // Arrange
+            mockStore.selectSignal = mockStoreSelector(
+                [],
+                []
+            )
+
+            fixture = TestBed.createComponent(SessionSectionComponent)
+            component = fixture.componentInstance
+            fixture.detectChanges()
+            
+            const newSession = someSession()
+            mockMatDialog.open = vi.fn()
+                    .mockReturnValueOnce({ 
+                        componentInstance: { created: of(newSession) },
+                        afterClosed: () => of(undefined) 
+                    })
+
+            // When the button is clicked
+            const helper = harnessHelper(loader)
+            const button = await helper.button(`sc-header-${day.key}-primary button`)
+            await button.click()
+            await fixture.whenStable()
+
+            // Assert the dialog has been called and the newSession was emitted once
+            expect(mockMatDialog.open).toHaveBeenCalled()
     })
 
 
