@@ -13,6 +13,8 @@ import { RoadmapStore } from './ngrx/stores/roadmap.store'
 import { RoadmapService } from './services/roadmap.service'
 import * as factories from 'src/_testhelpers/factories'
 import { FestivalRoadmap, RoadmapAuthor } from 'src/app/models/roadmap.model'
+import { Days, Theaters } from 'src/app/models/referential.data'
+import { Time } from 'src/app/models/time.model'
 
 import { AppComponent } from './app.component'
 import { Mode } from './ngrx/appstate-models/mode.model'
@@ -333,6 +335,80 @@ describe('AppComponent — UI tests (harnesses)', () => {
     // the exported content should contain the movie title from the sample roadmap
     const sampleTitle = roadmapSignal().sessions[0].movie.title
     expect(capturedAnchor!.href).toContain(encodeURIComponent(sampleTitle))
+
+    // restore
+    createSpy.mockRestore()
+    await menu.close()
+  })
+
+  it('should trigger booking plan export and create a download anchor with correct theater ordering', async () => {
+    /*
+      Goal: check `exportBookingPlan()` produces a download anchor with `download == gegerator-reservation.txt`
+
+      Synopsis:
+      - given: a mocked `$roadmap()` that returns a FestivalRoadmap containing two PlannedMovieSession:
+        * Espace Lac on the same day at 17h00
+        * MCL on the same day at 08h00
+      - when: user clicks the Export -> "Exporter le plan de réservation" menu item
+      - then: a created anchor element has `download` set to 'gegerator-reservation.txt' and the decoded content lists the Espace Lac session before the MCL session (theater ordering takes precedence)
+
+      Desired tests and assertions:
+      1. intercept `document.createElement` to capture the created anchor
+      2. assert anchor.download === 'gegerator-reservation.txt'
+      3. decode the exported content and assert 'Espace Lac' occurs before 'MCL'
+    */
+    await fixture.whenStable()
+
+    // prepare two sessions with the specific theaters/times and inject into the roadmap signal
+
+    const sessionMcl = factories.someSession({
+      theater: Theaters.MCL,
+      day: Days.SATURDAY,
+      startTime: new Time(8, 0),
+    })
+
+    const sessionEspace = factories.someSession({
+      theater: Theaters.ESPACE_LAC,
+      day: Days.SATURDAY,
+      startTime: new Time(17, 0),
+    })
+
+    roadmapSignal.set(new FestivalRoadmap(RoadmapAuthor.HUMAN, [sessionEspace, sessionMcl], []))
+    await fixture.whenStable()
+
+    // spy on document.createElement to capture the created anchor
+    const originalCreate = document.createElement.bind(document)
+    let capturedAnchor: HTMLAnchorElement | null = null
+    const createSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+      const el = originalCreate(tagName)
+      if (tagName === 'a') {
+        capturedAnchor = el as HTMLAnchorElement
+      }
+      return el
+    })
+
+    // open Export menu and click the 'Exporter le plan de réservation' item using testid
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Exporter' }))
+    await menu.open()
+    const bookingBtn = (await menu.getItems())[1]
+    await fixture.whenStable()
+    await bookingBtn.click()
+    await fixture.whenStable()
+
+    // assert an anchor was created and clicked
+    expect(createSpy).toHaveBeenCalled()
+    expect(capturedAnchor).not.toBeNull()
+    expect(capturedAnchor!.download).toBe('gegerator-reservation.txt')
+    expect(capturedAnchor!.href).toContain('data:application/octet-stream,')
+
+    // decode exported content and assert ordering: Espace Lac before MCL
+    const encoded = capturedAnchor!.href.split(',')[1]
+    const decoded = decodeURIComponent(encoded)
+    const idxEspace = decoded.indexOf('Espace Lac')
+    const idxMcl = decoded.indexOf('MCL')
+    expect(idxEspace).toBeGreaterThan(-1)
+    expect(idxMcl).toBeGreaterThan(-1)
+    expect(idxEspace).toBeLessThan(idxMcl)
 
     // restore
     createSpy.mockRestore()
