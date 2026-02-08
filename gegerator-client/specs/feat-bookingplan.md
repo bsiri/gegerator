@@ -8,7 +8,7 @@ The new feature allows the User to download a human-readable document that lists
 
 ## Context
 
-At a general level, the goal of the application is to help the User to design a Roadmap for a movie festival. The Roadmap consists of the list of movie sessions, and other activities beside movies, that the User plans to attend to at the festival. The application already have a feature to export (ie, allows the User to download) the Roadmap, in which the different events are listed in chronological order.
+At a general level, the goal of the application is to help the User to design a Roadmap for a movie festival. The Roadmap consists of the list of movie sessions, and other activities beside movies, that the User plans to attend to. The application already have a feature to export (ie, allows the User to download) the Roadmap, in which the different events are listed in chronological order.
 
 However, planning is not enough. Before the Festival begins, the User also have to book her seat for each of the Movie Sessions. Booking the seats is challenging, because as soon as the booking web portal opens at the specified day and time, many other festival goers everywhere in the country are also competing for the same seats at the very same moment. Available seats for popular sessions are typically exhausted within minutes. It is a very stressful step, and the User might make costly mistakes if she comes unprepared to the portal.
 

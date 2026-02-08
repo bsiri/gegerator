@@ -92,6 +92,18 @@ export class AppComponent implements OnInit{
 
   }
 
+  /**
+   * Exports the booking plan, i.e. the list of movie sessions in the most efficient order to
+   * book them on the portal. 
+   * 
+   * More precisely, sessions are listed by days, theater and times in 
+   * a very specific ordering; see methods 'bookingPlanDayOrder' and 'bookingPlanTheaterOrder'.
+   * These ordering are tuned to list the sessions from most competed for to least competed for, 
+   * so that when booking time comes the Users knows which sessions she should focus on first.
+   * 
+   * @returns : nothing, but the user receives a file via download.
+   */
+  // Implemented by Copilot, after specs in specs/feat-bookingplan.md. Code left as-is without edit.
   exportBookingPlan(): void{
     const sessions = this.$roadmap().sessions
     const dayOrder = this.bookingPlanDayOrder()
