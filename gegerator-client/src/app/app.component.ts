@@ -5,6 +5,9 @@ import { UploadDialog } from './components/appstate/uploaddialog/uploaddialog.co
 import { Mode } from './ngrx/appstate-models/mode.model';
 import { PlannableEvent } from './models/plannable.model';
 import { FestivalRoadmap } from './models/roadmap.model';
+import { PlannedMovieSession } from './models/session.model';
+import { Day, Days, Theater, Theaters } from './models/referential.data';
+import { Times } from './models/time.utils';
 import { AppStateActions } from './ngrx/actions/appstate.actions';
 import { ConfigDialog } from './components/configuration/configdialog/configdialog.component';
 import { WizardConfiguration } from './ngrx/appstate-models/wizardconfiguration.model';
@@ -89,6 +92,49 @@ export class AppComponent implements OnInit{
 
   }
 
+  exportBookingPlan(): void{
+    const sessions = this.$roadmap().sessions
+    const dayOrder = this.bookingPlanDayOrder()
+    const theaterOrder = this.bookingPlanTheaterOrder()
+    const theaterWidth = Math.max(...theaterOrder.map(theater => theater.name.length))
+    const timeWidth = Math.max(5, ...sessions.map(session => Times.toString(session.startTime).length))
+
+    let planStr = "=== Plan de réservation ===\n\n"
+
+    for (const day of dayOrder) {
+      const sessionsForDay = sessions.filter(session => session.day === day)
+      const theaterBlocks: string[] = []
+
+      for (const theater of theaterOrder) {
+        const sessionsForTheater = sessionsForDay
+          .filter(session => session.theater === theater)
+          .sort((left, right) => left.startTime.compare(right.startTime))
+
+        if (sessionsForTheater.length === 0) {
+          continue
+        }
+
+        theaterBlocks.push(
+          sessionsForTheater
+            .map(session => this.formatBookingSession(session, theaterWidth, timeWidth))
+            .join('\n')
+        )
+      }
+
+      planStr += `${day.name.toUpperCase()}\n\n`
+      if (theaterBlocks.length > 0) {
+        planStr += `${theaterBlocks.join('\n\n')}\n\n`
+      } else {
+        planStr += '\n'
+      }
+    }
+
+    const fakelink = document.createElement('a')
+    fakelink.download = 'gegerator-reservation.txt'
+    fakelink.href = "data:application/octet-stream," + encodeURIComponent(planStr)
+    fakelink.click()
+  }
+
   openWizardConfiguration(): void{
     const dialogRef = this.dialog.open(ConfigDialog, {
       autoFocus: 'first-tabbable',
@@ -107,6 +153,21 @@ export class AppComponent implements OnInit{
   // that's my pet project so who cares :-)
   formatEventStr(event: PlannableEvent): string{
     return event.toString().replace(/^(.*?), /, '    ')
+  }
+
+  private formatBookingSession(session: PlannedMovieSession, theaterWidth: number, timeWidth: number): string{
+    const theater = session.theater.name.padEnd(theaterWidth + 2, ' ')
+    const time = Times.toString(session.startTime).padEnd(timeWidth + 2, ' ')
+    const movie = session.movie.title.toUpperCase()
+    return `\t${theater}${time}${movie}`
+  }
+
+  private bookingPlanDayOrder(): Day[]{
+    return [Days.SATURDAY, Days.FRIDAY, Days.SUNDAY, Days.THURSDAY, Days.WEDNESDAY]
+  }
+
+  private bookingPlanTheaterOrder(): Theater[]{
+    return [Theaters.ESPACE_LAC, Theaters.CASINO, Theaters.MCL, Theaters.PARADISO]
   }
 
   toggleMode(): void{
