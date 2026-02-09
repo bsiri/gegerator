@@ -1,7 +1,6 @@
 package org.bsiri.gegerator.planner;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlanner;
 import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
 import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
@@ -14,19 +13,13 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.io.IOException;
-import java.security.Provider;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +31,7 @@ import static org.bsiri.gegerator.planner.PlannerEventHelper.event;
  * various scenarios.
  *
  */
-public class GraphPlannerAllImplTest {
+public class WizardPlannerAllImplTest {
 
     static private Long SURROGATE_ID_1 = -1L;
     static private Long MOVIE_1 = 1L;
@@ -73,8 +66,8 @@ public class GraphPlannerAllImplTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = plannerProvider.create(nodes);
-        List<PlannerEvent> best = graph.findBestRoadmap();
+        WizardPlanner planner = plannerProvider.create(nodes);
+        List<PlannerEvent> best = planner.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("Movie 1 Super", "Movie 2 Super"));
 
@@ -96,8 +89,8 @@ public class GraphPlannerAllImplTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = plannerProvider.create(nodes);
-        List<PlannerEvent> best = graph.findBestRoadmap();
+        WizardPlanner planner = plannerProvider.create(nodes);
+        List<PlannerEvent> best = planner.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super session"));
     }
@@ -110,7 +103,7 @@ public class GraphPlannerAllImplTest {
      * - an average movie third
      *
      * these movies slightly overlap with each other,
-     * and eventually the graph picks the one and third
+     * and eventually the planner picks the one and third
      * because it's better than nothing.
      */
     @ParameterizedTest
@@ -123,15 +116,15 @@ public class GraphPlannerAllImplTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = plannerProvider.create(nodes);
-        List<PlannerEvent> best = graph.findBestRoadmap();
+        WizardPlanner planner = plannerProvider.create(nodes);
+        List<PlannerEvent> best = planner.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("super movie", "average movie"));
     }
 
 
     /**
-     * In this scenario, the graph detects that one cannot possibly
+     * In this scenario, the planner detects that one cannot possibly
      * move fast enough to watch both movies, so it picks only the
      * best one.
      */
@@ -144,8 +137,8 @@ public class GraphPlannerAllImplTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = plannerProvider.create(nodes);
-        List<PlannerEvent> best = graph.findBestRoadmap();
+        WizardPlanner planner = plannerProvider.create(nodes);
+        List<PlannerEvent> best = planner.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains("best movie"));
     }
@@ -163,8 +156,8 @@ public class GraphPlannerAllImplTest {
         );
         //Collections.shuffle(nodes);
 
-        WizardPlanner graph = plannerProvider.create(nodes);
-        List<PlannerEvent> best = graph.findBestRoadmap();
+        WizardPlanner planner = plannerProvider.create(nodes);
+        List<PlannerEvent> best = planner.findBestRoadmap();
 
         MatcherAssert.assertThat(best.size(), Matchers.equalTo(1));
     }
@@ -209,8 +202,8 @@ public class GraphPlannerAllImplTest {
         );
         Collections.shuffle(nodes);
 
-        WizardPlanner graph = plannerProvider.create(nodes);
-        List<PlannerEvent> best = graph.findBestRoadmap();
+        WizardPlanner planner = plannerProvider.create(nodes);
+        List<PlannerEvent> best = planner.findBestRoadmap();
 
         MatcherAssert.assertThat(collectNames(best), Matchers.contains(
                 "movie 2 super",
@@ -237,13 +230,13 @@ public class GraphPlannerAllImplTest {
         // Running the planner in a separate thread because otherwise the @Timeout
         // will never CPU time to trigger
         try {
-            Callable<List<PlannerEvent>> graphtask = () -> {
+            Callable<List<PlannerEvent>> plannertask = () -> {
                 var grid = PlannerEventHelper.randomGrid(100);
-                WizardPlanner graph = plannerProvider.create(grid);
-                return graph.findBestRoadmap();
+                WizardPlanner planner = plannerProvider.create(grid);
+                return planner.findBestRoadmap();
             };
 
-            var task = new FutureTask<>(graphtask);
+            var task = new FutureTask<>(plannertask);
             var thread = new Thread(task);
             thread.start();
             var result = task.get();
