@@ -8,10 +8,7 @@ import org.bsiri.gegerator.domain.Theater;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
-import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -149,12 +146,13 @@ public class PlannerEventHelper {
 
     static final List<PlannerEvent> randomGrid(int size){
         List<PlannerEvent> result = new ArrayList<>();
-        Random rand = new Random(0);
+        Random rand = new Random(5);
 
         // setup
         var alldays = new DayOfWeek[]{ DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
         var alltheaters = Theater.values();
-        var maxMovie = (int)(size/1.6);
+        // 1.6 is an estimated factor depending on stuffs I'm too lazy to detail
+        var maxMovie = (int)(size/1.6); 
         var allMovieIds = IntStream.range(0, maxMovie).toArray();
         // minstartime 8:00 maxstarttime 21:40
         var minstarttime = 480;
@@ -175,7 +173,6 @@ public class PlannerEventHelper {
                     (selScore < 0.90) ? 0 :
                     rand.nextInt(-10000, -1000);
 
-            var selMovie = rand.nextFloat();
             var movieId = allMovieIds[rand.nextInt(0, maxMovie)];
 
             var hourStart = startminutes / 60;

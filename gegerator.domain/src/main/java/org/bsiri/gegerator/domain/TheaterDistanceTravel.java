@@ -1,8 +1,6 @@
 package org.bsiri.gegerator.domain;
 
 
-import org.bsiri.gegerator.domain.Theater;
-
 import static java.time.Duration.ofMinutes;
 import static org.bsiri.gegerator.domain.Theater.*;
 import java.time.Duration;

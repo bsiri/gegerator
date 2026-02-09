@@ -4,6 +4,7 @@ package org.bsiri.gegerator.planner;
 import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlanner;
 import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
 import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
+import org.bsiri.gegerator.planner.exoticplanners.CopilotPlanner;
 import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
 import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.hamcrest.MatcherAssert;
@@ -241,6 +242,7 @@ public class WizardPlannerAllImplTest {
             thread.start();
             var result = task.get();
             // dummy assertion
+            System.out.println(result.stream().collect(Collectors.summingLong(PlannerEvent::getScore)));
             Assertions.assertFalse(result.isEmpty());
         }
         catch (Exception ex){
@@ -280,6 +282,10 @@ public class WizardPlannerAllImplTest {
                 Arguments.of(
                         NaiveGraphPlanner.class.getSimpleName(),
                         (PlannerProvider) NaiveGraphPlanner::new
+                ),
+                Arguments.of(
+                        CopilotPlanner.class.getSimpleName(),
+                        (PlannerProvider) CopilotPlanner::new
                 )
         );
     }
@@ -293,6 +299,10 @@ public class WizardPlannerAllImplTest {
                 Arguments.of(
                         BlobPlanner.class.getSimpleName(),
                         (PlannerProvider) BlobPlanner::new
+                ),
+                Arguments.of(
+                        CopilotPlanner.class.getSimpleName(),
+                        (PlannerProvider) CopilotPlanner::new
                 )
 
                 // example of slow planner that would timeout,
