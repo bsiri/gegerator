@@ -8,6 +8,13 @@ import org.bsiri.gegerator.domain.Theater;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
+import java.util.DuplicateFormatFlagsException;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 public class PlannerEventHelper {
 
@@ -118,4 +125,77 @@ public class PlannerEventHelper {
         LocalTime endTime;
     }
 
+    /**
+     * Generates a random grid of the given size with the following score probabilities:
+     * - [7000 to 10000] : 15%
+     * - [1000 to 6999] : 25%
+     * - 0 : 50%
+     * - [-1000 to -10000] : the rest (10%)
+     *
+     * Day is equiprobable.
+     * Duration of events is between 50m and 120m.
+     * Start time is between 08h00 and 20h00.
+     * Movie ids are equiprobable.
+     * Theaters are equiprobable.
+     *
+     *
+     * This is not quite realistic (in reality sessions tend to be grouped by batches starting
+     * roughly at the same time for example), but still provide a good smoke test.
+     *
+     * Note: use a fixed seed for reproducibility of the result.
+     * @param size: the size of the grid
+     * @return
+     */
+
+    static final List<PlannerEvent> randomGrid(int size){
+        List<PlannerEvent> result = new ArrayList<>();
+        Random rand = new Random(0);
+
+        // setup
+        var alldays = new DayOfWeek[]{ DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
+        var alltheaters = Theater.values();
+        var maxMovie = (int)(size/1.6);
+        var allMovieIds = IntStream.range(0, maxMovie).toArray();
+        // minstartime 8:00 maxstarttime 21:40
+        var minstarttime = 480;
+        var maxstarttime = 1300;
+        // minduration: 50m, max duration: 120m
+        var minduration = 50;
+        var maxduration = 120;
+
+        for (int i=0; i<size; i++){
+            var day = alldays[(rand.nextInt(alldays.length))];
+            var theater = alltheaters[(rand.nextInt(alltheaters.length))];
+            var startminutes = rand.nextInt(minstarttime, maxstarttime);
+            var durationminutes = rand.nextInt(minduration, maxduration);
+
+            var selScore = rand.nextFloat();
+            var score = (selScore<0.15) ? rand.nextInt(7000, 10000):
+                    (selScore < 0.4) ? rand.nextInt(1000, 6999) :
+                    (selScore < 0.90) ? 0 :
+                    rand.nextInt(-10000, -1000);
+
+            var selMovie = rand.nextFloat();
+            var movieId = allMovieIds[rand.nextInt(0, maxMovie)];
+
+            var hourStart = startminutes / 60;
+            var minStart = startminutes % 60;
+            var startTime = LocalTime.of(hourStart, minStart);
+
+            var endTime = startTime.plusMinutes(durationminutes);
+
+            var event = new PlannerEvent(null,
+                    "event #"+i,
+                    score,
+                    (long) movieId,
+                    theater,
+                    day,
+                    startTime,
+                    endTime
+                    );
+            result.add(event);
+        }
+        return result;
+
+    }
 }

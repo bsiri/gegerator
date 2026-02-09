@@ -1,6 +1,7 @@
 package org.bsiri.gegerator.planner;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlanner;
 import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
 import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
@@ -8,13 +9,24 @@ import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
 import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.io.IOException;
+import java.security.Provider;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -210,6 +222,39 @@ public class GraphPlannerAllImplTest {
 
     }
 
+    /**
+     * In this scenario :
+     * - lots of everything are planned
+     * - the goal is just to return a result before the timeout
+     *
+     * Note: it is important to schedule here only fast planners !
+     * @return
+     */
+    @ParameterizedTest
+    @MethodSource("enumerateFastPlanners")
+    @Timeout(value = 2, unit = TimeUnit.SECONDS)
+    public void shouldCompleteBeforeTimeout(String plannerName, PlannerProvider plannerProvider) {
+        // Running the planner in a separate thread because otherwise the @Timeout
+        // will never CPU time to trigger
+        try {
+            Callable<List<PlannerEvent>> graphtask = () -> {
+                var grid = PlannerEventHelper.randomGrid(100);
+                WizardPlanner graph = plannerProvider.create(grid);
+                return graph.findBestRoadmap();
+            };
+
+            var task = new FutureTask<>(graphtask);
+            var thread = new Thread(task);
+            thread.start();
+            var result = task.get();
+            // dummy assertion
+            Assertions.assertFalse(result.isEmpty());
+        }
+        catch (Exception ex){
+            Assertions.fail("shouldCompleteBeforeTimeout thrown an exception : "+ex.getMessage());
+        }
+    }
+
 
     // *********** Helpers *************
 
@@ -243,6 +288,28 @@ public class GraphPlannerAllImplTest {
                         NaiveGraphPlanner.class.getSimpleName(),
                         (PlannerProvider) NaiveGraphPlanner::new
                 )
+        );
+    }
+
+    private static Stream<Arguments> enumerateFastPlanners() {
+        return Stream.of(
+                Arguments.of(
+                        RankedPathGraphPlanner.class.getSimpleName(),
+                        (PlannerProvider) RankedPathGraphPlanner::new
+                ),
+                Arguments.of(
+                        BlobPlanner.class.getSimpleName(),
+                        (PlannerProvider) BlobPlanner::new
+                )
+
+                // example of slow planner that would timeout,
+                // use to test that the timeout does work indeed
+                /*
+                ,
+                Arguments.of(
+                        NaiveGraphPlanner.class.getSimpleName(),
+                        (PlannerProvider) NaiveGraphPlanner::new
+                )*/
         );
     }
 }
