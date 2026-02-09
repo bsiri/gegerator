@@ -1,11 +1,6 @@
 package org.bsiri.gegerator.planner;
 
-
-import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlanner;
-import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
-import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
-import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
-import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
+import org.bsiri.gegerator.planner.copilot.CopilotPlanner;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -262,24 +257,8 @@ public class WizardPlannerAllImplTest {
     private static Stream<Arguments> enumeratePlanners() {
         return Stream.of(
                 Arguments.of(
-                        RankedPathGraphPlanner.class.getSimpleName(),
-                        (PlannerProvider) RankedPathGraphPlanner::new
-                ),
-                Arguments.of(
-                        IterativeGraphPlannerV2.class.getSimpleName(),
-                        (PlannerProvider) IterativeGraphPlannerV2::new
-                ),
-                Arguments.of(
-                        BlobPlanner.class.getSimpleName(),
-                        (PlannerProvider) BlobPlanner::new
-                ),
-                Arguments.of(
-                        IterativeGraphPlanner.class.getSimpleName(),
-                        (PlannerProvider) IterativeGraphPlanner::new
-                ),
-                Arguments.of(
-                        NaiveGraphPlanner.class.getSimpleName(),
-                        (PlannerProvider) NaiveGraphPlanner::new
+                        CopilotPlanner.class.getSimpleName(),
+                        (PlannerProvider) CopilotPlanner::new
                 )
         );
     }
@@ -287,22 +266,9 @@ public class WizardPlannerAllImplTest {
     private static Stream<Arguments> enumerateFastPlanners() {
         return Stream.of(
                 Arguments.of(
-                        RankedPathGraphPlanner.class.getSimpleName(),
-                        (PlannerProvider) RankedPathGraphPlanner::new
-                ),
-                Arguments.of(
-                        BlobPlanner.class.getSimpleName(),
-                        (PlannerProvider) BlobPlanner::new
+                        CopilotPlanner.class.getSimpleName(),
+                        (PlannerProvider) CopilotPlanner::new
                 )
-
-                // example of slow planner that would timeout,
-                // use to test that the timeout does work indeed
-                /*
-                ,
-                Arguments.of(
-                        NaiveGraphPlanner.class.getSimpleName(),
-                        (PlannerProvider) NaiveGraphPlanner::new
-                )*/
         );
     }
 }
