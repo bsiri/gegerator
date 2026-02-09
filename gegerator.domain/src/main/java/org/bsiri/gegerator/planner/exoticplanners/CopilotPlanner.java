@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.planner.copilot;
+package org.bsiri.gegerator.planner.exoticplanners;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +12,10 @@ import org.bsiri.gegerator.planner.TimeAndSpaceLocation;
 import org.bsiri.gegerator.planner.WizardPlanner;
 
 /**
- * Implementation of WizardPlanner by Copilot, after the specs in `specs/feat-betterplanner.md`
+ * Implementation of WizardPlanner by Copilot, after the specs in `specs/feat-betterplanner.md`.
+ * 
+ * Performs is way faster than BlobPlanner(between 2x and 3x) and only slightly less good than 
+ * RankedPathGraphPlanner, well done Copilot !
  * 
  */
 public class CopilotPlanner implements WizardPlanner{
