@@ -12,8 +12,8 @@ describe('Theaters', () => {
     // check order by comparing to known singletons
     expect(list[0]).toBe(Theaters.ESPACE_LAC)
     expect(list[1]).toBe(Theaters.CASINO)
-    expect(list[2]).toBe(Theaters.PARADISO)
-    expect(list[3]).toBe(Theaters.MCL)
+    expect(list[2]).toBe(Theaters.MCL)
+    expect(list[3]).toBe(Theaters.PARADISO)
   })
 
   it('fromKey resolves valid keys to singletons and throws on unknown key', async () => {

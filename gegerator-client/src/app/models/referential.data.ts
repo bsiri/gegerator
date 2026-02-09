@@ -24,7 +24,7 @@ export class Theaters{
     static MCL: Theater = {key: "MCL", name: "MCL"};
 
     static enumerate(): Theater[]{
-        return [this.ESPACE_LAC, this.CASINO, this.PARADISO, this.MCL];
+        return [this.ESPACE_LAC, this.CASINO, this.MCL, this.PARADISO];
     }
 
     static fromKey(key: string): Theater{

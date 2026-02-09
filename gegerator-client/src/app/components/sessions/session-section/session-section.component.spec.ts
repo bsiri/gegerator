@@ -343,9 +343,11 @@ describe('SessionSectionComponent — UI', () => {
 
           Desired assertions:
           1. number of `.session-day` equals Days.enumerate().length
-          2. each day and each theaters + other activity has a header column with add button
+          2. each day has a header with buttons for creating activities, sessions, and turbo sessions
+          3. each day has a swimlane for other activites and each theater
     
         */
+       const helper = harnessHelper(loader)
         // Arrange: make the store signals return the test datasets (Empty here is sufficient)
         mockStore.selectSignal = mockStoreSelector( [], [])
 
@@ -362,23 +364,26 @@ describe('SessionSectionComponent — UI', () => {
         // helper function
         const getPrimaryHeader = (day: Day) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-primary`))
         const getSecondHeaderColumn = (day: Day, suffix: string) => fixture.debugElement.query(By.css(`.testid-sc-header-${day.key}-${suffix}`))
-        const findButton = (elt: DebugElement) => elt.query(By.css('button'))
+        const findButton = (elt: DebugElement, testid_suffix: string) => elt.query(By.css('button.testid-'+testid_suffix))
         // const findButton = (elt: DebugElement) => elt.nativeElement.querySelector('button')
         // main loop
         for (const day of Days.enumerate()){
             
-            // day header + turbo session button
+            // day header + activity, session, and turbo session buttons
             const primaryHeader = getPrimaryHeader(day)
-            expect(findButton(primaryHeader)).toBeTruthy()
+            expect(primaryHeader).toBeTruthy()
+            expect(await helper.button("sc-newsession-"+day.key)).toBeTruthy()
+            expect(await helper.button("sc-newactivity-"+day.key)).toBeTruthy()
+            expect(await helper.button("sc-newsession-turbo-"+day.key)).toBeTruthy()
 
-            // activity header + create activity button
+            // activity header 
             const actHeaderCol = getSecondHeaderColumn(day, 'act')
-            expect(findButton(actHeaderCol)).toBeTruthy()
+            expect(actHeaderCol).toBeTruthy()
 
             // theater headers + create session buttons
             for (const theater of Theaters.enumerate()){
                 const thHeaderCol = getSecondHeaderColumn(day, theater.key)
-                expect(findButton(thHeaderCol)).toBeTruthy()
+                expect(thHeaderCol).toBeTruthy()
             }
         }
     })
@@ -474,96 +479,100 @@ describe('SessionSectionComponent — UI', () => {
     })
 
 
-    it.each<[Day, Theater]>(dayAndTheatersCombinations())("clicking %s %s header add buttons triggers openNewSession", 
-        async (day: Day, theater: Theater) => {
-        /*
-          Goal: ensure header buttons are wired to component handlers.
-    
-          Synopsis:
-          - given: the component rendered in the DOM
-          - when: user clicks the 'add' button in a session header and the activity header
-          - then: the component's `openNewSession` / `openNewActivity` are invoked
-    
-          UI actions (explicit):
-          - find the buttons via harnessHelper + testid and perform `click()`
-    
-          Desired assertions:
-          1. the component method spies are called with expected parameters (day, theater)
-        */
-        // Arrange
-        mockStore.selectSignal = mockStoreSelector(
-            TEST_PLANNED_SESSIONS, 
-            []
-        )
-
-        fixture = TestBed.createComponent(SessionSectionComponent)
-        component = fixture.componentInstance
-        fixture.detectChanges()
-
-        const newSession = someSession()
-        mockMatDialog.open = vi.fn()
-                .mockReturnValueOnce({ afterClosed: () => of(newSession) })
-                .mockReturnValueOnce({ afterClosed: () => of(undefined) })
-
-        // When the button is clicked
-        const helper = harnessHelper(loader)
-        const button = await helper.button(`sc-header-${day.key}-${theater.key} button`)
-        await button.click()
-        await fixture.whenStable()
-
-        // Assert the dialog has been called and the newSession was returned once
-        expect(mockMatDialog.open).toHaveBeenCalled()
-    })
-
-    it.each(Days.enumerate())("clicking %s header activity add button triggers openNewActivity", 
-        async (day: Day) => {
-        /*
-          Goal: ensure header buttons are wired to component handlers.
-
-         Synopsis:
-            - given: the component rendered in the DOM            
-            - when: user clicks the 'add' button in the activity header
-            - then: the component's `openNewActivity` is invoked
-
-          UI actions (explicit):
-          - find the button via harnessHelper + testid and perform `click()`
-
-          Desired assertions:
-          1. the component method spy is called with expected parameter (day)
-        */
-        // Arrange
-        mockStore.selectSignal = mockStoreSelector(
-            [],
-            TEST_OTHER_ACTIVITIES
-        )
-
-        fixture = TestBed.createComponent(SessionSectionComponent)
-        component = fixture.componentInstance
-        fixture.detectChanges()
-        
-        const newActivity = someSession()
-        mockMatDialog.open = vi.fn()
-                .mockReturnValueOnce({ afterClosed: () => of(newActivity) })
-                .mockReturnValueOnce({ afterClosed: () => of(undefined) })
-
-        // When the button is clicked
-        const helper = harnessHelper(loader)
-        const button = await helper.button(`sc-header-${day.key}-act button`)
-        await button.click()
-        await fixture.whenStable()
-
-        // Assert the dialog has been called and the newActivity was returned once
-        expect(mockMatDialog.open).toHaveBeenCalled()
-    })
-
-    it.each(Days.enumerate())("clicking %s header turbo session add button triggers openTurboSessionCreate", 
+    it.each(Days.enumerate())("clicking %s header create activity button triggers openNewActivity", 
         async (day: Day) => {
             /*
-                Goal: ensure header buttons are wired to component handlers.
+                Goal: ensure header "Other Activity" buttons are wired to component handlers.
 
                 Synopsis:
                 - given: the component rendered in the DOM            
-                - when: user clicks the 'add' button in the day header
+                - when: user clicks the 'other activities' button in the day header
+                - then: the component's `openNewActivity` is invoked
+                
+                UI actions (explicit):
+                - find the button via harnessHelper + testid and perform `click()`
+                Desired assertions:
+                1. the component method spy is called
+            */
+            // Arrange
+            mockStore.selectSignal = mockStoreSelector(
+                [],
+                []
+            )
+
+            fixture = TestBed.createComponent(SessionSectionComponent)
+            component = fixture.componentInstance
+            fixture.detectChanges()
+            
+            const newSession = someSession()
+            mockMatDialog.open = vi.fn()
+                    .mockReturnValueOnce({ 
+                        componentInstance: { created: of(newSession) },
+                        afterClosed: () => of(undefined) 
+                    })
+
+            // When the button is clicked
+            const helper = harnessHelper(loader)
+            const button = await helper.button(`sc-newactivity-${day.key}`)
+            await button.click()
+            await fixture.whenStable()
+
+            // Assert the dialog has been called and the newSession was emitted once
+            expect(mockMatDialog.open).toHaveBeenCalled()
+    })
+
+
+
+    it.each(Days.enumerate())("clicking %s header create session button triggers openNewSession", 
+        async (day: Day) => {
+            /*
+                Goal: ensure header "create session" buttons are wired to component handlers.
+
+                Synopsis:
+                - given: the component rendered in the DOM            
+                - when: user clicks the 'create session' button in the day header
+                - then: the component's `openNewSession` is invoked
+                
+                UI actions (explicit):
+                - find the button via harnessHelper + testid and perform `click()`
+                Desired assertions:
+                1. the component method spy is called
+            */
+            // Arrange
+            mockStore.selectSignal = mockStoreSelector(
+                [],
+                []
+            )
+
+            fixture = TestBed.createComponent(SessionSectionComponent)
+            component = fixture.componentInstance
+            fixture.detectChanges()
+            
+            const newSession = someSession()
+            mockMatDialog.open = vi.fn()
+                    .mockReturnValueOnce({ 
+                        componentInstance: { created: of(newSession) },
+                        afterClosed: () => of(undefined) 
+                    })
+
+            // When the button is clicked
+            const helper = harnessHelper(loader)
+            const button = await helper.button(`sc-newsession-${day.key}`)
+            await button.click()
+            await fixture.whenStable()
+
+            // Assert the dialog has been called and the newSession was emitted once
+            expect(mockMatDialog.open).toHaveBeenCalled()
+    })
+
+    it.each(Days.enumerate())("clicking %s header turbo session button triggers openTurboSessionCreate", 
+        async (day: Day) => {
+            /*
+                Goal: ensure header "turbo session" buttons are wired to component handlers.
+
+                Synopsis:
+                - given: the component rendered in the DOM            
+                - when: user clicks the 'Turbo session' button in the day header
                 - then: the component's `openTurboSessionCreate` is invoked
                 
                 UI actions (explicit):
@@ -590,7 +599,7 @@ describe('SessionSectionComponent — UI', () => {
 
             // When the button is clicked
             const helper = harnessHelper(loader)
-            const button = await helper.button(`sc-header-${day.key}-primary button`)
+            const button = await helper.button(`sc-newsession-turbo-${day.key}`)
             await button.click()
             await fixture.whenStable()
 
