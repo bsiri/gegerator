@@ -52,14 +52,14 @@
                   [ngTemplateOutletContext]="{day:day, theater: Theaters.CASINO}">
                 </ng-container>
               </th>
-              <th class="th-col testid-sc-header-{{day.key}}-PARADISO">
-                <ng-container [ngTemplateOutlet]="sessionHeader"
-                  [ngTemplateOutletContext]="{day:day, theater: Theaters.PARADISO}">
-                </ng-container>
-              </th>
               <th class="th-col testid-sc-header-{{day.key}}-MCL">
                 <ng-container [ngTemplateOutlet]="sessionHeader"
                   [ngTemplateOutletContext]="{day:day, theater: Theaters.MCL}">
+                </ng-container>
+              </th>
+              <th class="th-col testid-sc-header-{{day.key}}-PARADISO">
+                <ng-container [ngTemplateOutlet]="sessionHeader"
+                  [ngTemplateOutletContext]="{day:day, theater: Theaters.PARADISO}">
                 </ng-container>
               </th>
             </tr>
@@ -81,13 +81,13 @@
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
-              <td class="testid-sc-sw-{{day.key}}-PARADISO">
-                @for (session of sessionsByDayAndTheater(day, Theaters.PARADISO); track session.id) {
+              <td class="testid-sc-sw-{{day.key}}-MCL">
+                @for (session of sessionsByDayAndTheater(day, Theaters.MCL); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
-              <td class="testid-sc-sw-{{day.key}}-MCL">
-                @for (session of sessionsByDayAndTheater(day, Theaters.MCL); track session.id) {
+              <td class="testid-sc-sw-{{day.key}}-PARADISO">
+                @for (session of sessionsByDayAndTheater(day, Theaters.PARADISO); track session.id) {
                   <app-planned-movie-session [session]="session" [roadmap]="$roadmap()"></app-planned-movie-session>
                 }
               </td>
