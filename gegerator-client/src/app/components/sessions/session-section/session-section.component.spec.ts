@@ -347,6 +347,7 @@ describe('SessionSectionComponent — UI', () => {
           3. each day has a swimlane for other activites and each theater
     
         */
+       const helper = harnessHelper(loader)
         // Arrange: make the store signals return the test datasets (Empty here is sufficient)
         mockStore.selectSignal = mockStoreSelector( [], [])
 
@@ -370,9 +371,10 @@ describe('SessionSectionComponent — UI', () => {
             
             // day header + activity, session, and turbo session buttons
             const primaryHeader = getPrimaryHeader(day)
-            expect(findButton(primaryHeader, "sc-newsession-"+day.key)).toBeTruthy()
-            expect(findButton(primaryHeader, "sc-newactivity-"+day.key)).toBeTruthy()
-            expect(findButton(primaryHeader, "sc-newsession-turbo-"+day.key)).toBeTruthy()
+            expect(primaryHeader).toBeTruthy()
+            expect(await helper.button("sc-newsession-"+day.key)).toBeTruthy()
+            expect(await helper.button("sc-newactivity-"+day.key)).toBeTruthy()
+            expect(await helper.button("sc-newsession-turbo-"+day.key)).toBeTruthy()
 
             // activity header 
             const actHeaderCol = getSecondHeaderColumn(day, 'act')
