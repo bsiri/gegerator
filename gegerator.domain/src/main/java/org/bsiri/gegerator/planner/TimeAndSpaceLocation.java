@@ -6,7 +6,6 @@ import org.bsiri.gegerator.domain.TheaterDistanceTravel;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Comparator;
 
 
 public interface TimeAndSpaceLocation {
