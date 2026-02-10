@@ -126,7 +126,7 @@ public class PlannerEventHelper {
      * Generates a random grid of the given size with the following score probabilities:
      * - [7000 to 10000] : 15%
      * - [1000 to 6999] : 25%
-     * - 0 : 50%
+     * - 10 : 50%
      * - [-1000 to -10000] : the rest (10%)
      *
      * Day is equiprobable.
@@ -170,7 +170,7 @@ public class PlannerEventHelper {
             var selScore = rand.nextFloat();
             var score = (selScore<0.15) ? rand.nextInt(7000, 10000):
                     (selScore < 0.4) ? rand.nextInt(1000, 6999) :
-                    (selScore < 0.90) ? 0 :
+                    (selScore < 0.90) ? 10 :
                     rand.nextInt(-10000, -1000);
 
             var movieId = allMovieIds[rand.nextInt(0, maxMovie)];
