@@ -53,6 +53,11 @@ public class BranchAndBoundPlanner implements WizardPlanner {
     private static final double EPSILON = 1e-6;
     private static final int ROOT_ITERATIONS = 300;
     private static final int NODE_ITERATIONS = 20;
+    /* Reading the clock is not free : it is done once every that many nodes of the search tree */
+    private static final int NODES_BETWEEN_CLOCK_CHECKS = 8;
+    /* A long has 64 bits, and 64 is 2^6 : shifting right by 6 divides by 64 */
+    private static final int BITS_PER_WORD = 64;
+    private static final int WORD_SHIFT = 6;
 
     private final long timeBudgetNanos;
 
@@ -61,7 +66,20 @@ public class BranchAndBoundPlanner implements WizardPlanner {
     /* Events of positive score, sorted chronologically. */
     private PlannerEvent[] events;
     private int nbEvents;
-    /* Number of longs required for a bitset of events */
+    /*
+     * Sets of events are stored as bitsets : one bit per event, set to 1 if the event
+     * belongs to the set. A long only has 64 bits, so a bitset is an array of longs
+     * ("words") laid end to end : word 0 holds the events 0 to 63, word 1 holds the
+     * events 64 to 127, etc. Thus the event i is found at :
+     * - word number i / 64,
+     * - bit number i % 64 of that word.
+     * For instance, the event 70 is the bit 6 of the word 1.
+     * See the methods isSet, add and remove at the end of the class.
+     *
+     * The point of bitsets is speed : the union or the difference of two sets
+     * takes one operation per word, instead of one per event.
+     */
+    /* Number of words (longs) required for a bitset that can hold all the events */
     private int nbWords;
     private long[] score;
     /* Any valid roadmap score is a multiple of this */
@@ -147,7 +165,8 @@ public class BranchAndBoundPlanner implements WizardPlanner {
 
         events = sorted.toArray(new PlannerEvent[0]);
         nbEvents = events.length;
-        nbWords = (nbEvents + 63) >>> 6;
+        // ie nbEvents / 64, rounded up
+        nbWords = (nbEvents + BITS_PER_WORD - 1) >>> WORD_SHIFT;
 
         score = new long[nbEvents];
         scoreStep = 0;
@@ -198,14 +217,11 @@ public class BranchAndBoundPlanner implements WizardPlanner {
 
     private void initConflicts() {
         conflicts = new long[nbEvents][nbWords];
-        boolean[][] conflict = new boolean[nbEvents][nbEvents];
         for (int i = 0; i < nbEvents; i++) {
             for (int j = i + 1; j < nbEvents; j++) {
                 if (movie[i] == movie[j] || TimeAndSpaceLocation.overlap(events[i], events[j])) {
-                    conflict[i][j] = true;
-                    conflict[j][i] = true;
-                    conflicts[i][j >>> 6] |= 1L << j;
-                    conflicts[j][i >>> 6] |= 1L << i;
+                    add(conflicts[i], j);
+                    add(conflicts[j], i);
                 }
             }
         }
@@ -217,13 +233,13 @@ public class BranchAndBoundPlanner implements WizardPlanner {
             for (int i = dayStart[day]; i < dayStart[day + 1]; i++) {
                 int count = 0;
                 for (int j = i + 1; j < dayStart[day + 1]; j++) {
-                    if (!conflict[i][j]) buffer[count++] = j;
+                    if (!isSet(conflicts[i], j)) buffer[count++] = j;
                 }
                 successors[i] = Arrays.copyOf(buffer, count);
 
                 count = 0;
                 for (int j = dayStart[day]; j < i; j++) {
-                    if (!conflict[i][j]) buffer[count++] = j;
+                    if (!isSet(conflicts[i], j)) buffer[count++] = j;
                 }
                 predecessors[i] = Arrays.copyOf(buffer, count);
             }
@@ -267,7 +283,7 @@ public class BranchAndBoundPlanner implements WizardPlanner {
 
         if (nbEvents > 0) {
             long[] allEvents = new long[nbWords];
-            for (int i = 0; i < nbEvents; i++) allEvents[i >>> 6] |= 1L << i;
+            for (int i = 0; i < nbEvents; i++) add(allEvents, i);
             explore(allEvents, new double[nbMovies], 0, ROOT_ITERATIONS);
         }
 
@@ -289,7 +305,9 @@ public class BranchAndBoundPlanner implements WizardPlanner {
     private void explore(long[] active, double[] parentTolls, long baseScore, int maxIterations) {
         if (timedOut) return;
         // the root node is always explored, so there is always a decent roadmap to return
-        if ((exploredNodes++ & 7) == 7 && System.nanoTime() > deadline) {
+        boolean isRoot = (exploredNodes == 0);
+        exploredNodes++;
+        if (!isRoot && exploredNodes % NODES_BETWEEN_CLOCK_CHECKS == 0 && System.nanoTime() > deadline) {
             timedOut = true;
             return;
         }
@@ -360,14 +378,15 @@ public class BranchAndBoundPlanner implements WizardPlanner {
         // first, the case where the event is planned
         long[] child = remaining.clone();
         long[] eventConflicts = conflicts[branchEvent];
+        // child = remaining minus the conflicts of the event, word by word
         for (int w = 0; w < nbWords; w++) child[w] &= ~eventConflicts[w];
-        child[branchEvent >>> 6] &= ~(1L << branchEvent);
+        remove(child, branchEvent);
         planned[nbPlanned++] = branchEvent;
         explore(child, bestTolls, baseScore + score[branchEvent], NODE_ITERATIONS);
         nbPlanned--;
 
         // then, the case where it is not
-        remaining[branchEvent >>> 6] &= ~(1L << branchEvent);
+        remove(remaining, branchEvent);
         explore(remaining, bestTolls, baseScore, NODE_ITERATIONS);
     }
 
@@ -491,8 +510,9 @@ public class BranchAndBoundPlanner implements WizardPlanner {
 
     private void block(int event) {
         long[] eventConflicts = conflicts[event];
+        // blocked = blocked plus the conflicts of the event, word by word
         for (int w = 0; w < nbWords; w++) blocked[w] |= eventConflicts[w];
-        blocked[event >>> 6] |= 1L << event;
+        add(blocked, event);
     }
 
     /**
@@ -519,7 +539,7 @@ public class BranchAndBoundPlanner implements WizardPlanner {
                 if (!isSet(active, i)) continue;
                 double through = bestPreviousOf(i) + forward[i];
                 if (cannotImprove(otherDays + through)) {
-                    active[i >>> 6] &= ~(1L << i);
+                    remove(active, i);
                     discarded = true;
                 }
             }
@@ -565,7 +585,28 @@ public class BranchAndBoundPlanner implements WizardPlanner {
         return -1;
     }
 
+    // ******************* Bitsets ************************
+
+    /*
+     * In the three methods below :
+     * - 'index >>> WORD_SHIFT' is index / 64 : the word that holds the bit of that event,
+     * - '1L << index' is a long with a single bit set, at position index % 64. The modulo
+     *   is implicit : when shifting a long, Java only considers the lowest 6 bits of the
+     *   shift distance.
+     */
+
+    /* Tells if the event belongs to the set : word AND bit is non-zero only if the bit is set */
     private static boolean isSet(long[] bitset, int index) {
-        return (bitset[index >>> 6] & (1L << index)) != 0;
+        return (bitset[index >>> WORD_SHIFT] & (1L << index)) != 0;
+    }
+
+    /* Adds the event to the set : word OR bit switches the bit on */
+    private static void add(long[] bitset, int index) {
+        bitset[index >>> WORD_SHIFT] |= 1L << index;
+    }
+
+    /* Removes the event from the set : word AND (everything but the bit) switches the bit off */
+    private static void remove(long[] bitset, int index) {
+        bitset[index >>> WORD_SHIFT] &= ~(1L << index);
     }
 }
