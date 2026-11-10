@@ -118,7 +118,8 @@ public class Datasets {
                 null,
                 "activity-"+random.nextInt(1000),
                 randScore(),
-                null,
+                // surrogate movie id, as PlannerEvent.of(OtherActivity) does
+                -1L - random.nextInt(1_000_000),
                 null,
                 randDay(),
                 startEnd[0],

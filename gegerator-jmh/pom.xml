@@ -34,9 +34,9 @@ questions.
     <name>gegerator-jmh</name>
 
     <properties>
-        <gegerator.domain.version>1.1.1-SNAPSHOT</gegerator.domain.version>
+        <gegerator.domain.version>1.1.2-SNAPSHOT</gegerator.domain.version>
+        <jmh.version>1.37</jmh.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -44,18 +44,20 @@ questions.
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.35</version>
+            <version>${jmh.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.35</version>
+            <version>${jmh.version}</version>
+            <scope>provided</scope>
         </dependency>
 
+        <!-- required by the test jar of gegerator.domain, to read the sample grids -->
         <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-samples</artifactId>
-            <version>1.35</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.4</version>
         </dependency>
 
         <!-- gegerator dependencies -->
@@ -79,21 +81,23 @@ questions.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.14.1</version>
                 <configuration>
-                    <!--
-                    <compilerVersion>1.6</compilerVersion>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    -->
-                    <source>8</source>
-                    <target>8</target>
+                    <release>17</release>
+                    <!-- since JDK 23, annotation processors must be explicitly declared -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.openjdk.jmh</groupId>
+                            <artifactId>jmh-generator-annprocess</artifactId>
+                            <version>${jmh.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -102,6 +106,7 @@ questions.
                         </goals>
                         <configuration>
                             <finalName>microbenchmarks</finalName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.openjdk.jmh.Main</mainClass>

@@ -1,8 +1,11 @@
 package org.bsiri.gegerator.benchmark;
 
 
-import org.bsiri.gegerator.planner.*;
+import org.bsiri.gegerator.planner.FestivalDatasets;
+import org.bsiri.gegerator.planner.PlannerEvent;
+import org.bsiri.gegerator.planner.exactplanners.BranchAndBoundPlanner;
 import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
+import org.bsiri.gegerator.planner.exoticplanners.CopilotPlanner;
 import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
@@ -10,104 +13,89 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Compares the planners that are fast enough to be used for real, on
+ * the actual grids of the past festivals and on generated, larger grids.
+ *
+ * The grids are the same from one run to the other, so the results are comparable.
+ */
 @BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-
-@Warmup(iterations = 3, time = 15)
-@Measurement(iterations = 3, time = 5)
-
-/*
-@Warmup(iterations = 2)
-@Measurement(iterations = 2)
-*/
-@Timeout(time =11)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
+@Warmup(iterations = 2, time = 2)
+@Measurement(iterations = 3, time = 1)
+@Timeout(time = 11)
 @Fork(1)
 public class PlannerBenchmark {
 
-    private static int NB_SESSIONS = 96;
-    private static int NB_ACTIVITIES = 3;
+    @State(Scope.Benchmark)
+    public static class Grid {
 
-    @State(Scope.Thread)
-    public static class DatasetState{
-        int nbsessions = NB_SESSIONS;
-        int nbactivities = NB_ACTIVITIES;
-        List<PlannerEvent>  events = new ArrayList<>();
+        /*
+         * Either the name of a sample (see FestivalDatasets), or the spec
+         * of a generated grid : (rated|unrated)-(nb days)d-(nb sessions)
+         */
+        @Param({
+                "gege_2020.json",
+                "gege_2023.2.json",
+                "gege_2023.3.final.json",
+                "gege_2026.json",
+                "rated-5d-120",
+                "unrated-5d-120",
+                "rated-6d-150",
+                "unrated-6d-150",
+                "rated-7d-300",
+                "unrated-7d-300"
+        })
+        String grid;
 
-        public DatasetState() {
+        List<PlannerEvent> events;
+
+        @Setup(Level.Trial)
+        public void loadEvents() {
+            if (grid.endsWith(".json")) {
+                events = FestivalDatasets.load(grid);
+                return;
+            }
+            String[] spec = grid.split("-");
+            int nbDays = Integer.parseInt(spec[1].replace("d", ""));
+            int nbSessions = Integer.parseInt(spec[2]);
+            events = spec[0].equals("rated") ?
+                    FestivalDatasets.generate(1, nbDays, nbSessions) :
+                    FestivalDatasets.generateUnrated(1, nbDays, nbSessions);
         }
-
-        public DatasetState(int nbsessions, int nbactivities) {
-            this.nbsessions = nbsessions;
-            this.nbactivities = nbactivities;
-        }
-
-        @Setup(Level.Iteration)
-        public void newEvents(){
-            //this.events = Datasets.shuffledSmallDataset();
-            this.events = Datasets.generateDatasetOf(nbsessions, nbactivities);
-        }
-
-    }
-
-
-    /**
-     * This one is also the baseline
-     */
-
-/*
-    @Benchmark
-    public List<PlannerEvent> benchDailyGraphPlanner(DatasetState dataset){
-        return new DailyGraphPlanner(dataset.events).findBestRoadmap();
     }
 
     @Benchmark
-    public List<PlannerEvent> benchIterativeGraphPlanner(DatasetState dataset){
-        return new IterativeGraphPlanner(dataset.events).findBestRoadmap();
-    }
-*/
-/*
-    @Benchmark
-    public List<PlannerEvent> benchNaiveGraphPlanner(DatasetState dataset){
-        return new NaiveGraphPlanner(dataset.events).findBestRoadmap();
-    }
-*/
-
-/*
-    @Benchmark
-    public List<PlannerEvent> benchIterativeGraphPlannerV2(DatasetState dataset){
-        return new IterativeGraphPlannerV2(dataset.events).findBestRoadmap();
-    }
-
-*/
-    @Benchmark
-    public List<PlannerEvent> benchRankedPathGraphPlanner(DatasetState state){
-        return new RankedPathGraphPlanner(state.events).findBestRoadmap();
+    public List<PlannerEvent> benchBranchAndBoundPlanner(Grid grid) {
+        return new BranchAndBoundPlanner(grid.events).findBestRoadmap();
     }
 
     @Benchmark
-    public List<PlannerEvent> benchBlobPlanner(DatasetState state){
-        return new BlobPlanner(state.events).findBestRoadmap();
+    public List<PlannerEvent> benchRankedPathGraphPlanner(Grid grid) {
+        return new RankedPathGraphPlanner(grid.events).findBestRoadmap();
+    }
+
+    @Benchmark
+    public List<PlannerEvent> benchBlobPlanner(Grid grid) {
+        return new BlobPlanner(grid.events).findBestRoadmap();
+    }
+
+    @Benchmark
+    public List<PlannerEvent> benchCopilotPlanner(Grid grid) {
+        return new CopilotPlanner(grid.events).findBestRoadmap();
     }
 
     /*
      * ============================== HOW TO RUN THIS TEST: ====================================
      *
-     * Note JMH honors the default annotation settings. You can always override
-     * the defaults via the command line or API.
+     * See Notes.md. In short, from the directory gegerator-jmh :
+     *    $ mvn clean package
+     *    $ java -jar target/microbenchmarks.jar PlannerBenchmark
      *
-     * You can run this test:
-     *
-     * a) Via the command line:
-     *    $ mvn clean install
-     *    $ java -jar target/microBenchmarks.jar PlannerBenchmark
-     *
-     * b) Via the Java API:
-     *    (see the JMH homepage for possible caveats when running from IDE:
-     *      http://openjdk.java.net/projects/code-tools/jmh/)
+     * The samples are looked up from the working directory and its parents.
      */
     public static void main(String[] args) throws RuntimeException, RunnerException {
         Options opts = new OptionsBuilder()

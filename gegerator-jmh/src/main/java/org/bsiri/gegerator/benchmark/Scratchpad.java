@@ -11,13 +11,33 @@ import java.util.stream.Collectors;
 
 public class Scratchpad {
 
+    /* A randomly generated grid (different each time) */
+    private static class DatasetState {
+        final int nbsessions;
+        final int nbactivities;
+        List<PlannerEvent> events;
+
+        DatasetState() {
+            this(96, 3);
+        }
+
+        DatasetState(int nbsessions, int nbactivities) {
+            this.nbsessions = nbsessions;
+            this.nbactivities = nbactivities;
+        }
+
+        void newEvents() {
+            this.events = Datasets.generateDatasetOf(nbsessions, nbactivities);
+        }
+    }
+
     private static long getTotalScore(List<PlannerEvent> roadmap){
         return roadmap.stream().map(PlannerEvent::getScore).reduce(0L, (acc, next) -> acc+next);
     }
 
     private static final void comparePathCount(){
 
-        PlannerBenchmark.DatasetState state = new PlannerBenchmark.DatasetState();
+        DatasetState state = new DatasetState();
 
         for (int i=0; i<10; i++){
             state.newEvents();
@@ -32,7 +52,7 @@ public class Scratchpad {
     }
 
     private static void samplebestpath(){
-        PlannerBenchmark.DatasetState state = new PlannerBenchmark.DatasetState(96, 3);
+        DatasetState state = new DatasetState(96, 3);
         state.newEvents();
         RankedPathGraphPlanner graph = new RankedPathGraphPlanner(state.events);
         List<PlannerEvent> bestpath = graph.findBestRoadmap();
@@ -49,7 +69,7 @@ public class Scratchpad {
     }
 
     private static void rankedPathVsBlobs(){
-        PlannerBenchmark.DatasetState state = new PlannerBenchmark.DatasetState(96, 3);
+        DatasetState state = new DatasetState(96, 3);
         state.newEvents();
 
         RankedPathGraphPlanner graph = new RankedPathGraphPlanner(state.events);
@@ -65,7 +85,7 @@ public class Scratchpad {
 
     public static void rankedstats(){
 
-        PlannerBenchmark.DatasetState state = new PlannerBenchmark.DatasetState(96, 3);
+        DatasetState state = new DatasetState(96, 3);
         state.newEvents();
         RankedPathGraphPlanner graph = new RankedPathGraphPlanner(state.events);
         graph.stats();
