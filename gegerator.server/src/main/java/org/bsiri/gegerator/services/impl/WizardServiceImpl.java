@@ -5,8 +5,7 @@ import org.bsiri.gegerator.config.Scoring;
 import org.bsiri.gegerator.config.WizardConfiguration;
 import org.bsiri.gegerator.domain.*;
 import org.bsiri.gegerator.planner.*;
-import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
-import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
+import org.bsiri.gegerator.planner.exactplanners.BranchAndBoundPlanner;
 import org.bsiri.gegerator.services.*;
 import org.bsiri.gegerator.services.events.MoviesChangedEvent;
 import org.bsiri.gegerator.services.events.OtherActivitiesChangedEvent;
@@ -32,8 +31,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class WizardServiceImpl implements WizardService {
-
-    private static final Integer PLANNER_IMPL_THRESHOLD = 30;
 
     private static final Duration THROTTLE_TIME = Duration.ofMillis(100);
 
@@ -136,14 +133,8 @@ public class WizardServiceImpl implements WizardService {
     }
 
     private WizardPlanner createPlanner(List<PlannerEvent> events){
-        // if the problem is small enough -> use an exact solver
-        if (events.size() <= PLANNER_IMPL_THRESHOLD){
-            return new IterativeGraphPlannerV2(events);
-        }
-        // else, use an approximate solver
-        else{
-            return new RankedPathGraphPlanner(events);
-        }
+        // exact solver, fast enough whatever the size of the grid
+        return new BranchAndBoundPlanner(events);
     }
 
     // ************** Internal event listener ********************/

@@ -51,22 +51,32 @@ In Wizard mode, the rendering depends on whether a particular event has been sel
 # Implementation details
 ## About the Wizard algorithm
 ### Description
-It is essentially a graph-based score-maximization algorithm under constraints. 
+It is a score-maximization problem under constraints.
 
-Events are assigned a score that depend on various parameters: movie rating, event rating, theater rating, weighted by a bias depending on whether Users put Movies first, or Theaters first (some are really comfy to take a nap !) 
+Events are assigned a score that depend on various parameters: movie rating, event rating, theater rating, weighted by a bias depending on whether Users put Movies first, or Theaters first (some are really comfy to take a nap !)
 
 The constraints are:
 - two Events are incompatible if their start and end time overlap,
 - those time constraint include traveiling time between Theaters,
 - a Movie can be planned at most once.
 
-The events are then modeled as a graph, where events are (weighted by score) nodes, and an edge exists between two nodes if they are compatible timing-wise. The algorithm then looks for the path having the maximum cumulative score, discarding paths with Movies planned twice or more.
+Events with a score of zero or less are never planned.
+
+In the litterature this is known as the (weighted) Job Interval Selection Problem: each Movie is a job, each of its Sessions is an interval during which the job can be done, and at most one interval per job can be selected.
+
+### Algorithm
+The problem is NP-hard: the number of possible roadmaps for a typical Gerardmer grid is about 10^17, so they cannot be all examined. However, without the rule "a Movie can be planned at most once", it would be an easy problem: the events of a day are modeled as a graph, where events are (weighted by score) nodes, and an edge exists between two nodes if they are compatible timing-wise. The best roadmap is then the path having the maximum cumulative score, which is quick to compute.
+
+The Wizard (class `BranchAndBoundPlanner`) leverages this with a branch-and-bound:
+- the Movie rule is replaced by a toll to pay for each Movie planned. Whatever the tolls, the best path (tolls deduced) plus the sum of the tolls cannot be less than the score of the best valid roadmap: it is an upper bound. The tolls are adjusted until this bound is as low as possible (the technical name is "Lagrangian relaxation").
+- each path computed along the way is turned into a valid roadmap by removing Movies planned twice and filling the holes. The best one is kept.
+- when the bound equals the score of the best roadmap found, that roadmap is proven optimal. Otherwise the Wizard picks an event, and explores recursively both cases: the event is planned, or it is not.
+
+In practice the bound is so close to the optimum that the answer is almost always proven optimal without exploring any case, within a millisecond for a typical grid.
 
 ### Discussion
-Due to the huge solution space, it cannot find the absolute optimum in a reasonable time. For a typical Gerardmer grid over a four day, the combinatorial is about 10^17 (as of year 2026 the festival now goes for five days). Speed has been favored over accuracy so the Users have an immediate feedback when they adjust their ratings. 
+The result is exact: no other roadmap has a better score (there may be several roadmaps with the same best score, though). There is no limit on the number of events.
 
-The tradeoffs are the following:
-- only the 64 top scores Events (depending on Ratings) are considered,
-- events earlier in the week tend to be favored due to its internal working ("greediness").
+Since the problem is NP-hard, a pathological grid could still take too long. For this reason the Wizard works with a time budget (1.5 second): when elapsed, it returns the best roadmap found so far. We could not trigger this with realistic grids, even ones much larger than the actual festival (300 sessions over 7 days).
 
-In the litterature, the best approximation I could come with would be: "longest path in a tropical graph with at most one color for each". However there is no such algorithm so I had to roll out my own. I have considered other ways to model the problem but I don't have the skills to apply them. Still, if someone has a better idea I will welcome it !
+Former attempts (exhaustive search, approximations) are still available in the package `planner`, see `gegerator-jmh` for a comparison.

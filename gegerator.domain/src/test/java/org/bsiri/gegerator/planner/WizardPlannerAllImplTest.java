@@ -3,6 +3,7 @@ package org.bsiri.gegerator.planner;
 
 import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlanner;
 import org.bsiri.gegerator.planner.deprecated.NaiveGraphPlanner;
+import org.bsiri.gegerator.planner.exactplanners.BranchAndBoundPlanner;
 import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
 import org.bsiri.gegerator.planner.exoticplanners.CopilotPlanner;
 import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
@@ -264,6 +265,10 @@ public class WizardPlannerAllImplTest {
     private static Stream<Arguments> enumeratePlanners() {
         return Stream.of(
                 Arguments.of(
+                        BranchAndBoundPlanner.class.getSimpleName(),
+                        (PlannerProvider) BranchAndBoundPlanner::new
+                ),
+                Arguments.of(
                         RankedPathGraphPlanner.class.getSimpleName(),
                         (PlannerProvider) RankedPathGraphPlanner::new
                 ),
@@ -292,6 +297,10 @@ public class WizardPlannerAllImplTest {
 
     private static Stream<Arguments> enumerateFastPlanners() {
         return Stream.of(
+                Arguments.of(
+                        BranchAndBoundPlanner.class.getSimpleName(),
+                        (PlannerProvider) BranchAndBoundPlanner::new
+                ),
                 Arguments.of(
                         RankedPathGraphPlanner.class.getSimpleName(),
                         (PlannerProvider) RankedPathGraphPlanner::new

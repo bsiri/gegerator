@@ -9,6 +9,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -145,11 +146,19 @@ public class PlannerEventHelper {
      */
 
     static final List<PlannerEvent> randomGrid(int size){
+        return randomGrid(size, 5, 5);
+    }
+
+    /**
+     * Same as above, with a choice of the seed and of the number of days
+     * of the festival (at most 7, the last day is always sunday).
+     */
+    public static final List<PlannerEvent> randomGrid(int size, long seed, int nbDays){
         List<PlannerEvent> result = new ArrayList<>();
-        Random rand = new Random(5);
+        Random rand = new Random(seed);
 
         // setup
-        var alldays = new DayOfWeek[]{ DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
+        var alldays = Arrays.copyOfRange(DayOfWeek.values(), 7 - nbDays, 7);
         var alltheaters = Theater.values();
         // 1.6 is an estimated factor depending on stuffs I'm too lazy to detail
         var maxMovie = (int)(size/1.6); 

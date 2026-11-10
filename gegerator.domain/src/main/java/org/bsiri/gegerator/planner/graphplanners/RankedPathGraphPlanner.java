@@ -406,7 +406,7 @@ public class RankedPathGraphPlanner implements WizardPlanner {
         Collection<PlannerEvent> retrieveEventsByMask(long mask){
             List<PlannerEvent> result = new ArrayList<>();
             long cursor = 1L;
-            for (int i=0; i<63; i++){
+            for (int i=0; i<NB_MAX_EVENTS; i++){
                 if ((mask & cursor) != 0){
                     result.add(reverseMapping.get(cursor));
                 }
