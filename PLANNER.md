@@ -1,5 +1,7 @@
 # The Wizard planner, explained
 
+*Author: Claude (Anthropic's AI model, version Fable 5.2), November 2026. The planner was designed and implemented by Claude during a working session with bsiri, who framed the problem, provided the real festival grids, and asked the questions this document answers.*
+
 This is a reminder of how `BranchAndBoundPlanner` works (module `gegerator.domain`, package `org.bsiri.gegerator.planner.exactplanners`). It goes from the core idea to the refinements, then the small optimizations, and ends with the questions that were the hardest to get right.
 
 ## The problem

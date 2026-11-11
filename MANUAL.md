@@ -57,15 +57,15 @@ Events are assigned a score that depend on various parameters: movie rating, eve
 
 The constraints are:
 - two Events are incompatible if their start and end time overlap,
-- those time constraint include traveiling time between Theaters,
+- those time constraint include traveling time between Theaters,
 - a Movie can be planned at most once.
 
 Events with a score of zero or less are never planned.
 
-In the litterature this is known as the (weighted) Job Interval Selection Problem: each Movie is a job, each of its Sessions is an interval during which the job can be done, and at most one interval per job can be selected.
+In the literature this is known as the (weighted) Job Interval Selection Problem: each Movie is a job, each of its Sessions is an interval during which the job can be done, and at most one interval per job can be selected.
 
 ### Algorithm
-The problem is NP-hard: the number of possible roadmaps for a typical Gerardmer grid is about 10^17, so they cannot be all examined. However, without the rule "a Movie can be planned at most once", it would be an easy problem: the events of a day are modeled as a graph, where events are (weighted by score) nodes, and an edge exists between two nodes if they are compatible timing-wise. The best roadmap is then the path having the maximum cumulative score, which is quick to compute.
+The problem is NP-hard: the number of possible paths to evaluate for a typical Gerardmer grid is about 10^17, so they cannot be all examined. However, without the rule "a Movie can be planned at most once", it would be an easy problem: the events of a day are modeled as a graph, where events are (weighted by score) nodes, and an edge exists between two nodes if they are compatible timing-wise. The best roadmap is then the path having the maximum cumulative score, which is quick to compute.
 
 The Wizard (class `BranchAndBoundPlanner`) leverages this with a branch-and-bound:
 - the Movie rule is replaced by a toll to pay for each Movie planned. Whatever the tolls, the best path (tolls deduced) plus the sum of the tolls cannot be less than the score of the best valid roadmap: it is an upper bound. The tolls are adjusted until this bound is as low as possible (the technical name is "Lagrangian relaxation").
