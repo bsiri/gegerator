@@ -1,9 +1,9 @@
 package org.bsiri.gegerator.benchmark;
 
-import org.bsiri.gegerator.planner.graphplanners.IterativeGraphPlannerV2;
+import org.bsiri.gegerator.planner.deprecated.IterativeGraphPlannerV2;
 import org.bsiri.gegerator.planner.PlannerEvent;
-import org.bsiri.gegerator.planner.graphplanners.RankedPathGraphPlanner;
-import org.bsiri.gegerator.planner.exoticplanners.BlobPlanner;
+import org.bsiri.gegerator.planner.deprecated.RankedPathGraphPlanner;
+import org.bsiri.gegerator.planner.deprecated.BlobPlanner;
 
 import java.util.Comparator;
 import java.util.List;

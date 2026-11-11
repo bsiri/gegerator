@@ -13,6 +13,19 @@ import java.time.LocalTime;
 import java.util.*;
 
 /*
+ * ======================== PLANNER LABEL ========================
+ * Status: deprecated, superseded by BranchAndBoundPlanner (exact, no limit on the
+ *         number of events, less than 1 ms for 300 events).
+ * Type: exact (exhaustive search, recursion replaced by a stack)
+ * Maximum recommended events: 30
+ * Speed: about 5 ms for 20 events, 40 ms for 30, 0.4 s for 35, 2.5 s for 40, more than 10 s for 45.
+ * Notes: The time grows exponentially with the number of events.
+ *
+ * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
+ * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
+/*
     This variant aims at getting rid of as much
     recursion as possible in method 'explore'
  */

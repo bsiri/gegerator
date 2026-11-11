@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.planner.graphplanners;
+package org.bsiri.gegerator.planner.deprecated;
 
 
 import org.bsiri.gegerator.planner.PlannerEvent;
@@ -9,6 +9,20 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/*
+ * ======================== PLANNER LABEL ========================
+ * Status: deprecated, superseded by BranchAndBoundPlanner (exact, no limit on the
+ *         number of events, less than 1 ms for 300 events).
+ * Type: exact (exhaustive search, fewer branches than v1)
+ * Maximum recommended events: 40
+ * Speed: about 2 ms for 20 events, 5 ms for 30, 70 ms for 35, 0.4 s for 40, 2.5 s for 45, more than 10 s for 50.
+ * Notes: The time grows exponentially with the number of events. Still used by the tests as the
+ * reference for exactness on small grids.
+ *
+ * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
+ * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
 /**
     Slightly optimized version of IterativePlanner. Here again the event
     grid is modeled as a graph between MovieSession that are technically

@@ -81,4 +81,4 @@ The result is exact: no other roadmap has a better score (there may be several r
 
 Since the problem is NP-hard, a pathological grid could still take too long. For this reason the Wizard works with a time budget (1.5 second): when elapsed, it returns the best roadmap found so far. We could not trigger this with realistic grids, even ones much larger than the actual festival (300 sessions over 7 days).
 
-Former attempts (exhaustive search, approximations) are still available in the package `planner`, see `gegerator-jmh` for a comparison.
+Former attempts (exhaustive search, approximations) are still available in the package `planner.deprecated` (each one is labeled with its type, limits and speed), see `gegerator-jmh` for a comparison.

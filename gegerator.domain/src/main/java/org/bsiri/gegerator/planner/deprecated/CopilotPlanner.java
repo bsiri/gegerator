@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.planner.exoticplanners;
+package org.bsiri.gegerator.planner.deprecated;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,6 +11,20 @@ import org.bsiri.gegerator.planner.PlannerEvent;
 import org.bsiri.gegerator.planner.TimeAndSpaceLocation;
 import org.bsiri.gegerator.planner.WizardPlanner;
 
+/*
+ * ======================== PLANNER LABEL ========================
+ * Status: deprecated, superseded by BranchAndBoundPlanner (exact, no limit on the
+ *         number of events, less than 1 ms for 300 events).
+ * Type: approximate (greedy insertion with local replacement)
+ * Maximum recommended events: 300 and more
+ * Speed: less than 0.1 ms for the actual festivals (84 to 103 events), less than 1 ms for 300 events.
+ * Notes: Events with a negative score are ignored. Quality on the actual festivals: optimal on 1 grid
+ * out of 4, within 0.7% on two others, and 84% of the optimum on the unrated grid (210 instead of 250).
+ *
+ * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
+ * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
 /**
  * Implementation of WizardPlanner by Copilot, after the specs in `specs/feat-betterplanner.md`.
  * 

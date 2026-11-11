@@ -10,6 +10,19 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
 
+/*
+ * ======================== PLANNER LABEL ========================
+ * Status: deprecated, superseded by BranchAndBoundPlanner (exact, no limit on the
+ *         number of events, less than 1 ms for 300 events).
+ * Type: exact (exhaustive search, recursive)
+ * Maximum recommended events: 30
+ * Speed: about 2 ms for 20 events, 25 ms for 30, 0.4 s for 35, 2 s for 40, more than 10 s for 45.
+ * Notes: First design. The time grows exponentially with the number of events.
+ *
+ * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
+ * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
 public class NaiveGraphPlanner implements WizardPlanner {
 
     private static Long ROOT_MOVIE = -9999L;

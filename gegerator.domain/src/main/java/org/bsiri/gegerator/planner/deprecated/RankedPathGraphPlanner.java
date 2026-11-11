@@ -1,4 +1,4 @@
-package org.bsiri.gegerator.planner.graphplanners;
+package org.bsiri.gegerator.planner.deprecated;
 
 import lombok.Getter;
 import org.bsiri.gegerator.planner.PlannerEvent;
@@ -8,6 +8,20 @@ import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * ======================== PLANNER LABEL ========================
+ * Status: deprecated, superseded by BranchAndBoundPlanner (exact, no limit on the
+ *         number of events, less than 1 ms for 300 events).
+ * Type: approximate (exact per day, then days stitched together keeping the 64 best)
+ * Maximum recommended events: no hard limit, but only the 64 best-scored events are considered
+ * Speed: 2 to 10 ms for the actual festivals (84 to 103 events), up to 50 ms for 120 unrated events.
+ * Notes: Quality on the actual festivals: optimal on 2 grids out of 4, 20 points short on a third,
+ * and 72% of the optimum on the unrated grid (180 instead of 250).
+ *
+ * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
+ * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
 /**
  * This planner returns an approximate optimum, sacrificing accuracy for speed.
  * It should run fast enough for about 120 events, perhaps even more.
