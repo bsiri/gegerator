@@ -8,6 +8,24 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.util.*;
 
+/*
+ * ======================== PLANNER LABEL ========================
+ * Status: current, this is the planner used by the wizard.
+ * Type: exact (with a time budget of 1.5 s : if it ever elapses, the best roadmap
+ *       found so far is returned and isOptimal() returns false)
+ * Maximum recommended events: no limit (tested up to 2000)
+ * Speed: less than 0.1 ms for the actual festivals (84 to 103 events), less than 1 ms
+ *        for 300 events, 20 to 30 ms for 2000 events. About 10 ms for the very first
+ *        call on a cold JVM.
+ * Notes: Events with a score of zero or less are never planned. The hardest grids are
+ *        those with many sessions per movie and equal scores : the worst one produced
+ *        (500 events, ten sessions per movie) took 441 ms. See PLANNER.md at the root
+ *        of the project for a walkthrough.
+ *
+ * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
+ * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
 /**
  * Exact planner: it returns a roadmap of maximum cumulative score, and can tell
  * whether it had the time to prove it (see {@link #isOptimal()}).
