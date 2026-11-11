@@ -74,6 +74,8 @@ The Wizard (class `BranchAndBoundPlanner`) leverages this with a branch-and-boun
 
 In practice the bound is so close to the optimum that the answer is almost always proven optimal without exploring any case, within a millisecond for a typical grid.
 
+See [PLANNER.md](PLANNER.md) for a detailed walkthrough: the maths, the refinements, how it maps to the code, and a Q/A.
+
 ### Discussion
 The result is exact: no other roadmap has a better score (there may be several roadmaps with the same best score, though). There is no limit on the number of events.
 
