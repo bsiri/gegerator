@@ -18,11 +18,42 @@ import java.util.stream.Collectors;
  * Type: approximate (greedy)
  * Maximum recommended events: 300 and more
  * Speed: less than 0.1 ms for the actual festivals (84 to 103 events), about 1 ms for 300 events.
- * Notes: Events with a negative score are ignored. Quality: 79% of the optimum on the random grid
- * of 100 events used by the timeout test (not measured on the actual festivals).
+ * Notes: Events with a negative score are ignored. Quality on the actual festivals: optimal
+ * on 2 grids out of 4, within 0.01% on a third, and 80% of the optimum on the unrated grid
+ * (200 instead of 250). Over 300 generated grids of 100 events: 96.5% of the optimum on
+ * average, 78.5% for the worst one.
  *
  * Timings: laptop, Intel Core Ultra 7 255U, 16 GB RAM, JDK 25, single thread,
  * JVM warmed up, November 2026. Orders of magnitude only.
+ * ================================================================
+ */
+/*
+ * ======================== KNOWN ISSUES ==========================
+ * This planner is NOT TRUSTWORTHY as it stands. It sometimes returns surprisingly
+ * bad roadmaps (down to 78.5% of the optimum, see the label above), and it may
+ * contain bugs that were never fixed since it is deprecated. Two suspects, both
+ * found by reading the code, none of them confirmed:
+ *
+ * 1. Missed conflicts in applyPressures(). For a given blob, the loop walks the
+ *    following blobs (sorted by start time) and stops at the first one that is
+ *    not in conflict. This assumes that the conflicts of a blob are contiguous,
+ *    which is not guaranteed because the travel time depends on the theater.
+ *    Example: A ends at 12:00 at ESPACE_LAC, B starts at 12:05 at ESPACE_LAC
+ *    (no travel: no conflict), C starts at 12:20 at MCL (33 minutes of travel:
+ *    conflict). The loop stops at B and never sees the conflict between A and C.
+ *    Consequences: pressures are underestimated, so the wrong blob may be evicted,
+ *    and in principle a roadmap with overlapping events could be returned.
+ *    Note: over 304 grids (the 4 actual festivals and 300 generated ones), every
+ *    roadmap returned was valid. So if this happens, it is rare.
+ *
+ * 2. Collisions of surrogate ids. An event with no movie gets a random id among
+ *    1000 values (see the constructor of Blob). Two such events may get the same
+ *    id, and would then be handled as two sessions of the same movie: only one
+ *    of them could be planned. In the application this cannot happen, because
+ *    PlannerEvent.of(OtherActivity) always sets a movie id.
+ *
+ * The bad roadmaps may also simply be the nature of the algorithm: it is greedy,
+ * an evicted session is never reconsidered.
  * ================================================================
  */
 /**
